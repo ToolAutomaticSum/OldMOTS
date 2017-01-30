@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/StanfordCoreNLP"/>
+	<classpathentry kind="lib" path="lib/GrammaticalWords.jar"/>
+	<classpathentry kind="lib" path="lib/ReaderWriter.jar"/>
+	<classpathentry kind="lib" path="G:/workspace/JGibbLabeledLDA.jar" sourcepath="/JGibbLabeledLDA-master/src"/>
+	<classpathentry kind="lib" path="G:/theseWorkspace/JGibbLabeledLDA-master/lib/trove-3.0.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
