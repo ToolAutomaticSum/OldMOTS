@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ROUGE_EVAL version="1.55">
+  <EVAL ID="TASK_2">
+    <MODEL-ROOT>/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/LDA/models</MODEL-ROOT>
+    <PEER-ROOT>/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/LDA/systems</PEER-ROOT>
+    <INPUT-FORMAT TYPE="SEE"/>
+    <PEERS>
+      <P ID="0">T20.html</P>
+    </PEERS>
+    <MODELS>
+      <M ID="0">1.html</M>
+    </MODELS>
+  </EVAL>
+</ROUGE_EVAL>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<!--TASK ID="0">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>G:\Thèse\TAL\Corpus\multilingMss2015Eval\body\text\en</INPUT_PATH>
+		<OUTPUT_PATH>doc\TF_IDF</OUTPUT_PATH>
+		<DOCUMENT ID="0">ALL</DOCUMENT>
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="LiveProcess">false</OPTION>
+			<OPTION NAME="LimitSize">20000000</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="StopWordsRemover">
+			<OPTION NAME="StopWordListPath">doc\StopWords</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="TextStemming"></PREPROCESS>
+		<PROCESS NAME="TF_IDF.LearningTF_IDF">
+			<OPTION NAME="PathModel">doc\TF_IDF</OPTION>
+		</PROCESS>
+	</TASK-->
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>doc</INPUT_PATH>
+		<OUTPUT_PATH>doc\Output</OUTPUT_PATH>
+		<DOCUMENT ID="0">132a33e8586a65700024a05fa7b18c5c_body.txt</DOCUMENT>
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="LiveProcess">false</OPTION>
+			<OPTION NAME="LimitSize">20000000</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="StopWordsRemover">
+			<OPTION NAME="StopWordListPath">doc\StopWords</OPTION>
+		</PREPROCESS>
+		<!--PREPROCESS NAME="TextStemming"></PREPROCESS-->
+		<PROCESS NAME="TF_IDF.TF_IDF">
+			<OPTION NAME="LoadModel">true</OPTION>
+			<OPTION NAME="PathModel">doc/TF_IDF/TF_IDF_Model.txt</OPTION>
+			<SCORING_METHOD NAME="graphBased.ClusterLexRank">
+				<OPTION NAME="Threshold">0.2</OPTION>
+				<OPTION NAME="ThresholdCluster">2</OPTION>
+				<OPTION NAME="NbMaxWordInCluster">10</OPTION>
+				<OPTION NAME="GraphThreshold">0.2</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+			</SCORING_METHOD>
+			<SUMMARIZE_METHOD NAME="BestIsBetter">
+				<OPTION NAME="CharLimitBoolean">true</OPTION>
+				<OPTION NAME="Size">250</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+			</SUMMARIZE_METHOD>
+		</PROCESS>
+		<ROUGE_EVALUATION>
+			<MODEL-ROOT>models</MODEL-ROOT>
+			<PEER-ROOT>systems</PEER-ROOT>
+		</ROUGE_EVALUATION>
+	</TASK>
+	<!--TASK ID="2">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>doc</INPUT_PATH>
+		<OUTPUT_PATH>doc\Output</OUTPUT_PATH>
+		<DOCUMENT ID="0">132a33e8586a65700024a05fa7b18c5c_body.txt</DOCUMENT>
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="LiveProcess">false</OPTION>
+			<OPTION NAME="LimitSize">20000000</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="StopWordsRemover">
+			<OPTION NAME="StopWordListPath">doc\StopWords</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="TextStemming"></PREPROCESS>
+		<PROCESS NAME="LDA.InferenceLDA">
+			<OPTION NAME="NbTopicsLDA">50</OPTION>
+			<OPTION NAME="Alpha">0.8</OPTION>
+			<OPTION NAME="Beta">0.8</OPTION>
+			<OPTION NAME="LoadModel">true</OPTION>
+			<OPTION NAME="PathModel">doc/LDA</OPTION>
+			<SCORING_METHOD NAME="graphBased.LexRank">
+				<OPTION NAME="Threshold">0.3</OPTION>
+				<OPTION NAME="GraphThreshold">0.2</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+			</SCORING_METHOD>
+			<SUMMARIZE_METHOD NAME="MMR">
+				<OPTION NAME="CharLimitBoolean">true</OPTION>
+				<OPTION NAME="Size">250</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+			</SUMMARIZE_METHOD>
+		</PROCESS>
+		<ROUGE_EVALUATION>
+			<MODEL-ROOT>models</MODEL-ROOT>
+			<PEER-ROOT>systems</PEER-ROOT>
+		</ROUGE_EVALUATION>
+	</TASK-->
+</CONFIG>

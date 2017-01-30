@@ -1,0 +1,4 @@
+G:\theseWorkspace\AutomaticSummarization\lib\ROUGE-1.5.5\RELEASE-1.5.5>
+perl ROUGE-1.5.5.pl -e G:\theseWorkspace\AutomaticSummarization\lib\ROUGE-1.5.5\RELEASE-1.5.5\data -c 95 -2 -1 -U -r 1000 -n 4 -w 1.2 -a G:\theseWorkspace\AutomaticSummarization\doc\LDA\settings0.xml > G:\theseWorkspace\AutomaticSummarization\test5.txt
+
+perl ROUGE-1.5.5.pl -e G:\theseWorkspace\AutomaticSummarization\lib\ROUGE-1.5.5\RELEASE-1.5.5\data -n 2 -x -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 G:\theseWorkspace\AutomaticSummarization\doc\LDA\settings0.xml > G:\theseWorkspace\AutomaticSummarization\test5.txt
