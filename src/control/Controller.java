@@ -112,10 +112,11 @@ public class Controller {
 	    		File f = new File(inputCorpusPath);
 	        	File[] lf = f.listFiles();
 	        	for (int j = 0; j<lf.length; j++) {
-	        		if (Tools.getFileExtension(lf[j]).equals("txt"))
+	        		//if (Tools.getFileExtension(lf[j]).equals("txt"))
 	        			docNames.add(lf[j].getName());
 	        	}
 	    	}
+	    	corpus.setOneSummaryByDoc(false);
 	    	corpus.setModel(model);
 	    	corpus.setDocNames(docNames);
 	    	corpus.setSummaryPath(summaryInputPath);
@@ -127,16 +128,17 @@ public class Controller {
 	    		File f = new File(inputCorpusPath);
 	        	File[] lf = f.listFiles();
 	        	for (int j = 0; j<lf.length; j++) {
-	        		if (Tools.getFileExtension(lf[j]).equals("txt")) {
+	        		//if (Tools.getFileExtension(lf[j]).equals("txt")) {
 	        			Corpus c = new Corpus(corpusList.size());
 	        			List<String> l = new ArrayList<String>();
 	        			l.add(lf[j].getName());
+	        	    	c.setOneSummaryByDoc(true);
 	        			c.setDocNames(l);
 	        	    	c.setSummaryPath(summaryInputPath);
 	        			c.setInputPath(inputCorpusPath);
 	        			c.setModel(model);
 	        			corpusList.add(c);
-	        		}
+	        		//}
 	        	}
 	    	}
 	    	else {
@@ -144,6 +146,7 @@ public class Controller {
 	    			Corpus c = new Corpus(corpusList.size());
         			List<String> l = new ArrayList<String>();
         			l.add(docNames.get(j));
+        	    	c.setOneSummaryByDoc(true);
         			c.setDocNames(l);
         	    	c.setSummaryPath(summaryInputPath);
         			c.setInputPath(inputCorpusPath);

@@ -86,7 +86,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	
 	private void writeHtmlModelSummary(int summaryID) {
 		for (String modelSummary : getModel().getCorpusModels().get(summaryID).getSummaryNames()) {
-    		Writer w = new Writer(getModel().getOutputPath() + "\\" + getModel().getModelRoot() + "\\" + modelSummary.replace(".txt", ".html"));
+    		Writer w = new Writer(getModel().getOutputPath() + "\\" + getModel().getModelRoot() + "\\" + modelSummary.replace(".txt", "") + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", ".html") + "</title></head>" +
 			"<body bgcolor=\"white\">\n");

@@ -1,8 +1,16 @@
 package model.task.preProcess;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import exception.LacksOfFeatures;
 import exception.SizeException;
@@ -13,6 +21,7 @@ import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
+import tools.Tools;
 
 /**
  * Generate Bag of Words
@@ -146,24 +155,53 @@ public class GenerateTextModel extends AbstractPreProcess {
 		}
 	}
 	
-	public static boolean loadText(TextModel textModel, int limitSize) throws SizeException {
+	public static boolean loadText(TextModel textModel, int limitSize) throws Exception {
 		if (textModel.getText() == null) {
-			Reader r = new Reader(textModel.getDocumentFilePath(), true);
-			r.open();
-			textModel.setTextSize(r.size());
-			if (textModel.getTextSize() > limitSize) {
-				r.close();
-				cutText(textModel, limitSize);
-				throw new SizeException(textModel.getDocumentFilePath());
-			} else {
-				String text = r.read();
-				textModel.setText("");
-				while (text != null) {
-					textModel.setText(textModel.getText()+ text + "\n");
-					text = r.read();
+			File fXmlFile = new File(textModel.getDocumentFilePath());
+			if (!Tools.getFileExtension(fXmlFile).equals("txt")) {
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(fXmlFile);
+				NodeList listText =  doc.getElementsByTagName("TEXT");
+				if (listText.getLength() > 0) {
+					Element task = (Element) listText.item(0);
+					String[] listLine = task.getTextContent().split("\n");
+					textModel.setText("");
+					for (int i=0; i<listLine.length; i++) {
+						if (!listLine[i].contains("<") && !listLine[i].contains(">")) {
+							listLine[i] = listLine[i].replace("\n", "");
+							//listLine[i] = listLine[i].replace("  ", "");
+							String str = listLine[i];
+							System.out.println(str.trim());
+							if (!listLine[i].trim().isEmpty()) 
+								textModel.setText(textModel.getText() + listLine[i].trim() + " ");
+							else
+								textModel.setText(textModel.getText() + "\n");
+						}
+					}
+					return true;
 				}
-				r.close();
-				return true;
+				else
+					return false;
+			}
+			else {
+				Reader r = new Reader(textModel.getDocumentFilePath(), true);
+				r.open();
+				textModel.setTextSize(r.size());
+				if (textModel.getTextSize() > limitSize) {
+					r.close();
+					cutText(textModel, limitSize);
+					throw new SizeException(textModel.getDocumentFilePath());
+				} else {
+					String text = r.read();
+					textModel.setText("");
+					while (text != null) {
+						textModel.setText(textModel.getText()+ text + "\n");
+						text = r.read();
+					}
+					r.close();
+					return true;
+				}
 			}
 		} else 
 			return true;

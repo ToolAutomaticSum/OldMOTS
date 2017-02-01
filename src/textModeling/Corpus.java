@@ -6,7 +6,7 @@ import java.util.List;
 
 import model.Model;
 
-public class Corpus extends ArrayList<TextModel>{
+public class Corpus extends ArrayList<TextModel> {
 
 	/**
 	 * 
@@ -18,6 +18,7 @@ public class Corpus extends ArrayList<TextModel>{
 	protected String summaryPath;
 	protected Model model;
 	protected List<String> docNames;
+	private boolean oneSummaryByDoc;
 	protected List<String> summaryNames = new ArrayList<String>();
 	
 	public Corpus(int iD) {
@@ -25,16 +26,18 @@ public class Corpus extends ArrayList<TextModel>{
 	}
 	
 	public void loadDocumentModels() {
-		//List<TextModel> documentModels = new ArrayList<TextModel>();
-		
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
-			summaryNames.add(docName.replace("body", "summary"));
+			if (oneSummaryByDoc)
+				summaryNames.add(docName.replace("body", "summary"));
 			this.add(new TextModel(inputPath + "\\" + docName));
 		}
-		
-    	//setDocumentModels(documentModels);
+		if (!oneSummaryByDoc){
+			String[] listDoc = summaryPath.split("\\\\");
+			summaryNames.add(listDoc[listDoc.length-1]);
+			summaryPath = summaryPath.replace("\\" + listDoc[listDoc.length-1], "");
+		}
     }
 	
 	public SentenceModel getSentenceByID(int id) {
@@ -101,5 +104,13 @@ public class Corpus extends ArrayList<TextModel>{
 
 	public void setSummaryNames(List<String> summaryNames) {
 		this.summaryNames = summaryNames;
+	}
+
+	public boolean isOneSummaryByDoc() {
+		return oneSummaryByDoc;
+	}
+
+	public void setOneSummaryByDoc(boolean oneSummaryByDoc) {
+		this.oneSummaryByDoc = oneSummaryByDoc;
 	}
 }
