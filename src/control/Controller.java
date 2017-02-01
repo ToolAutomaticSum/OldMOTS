@@ -13,7 +13,6 @@ import model.task.process.AbstractProcess;
 import model.task.scoringMethod.AbstractScoringMethod;
 import model.task.summarizeMethod.AbstractSummarizeMethod;
 import textModeling.Corpus;
-import tools.Tools;
 import view.AbstractView;
 
 public class Controller {
@@ -94,7 +93,7 @@ public class Controller {
     	getModel().setInputPath(inputDir);
     }*/
     
-    public void notifyCorpusChanged(Boolean summary, String summaryInputPath, String inputCorpusPath, List<String> docNames) {
+    public void notifyCorpusChanged(String summaryInputPath, List<String> summaryNames, String inputCorpusPath, List<String> docNames) {
     	int i = 0;
     	boolean notAll  = true;
     	while (notAll && i < docNames.size()) {
@@ -103,7 +102,7 @@ public class Controller {
     		}
     		i++;	
     	}
-    	if (!summary) {
+    	//if (!one_Summary_Per_Doc) {
 	    	Corpus corpus = new Corpus(corpusList.size());
 	    	corpusList.add(corpus);
 	    	//this.docNames = docNames;
@@ -113,17 +112,17 @@ public class Controller {
 	        	File[] lf = f.listFiles();
 	        	for (int j = 0; j<lf.length; j++) {
 	        		//if (Tools.getFileExtension(lf[j]).equals("txt"))
-	        			docNames.add(lf[j].getName());
+	        		docNames.add(lf[j].getName());
 	        	}
 	    	}
-	    	corpus.setOneSummaryByDoc(false);
 	    	corpus.setModel(model);
 	    	corpus.setDocNames(docNames);
-	    	corpus.setSummaryPath(summaryInputPath);
 	    	corpus.setInputPath(inputCorpusPath);
-    	}
+	    	corpus.setSummaryNames(summaryNames);
+	    	corpus.setSummaryPath(summaryInputPath);
+    	/*}
     	else {
-	    	if (!notAll) { /** Si tous les documents txt du dossier */
+	    	if (!notAll) { //Si tous les documents txt du dossier
 	    		docNames.clear();
 	    		File f = new File(inputCorpusPath);
 	        	File[] lf = f.listFiles();
@@ -132,10 +131,12 @@ public class Controller {
 	        			Corpus c = new Corpus(corpusList.size());
 	        			List<String> l = new ArrayList<String>();
 	        			l.add(lf[j].getName());
-	        	    	c.setOneSummaryByDoc(true);
 	        			c.setDocNames(l);
+	        	    	c.setInputPath(inputCorpusPath);
+	        	    	List<String> listSummaryNames = new ArrayList<String>();
+	        	    	listSummaryNames.add(summaryNames.get(j));
+	        	    	c.setSummaryNames(summaryNames);
 	        	    	c.setSummaryPath(summaryInputPath);
-	        			c.setInputPath(inputCorpusPath);
 	        			c.setModel(model);
 	        			corpusList.add(c);
 	        		//}
@@ -146,18 +147,18 @@ public class Controller {
 	    			Corpus c = new Corpus(corpusList.size());
         			List<String> l = new ArrayList<String>();
         			l.add(docNames.get(j));
-        	    	c.setOneSummaryByDoc(true);
         			c.setDocNames(l);
+        	    	c.setInputPath(inputCorpusPath);
+        	    	List<String> listSummaryNames = new ArrayList<String>();
+        	    	listSummaryNames.add(summaryNames.get(j));
+        	    	c.setSummaryNames(listSummaryNames);
         	    	c.setSummaryPath(summaryInputPath);
-        			c.setInputPath(inputCorpusPath);
         			c.setModel(model);
         			corpusList.add(c);
 	    		}
 	    	}
-	    		
-    	}
+    	}*/
     	getModel().setCorpusModels(corpusList);
-    	//getModel().setDocNames(docNames);
     }
 
     public void notifyOutputPathChanged(String outputDir) {

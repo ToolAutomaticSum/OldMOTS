@@ -25,7 +25,7 @@ public class ClusterLexRank extends Centroid implements ScoreBasedOut {
 	private double epsilon = 0.01;
 	
 	/** Associé à listCluster issu de Centroid */
-	private Map<Integer, GraphSentenceBased> listGraph = new HashMap<Integer, GraphSentenceBased>();
+	private Map<Integer, GraphSentenceBased> listGraph;
 	private double graphThreshold = 0;
 	
 	public ClusterLexRank(int id) throws Exception {
@@ -44,11 +44,13 @@ public class ClusterLexRank extends Centroid implements ScoreBasedOut {
 		SentenceSimilarityMetric sim = Tools.instanciateSentenceSimilarity(similarityMethod, sentenceCaracteristic);
 		
 		/** Création de la liste des graphes associés à chaque cluster de listCluster */
+		listGraph = new HashMap<Integer, GraphSentenceBased>();
+		
 		Iterator<ClusterCentroid> itCluster = listCluster.values().iterator();
 		while (itCluster .hasNext()) {
 			ClusterCentroid cluster = itCluster.next();
 			if (cluster.size() > 4) {
-				System.out.println(cluster);
+				//System.out.println(cluster);
 				GraphSentenceBased graph = new GraphSentenceBased(graphThreshold, sim);
 				listGraph.put(cluster.getId(), graph);
 				
@@ -60,7 +62,7 @@ public class ClusterLexRank extends Centroid implements ScoreBasedOut {
 				}
 			
 				graph.generateGraph();
-				System.out.println(graph);
+				//System.out.println(graph);
 			} else
 				listGraph.put(cluster.getId(), null);
 		}
@@ -71,26 +73,28 @@ public class ClusterLexRank extends Centroid implements ScoreBasedOut {
 		sentencesScores = new TreeSet<PairSentenceScore>(); 
 		
 		for (int i = 0; i<listCluster.size();i++) {
-			 GraphSentenceBased graph = listGraph.get(i);
-			 if (graph != null) {
-				 double[][] tempMat = new double[graph.size()][graph.size()];
-				 double[][] matAdj = graph.getMatAdj();
-				 int[] degree = graph.getDegree();
-				 for (int j=0;j<graph.size();j++) {
-					 for (int k=0;k<graph.size();k++) {
-						 tempMat[j][k] = dumpingParameter/graph.size()+(1-dumpingParameter)*matAdj[j][k]/degree[j];
-					 }
-				 }
-				 double[] result = computeLexRankScore(tempMat, graph.size(), epsilon);
-				 for (NodeGraphSentenceBased n : graph) {
-					 sentencesScores.add(new PairSentenceScore(n.getCurrentSentence(), result[n.getIdNode()]));
-				 }
-			 }
-			 else {
-				 for (SentenceModel s : listCluster.get(i))
-					 sentencesScores.add(new PairSentenceScore(s, 0.0));
-			 }
-		 }
+			GraphSentenceBased graph = listGraph.get(i);
+			if (graph != null) {
+				double[][] tempMat = new double[graph.size()][graph.size()];
+				double[][] matAdj = graph.getMatAdj();
+				int[] degree = graph.getDegree();
+				for (int j=0;j<graph.size();j++) {
+					for (int k=0;k<graph.size();k++) {
+						tempMat[j][k] = dumpingParameter/graph.size()+(1-dumpingParameter)*matAdj[j][k]/degree[j];
+					}
+				}
+				double[] result = computeLexRankScore(tempMat, graph.size(), epsilon);
+				for (NodeGraphSentenceBased n : graph) {
+					sentencesScores.add(new PairSentenceScore(n.getCurrentSentence(), result[n.getIdNode()]));
+				}
+			}
+			else {
+				for (SentenceModel s : listCluster.get(i))
+					sentencesScores.add(new PairSentenceScore(s, 0.0));
+			}
+		}
+		
+		super.computeScores();
 	}
 	
 	public static double[] computeLexRankScore(double[][] matAdj, int matSize, double epsilon) throws Exception {

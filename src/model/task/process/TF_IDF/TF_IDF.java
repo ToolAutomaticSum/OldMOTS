@@ -15,7 +15,7 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedOut {
 
-	private Map<SentenceModel, double[]> sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
+	private Map<SentenceModel, double[]> sentenceCaracteristic;
 	private boolean loadModel;
 	private String pathModel;
 	//private String pathCorpus;
@@ -45,6 +45,8 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 	 */
 	@Override
 	public void process() throws Exception {
+		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
+		
 		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
 		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();

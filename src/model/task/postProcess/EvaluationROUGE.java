@@ -42,12 +42,17 @@ public class EvaluationROUGE extends AbstractPostProcess {
     			lf[i].delete();
     	}
     	
+    	boolean modelWrite = false;
 		for (int i = 0; i<getModel().getProcess().size(); i++) {
-			for (int j = 0; j<getModel().getProcess().get(i).getSummary().size();j++) {
-				writeHtmlGeneratedSummary(i, j);
-				if (i == 0)
-					writeHtmlModelSummary(j);
-			}
+			//if (getModel().getProcess().get(i).getSummary() != null) {
+				for (int j = 0; j<getModel().getCorpusModels().size();j++) {
+					writeHtmlGeneratedSummary(i, j);
+					if (!modelWrite)
+						writeHtmlModelSummary(j);
+				}
+				if (!modelWrite)
+					modelWrite = true;
+			//}
 			writeSettingsXml(i);
 		}
 	}
@@ -70,7 +75,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	}
 	
 	private void writeHtmlGeneratedSummary(int processID, int summaryID) {
-		//for (int i = 0; i<getModel().getProcess().size(); i++) {
+		if (getModel().getProcess().get(processID).getSummary() != null) {
 			Writer w = new Writer(getModel().getOutputPath() + "\\" + getModel().getPeerRoot() + "\\T" + getModel().getTaskID() + "_" + String.valueOf(processID/*getModel().getProcess().get(i).getId()*/)+ "_" + String.valueOf(summaryID) + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + String.valueOf(processID/*getModel().getProcess().get(i).getId()*/) + "</title></head>" +
@@ -81,14 +86,14 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			}
 			w.write("</body>\n</html>");
 			w.close();
-		//}
+		}
 	}
 	
 	private void writeHtmlModelSummary(int summaryID) {
 		for (String modelSummary : getModel().getCorpusModels().get(summaryID).getSummaryNames()) {
     		Writer w = new Writer(getModel().getOutputPath() + "\\" + getModel().getModelRoot() + "\\" + modelSummary.replace(".txt", "") + ".html");
 			w.open();
-			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", ".html") + "</title></head>" +
+			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
 			Reader r = new Reader( getModel().getCorpusModels().get(summaryID).getSummaryPath() + "\\" + modelSummary, true);
 			r.open();
@@ -115,9 +120,9 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    rootNode.setAttribute("version", "1.55");
 	    document.appendChild(rootNode);
 	    
-	    //for (int i = 0; i<getModel().getProcess().size(); i++) {
+	    for (int i = 0; i<getModel().getCorpusModels().size(); i++) {
 	    	Element process = document.createElement("EVAL");
-	    	process.setAttribute("ID", "TASK_" + getModel().getTaskID());
+	    	process.setAttribute("ID", "CORPUS_" + i);
 	    	//process.appendChild(document.createTextNode(getModel().getProcess().get(i).getClass().toString()));
 	    	
 	    	Element modelRoot = document.createElement("MODEL-ROOT");
@@ -134,30 +139,33 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    	
 	    	Element peers = document.createElement("PEERS");
 	    	//for (int j = 0; j<getModel().getProcess().size(); j++) {
-	    	for (int j = 0; j<getModel().getProcess().get(processID).getSummary().size();j++) {
+	    	//for (int j = 0; j<getModel().getProcess().get(processID).getSummary().size();j++) {
 		    	Element generatedSummary = document.createElement("P");
-	    		generatedSummary.setAttribute("ID", String.valueOf(j/*getModel().getProcess().get(j).getId()*/));
-	    		generatedSummary.appendChild(document.createTextNode("T" + getModel().getTaskID() + "_" + String.valueOf(processID/*getModel().getProcess().get(j).getId()*/)+ "_" + String.valueOf(j) + ".html"));
+	    		generatedSummary.setAttribute("ID", String.valueOf(processID/*getModel().getProcess().get(j).getId()*/));
+	    		generatedSummary.appendChild(document.createTextNode("T" + getModel().getTaskID() + "_" + String.valueOf(processID/*getModel().getProcess().get(j).getId()*/)+ "_" + i + ".html"));
 	    		peers.appendChild(generatedSummary);
-			}
+			//}
 	    	//}
 	    	process.appendChild(peers);
 
 	    	Element models = document.createElement("MODELS");
-	    	File f = new File(getModel().getOutputPath() + "\\" + getModel().getModelRoot());
+	    	
+	    	/*File f = new File(getModel().getOutputPath() + "\\" + getModel().getModelRoot());
 	    	File[] lf = f.listFiles();
 	    	for (int j = 0; j<lf.length; j++) {
-	    		if (Tools.getFileExtension(lf[j]).equals("html")) {
+	    		if (Tools.getFileExtension(lf[j]).equals("html")) {*/
+	    	for (int j = 0; j<getModel().getCorpusModels().get(i).getSummaryNames().size();j++) {
 		    		Element modelSummary = document.createElement("M");
-		    		modelSummary.setAttribute("ID", String.valueOf(j));
-		    		modelSummary.appendChild(document.createTextNode(lf[j].getName()));
+		    		modelSummary.setAttribute("ID", String.valueOf(i) + String.valueOf(j));
+		    		modelSummary.appendChild(document.createTextNode(getModel().getCorpusModels().get(i).getSummaryNames().get(j).replace(".txt", "") + ".html"));
 		    		models.appendChild(modelSummary);
-	    		}
 	    	}
+	    		/*}
+	    	}*/
 	    	process.appendChild(models);
 	    	
 	    	rootNode.appendChild(process);
-	    //}
+	    }
 	    	TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	    	Transformer transformer = transformerFactory.newTransformer();
 	    	DOMSource source = new DOMSource(document);

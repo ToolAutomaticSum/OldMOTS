@@ -66,25 +66,27 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess{
 				// a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
 				List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 				for(CoreMap sentence: sentences) {
-					SentenceModel sen = new SentenceModel(sentence.toString(), iD, parModel);
-					parModel.add(sen);
-					// traversing the words in the current sentence
-					// a CoreLabel is a CoreMap with additional token-specific methods
-					for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
-						String w = token.get(TextAnnotation.class);
-						if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
-							WordModel word = new WordModel();
-							word.setmForm(w);
-							word.setSentence(sen);
-							word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
-							//System.out.println(token.get(LemmaAnnotation.class));
-							word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
-							word.setWord(w);
-							sen.add(word);
+					if (!sentence.toString().replace("_", "").isEmpty()) {
+						SentenceModel sen = new SentenceModel(sentence.toString(), iD, parModel);
+						parModel.add(sen);
+						// traversing the words in the current sentence
+						// a CoreLabel is a CoreMap with additional token-specific methods
+						for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
+							String w = token.get(TextAnnotation.class);
+							if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
+								WordModel word = new WordModel();
+								word.setmForm(w);
+								word.setSentence(sen);
+								word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
+								//System.out.println(token.get(LemmaAnnotation.class));
+								word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
+								word.setWord(w);
+								sen.add(word);
+							}
 						}
+						iD++;
+						nbSentence++;
 					}
-					iD++;
-					nbSentence++;
 				}
 				parModel.setNbSentence(nbSentence);
 			}

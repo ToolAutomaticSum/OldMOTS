@@ -172,7 +172,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 							listLine[i] = listLine[i].replace("\n", "");
 							//listLine[i] = listLine[i].replace("  ", "");
 							String str = listLine[i];
-							System.out.println(str.trim());
+							//System.out.println(str.trim());
 							if (!listLine[i].trim().isEmpty()) 
 								textModel.setText(textModel.getText() + listLine[i].trim() + " ");
 							else

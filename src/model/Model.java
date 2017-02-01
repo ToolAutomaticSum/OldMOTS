@@ -68,6 +68,12 @@ public class Model extends Observable {
 					AbstractPreProcess p = preProIt.next();
 					p.finish();
 				}
+			}
+			
+			corpusIt = corpusModels.iterator();
+			while (corpusIt.hasNext()) {
+				currentCorpus = corpusIt.next();		
+				System.out.println("Corpus : " + currentCorpus.getiD());
 				
 				Iterator<AbstractProcess> proIt = process.iterator();
 				while (proIt.hasNext()) {
@@ -78,9 +84,11 @@ public class Model extends Observable {
 					p.finish();
 					setChanged();
 					
-					List<SentenceModel> summary = p.getSummary().get(currentCorpus.getiD());
-					Collections.sort(summary);
-					notifyObservers(SentenceModel.listSentenceModelToString(summary));
+					if (p.getSummary() != null) {
+						List<SentenceModel> summary = p.getSummary().get(currentCorpus.getiD());
+						Collections.sort(summary);
+						notifyObservers(SentenceModel.listSentenceModelToString(summary));
+					}
 				}
 			}
 			if (bRougeEvaluation) {

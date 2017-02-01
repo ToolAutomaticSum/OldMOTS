@@ -42,7 +42,8 @@ public class ParagraphSplitter extends AbstractPreProcess {
 		int start = 0;
 		for (int i = 0;i<textModel.getText().length();i++) {
 			if (textModel.getText().charAt(i) == '\n') { //start+1 pour enlever le \n résiduel
-				textModel.add(new ParagraphModel(textModel.getText().substring(start, i).replace("\n", ""), textModel));
+				if (!textModel.getText().substring(start, i).replace("\n", "").isEmpty())
+					textModel.add(new ParagraphModel(textModel.getText().substring(start, i).replace("\n", ""), textModel));
 				start = i;
 			}
 		}

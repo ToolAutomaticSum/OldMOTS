@@ -34,7 +34,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 	private double[][] theta;
 	private int K;
 	
-	private Map<SentenceModel, double[]> sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
+	private Map<SentenceModel, double[]> sentenceCaracteristic;
 	
 	public InferenceLDA(int id) {
 		super(id);	
@@ -72,6 +72,8 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 	 */
 	@Override
 	public void process() throws Exception {
+		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
+		
 		generateDictionary();
 		File f = new File(getModel().getOutputPath() + "\\modelLDA\\temp.txt");
 		f.delete();		//Suppression de tempInputFile

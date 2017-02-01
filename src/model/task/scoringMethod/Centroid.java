@@ -65,7 +65,7 @@ public abstract class Centroid extends AbstractScoringMethod implements VectorCa
 			while(senIt.hasNext()) {
 				addNextSentence(senIt.next());
 				//senIt.remove();
-				System.out.println(listCluster.size());
+				//System.out.println(listCluster.size());
 			}
 		}
 		
@@ -73,7 +73,10 @@ public abstract class Centroid extends AbstractScoringMethod implements VectorCa
 	}
 
 	@Override
-	public abstract void computeScores() throws Exception;
+	public void computeScores() throws Exception {
+		listCluster.clear();
+		idCluster = 0;
+	}
 	
 	private void addNextSentence(SentenceModel sentence) throws VectorDimensionException {
 		/** Tester similarité avec cluster existant */

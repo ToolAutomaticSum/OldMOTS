@@ -44,6 +44,8 @@ public class ScoringCentroidTF_IDF extends Centroid implements ScoreBasedOut {
 			}
 		}	
 		System.out.println(sentencesScores);	
+		
+		super.computeScores();
 	}
 
 	@Override

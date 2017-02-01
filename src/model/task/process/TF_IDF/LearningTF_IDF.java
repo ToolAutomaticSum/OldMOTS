@@ -1,5 +1,6 @@
 package model.task.process.TF_IDF;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.TreeSet;
 
 import model.task.process.AbstractProcess;
 import reader_writer.Writer;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -19,24 +21,46 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 public class LearningTF_IDF extends AbstractProcess {
 
 	protected String pathModel;
+	private boolean liveLearning = false;
+	protected List<Corpus> listLearningDoc = new ArrayList<Corpus>();
 	
 	public LearningTF_IDF(int id) {
 		super(id);
+		summary = null;
 	}
 
 	@Override
 	public void init() throws Exception {
-		pathModel = getModel().getProcessOption(id, "PathModel");	
+		listLearningDoc.clear();
+		
+		pathModel = getModel().getProcessOption(id, "PathModel");
+		liveLearning = Boolean.parseBoolean(getModel().getProcessOption(id, "LiveLearning"));
+		if (liveLearning) {
+			String[] listCorpus = getModel().getProcessOption(id, "LearningCorpusID").trim().split("\n");
+			String[] learningCorpus = listCorpus[getModel().getDocumentModels().getiD()].trim().split(" ");
+			for (int i = 1; i<learningCorpus.length;i++)
+				listLearningDoc.add(getModel().getCorpusModels().get(Integer.parseInt(learningCorpus[i])));
+		}
 	}
 
 	@Override
 	public void process() throws Exception {
-		generateDictionary(getModel().getDocumentModels(), dictionnary, hashMapWord);
+		if (liveLearning) {
+			for (Corpus c : listLearningDoc)
+				generateDictionary(c, dictionnary, hashMapWord);
+		}
+		else
+			generateDictionary(getModel().getDocumentModels(), dictionnary, hashMapWord);
 	}
 
 	@Override
 	public void finish() throws Exception {
-		writeTF_IDFModel();
+		if (liveLearning)
+			writeTF_IDFModel();
+		else {
+			if (getModel().getDocumentModels().equals(getModel().getCorpusModels().get(getModel().getCorpusModels().size()-1)))
+				writeTF_IDFModel();
+		}
 	}
 	
 	/**

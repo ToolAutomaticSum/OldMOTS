@@ -67,7 +67,7 @@ public class CommandView extends AbstractView {
 			        for (int j = 0; j<corpusList.getLength(); j++) {
 			        	if(corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 			        		Element corpus = (Element) corpusList.item(j);
-			        		Boolean summary = Boolean.parseBoolean(corpus.getElementsByTagName("SUMMARY").item(0).getTextContent());
+			        		//Boolean one_Summary_Per_Doc = Boolean.parseBoolean(corpus.getElementsByTagName("ONE_SUMMARY_PER_DOC").item(0).getTextContent());
 			        		String summaryInputPath = corpus.getElementsByTagName("SUMMARY_PATH").item(0).getTextContent();
 			        		String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0).getTextContent();
 			        		NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
@@ -77,7 +77,14 @@ public class CommandView extends AbstractView {
 					        		docNames.add(documentList.item(k).getTextContent());
 					        	}
 							}
-					        getCtrl().notifyCorpusChanged(summary, summaryInputPath, corpusInputPath, docNames);
+					        NodeList summaryList = corpus.getElementsByTagName("SUMMARY");
+							List<String> summaryNames = new ArrayList<String>();
+					        for (int k = 0; k<summaryList.getLength(); k++) {
+					        	if(summaryList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+					        		summaryNames.add(summaryList.item(k).getTextContent());
+					        	}
+							}
+					        getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath, docNames);
 			        	}
 					}
 				        
