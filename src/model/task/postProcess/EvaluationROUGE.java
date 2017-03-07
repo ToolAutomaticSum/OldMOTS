@@ -1,6 +1,9 @@
 package model.task.postProcess;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,13 +19,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import exception.LacksOfFeatures;
+import optimize.SupportADNException;
 import reader_writer.Reader;
 import reader_writer.Writer;
+import tools.OSDetector;
 import tools.Tools;
 
 public class EvaluationROUGE extends AbstractPostProcess {
 
-	public EvaluationROUGE(int id) {
+	private String rougePath = "";
+	private List<String> rougeMeasure = new ArrayList<String>();
+	
+	public EvaluationROUGE(int id) throws SupportADNException {
 		super(id);
 	}
 
@@ -35,6 +43,13 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	@Override
 	public void init() throws LacksOfFeatures, ParserConfigurationException, TransformerException {
 
+		if (OSDetector.isUnix()) {
+			rougePath = getModel().getProcessOption(id, "RougePath");
+			for (String s : getModel().getProcessOption(id, "RougePath").split("\n")) {
+				rougeMeasure.add(s);
+			}
+		}
+		
 		File f = new File(getModel().getOutputPath() + "\\" + getModel().getModelRoot());
     	File[] lf = f.listFiles();
     	for (int i = 0; i<lf.length; i++) {
@@ -44,7 +59,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	
     	boolean modelWrite = false;
 		for (int i = 0; i<getModel().getProcess().size(); i++) {
-			//if (getModel().getProcess().get(i).getSummary() != null) {
+			if (getModel().getProcess().get(i).getSummary() != null) {
 				for (int j = 0; j<getModel().getCorpusModels().size();j++) {
 					writeHtmlGeneratedSummary(i, j);
 					if (!modelWrite)
@@ -52,26 +67,39 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				}
 				if (!modelWrite)
 					modelWrite = true;
-			//}
-			writeSettingsXml(i);
+				writeSettingsXml(i);
+			}
 		}
 	}
 
 	@Override
-	public void process() {
-		/*String script ="#!/usr/bin/perl -w\n"
-				+ "$cmd=\"./ROUGE-1.5.5.pl -e data -c 95 -2 -1 -U -r 1000 -n 4 -w 1.2 -a LDA/settings.xml\""
-				+ "print $cmd,\"\\n\";\n"
-				+ "system($cmd);\n";
-		Writer w = new Writer("doc\\LDA\\scriptRouge.pl");
-		w.open();
-		w.write(script);
-		w.close();*/
-		//Tools.copyFile("G:\\theseWorkspace\\AutomaticSummarization\\doc\\LDA", "lib\\ROUGE-1.5.5\\RELEASE-1.5.5");
+	public void process() throws IOException {
+		if (OSDetector.isUnix()) {
+			for (int i = 0; i<getModel().getProcess().size(); i++) {
+				Process proc = Runtime.getRuntime().exec(
+			        "perl " + rougePath + "/ROUGE-1.5.5.pl" + 
+			        "-e " + rougePath + "/data" +
+			        "-c 95 -2 -1 -U -r 1000 -n 4 -w 1.2 -a" +
+			        getModel().getOutputPath() + "/settings" + i + ".xml > " + getModel().getOutputPath() + "test" + i + ".txt");
+			}
+		}
 	}
 
 	@Override
 	public void finish() {
+		for (int i = 0; i<getModel().getProcess().size(); i++) {
+			Reader r = new Reader(getModel().getOutputPath() + "test" + i + ".txt", true);
+			r.open();
+			String t = r.read();
+			while (t != null) {
+				String[] result = t.split(" ");
+				if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_F:")) {
+					currentProcess.setScore(Double.parseDouble(result[3]));
+					System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
+				}
+				t = r.read();
+			}
+		}
 	}
 	
 	private void writeHtmlGeneratedSummary(int processID, int summaryID) {

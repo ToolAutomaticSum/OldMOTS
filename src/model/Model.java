@@ -57,7 +57,6 @@ public class Model extends Observable {
 			Iterator<Corpus> corpusIt = corpusModels.iterator();
 			while (corpusIt.hasNext()) {
 				currentCorpus = corpusIt.next();
-				
 				preProIt = preProcess.iterator();
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
@@ -67,7 +66,9 @@ public class Model extends Observable {
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
 					p.finish();
-				}
+				}				
+
+				System.out.println(currentCorpus);
 			}
 			
 			corpusIt = corpusModels.iterator();

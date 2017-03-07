@@ -93,9 +93,9 @@ public class CommandView extends AbstractView {
 		        	for (int j=0;j<preProcessList.getLength();j++) {
 		        		if(preProcessList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 			        		Element preProcess = (Element) preProcessList.item(j);
-				        	getCtrl().notifyPreProcessChanged(preProcess.getAttribute("NAME"));
-				        	
 				        	getCtrl().notifyProcessOptionChanged(getProcessOptionMap(preProcess));
+				        	
+				        	getCtrl().notifyPreProcessChanged(preProcess.getAttribute("NAME"));
 		        		}
 	        		}
 			        
@@ -103,32 +103,32 @@ public class CommandView extends AbstractView {
 			        for (int j = 0; j<processList.getLength(); j++) {
 			        	if(processList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 				        	Element process = (Element) processList.item(j);
-				        	getCtrl().notifyProcessChanged(process.getAttribute("NAME"));
-				        	
 				        	getCtrl().notifyProcessOptionChanged(getProcessOptionMap(process));
+				        	
+				        	getCtrl().notifyProcessChanged(process.getAttribute("NAME"));
 				        	
 				        	NodeList scoringMethodList = process.getElementsByTagName("SCORING_METHOD");
 				        	for (int k=0;k<scoringMethodList.getLength();k++) {
 				        		if(scoringMethodList.item(k).getNodeType() == Node.ELEMENT_NODE) {
 						        	Element scoringMethod = (Element) process.getElementsByTagName("SCORING_METHOD").item(k);
-						        	getCtrl().notifyScoringMethodChanged(process.getAttribute("NAME"), scoringMethod.getAttribute("NAME"));
 						        	getCtrl().notifyProcessOptionChanged(getProcessOptionMap(scoringMethod));
+						        	getCtrl().notifyScoringMethodChanged(process.getAttribute("NAME"), scoringMethod.getAttribute("NAME"));
 				        		}
 				        	}
 				        	
 				        	Element summarizeMethod = (Element) process.getElementsByTagName("SUMMARIZE_METHOD").item(0);
 				        	if (summarizeMethod != null) {
-				        		getCtrl().notifySummarizeMethodChanged(process.getAttribute("NAME"), summarizeMethod.getAttribute("NAME"));
 				        		getCtrl().notifyProcessOptionChanged(getProcessOptionMap(summarizeMethod));
+				        		getCtrl().notifySummarizeMethodChanged(process.getAttribute("NAME"), summarizeMethod.getAttribute("NAME"));
 				        	}
 				        	
 				        	NodeList postProcessList = process.getElementsByTagName("POSTPROCESS");
 				        	for (int k=0;k<postProcessList.getLength();k++) {
 				        		if(postProcessList.item(k).getNodeType() == Node.ELEMENT_NODE) {
-					        		Element postProcess = (Element) postProcessList.item(k);
-						        	getCtrl().notifyPostProcessChanged(process.getAttribute("NAME"), postProcess.getAttribute("NAME"));
-						        	
+					        		Element postProcess = (Element) postProcessList.item(k);						        	
 						        	getCtrl().notifyProcessOptionChanged(getProcessOptionMap(postProcess));
+						        	
+						        	getCtrl().notifyPostProcessChanged(process.getAttribute("NAME"), postProcess.getAttribute("NAME"));
 				        		}
 			        		}
 			        	}

@@ -10,7 +10,7 @@ public class WordIndex extends ArrayList<WordModel>{
 	 */
 	private static final long serialVersionUID = 6192277237881669695L;
 	private String word;
-	private int iD;
+	private Integer iD;
 	protected Dictionnary dictionnary;
 	//private List<WordModel> listWord = new ArrayList<WordModel>();
 
@@ -35,7 +35,7 @@ public class WordIndex extends ArrayList<WordModel>{
 		this.word = word;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return iD;
 	}
 

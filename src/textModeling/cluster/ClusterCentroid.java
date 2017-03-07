@@ -23,7 +23,7 @@ public abstract class ClusterCentroid extends Cluster {
 	public ClusterCentroid(int id, Dictionnary dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
 		super(id);
 		this.dictionnary = dictionnary;
-		clusterDictionnary = new Dictionnary(this.dictionnary.getNbSentence());
+		clusterDictionnary = new Dictionnary(this.dictionnary.getNbDocument());
 		this.hashMapWord = hashMapWord;
 		
 		//centroid = new double[dictionnary.size()];

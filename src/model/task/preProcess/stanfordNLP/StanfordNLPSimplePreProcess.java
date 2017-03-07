@@ -68,7 +68,6 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess{
 				for(CoreMap sentence: sentences) {
 					if (!sentence.toString().replace("_", "").isEmpty()) {
 						SentenceModel sen = new SentenceModel(sentence.toString(), iD, parModel);
-						parModel.add(sen);
 						// traversing the words in the current sentence
 						// a CoreLabel is a CoreMap with additional token-specific methods
 						for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
@@ -84,6 +83,8 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess{
 								sen.add(word);
 							}
 						}
+						if (sen.getLength() > 0)
+							parModel.add(sen);
 						iD++;
 						nbSentence++;
 					}

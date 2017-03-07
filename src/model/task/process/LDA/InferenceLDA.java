@@ -15,6 +15,7 @@ import jgibblda.Inferencer;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
 import model.task.process.AbstractProcess;
+import optimize.parameter.Parameter;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -22,6 +23,29 @@ import textModeling.WordModel;
 import textModeling.wordIndex.LDA.WordLDA;
 
 public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
+	
+	static {
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("NbTopicsLDA", Integer.class);
+		supportADN.put("Alpha", Double.class);
+		supportADN.put("Beta", Double.class);
+	}
+
+	public static enum InferenceLDA_Parameter {
+		K("NbTopicsLDA"),
+		alpha("Alpha"),
+		beta("Beta");
+
+		private String name;
+
+		private InferenceLDA_Parameter(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
 	
 	protected double[] averageVector;
 	//Vecteur de la phrases obtenue par moyenne des vecteurs des mots de la phrases
@@ -36,8 +60,12 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 	
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
 	
-	public InferenceLDA(int id) {
-		super(id);	
+	public InferenceLDA(int id) throws Exception {
+		super(id);
+		
+		adn.putParameter(new Parameter<Integer>(InferenceLDA_Parameter.K.getName(), Integer.parseInt(getModel().getProcessOption(id, InferenceLDA_Parameter.K.getName()))));
+		adn.putParameter(new Parameter<Double>(InferenceLDA_Parameter.alpha.getName(), Double.parseDouble(getModel().getProcessOption(id, InferenceLDA_Parameter.alpha.getName()))));
+		adn.putParameter(new Parameter<Double>(InferenceLDA_Parameter.beta.getName(), Double.parseDouble(getModel().getProcessOption(id, InferenceLDA_Parameter.beta.getName()))));
 	}
 	
 	/**
@@ -54,9 +82,9 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 		option.inf = true;
 		//option..savestep = 10;
 		option.twords = 20;
-		option.K = Integer.parseInt(getModel().getProcessOption(id, "NbTopicsLDA"));
-		option.alpha = Double.parseDouble(getModel().getProcessOption(id, "Alpha"));
-		option.beta = Double.parseDouble(getModel().getProcessOption(id, "Beta"));
+		option.K = adn.getParameterValue(Integer.class, InferenceLDA_Parameter.K.getName()); //Integer.parseInt(getModel().getProcessOption(id, "NbTopicsLDA"));
+		option.alpha = adn.getParameterValue(Double.class, InferenceLDA_Parameter.alpha.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Alpha"));
+		option.beta = adn.getParameterValue(Double.class, InferenceLDA_Parameter.beta.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Beta"));
 		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
 		option.dir = getModel().getProcessOption(id, "PathModel") + "\\modelLDA";
 		option.dfile = "temp.txt.gz"; //TODO à changer

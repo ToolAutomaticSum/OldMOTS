@@ -2,6 +2,8 @@ package model.task.process.ILP;
 
 import java.util.ArrayList;
 
+import textModeling.wordIndex.NGram;
+
 public interface BiGramListBasedOut {
 
 	public ArrayList<Double> getBiGramWeights();

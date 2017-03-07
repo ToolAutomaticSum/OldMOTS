@@ -53,7 +53,8 @@ public class StopWordsRemover extends AbstractPreProcess {
 					if (gramWordsMap.detectGramWords(word.getWord()) != 0) {
 						word.setStopWord(true);
 						//word.setmLemma("___");
-					}
+					} else if (word.getWord().matches("\\p{Digit}+"))
+						word.setStopWord(true);
 				}
 			}
 		}

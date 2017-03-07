@@ -10,15 +10,18 @@ public class TextModel extends ArrayList<ParagraphModel> {
 	 */
 	private static final long serialVersionUID = 2340334806960704550L;
 
+	private static int iD = 0;
+	private int textID = iD;
 	protected String documentFilePath;
 	
 	protected int textSize = 0;
-	protected String text;
+	protected String text = "";
 	//protected ArrayList<ParagraphModel> listParagraph = new ArrayList<ParagraphModel>();
 	protected int nbSentence;
 	
 	public TextModel(String filePath) {
 		super();
+		iD++;
 		documentFilePath = filePath;
 	}
 	
@@ -55,13 +58,16 @@ public class TextModel extends ArrayList<ParagraphModel> {
 		return sen;
 	}
 
-	/*public ArrayList<ParagraphModel> getListParagraph() {
-		return listParagraph;
+	public ArrayList<SentenceModel> getSentence() {
+		ArrayList<SentenceModel> listSentence = new ArrayList<SentenceModel>();
+		for (ParagraphModel p : this) {
+			for (SentenceModel s : p) {
+				if (!s.getSentence().equals(""))
+					listSentence.add(s);
+			}
+		}
+		return listSentence;
 	}
-
-	public void setListParagraph(ArrayList<ParagraphModel> listParagraph) {
-		this.listParagraph = listParagraph;
-	}*/
 
 	public boolean isEmpty() {
 		return (/*listParagraph*/this.size() == 0);
@@ -75,16 +81,25 @@ public class TextModel extends ArrayList<ParagraphModel> {
 		this.nbSentence = nbSentence;
 	}
 
-	@Override
-	public String toString() {
-		return text;
-	}
-
 	public int getTextSize() {
 		return textSize;
 	}
 
 	public void setTextSize(int textSize) {
 		this.textSize = textSize;
+	}
+	
+	@Override
+	public String toString() {
+		String str = "";
+		for (int i = 0; i<size(); i++) {
+			str+="Paragraphe " + i + " : \n";
+			str+=get(i).toString() + "\n";
+		}
+		return str;
+	}
+
+	public int getTextID() {
+		return textID;
 	}
 }

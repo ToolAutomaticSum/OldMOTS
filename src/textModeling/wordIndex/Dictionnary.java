@@ -9,22 +9,30 @@ public class Dictionnary extends HashMap<String, WordIndex> {
 	 */
 	private static final long serialVersionUID = -4164985351782026778L;
 	
-	int nbSentence;
-
+	private int nbDoc;
+	/**
+	 * Tf et Idf par documents : Key = idDoc
+	 */
+	private HashMap<Integer, Integer> docNbWord = new HashMap<Integer, Integer>();
+	
 	public Dictionnary() {
 		super();
 	}
 
-	public Dictionnary(int nbSentence) {
+	public Dictionnary(int nbDoc) {
 		super();
-		this.nbSentence = nbSentence;
+		this.nbDoc = nbDoc;
 	}
 
-	public int getNbSentence() {
-		return nbSentence;
+	public int getNbDocument() {
+		return nbDoc;
 	}
 
-	public void setNbSentence(int nbSentence) {
-		this.nbSentence = nbSentence;
+	public void setNbDocument(int nbDoc) {
+		this.nbDoc = nbDoc;
+	}
+
+	public HashMap<Integer, Integer> getDocNbWord() {
+		return docNbWord;
 	}
 }

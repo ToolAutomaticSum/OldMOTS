@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import model.task.process.AbstractProcess;
+import optimize.SupportADNException;
 import reader_writer.Writer;
 import textModeling.Corpus;
 import textModeling.ParagraphModel;
@@ -24,7 +23,7 @@ public class LearningTF_IDF extends AbstractProcess {
 	private boolean liveLearning = false;
 	protected List<Corpus> listLearningDoc = new ArrayList<Corpus>();
 	
-	public LearningTF_IDF(int id) {
+	public LearningTF_IDF(int id) throws SupportADNException {
 		super(id);
 		summary = null;
 	}
@@ -68,17 +67,18 @@ public class LearningTF_IDF extends AbstractProcess {
 	 */
 	public static void generateDictionary(List<TextModel> listText, Dictionnary dictionnary, Map<Integer, String> hashMapWord) {
 		
-		int nbSentence = 0;
+		/*int nbSentence = 0;
 		for (int i = 0; i < listText.size(); i++) {
 			nbSentence += listText.get(i).getNbSentence();
-		}
+		}*/
 		
-		dictionnary.setNbSentence(dictionnary.getNbSentence()+nbSentence);
+		dictionnary.setNbDocument(dictionnary.getNbDocument()+listText.size());
 		
 		//Construction du dictionnaire
 		int idWord = 0;
 		Iterator<TextModel> textIt = listText.iterator();
 		while (textIt.hasNext()) {
+			int docNbWord = 0;
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
 			while (paragraphIt.hasNext()) {
@@ -86,33 +86,43 @@ public class LearningTF_IDF extends AbstractProcess {
 				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
 				while (sentenceIt.hasNext()) {
 					SentenceModel sentenceModel = sentenceIt.next();
-					Set<String> wordSet = new TreeSet<String>();
+					/*Set<String> wordSet = new TreeSet<String>();
 					for (int i = 0;i<sentenceModel.size();i++)
-						wordSet.add(sentenceModel.get(i).getmLemma());
+						wordSet.add(sentenceModel.get(i).getmLemma());*/
 					
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						if(!dictionnary.containsKey(word.getmLemma())) {
-							dictionnary.put(word.getmLemma(), new WordTF_IDF(word.getmLemma(), dictionnary, idWord));
-							hashMapWord.put(idWord, word.getmLemma());
-							idWord++;
-						}
-						if (wordSet.contains(word.getmLemma())) {
+						if (!word.isStopWord()) {
+							if(!dictionnary.containsKey(word.getmLemma())) {
+								WordTF_IDF w = new WordTF_IDF(word.getmLemma(), dictionnary, idWord);
+								w.addDocumentOccurence(textModel.getTextID());
+								dictionnary.put(word.getmLemma(), w);
+								hashMapWord.put(idWord, word.getmLemma());
+								idWord++;
+							}
+							else {
+								WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
+								w.addDocumentOccurence(textModel.getTextID());
+							}
+						/*if (wordSet.contains(word.getmLemma())) {
 							wordSet.remove(word.getmLemma());
 							((WordTF_IDF)dictionnary.get(word.getmLemma())).incrementSentenceWithWordSeen();
+						}*/
+							dictionnary.get(word.getmLemma()).add(word); //Ajout au wordEmbeddings des WordModel correspondant
+							docNbWord++;
 						}
-						dictionnary.get(word.getmLemma()).add(word); //Ajout au wordEmbeddings des WordModel correspondant
 					}
 				}
 			}
+			dictionnary.getDocNbWord().put(textModel.getTextID(), docNbWord);
 		}
 	}
 	
 	private void writeTF_IDFModel() {
 		Writer w = new Writer(pathModel + "\\TF_IDF_Model.txt");
 		w.open();
-		w.write(String.valueOf(dictionnary.getNbSentence()) + "\n");
+		w.write(String.valueOf(dictionnary.getNbDocument()) + "\n");
 		for (WordIndex wordIndex : dictionnary.values()) {
 			WordTF_IDF word = (WordTF_IDF) wordIndex;
 			w.write(word.getWord() + "\t" + word.getId() + "\t" + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf() + "\n");

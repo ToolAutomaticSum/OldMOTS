@@ -68,6 +68,11 @@ public class ParagraphModel extends ArrayList<SentenceModel> {
 
 	@Override
 	public String toString() {
-		return paragraph;
+		String str = "";
+		for (int i = 0; i<size(); i++) {
+			str+="\t\tPhrase " + i + " : \n";
+			str+="\t" + get(i).toString() + "\n";
+		}
+		return str;
 	}
 }

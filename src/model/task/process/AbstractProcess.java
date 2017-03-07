@@ -6,30 +6,31 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import model.task.AbstractTask;
-import model.task.VectorCaracteristicBasedIn;
-import model.task.VectorCaracteristicBasedOut;
+import model.Model;
+import model.task.AbstractTaskModel;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.process.ILP.BiGramListBasedOut;
 import model.task.process.LDA.LdaBasedOut;
-import model.task.scoringMethod.AbstractScoringMethod;
-import model.task.scoringMethod.ScoreBasedOut;
-import model.task.scoringMethod.ILP.BiGramListBasedIn;
-import model.task.scoringMethod.ILP.FileModelBasedOut;
-import model.task.scoringMethod.LDA.LdaBasedIn;
-import model.task.scoringMethod.LDA.TopicLdaBasedOut;
-import model.task.summarizeMethod.AbstractSummarizeMethod;
-import model.task.summarizeMethod.FileModelBasedIn;
-import model.task.summarizeMethod.ScoreBasedIn;
-import model.task.summarizeMethod.TopicLdaBasedIn;
-import textModeling.ParagraphModel;
+import model.task.process.scoringMethod.AbstractScoringMethod;
+import model.task.process.scoringMethod.ScoreBasedOut;
+import model.task.process.scoringMethod.ILP.BiGramListBasedIn;
+import model.task.process.scoringMethod.ILP.FileModelBasedOut;
+import model.task.process.scoringMethod.LDA.LdaBasedIn;
+import model.task.process.scoringMethod.LDA.TopicLdaBasedOut;
+import model.task.process.summarizeMethod.AbstractSummarizeMethod;
+import model.task.process.summarizeMethod.FileModelBasedIn;
+import model.task.process.summarizeMethod.ScoreBasedIn;
+import model.task.process.summarizeMethod.TopicLdaBasedIn;
+import optimize.Optimize;
+import optimize.SupportADNException;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.wordIndex.Dictionnary;
 import tools.Tools;
 
-public abstract class AbstractProcess extends AbstractTask {
+public abstract class AbstractProcess extends Optimize implements AbstractTaskModel {
 
+	protected Model model;
 	protected Dictionnary dictionnary = new Dictionnary();
 	protected Map<Integer, String> hashMapWord = new HashMap<Integer, String>();
 	
@@ -40,7 +41,7 @@ public abstract class AbstractProcess extends AbstractTask {
 	protected List<List<SentenceModel>> summary = new ArrayList<List<SentenceModel>>();
 	private int sizeSummary = 8;
 	
-	public AbstractProcess(int id) {
+	public AbstractProcess(int id) throws SupportADNException {
 		super(id);	
 	}
 	
@@ -74,23 +75,19 @@ public abstract class AbstractProcess extends AbstractTask {
 	public void process() throws Exception {
 		for (TextModel text : getModel().getDocumentModels())
 		{
-			for ( ParagraphModel p : text )
-			{
-				for ( SentenceModel s : p )
-				{
-					allSentenceList.add(s);
-				}
-			}
+			allSentenceList.addAll(text.getSentence());
 		}
 		
 		if (!(scoringMethod == null)) {
 			scoringMethod.setCurrentProcess(this);
+			scoringMethod.setModel(model);
 			initCompatibilityProcess();
 			scoringMethod.init(this, dictionnary, hashMapWord);
 			scoringMethod.computeScores();
 		}
 		if (!(sentenceSelection == null)) {
 			sentenceSelection.setCurrentProcess(this);
+			sentenceSelection.setModel(model);
 			initCompatibilityScoring();
 			summary.add(sentenceSelection.calculateSummary());
 		}
@@ -117,19 +114,21 @@ public abstract class AbstractProcess extends AbstractTask {
 	}
 	
 	protected void initCompatibilityScoring() {
-		for (Class<?> scoring : Tools.getInheritance(scoringMethod.getClass())) {
-			for (Class<?> selection : Tools.getInheritance(sentenceSelection.getClass())) {
-				if (scoring == ScoreBasedOut.class && selection == ScoreBasedIn.class) {
-					((ScoreBasedIn)sentenceSelection).setScore(((ScoreBasedOut)scoringMethod).getScore());
-				}
-				else if (scoring == TopicLdaBasedOut.class && selection == TopicLdaBasedIn.class) {
-					((TopicLdaBasedIn)sentenceSelection).setListTopicLda(((TopicLdaBasedOut)scoringMethod).getListTopicLda());
-				}
-				else if (scoring == VectorCaracteristicBasedOut.class && selection == VectorCaracteristicBasedIn.class) {
-					((VectorCaracteristicBasedIn)sentenceSelection).setVectorCaracterisic(((VectorCaracteristicBasedOut)scoringMethod).getVectorCaracterisic());
-				}
-				else if (scoring == FileModelBasedOut.class && selection == FileModelBasedIn.class) {
-					((FileModelBasedIn)sentenceSelection).setFileModel(((FileModelBasedOut)scoringMethod).getFileModel());
+		if(scoringMethod != null) {
+			for (Class<?> scoring : Tools.getInheritance(scoringMethod.getClass())) {
+				for (Class<?> selection : Tools.getInheritance(sentenceSelection.getClass())) {
+					if (scoring == ScoreBasedOut.class && selection == ScoreBasedIn.class) {
+						((ScoreBasedIn)sentenceSelection).setScore(((ScoreBasedOut)scoringMethod).getScore());
+					}
+					else if (scoring == TopicLdaBasedOut.class && selection == TopicLdaBasedIn.class) {
+						((TopicLdaBasedIn)sentenceSelection).setListTopicLda(((TopicLdaBasedOut)scoringMethod).getListTopicLda());
+					}
+					else if (scoring == VectorCaracteristicBasedOut.class && selection == VectorCaracteristicBasedIn.class) {
+						((VectorCaracteristicBasedIn)sentenceSelection).setVectorCaracterisic(((VectorCaracteristicBasedOut)scoringMethod).getVectorCaracterisic());
+					}
+					else if (scoring == FileModelBasedOut.class && selection == FileModelBasedIn.class) {
+						((FileModelBasedIn)sentenceSelection).setFileModel(((FileModelBasedOut)scoringMethod).getFileModel());
+					}
 				}
 			}
 		}
@@ -214,5 +213,42 @@ public abstract class AbstractProcess extends AbstractTask {
 
 	public void setSentenceList(List<SentenceModel> allSentenceList) {
 		this.allSentenceList = allSentenceList;
+	}
+	
+	@Override
+	public void optimize() throws Exception {
+		setModel(getModel());
+		init();
+		process();
+		finish();
+	}
+	
+	/**
+	 * Nécessite utilisation de ROUGE
+	 */
+	@Override
+	public double getScore() {
+		if (!getModel().isbRougeEvaluation())
+			return 0;
+		else
+			return score;
+	}
+	
+	@Override
+	public Model getModel() {
+		return model;
+	}
+
+	@Override
+	public void setModel(Model model) {
+		this.model = model;
+	}
+
+	public Dictionnary getDictionnary() {
+		return dictionnary;
+	}
+
+	public Map<Integer, String> getHashMapWord() {
+		return hashMapWord;
 	}
 }

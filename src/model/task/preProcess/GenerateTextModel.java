@@ -10,6 +10,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import exception.LacksOfFeatures;
@@ -156,7 +157,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 	}
 	
 	public static boolean loadText(TextModel textModel, int limitSize) throws Exception {
-		if (textModel.getText() == null) {
+		if (textModel.getText().equals("")) {
 			File fXmlFile = new File(textModel.getDocumentFilePath());
 			if (!Tools.getFileExtension(fXmlFile).equals("txt")) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -164,8 +165,25 @@ public class GenerateTextModel extends AbstractPreProcess {
 				Document doc = dBuilder.parse(fXmlFile);
 				NodeList listText =  doc.getElementsByTagName("TEXT");
 				if (listText.getLength() > 0) {
-					Element task = (Element) listText.item(0);
-					String[] listLine = task.getTextContent().split("\n");
+					for (int i = 0; i<listText.getLength(); i++) {
+						if(listText.item(i).getNodeType() == Node.ELEMENT_NODE) {
+					        Element task = (Element) listText.item(i);
+					        NodeList pList = task.getElementsByTagName("P");
+					        if (pList.getLength() != 0) {
+						        for (int j = 0; j<pList.getLength(); j++) {
+						        	if(pList.item(j).getNodeType() == Node.ELEMENT_NODE) {
+						        		Element p = (Element) pList.item(j);
+						        		textModel.setText(textModel.getText() + p.getTextContent().replace("\n", " ").replace("  ", " ") + "\n");
+						        	}
+						        }
+					        }
+					        else {
+					        	textModel.setText(textModel.getText() + task.getTextContent().replace("\n", "").replace("   ", "\n").replace("  ", " ") + "\n");
+							}
+						}
+					}
+					
+					/*String[] listLine = task.getTextContent().split("\n");
 					textModel.setText("");
 					for (int i=0; i<listLine.length; i++) {
 						if (!listLine[i].contains("<") && !listLine[i].contains(">")) {
@@ -178,7 +196,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 							else
 								textModel.setText(textModel.getText() + "\n");
 						}
-					}
+					}*/
 					return true;
 				}
 				else
@@ -187,7 +205,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 			else {
 				Reader r = new Reader(textModel.getDocumentFilePath(), true);
 				r.open();
-				textModel.setTextSize(r.size());
+				//textModel.setTextSize(r.size());
 				if (textModel.getTextSize() > limitSize) {
 					r.close();
 					cutText(textModel, limitSize);

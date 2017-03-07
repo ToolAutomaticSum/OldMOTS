@@ -104,4 +104,18 @@ public class Corpus extends ArrayList<TextModel> {
 	public void setSummaryNames(List<String> summaryNames) {
 		this.summaryNames = summaryNames;
 	}
+	
+	@Override
+	public String toString() {
+		int current = 0;
+		for(TextModel text : this) {
+				current += text.getNbSentence();
+		}
+		String str = "Corpus " + iD + " \n" + current + "\n";
+		/*for (int i = 0; i<size(); i++) {
+			str+="Text " + i + " : \n";
+			str+=get(i).toString() + "\n";
+		}*/
+		return str;
+	}
 }

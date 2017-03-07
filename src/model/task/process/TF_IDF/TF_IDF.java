@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import model.task.VectorCaracteristicBasedOut;
 import model.task.process.AbstractProcess;
+import model.task.process.VectorCaracteristicBasedOut;
+import optimize.SupportADNException;
 import reader_writer.Reader;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
@@ -15,12 +16,16 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedOut {
 
+	static {
+		supportADN = new HashMap<String, Class<?>>();
+	}
+	
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
 	private boolean loadModel;
 	private String pathModel;
 	//private String pathCorpus;
 	
-	public TF_IDF(int id) {
+	public TF_IDF(int id) throws SupportADNException {
 		super(id);
 	}
 
@@ -60,15 +65,19 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel wm = wordIt.next();
-						WordTF_IDF word = (WordTF_IDF) dictionnary.get(wm.getmLemma());
-						//tfIdfVector[word.getId()]++;
-						tfIdfVector[word.getId()]=word.getTf();
+						if (!wm.isStopWord()) {
+							WordTF_IDF word = (WordTF_IDF) dictionnary.get(wm.getmLemma());
+							//tfIdfVector[word.getId()]++;
+							tfIdfVector[word.getId()]=word.getTf(textModel.getTextID());
+						}
 					}
 					wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel wm = wordIt.next();
-						WordTF_IDF word = (WordTF_IDF) dictionnary.get(wm.getmLemma());
-						tfIdfVector[word.getId()]*=word.getIdf();
+						if (!wm.isStopWord()) {
+							WordTF_IDF word = (WordTF_IDF) dictionnary.get(wm.getmLemma());
+							tfIdfVector[word.getId()]*=word.getIdf();
+						}
 					}
 					//sentenceModel.getCaracteristic().setdTab(tfIdfVector);//.setScore(score);
 					sentenceCaracteristic.put(sentenceModel, tfIdfVector);
@@ -130,14 +139,16 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 		r.open();
 		String text = r.read();
 		if (text!= null) {
-			dictionnary.setNbSentence(Integer.parseInt(text));
+			dictionnary.setNbDocument(Integer.parseInt(text));
 			text = r.read();
 		}
 		while (text != null)
         {
 			String[] tfidf = text.split("\t");
-			dictionnary.put(tfidf[0], new WordTF_IDF(tfidf[0], dictionnary, Integer.parseInt(tfidf[1]), Integer.parseInt(tfidf[2])));
-			hashMapWord.put(Integer.parseInt(tfidf[1]), tfidf[0]);
+			if (!tfidf[0].equals("") && !tfidf[0].equals(" ")) {
+				dictionnary.put(tfidf[0], new WordTF_IDF(tfidf[0], dictionnary, Integer.parseInt(tfidf[1]), Integer.parseInt(tfidf[2])));
+				hashMapWord.put(Integer.parseInt(tfidf[1]), tfidf[0]);
+			}
 			text = r.read();
         }
 	}

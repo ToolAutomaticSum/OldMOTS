@@ -46,7 +46,8 @@ public class WordSplitter extends AbstractPreProcess {
 					WordModel word = new WordModel();
 					word.setSentence(sentenceModel);
 					word.setWord(Tools.enleverPonctuation(words[i]));
-					sentenceModel.add(word);		
+					sentenceModel.add(word);
+					textModel.setTextSize(textModel.getTextSize()+1);
 				}
 				if (sentenceModel.size() < 6) {
 					sentenceIt.remove();

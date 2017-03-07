@@ -18,6 +18,7 @@ import model.task.preProcess.StopWordsRemover;
 import model.task.preProcess.TextStemming;
 import model.task.preProcess.WordSplitter;
 import model.task.process.AbstractProcess;
+import optimize.SupportADNException;
 import reader_writer.Reader;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
@@ -35,8 +36,9 @@ public class LearningLDAModel extends AbstractProcess {
 	
 	/**
 	 * ProcessOption lié NbTopicsLDA, int.
+	 * @throws SupportADNException 
 	 */
-	public LearningLDAModel(int id) {
+	public LearningLDAModel(int id) throws SupportADNException {
 		super(id);	
 	}
 	

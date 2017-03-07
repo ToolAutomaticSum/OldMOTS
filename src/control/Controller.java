@@ -10,8 +10,8 @@ import model.Model;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.preProcess.AbstractPreProcess;
 import model.task.process.AbstractProcess;
-import model.task.scoringMethod.AbstractScoringMethod;
-import model.task.summarizeMethod.AbstractSummarizeMethod;
+import model.task.process.scoringMethod.AbstractScoringMethod;
+import model.task.process.summarizeMethod.AbstractSummarizeMethod;
 import textModeling.Corpus;
 import view.AbstractView;
 
@@ -21,7 +21,7 @@ public class Controller {
     private final AbstractView view;
 
 	//private int taskID;
-	private int processID = -1;
+	private int processID = 0;
 	protected String language;
 	protected String inputDir;
 	protected List<Corpus> corpusList = new ArrayList<Corpus>();
@@ -61,8 +61,8 @@ public class Controller {
 			cl = Class.forName("model.task." + className);
 		    //Class types = new Class{Integer.class};
 		    Constructor<?> ct = cl.getConstructor(int.class);
-		    processID++;
 		    Object o = ct.newInstance(processID);
+		    processID++;
 		    return o;
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
@@ -72,7 +72,7 @@ public class Controller {
     
     public void notifyTaskChanged(int taskID) {
     	if (getModel().getTaskID() != taskID) {
-    		processID = -1;
+    		processID = 0;
     		corpusList.clear();
     		processName = null;
     		processOption.clear();
@@ -172,8 +172,8 @@ public class Controller {
     }
     
     public void notifyProcessChanged(String processName) {
-    	Object o = dynamicConstructor("process." + processName);
     	getModel().getProcessIDs().put(processName, processID);
+    	Object o = dynamicConstructor("process." + processName);
 		getModel().getProcess().add((AbstractProcess) o);
     }
     
@@ -183,12 +183,12 @@ public class Controller {
     }
     
     public void notifyScoringMethodChanged(String processName, String scoringMethod) {
-    	Object o = dynamicConstructor("scoringMethod." + scoringMethod);
+    	Object o = dynamicConstructor("process.scoringMethod." + scoringMethod);
     	getModel().getProcessByID(getModel().getProcessIDs().get(processName)).setScoringMethod((AbstractScoringMethod)o);
     }
     
     public void notifySummarizeMethodChanged(String processName, String summarizeMethod) {
-    	Object o = dynamicConstructor("summarizeMethod." + summarizeMethod);
+    	Object o = dynamicConstructor("process.summarizeMethod." + summarizeMethod);
     	getModel().getProcessByID(getModel().getProcessIDs().get(processName)).setSentenceSelection((AbstractSummarizeMethod)o);
     }
     

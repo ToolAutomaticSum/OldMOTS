@@ -61,7 +61,7 @@ public class ClusterCentroid_TF_IDF extends ClusterCentroid {
 			double idf = ((WordTF_IDF)dictionnary.get(wordIndex.getWord())).getIdf();
 			//System.out.println(wordIndex.getWord());
 			if (idf > thresholdCluster) {
-				listScoreWord.add(new Pair(wordIndex, wordIndex.getTf()*idf));
+				listScoreWord.add(new Pair(wordIndex, wordIndex.getTf(id)*idf));
 			}
 		}
 		Collections.sort(listScoreWord);

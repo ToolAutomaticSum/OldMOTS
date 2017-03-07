@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
+
 public class SentenceModel extends ArrayList<WordModel> implements Comparable<SentenceModel> {
 
 	/**
@@ -107,5 +111,68 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 
 	public void setScore(double score) {
 		this.score = score;
+	}
+
+	public ArrayList<NGram> getNGrams(int n, Dictionnary index) {
+		ArrayList <NGram> ngrams_list = new ArrayList<NGram> () ;
+		WordModel u;
+		
+		if (n == 1)
+		{
+			for (WordModel u1 : this)
+			{
+				
+				NGram ng = new NGram();
+			//	System.out.println(ng);
+				if (!u1.isStopWord())
+				{
+				//	System.out.println(index);
+					WordIndex uIndex = index.get(u1.getmLemma()); 
+					ng.addGram(uIndex);
+					ngrams_list.add(ng);
+				}
+			}
+			return ngrams_list;
+		}
+		
+		
+		for (int i = 0; i < this.size() - n + 1; i++)
+		{
+			boolean cond = false;
+			NGram ng = new NGram ();
+			//System.out.println("Sentence size : "+this.unitesLexWVides.size());
+			for (int j = i; j < i + n; j++)
+			{
+				//System.out.println("j : "+j);
+				u = this.get(j);
+				if (!u.isStopWord())
+				{	
+					cond = true;
+				}
+				ng.addGram(index.get(u.getmLemma()));
+			}
+			if (cond)
+				ngrams_list.add(ng);
+			//else
+				//System.out.println("Filtrée !");
+		}
+		
+		return ngrams_list;
+	}
+	
+	public double getPosScore() {
+		if (paragraph.size() > 1)
+			return (double)(paragraph.size() - 1 - paragraph.indexOf(this)) / (double)(paragraph.size() - 1);
+		else
+			return 1;
+	}
+	
+	public int getLength() {
+		int n = 0;
+		for (WordModel w : this) {
+			if (!w.isStopWord())
+				n++;
+		}
+		return n;
 	}
 }

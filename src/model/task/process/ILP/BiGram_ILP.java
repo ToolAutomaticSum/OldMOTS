@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import model.task.process.AbstractProcess;
+import optimize.SupportADNException;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.NGram;
 import textModeling.wordIndex.WordIndex;
 import tools.Tools;
 import tools.wordFilters.WordFilter;
@@ -16,13 +18,32 @@ import tools.wordFilters.WordStopListFilter;
 
 public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 
+	static {
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("fscFactor", Double.class);
+	}
+
+	public static enum BiGramILP_Parameter {
+		fscFactor("fscFactor");
+
+		private String name;
+
+		private BiGramILP_Parameter(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
+	
 	private ArrayList<Double> bigram_weights;
 	private ArrayList<ArrayList<Integer>> bigrams_in_sentence;
 	private ArrayList<NGram> bigrams; 
 	private WordFilter filter;
 	private double fsc_factor = 1;
 	
-	public BiGram_ILP(int id) {
+	public BiGram_ILP(int id) throws SupportADNException {
 		super(id);
 	}
 
@@ -136,8 +157,8 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 			if (filter.passFilter(w1) || filter.passFilter(w2) )
 			{
 				NGram ng = new NGram();
-				ng.addGram(dico.get(w1.getmLemma()).getId());
-				ng.addGram(dico.get(w2.getmLemma()).getId());
+				ng.addGram(dico.get(w1.getmLemma()));
+				ng.addGram(dico.get(w2.getmLemma()));
 				//if (! ngrams_list.contains(ng));
 				ngrams_list.add(ng);
 				//System.out.println("Pas Filtrée !");
