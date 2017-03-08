@@ -110,7 +110,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 			while (textIt.hasNext()) {
 				TextModel textModel = textIt.next();
 				
-				//BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp" + i + ".txt")));
+				//BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp" + i + ".txt")));
 	
 				Reader r = new Reader(textModel.getDocumentFilePath(), true);
 				r.open();

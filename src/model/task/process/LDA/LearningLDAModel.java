@@ -55,7 +55,7 @@ public class LearningLDAModel extends AbstractProcess {
 		option.niters = 1000;
 		//option.savestep = 500;
 		option.twords = 15;
-		option.dir = getModel().getOutputPath() + "\\modelLDA";
+		option.dir = getModel().getOutputPath() + File.separator + "modelLDA";
 		option.dfile = "temp_"+option.alpha+"_"+option.beta;
 		//estimator.init(option);
 		
@@ -114,7 +114,7 @@ public class LearningLDAModel extends AbstractProcess {
 				
 				BufferedWriter w = new BufferedWriter(new OutputStreamWriter(
 		                new GZIPOutputStream(
-		                    new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp" + i + "_"+option.alpha+"_"+option.beta)), "UTF-8"));
+		                    new FileOutputStream(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp" + i + "_"+option.alpha+"_"+option.beta)), "UTF-8"));
 	
 				Reader r = new Reader(textModel.getDocumentFilePath(), true);
 				r.open();
@@ -129,7 +129,7 @@ public class LearningLDAModel extends AbstractProcess {
 				i++;
 			}
 		}
-		/*RandomAccessFile raf = new RandomAccessFile(new File(getModel().getOutputPath() + "\\modelLDA\\temp.txt"), "rw");
+		/*RandomAccessFile raf = new RandomAccessFile(new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt"), "rw");
 		raf.seek(0);
 		String value = String.valueOf(nbSentence) + "\n";
 		ByteBuffer buf = ByteBuffer.allocate(16);
@@ -200,17 +200,17 @@ public class LearningLDAModel extends AbstractProcess {
 	public void finish() throws Exception {
 		super.finish();
 		if (!liveProcess) {
-			File f = new File(getModel().getOutputPath() + "\\modelLDA\\temp.txt");
+			File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt");
 			f.delete();
 		}
 	}
 	
 	private void writeTempInputFile() throws IOException {
-		new File(getModel().getOutputPath() + "\\modelLDA").mkdir();
+		new File(getModel().getOutputPath() + File.separator + "modelLDA").mkdir();
 		
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                 new GZIPOutputStream(
-                    new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp.txt")), "UTF-8"));
+                    new FileOutputStream(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt")), "UTF-8"));
 
 		writer.write(String.valueOf(getModel().getCurrentMultiCorpus().size()) + "\n");
 		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();

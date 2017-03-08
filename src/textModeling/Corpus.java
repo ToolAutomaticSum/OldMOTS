@@ -1,5 +1,6 @@
 package textModeling;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Corpus extends ArrayList<TextModel> {
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
-			this.add(new TextModel(this, inputPath + "\\" + docName));
+			this.add(new TextModel(this, inputPath + File.separator + docName));
 		}
     }
 	

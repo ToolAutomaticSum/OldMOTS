@@ -1,5 +1,6 @@
 package model.task.process.TF_IDF;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -104,7 +105,7 @@ public class LearningTF_IDF extends AbstractProcess {
 	}
 	
 	private void writeTF_IDFModel() {
-		Writer w = new Writer(pathModel + "\\TF_IDF_Model.txt");
+		Writer w = new Writer(pathModel + File.separator + "TF_IDF_Model.txt");
 		w.open();
 		w.write(String.valueOf(index.getNbDocument()) + "\n");
 		for (WordIndex wordIndex : index.values()) {

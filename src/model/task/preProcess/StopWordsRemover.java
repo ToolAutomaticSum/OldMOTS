@@ -1,5 +1,6 @@
 package model.task.preProcess;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,7 @@ public class StopWordsRemover extends AbstractPreProcess {
 	
 	@Override
 	public void init() throws LacksOfFeatures {
-			gramWordsMap = new GrammaticalWordsMap(getModel().getLanguage(), getModel().getProcessOption(id, "StopWordListPath") + "\\" + getModel().getLanguage() + "StopWords.txt");
+			gramWordsMap = new GrammaticalWordsMap(getModel().getLanguage(), getModel().getProcessOption(id, "StopWordListPath") + File.separator + getModel().getLanguage() + "StopWords.txt");
 	}
 	
 	@Override

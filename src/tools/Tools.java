@@ -180,7 +180,6 @@ public class Tools {
 		}
 	    out.println(string);
 	    out.close();// It's done, closing document.
-	    //Runtime.getRuntime().exec("C:\\Program Files (x86)\\gnuplot\\bin\\gnuplot auxfile.gp");
 	    
 	}
 	

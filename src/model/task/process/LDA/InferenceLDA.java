@@ -86,7 +86,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 		option.alpha = adn.getParameterValue(Double.class, InferenceLDA_Parameter.alpha.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Alpha"));
 		option.beta = adn.getParameterValue(Double.class, InferenceLDA_Parameter.beta.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Beta"));
 		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
-		option.dir = getModel().getProcessOption(id, "PathModel") + "\\modelLDA";
+		option.dir = getModel().getProcessOption(id, "PathModel")  + File.separator + "modelLDA";
 		option.dfile = "temp.txt.gz"; //TODO à changer
 		inferencer = new Inferencer(option);
 		//inferencer.init(option);
@@ -103,7 +103,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
 		
 		generateDictionary();
-		File f = new File(getModel().getOutputPath() + "\\modelLDA\\temp.txt");
+		File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt");
 		f.delete();		//Suppression de tempInputFile
 		
 		double valeurLimiteTopic = 0.01;
@@ -182,11 +182,11 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 	}
 	
 	private void writeTempInputFile() throws IOException {
-		new File(getModel().getOutputPath() + "\\modelLDA").mkdir();
+		new File(getModel().getOutputPath() + File.separator + "modelLDA").mkdir();
 		
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                 new GZIPOutputStream(
-                    new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp.txt.gz")), "UTF-8"));
+                    new FileOutputStream(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt.gz")), "UTF-8"));
 
 		//writer.write(String.valueOf(getModel().getDocumentModels().size()) + "\n");
 		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();

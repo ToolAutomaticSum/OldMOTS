@@ -123,7 +123,7 @@ public class Model extends Observable {
 		
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
-			corpusModels.add(new TextModel(inputPath + "\\" + it.next()));
+			corpusModels.add(new TextModel(inputPath + File.separator + it.next()));
 		}
 		
     	//setDocumentModels(documentModels);
