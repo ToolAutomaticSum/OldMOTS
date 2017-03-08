@@ -6,6 +6,7 @@ import java.util.List;
 
 import exception.LacksOfFeatures;
 import grammaticalWords.GrammaticalWordsMap;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -29,10 +30,13 @@ public class StopWordsRemover extends AbstractPreProcess {
 	
 	@Override
 	public void process() {
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			removeGramWords(textModel);
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				removeGramWords(textModel);
+			}
 		}
 	}
 	

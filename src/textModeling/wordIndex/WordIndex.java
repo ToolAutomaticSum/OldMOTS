@@ -11,22 +11,22 @@ public class WordIndex extends ArrayList<WordModel>{
 	private static final long serialVersionUID = 6192277237881669695L;
 	private String word;
 	private Integer iD;
-	protected Dictionnary dictionnary;
+	protected Index dictionnary;
 	//private List<WordModel> listWord = new ArrayList<WordModel>();
 
-	public WordIndex(String word, Dictionnary dictionnary) {
+	public WordIndex(String word, Index dictionnary) {
 		super();
 		this.word = word;
 		this.dictionnary = dictionnary;
 	}
 
-	public WordIndex(String word, Dictionnary dictionnary, int iD) {
+	/*public WordIndex(String word, Index dictionnary, int iD) {
 		super();
 		this.word = word;
 		this.dictionnary = dictionnary;
 		this.iD = iD;
 	}
-	
+	*/
 	public String getWord() {
 		return word;
 	}
@@ -43,11 +43,11 @@ public class WordIndex extends ArrayList<WordModel>{
 		this.iD = iD;
 	}
 
-	public Dictionnary getDictionnary() {
+	public Index getDictionnary() {
 		return dictionnary;
 	}
 
-	public void setDictionnary(Dictionnary dictionnary) {
+	public void setDictionnary(Index dictionnary) {
 		this.dictionnary = dictionnary;
 	}
 	

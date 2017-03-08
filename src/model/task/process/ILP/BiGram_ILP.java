@@ -2,6 +2,7 @@ package model.task.process.ILP;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
@@ -9,7 +10,7 @@ import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 import textModeling.wordIndex.WordIndex;
 import tools.Tools;
@@ -82,8 +83,9 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 	
 		System.out.println("Construction du modèle");
 		
-		for (TextModel text : getModel().getDocumentModels())
-		{
+		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
+		while (textIt.hasNext()) {
+			TextModel text = textIt.next();
 			HashMap <NGram, Integer> firstSentencesConcepts = new HashMap <NGram, Integer> ();
 			curr_doc_bg_arr = new ArrayList <Integer> ();
 			for ( ParagraphModel p : text )
@@ -91,14 +93,14 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 				for ( SentenceModel s : p )
 				{
 					for (WordModel w : s) {
-						if (!dictionnary.containsKey(w.getmLemma()))
-							dictionnary.put(w.getmLemma(), new WordIndex(w.getmLemma(), dictionnary, wordId));
-						dictionnary.get(w.getmLemma()).add(w);
+						if (!index.containsKey(w.getmLemma()))
+							index.put(w.getmLemma(), new WordIndex(w.getmLemma(), index));
+						index.get(w.getmLemma()).add(w);
 						wordId++;
 					}
 					//On construit le set des bigrams dans la phrase
 					ArrayList <Integer> sentence_bigrams = new ArrayList <Integer> ();
-					curr_bg_arr = generateBiGrams(dictionnary, s, filter);
+					curr_bg_arr = generateBiGrams(index, s, filter);
 					Tools.toSet(curr_bg_arr);
 					for (NGram ng : curr_bg_arr)
 					{
@@ -143,10 +145,10 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 				Integer i = this.bigrams.indexOf(ng);
 				this.bigram_weights.set( i, this.bigram_weights.get(i) + (this.fsc_factor) );
 			}
-		}		
+		}
 	}
 	
-	public static ArrayList<NGram> generateBiGrams(Dictionnary dico, SentenceModel sentence, WordFilter filter) {
+	public static ArrayList<NGram> generateBiGrams(Index dico, SentenceModel sentence, WordFilter filter) {
 		ArrayList<NGram> ngrams_list = new ArrayList<NGram> ();
 		WordModel w1, w2;
 		for (int i = 0; i < sentence.size() - 1; i++)
@@ -157,6 +159,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 			if (filter.passFilter(w1) || filter.passFilter(w2) )
 			{
 				NGram ng = new NGram();
+				//TODO Ajouter filtre à la place de getmLemma()
 				ng.addGram(dico.get(w1.getmLemma()));
 				ng.addGram(dico.get(w2.getmLemma()));
 				//if (! ngrams_list.contains(ng));

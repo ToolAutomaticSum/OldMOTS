@@ -58,9 +58,11 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	}
     	
     	boolean modelWrite = false;
+    	// boucle sur les process (1 résumé par process par execution)
 		for (int i = 0; i<getModel().getProcess().size(); i++) {
 			if (getModel().getProcess().get(i).getSummary() != null) {
-				for (int j = 0; j<getModel().getCorpusModels().size();j++) {
+				// boucle sur les multiCorpus, 1 exécution de process par multicorpus
+				for (int j = 0; j<getModel().getMultiCorpusModels().size();j++) {
 					writeHtmlGeneratedSummary(i, j);
 					if (!modelWrite)
 						writeHtmlModelSummary(j);
@@ -87,17 +89,19 @@ public class EvaluationROUGE extends AbstractPostProcess {
 
 	@Override
 	public void finish() {
-		for (int i = 0; i<getModel().getProcess().size(); i++) {
-			Reader r = new Reader(getModel().getOutputPath() + "test" + i + ".txt", true);
-			r.open();
-			String t = r.read();
-			while (t != null) {
-				String[] result = t.split(" ");
-				if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_F:")) {
-					currentProcess.setScore(Double.parseDouble(result[3]));
-					System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
+		if (OSDetector.isUnix()) {
+			for (int i = 0; i<getModel().getProcess().size(); i++) {
+				Reader r = new Reader(getModel().getOutputPath() + "test" + i + ".txt", true);
+				r.open();
+				String t = r.read();
+				while (t != null) {
+					String[] result = t.split(" ");
+					if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_F:")) {
+						currentProcess.setScore(Double.parseDouble(result[3]));
+						System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
+					}
+					t = r.read();
 				}
-				t = r.read();
 			}
 		}
 	}
@@ -118,12 +122,12 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	}
 	
 	private void writeHtmlModelSummary(int summaryID) {
-		for (String modelSummary : getModel().getCorpusModels().get(summaryID).getSummaryNames()) {
+		for (String modelSummary : getModel().getCurrentMultiCorpus().get(summaryID).getSummaryNames()) {
     		Writer w = new Writer(getModel().getOutputPath() + "\\" + getModel().getModelRoot() + "\\" + modelSummary.replace(".txt", "") + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
-			Reader r = new Reader( getModel().getCorpusModels().get(summaryID).getSummaryPath() + "\\" + modelSummary, true);
+			Reader r = new Reader( getModel().getCurrentMultiCorpus().get(summaryID).getSummaryPath() + "\\" + modelSummary, true);
 			r.open();
 			int j = 0;
 			String text = r.read();
@@ -148,7 +152,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    rootNode.setAttribute("version", "1.55");
 	    document.appendChild(rootNode);
 	    
-	    for (int i = 0; i<getModel().getCorpusModels().size(); i++) {
+	    for (int i = 0; i<getModel().getCurrentMultiCorpus().size(); i++) {
 	    	Element process = document.createElement("EVAL");
 	    	process.setAttribute("ID", "CORPUS_" + i);
 	    	//process.appendChild(document.createTextNode(getModel().getProcess().get(i).getClass().toString()));
@@ -182,10 +186,10 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    	File[] lf = f.listFiles();
 	    	for (int j = 0; j<lf.length; j++) {
 	    		if (Tools.getFileExtension(lf[j]).equals("html")) {*/
-	    	for (int j = 0; j<getModel().getCorpusModels().get(i).getSummaryNames().size();j++) {
+	    	for (int j = 0; j<getModel().getCurrentMultiCorpus().get(i).getSummaryNames().size();j++) {
 		    		Element modelSummary = document.createElement("M");
 		    		modelSummary.setAttribute("ID", String.valueOf(i) + String.valueOf(j));
-		    		modelSummary.appendChild(document.createTextNode(getModel().getCorpusModels().get(i).getSummaryNames().get(j).replace(".txt", "") + ".html"));
+		    		modelSummary.appendChild(document.createTextNode(getModel().getCurrentMultiCorpus().get(i).getSummaryNames().get(j).replace(".txt", "") + ".html"));
 		    		models.appendChild(modelSummary);
 	    	}
 	    		/*}

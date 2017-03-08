@@ -3,6 +3,7 @@ package model.task.preProcess;
 import java.util.Iterator;
 
 import model.task.preProcess.snowballStemmer.SnowballStemmer;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -34,10 +35,13 @@ public class TextStemming extends AbstractPreProcess {
 
 	@Override
 	public void process() {
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			stemmWord(textModel);
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				stemmWord(textModel);
+			}
 		}
 	}
 	

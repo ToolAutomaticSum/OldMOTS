@@ -12,6 +12,7 @@ public class TextModel extends ArrayList<ParagraphModel> {
 
 	private static int iD = 0;
 	private int textID = iD;
+	private Corpus parentCorpus;
 	protected String documentFilePath;
 	
 	protected int textSize = 0;
@@ -19,8 +20,9 @@ public class TextModel extends ArrayList<ParagraphModel> {
 	//protected ArrayList<ParagraphModel> listParagraph = new ArrayList<ParagraphModel>();
 	protected int nbSentence;
 	
-	public TextModel(String filePath) {
+	public TextModel(Corpus parentCorpus, String filePath) {
 		super();
+		this.parentCorpus = parentCorpus;
 		iD++;
 		documentFilePath = filePath;
 	}

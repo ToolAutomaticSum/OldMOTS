@@ -37,6 +37,7 @@ public class CommandView extends AbstractView {
 	public void display() {
 		//Différent notify à faire
 		loadConfiguration(args[1]);
+		getCtrl().run();
 	}
 
 	@Override
@@ -63,30 +64,38 @@ public class CommandView extends AbstractView {
 			        //getCtrl().notifyInputPathChanged(task.getElementsByTagName("INPUT_PATH").item(0).getTextContent());
 			        getCtrl().notifyOutputPathChanged(task.getElementsByTagName("OUTPUT_PATH").item(0).getTextContent());
 			        
-			        NodeList corpusList = task.getElementsByTagName("CORPUS");
-			        for (int j = 0; j<corpusList.getLength(); j++) {
-			        	if(corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
-			        		Element corpus = (Element) corpusList.item(j);
-			        		//Boolean one_Summary_Per_Doc = Boolean.parseBoolean(corpus.getElementsByTagName("ONE_SUMMARY_PER_DOC").item(0).getTextContent());
-			        		String summaryInputPath = corpus.getElementsByTagName("SUMMARY_PATH").item(0).getTextContent();
-			        		String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0).getTextContent();
-			        		NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
-							List<String> docNames = new ArrayList<String>();
-					        for (int k = 0; k<documentList.getLength(); k++) {
-					        	if(documentList.item(k).getNodeType() == Node.ELEMENT_NODE) {
-					        		docNames.add(documentList.item(k).getTextContent());
+			        NodeList multiCorpusList = task.getElementsByTagName("MULTICORPUS");
+			        for (int l = 0; l<multiCorpusList.getLength(); l++) {
+			        	if(multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {
+			        		Element multiCorpus = (Element) multiCorpusList.item(l);
+			        		getCtrl().notifyMultiCorpusChanged();
+			        		
+					        NodeList corpusList = task.getElementsByTagName("CORPUS");
+					        for (int j = 0; j<corpusList.getLength(); j++) {
+					        	if(corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
+					        		Element corpus = (Element) corpusList.item(j);
+					        		//Boolean one_Summary_Per_Doc = Boolean.parseBoolean(corpus.getElementsByTagName("ONE_SUMMARY_PER_DOC").item(0).getTextContent());
+					        		String summaryInputPath = corpus.getElementsByTagName("SUMMARY_PATH").item(0).getTextContent();
+					        		String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0).getTextContent();
+					        		NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
+									List<String> docNames = new ArrayList<String>();
+							        for (int k = 0; k<documentList.getLength(); k++) {
+							        	if(documentList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+							        		docNames.add(documentList.item(k).getTextContent());
+							        	}
+									}
+							        NodeList summaryList = corpus.getElementsByTagName("SUMMARY");
+									List<String> summaryNames = new ArrayList<String>();
+							        for (int k = 0; k<summaryList.getLength(); k++) {
+							        	if(summaryList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+							        		summaryNames.add(summaryList.item(k).getTextContent());
+							        	}
+									}
+							        getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath, docNames);
 					        	}
-							}
-					        NodeList summaryList = corpus.getElementsByTagName("SUMMARY");
-							List<String> summaryNames = new ArrayList<String>();
-					        for (int k = 0; k<summaryList.getLength(); k++) {
-					        	if(summaryList.item(k).getNodeType() == Node.ELEMENT_NODE) {
-					        		summaryNames.add(summaryList.item(k).getTextContent());
-					        	}
-							}
-					        getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath, docNames);
-			        	}
-					}
+				        	}
+						}
+		        	}
 				        
 			        
 			        NodeList preProcessList = task.getElementsByTagName("PREPROCESS");
@@ -142,8 +151,6 @@ public class CommandView extends AbstractView {
 			        }
 		        	else
 		        		getCtrl().notifyRougeEvaluationChanged(false);
-		        	
-			        getCtrl().run();
 			    }
 			}
 			return null;

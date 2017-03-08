@@ -2,9 +2,6 @@ package textModeling.wordIndex;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
-
-import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class InvertedIndex {
 	
@@ -16,14 +13,13 @@ public class InvertedIndex {
 		return this.clustWordIndex;
 	}
 	
-	
-	public InvertedIndex (Dictionnary dico)
+	public InvertedIndex (Index dico)
 	{
 		ArrayList<WordIndex> currWordList;
 		this.clustWordIndex = new HashMap <Integer, ArrayList<WordIndex>>();
-		for ( WordIndex indexKey : dico.values())
+		for (WordIndex indexKey : dico.values())
 		{
-			WordTF_IDF cti = (WordTF_IDF) indexKey;
+			//WordTF_IDF cti = (WordTF_IDF) indexKey;
 			/*for (Integer clustId : cti.getOccurence().keySet())
 			{*/
 				if (this.clustWordIndex.containsKey(0))

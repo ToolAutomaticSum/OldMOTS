@@ -3,6 +3,7 @@ package model.task.preProcess;
 import java.util.Iterator;
 
 import exception.LacksOfFeatures;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.TextModel;
 
@@ -18,22 +19,28 @@ public class ParagraphSplitter extends AbstractPreProcess {
 	
 	@Override
 	public void process() {
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			splitTextIntoParagraph(textModel);
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				splitTextIntoParagraph(textModel);
+			}
 		}
 	}
 	
 	@Override
 	public void finish() {
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				textModel.setNbSentence(textModel.getNbSentence()+paragraphModel.getNbSentence());
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				Iterator<ParagraphModel> paragraphIt = textModel.iterator();
+				while (paragraphIt.hasNext()) {
+					ParagraphModel paragraphModel = paragraphIt.next();
+					textModel.setNbSentence(textModel.getNbSentence()+paragraphModel.getNbSentence());
+				}
 			}
 		}
 	}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import model.Model;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.ParagraphModel;
@@ -12,7 +11,7 @@ import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.smoothings.DirichletSmoothing;
 import textModeling.smoothings.Smoothing;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
 
@@ -25,17 +24,17 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, HashMap<Integer, String> hashMapWord, InvertedIndex invertedIndex, Dictionnary index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, null, index, null, delta, firstSentenceConceptsFactor,
+	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, corpus, null, index, null, delta, firstSentenceConceptsFactor,
 				null, null);	
 	}
 	
 	public void init() {
-		System.out.println("JS Bigram scorer initialization");
+		System.out.println("JS Bigram scorer initialization.");
 		this.computeNGrams_in_sentences();
 		
 		this.computeSourceDistribution ();
-		System.out.println("JS Bigram scorer initialized");
+		System.out.println("JS Bigram scorer initialized.");
 	}
 	
 	public void computeNGrams_in_sentences()

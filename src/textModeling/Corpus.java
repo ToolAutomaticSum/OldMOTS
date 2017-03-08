@@ -28,15 +28,8 @@ public class Corpus extends ArrayList<TextModel> {
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
-			//if (oneSummaryByDoc)
-				//summaryNames.add(docName.replace("body", "summary"));
-			this.add(new TextModel(inputPath + "\\" + docName));
+			this.add(new TextModel(this, inputPath + "\\" + docName));
 		}
-		/*if (!oneSummaryByDoc){
-			String[] listDoc = summaryPath.split("\\\\");
-			summaryNames.add(listDoc[listDoc.length-1]);
-			summaryPath = summaryPath.replace("\\" + listDoc[listDoc.length-1], "");
-		}*/
     }
 	
 	public SentenceModel getSentenceByID(int id) {
@@ -54,11 +47,6 @@ public class Corpus extends ArrayList<TextModel> {
 			}
 		}
 		return sen;
-	}
-	
-	@Override
-	public Iterator<TextModel> iterator() {
-		return super.iterator();
 	}
 
 	public Model getModel() {
@@ -112,10 +100,6 @@ public class Corpus extends ArrayList<TextModel> {
 				current += text.getNbSentence();
 		}
 		String str = "Corpus " + iD + " \n" + current + "\n";
-		/*for (int i = 0; i<size(); i++) {
-			str+="Text " + i + " : \n";
-			str+=get(i).toString() + "\n";
-		}*/
 		return str;
 	}
 }

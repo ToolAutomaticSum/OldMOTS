@@ -14,7 +14,7 @@ import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import tools.PairSentenceScore;
 
 public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
@@ -28,40 +28,16 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 	}
 
 	@Override
-	public void init(AbstractProcess currentProcess, Dictionnary dictionnary, Map<Integer, String> hashMapWord) throws Exception {
-		super.init(currentProcess, dictionnary, hashMapWord);
+	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
+		super.init(currentProcess, dictionnary);
 		cosineThreshold = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "CosineThreshold"));
 	}
 	
 	@Override
-	public void computeScores() throws Exception {
-		//int nbLemma = getDictionnary().size();
-		//double[] averageVector = new double[nbLemma];
-		
-		/** Récupération de TfIdfMax afin de déterminer le vecteur général des documents */
-		/*double tfIdfMax = 0;		
-		Iterator<WordIndex> itWord = getDictionnary().values().iterator();
-		while (itWord.hasNext()) {
-			WordTF_IDF w = (WordTF_IDF) itWord.next();
-			double temp = w.getTf()*w.getIdf();
-			if (temp > tfIdfMax)
-				tfIdfMax = temp;
-		}
-		
-		int j = 0; //Word variable
-		itWord = getDictionnary().values().iterator();
-		while (itWord.hasNext()) {
-			WordTF_IDF w = (WordTF_IDF) itWord.next();
-			double temp = w.getTf()*w.getIdf();
-			if (temp >= tfIdfMax/10) {
-				averageVector[j] = temp;
-			}
-			j++;
-		}*/
-		
+	public void computeScores() throws Exception {		
 		sentencesScores = new TreeSet<PairSentenceScore>();
 		
-		Iterator<TextModel> textIt = getCurrentProcess().getModel().getDocumentModels().iterator();
+		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {			
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();

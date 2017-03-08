@@ -20,6 +20,7 @@ import model.task.preProcess.WordSplitter;
 import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import reader_writer.Reader;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -105,25 +106,28 @@ public class LearningLDAModel extends AbstractProcess {
 		
 		int i = 0;
 		nbSentence = 0;
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			
-			BufferedWriter w = new BufferedWriter(new OutputStreamWriter(
-	                new GZIPOutputStream(
-	                    new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp" + i + "_"+option.alpha+"_"+option.beta)), "UTF-8"));
-
-			Reader r = new Reader(textModel.getDocumentFilePath(), true);
-			r.open();
-			String text = r.read();
-
-			while (text != null)
-	        {
-				w.write(liveTextProcess(text, stopWordsProcess, textStemmer));
-				text = r.read();
-	        }
-			w.close();
-			i++;
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				
+				BufferedWriter w = new BufferedWriter(new OutputStreamWriter(
+		                new GZIPOutputStream(
+		                    new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp" + i + "_"+option.alpha+"_"+option.beta)), "UTF-8"));
+	
+				Reader r = new Reader(textModel.getDocumentFilePath(), true);
+				r.open();
+				String text = r.read();
+	
+				while (text != null)
+		        {
+					w.write(liveTextProcess(text, stopWordsProcess, textStemmer));
+					text = r.read();
+		        }
+				w.close();
+				i++;
+			}
 		}
 		/*RandomAccessFile raf = new RandomAccessFile(new File(getModel().getOutputPath() + "\\modelLDA\\temp.txt"), "rw");
 		raf.seek(0);
@@ -172,12 +176,15 @@ public class LearningLDAModel extends AbstractProcess {
 			option.dfile = "temp0_"+option.alpha+"_"+option.beta;
 			estimator = new Estimator(option);
 			estimator.estimate();
-			for (int i = 1; i < getModel().getDocumentModels().size(); i++) {
-				option.dfile = "temp" + i+"_"+option.alpha+"_"+option.beta;
-				option.est=false;
-				option.estc=true;
-				estimator = new Estimator(option);
-				estimator.estimate();
+			Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+			while (corpusIt.hasNext()) {
+				for (int i = 1; i <  corpusIt.next().size(); i++) {
+					option.dfile = "temp" + i+"_"+option.alpha+"_"+option.beta;
+					option.est=false;
+					option.estc=true;
+					estimator = new Estimator(option);
+					estimator.estimate();
+				}
 			}
 		}
 		else {
@@ -205,24 +212,27 @@ public class LearningLDAModel extends AbstractProcess {
                 new GZIPOutputStream(
                     new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp.txt")), "UTF-8"));
 
-		writer.write(String.valueOf(getModel().getDocumentModels().size()) + "\n");
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			Iterator<ParagraphModel> parIt = textIt.next().iterator();
-			while (parIt.hasNext()) {
-				Iterator<SentenceModel> senIt = parIt.next().iterator();
-				while (senIt.hasNext()) {
-					Iterator<WordModel> wordIt = senIt.next().iterator();
-					while (wordIt.hasNext()) {
-						String word = wordIt.next().toString();
-						if (!word.isEmpty()) {
-							writer.write(word + " ");
-							//System.out.println(word);
+		writer.write(String.valueOf(getModel().getCurrentMultiCorpus().size()) + "\n");
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				Iterator<ParagraphModel> parIt = textIt.next().iterator();
+				while (parIt.hasNext()) {
+					Iterator<SentenceModel> senIt = parIt.next().iterator();
+					while (senIt.hasNext()) {
+						Iterator<WordModel> wordIt = senIt.next().iterator();
+						while (wordIt.hasNext()) {
+							String word = wordIt.next().toString();
+							if (!word.isEmpty()) {
+								writer.write(word + " ");
+								//System.out.println(word);
+							}
 						}
 					}
 				}
+				writer.write("\n");
 			}
-			writer.write("\n");
 		}
 		writer.close();   
 	}

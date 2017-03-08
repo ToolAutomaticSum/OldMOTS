@@ -1,13 +1,14 @@
 package textModeling.wordIndex;
 
 import java.util.ArrayList;
-import java.util.Map.Entry;
-import java.util.TreeSet;
-
-import edu.stanford.nlp.util.Index;
 
 public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4188336154082203140L;
+
 	public NGram()
 	{
 		super();

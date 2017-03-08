@@ -25,19 +25,20 @@ import optimize.Optimize;
 import optimize.SupportADNException;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import tools.Tools;
 
 public abstract class AbstractProcess extends Optimize implements AbstractTaskModel {
 
+	protected Integer summarizeCorpusId;
 	protected Model model;
-	protected Dictionnary dictionnary = new Dictionnary();
-	protected Map<Integer, String> hashMapWord = new HashMap<Integer, String>();
+	protected Index index = new Index();
 	
 	protected AbstractSummarizeMethod sentenceSelection;
 	protected AbstractScoringMethod scoringMethod;
 	protected List<AbstractPostProcess> postProcess = new ArrayList<AbstractPostProcess>();
 	protected List<SentenceModel> allSentenceList = new ArrayList<SentenceModel>();
+	//
 	protected List<List<SentenceModel>> summary = new ArrayList<List<SentenceModel>>();
 	private int sizeSummary = 8;
 	
@@ -47,25 +48,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	
 	@Override
 	public void init() throws Exception {
-		/*Iterator<AbstractPreProcess> preProIt = preProcess.iterator();
-		while (preProIt.hasNext()) {
-			AbstractPreProcess p = preProIt.next();
-			p.setModel(getModel());
-			p.setCurrentProcess(this);
-			p.init();
-		}
-		
-		preProIt = preProcess.iterator();
-		while (preProIt.hasNext()) {
-			AbstractPreProcess p = preProIt.next();
-			p.process();
-		}
-		
-		preProIt = preProcess.iterator();
-		while (preProIt.hasNext()) {
-			AbstractPreProcess p = preProIt.next();
-			p.finish();
-		}*/
+		summarizeCorpusId = Integer.parseInt(getModel().getProcessOption(id, "CorpusIdToSummarize"));
 	}
 	
 	/**
@@ -73,8 +56,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	 */
 	@Override
 	public void process() throws Exception {
-		for (TextModel text : getModel().getDocumentModels())
-		{
+		for (TextModel text : getModel().getCurrentMultiCorpus().get(summarizeCorpusId)) {
 			allSentenceList.addAll(text.getSentence());
 		}
 		
@@ -82,7 +64,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			scoringMethod.setCurrentProcess(this);
 			scoringMethod.setModel(model);
 			initCompatibilityProcess();
-			scoringMethod.init(this, dictionnary, hashMapWord);
+			scoringMethod.init(this, index);
 			scoringMethod.computeScores();
 		}
 		if (!(sentenceSelection == null)) {
@@ -156,7 +138,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			p.finish();
 		}
 		
-		dictionnary.clear();
+		index.clear();
 		allSentenceList.clear();
 	}
 	
@@ -244,11 +226,11 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		this.model = model;
 	}
 
-	public Dictionnary getDictionnary() {
-		return dictionnary;
+	public Index getDictionnary() {
+		return index;
 	}
 
-	public Map<Integer, String> getHashMapWord() {
-		return hashMapWord;
+	public Integer getSummarizeCorpusId() {
+		return summarizeCorpusId;
 	}
 }

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public class Interpolation extends Smoothing{
@@ -15,7 +15,7 @@ public class Interpolation extends Smoothing{
 	private ArrayList <SentenceModel> sentences;
 	private int maxN;
 	
-	public Interpolation ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Dictionnary index)
+	public Interpolation ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index index)
 	{
 		super (sentences, 0, index);
 		this.alphas = alphas;
@@ -34,7 +34,7 @@ public class Interpolation extends Smoothing{
 		for (int i = maxN -1; i >= 0; i--)
 		{
 			TreeMap<NGram, Double> curr_distrib_n = new TreeMap<NGram, Double> ();
-			double summOcc = 0.;
+			//double summOcc = 0.;
 			for (SentenceModel sent : this.sentences)
 			{
 				//System.out.println(i+1);
@@ -54,7 +54,7 @@ public class Interpolation extends Smoothing{
 						{
 							curr_distrib_n.put(ng, 1.);
 						}
-						summOcc ++;
+						//summOcc ++;
 						if (i == maxN-1)
 						{
 							summOccBiggerGram ++;
@@ -72,11 +72,8 @@ public class Interpolation extends Smoothing{
 		}
 	}
 	
-	
 	@Override
 	public double getSmoothedProb(NGram ng) {
-		// TODO Auto-generated method stub
-		
 		double smoothed_prob = 0.;
 		
 		NGram ng_copy = new NGram (ng);

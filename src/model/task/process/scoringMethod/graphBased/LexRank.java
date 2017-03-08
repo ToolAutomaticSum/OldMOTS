@@ -17,7 +17,7 @@ import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
 import textModeling.graphBased.GraphSentenceBased;
 import textModeling.graphBased.NodeGraphSentenceBased;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import tools.PairSentenceScore;
 import tools.Tools;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
@@ -65,8 +65,8 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 	}
 
 	@Override
-	public void init(AbstractProcess currentProcess, Dictionnary dictionnary, Map<Integer, String> hashMapWord) throws Exception {
-		super.init(currentProcess, dictionnary, hashMapWord);
+	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
+		super.init(currentProcess, dictionnary);
 		
 		dumpingParameter = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.DumpingParameter.getName());
 		epsilon = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.Epsilon.getName());

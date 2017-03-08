@@ -3,20 +3,19 @@ package model.task.process.summarizeMethod.genetic.geneticScorers;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import model.Model;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.WordIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class CosineScorer extends GeneticIndividualScorer{
 
-	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, HashMap<Integer, String> hashMapWord, InvertedIndex invertedIndex, Dictionnary dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, null, invertedIndex, dictionnary, null, null, null, null, null);
+	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, null, invertedIndex, dictionnary, null, null, null, null, null);
 	}
 
 

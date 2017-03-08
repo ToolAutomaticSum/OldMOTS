@@ -3,7 +3,7 @@ package textModeling.cluster;
 import java.util.Map;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 
 public abstract class ClusterCentroid extends Cluster {
 
@@ -12,18 +12,18 @@ public abstract class ClusterCentroid extends Cluster {
 	 */
 	private static final long serialVersionUID = 6680832604482340969L;
 	
-	protected Dictionnary clusterDictionnary;
-	protected Dictionnary dictionnary;
+	protected Index clusterDictionnary;
+	protected Index dictionnary;
 	protected Map<Integer, String> hashMapWord;
 	protected double thresholdCluster;
 	protected int nbMaxWord;
 	
 	//private double[] centroid;
 	
-	public ClusterCentroid(int id, Dictionnary dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
+	public ClusterCentroid(int id, Index dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
 		super(id);
 		this.dictionnary = dictionnary;
-		clusterDictionnary = new Dictionnary(this.dictionnary.getNbDocument());
+		clusterDictionnary = new Index(this.dictionnary.getNbDocument());
 		this.hashMapWord = hashMapWord;
 		
 		//centroid = new double[dictionnary.size()];
@@ -56,11 +56,11 @@ public abstract class ClusterCentroid extends Cluster {
 		return str;
 	}
 
-	public Dictionnary getClusterDictionnary() {
+	public Index getClusterDictionnary() {
 		return clusterDictionnary;
 	}
 
-	public void setClusterDictionnary(Dictionnary clusterDictionnary) {
+	public void setClusterDictionnary(Index clusterDictionnary) {
 		this.clusterDictionnary = clusterDictionnary;
 	}
 }

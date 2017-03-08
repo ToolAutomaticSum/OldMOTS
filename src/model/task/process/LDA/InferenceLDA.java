@@ -111,7 +111,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 		nbSentence = 0;
 		K = newModel.K;
 		theta = newModel.theta;
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
+		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {
 			nbSentence+=textIt.next().getNbSentence();
 			//Parcours de theta, si valeur topic < X => valeur topic = 0;
@@ -140,7 +140,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 	
 	private void generateDictionary() {
 		//Construction du dictionnaire
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
+		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
@@ -152,10 +152,10 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						if(!dictionnary.containsKey(word.getmLemma())) {
-							dictionnary.put(word.getmLemma(), new WordLDA(word.getmLemma(), dictionnary, -1, newModel.K));
+						if(!index.containsKey(word.getmLemma())) {
+							index.put(word.getmLemma(), new WordLDA(word.getmLemma(), index, newModel.K));
 						}
-						dictionnary.get(word.getmLemma()).add(word);
+						index.get(word.getmLemma()).add(word);
 					}
 				}
 			}
@@ -165,15 +165,13 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 		for (int w = 0; w < newModel.V; w++){ //Boucle sur le nombre de mot du vocabulaire local
 			String word = newModel.data.localDict.getWord(w);
 			WordLDA wordEmbeddings;
-			if(dictionnary.containsKey(word)) {
-				wordEmbeddings = (WordLDA) dictionnary.get(word);
+			if(index.containsKey(word)) {
+				wordEmbeddings = (WordLDA) index.get(word);
 				wordEmbeddings.setId(w);
-				hashMapWord.put(w, word);
 			}
 			else {
-				wordEmbeddings = new WordLDA(word, dictionnary, w, newModel.K);
-				hashMapWord.put(w, word);
-				dictionnary.put(word, wordEmbeddings);
+				wordEmbeddings = new WordLDA(word, index, newModel.K);
+				index.put(word, wordEmbeddings);
 			}
 			for (int k = 0; k < newModel.K; k++){ //Boucle sur le nombre de Topic
 				if (newModel.data.localDict.contains(w)){
@@ -191,7 +189,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
                     new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp.txt.gz")), "UTF-8"));
 
 		//writer.write(String.valueOf(getModel().getDocumentModels().size()) + "\n");
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
+		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {
 			Iterator<ParagraphModel> parIt = textIt.next().iterator();
 			while (parIt.hasNext()) {
@@ -225,8 +223,8 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 		int i = 0; //sentence variable
 		int l = 1; //optional parameter to configure handicap for long sentences
 
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {			
+		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
+		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
 			while (paragraphIt.hasNext()) {
@@ -238,7 +236,7 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 					int j = 0; //length of the sentence
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						WordLDA wordLDA = (WordLDA) dictionnary.get(word.getmLemma());
+						WordLDA wordLDA = (WordLDA) index.get(word.getmLemma());
 						for (int k = 0; k<K; k++)
 							matSentenceTopic[i][k] += wordLDA.getTopicDistribution()[k]*theta[t][k];
 						j++;
@@ -252,10 +250,9 @@ public class InferenceLDA extends AbstractProcess implements LdaBasedOut {
 					//sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 					i++;
 				}
+				t++;
 			}
-			t++;
 		}
-		
 		//return sentencesScores;
 	}
 	

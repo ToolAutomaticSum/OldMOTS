@@ -6,24 +6,24 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public class GoodTuring extends Smoothing{
 
 	private TreeMap <NGram, Double> distrib;
-	private double delta;
+	//private double delta;
 	private int window;
-	private int ngram_total_occs;
+	//private int ngram_total_occs;
 	private HashMap <Integer, Double> Nr;
 	private double total_observed;
 	
-	public GoodTuring (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, Dictionnary index)
+	public GoodTuring (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, Index index)
 	{
 		super (sentences, vocab_card, index);
 		this.window = window;
-		this.delta = delta;
-		this.ngram_total_occs = 0;
+		//this.delta = delta;
+		//this.ngram_total_occs = 0;
 	
 		this.buildDistrib();
 		this.buildNr();
@@ -50,7 +50,7 @@ public class GoodTuring extends Smoothing{
 					{
 						this.distrib.put(ng, 1.);
 					}
-					this.ngram_total_occs ++;
+					//this.ngram_total_occs ++;
 				//}
 			}
 		}

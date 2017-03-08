@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import model.Model;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.WordIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
@@ -17,8 +16,8 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 public class DiversityScorer extends GeneticIndividualScorer {
 	private double maxIdf;
 	
-	public DiversityScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, HashMap<Integer, String> hashMapWord, InvertedIndex invertedIndex, Dictionnary dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, hashMapWord, invertedIndex, dictionnary, null, null, null, null, null);		
+	public DiversityScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, null, invertedIndex, dictionnary, null, null, null, null, null);		
 	}
 
 	public void init() {
@@ -66,18 +65,20 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		{
 			for (WordModel u : p)
 			{
-				int uIndexKey = index.get(u.getmLemma()).getId();
-				if (! giIndexKeys.contains(uIndexKey))
-				{
-					giIndexKeys.add(uIndexKey);
+				if (!u.isStopWord()) {
+					int uIndexKey = index.get(u.getmLemma()).getId();
+					if (! giIndexKeys.contains(uIndexKey))
+					{
+						giIndexKeys.add(uIndexKey);
+					}
+					cpt++;
 				}
-				cpt++;
 			}
 		
 		}
 		for (Integer indexKey : giIndexKeys)
 		{
-			WordTF_IDF w = (WordTF_IDF) index.get(hashMapWord.get(indexKey));
+			WordTF_IDF w = (WordTF_IDF) index.get(indexKey);
 			sum += (w.getIdf() / this.maxIdf);
 		}
 		

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import model.Model;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.ParagraphModel;
@@ -12,7 +11,7 @@ import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.smoothings.DirichletUniqueProbSmoothing;
 import textModeling.smoothings.Smoothing;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
 
@@ -25,8 +24,8 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, HashMap<Integer, String> hashMapWord, InvertedIndex invertedIndex, Dictionnary index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, null, index, null, delta, firstSentenceConceptsFactor,
+	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, corpus, null, index, null, delta, firstSentenceConceptsFactor,
 				null, null);
 	}
 		

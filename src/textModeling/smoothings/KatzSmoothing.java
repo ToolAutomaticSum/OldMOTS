@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public class KatzSmoothing extends Smoothing{
@@ -15,7 +15,7 @@ public class KatzSmoothing extends Smoothing{
 	private ArrayList <SentenceModel> sentences;
 	private int maxN;
 	
-	public KatzSmoothing ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Dictionnary index, int vocab_card )
+	public KatzSmoothing ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index index, int vocab_card )
 	{
 		super (sentences, vocab_card, index);
 		this.alphas = alphas;

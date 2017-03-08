@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import exception.LacksOfFeatures;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -23,10 +24,13 @@ public class WordSplitter extends AbstractPreProcess {
 
 	@Override
 	public void process() {
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			splitSentenceIntoWord(textModel);
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				splitSentenceIntoWord(textModel);
+			}
 		}
 	}
 	

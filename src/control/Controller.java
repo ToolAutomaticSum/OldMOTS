@@ -13,6 +13,7 @@ import model.task.process.AbstractProcess;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.summarizeMethod.AbstractSummarizeMethod;
 import textModeling.Corpus;
+import textModeling.MultiCorpus;
 import view.AbstractView;
 
 public class Controller {
@@ -30,6 +31,7 @@ public class Controller {
 	protected String processName;
 	protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
 	protected List<String> postProcess = new ArrayList<String>();
+	protected MultiCorpus currentMultiCorpus;
 	/*protected boolean bRougeEvaluation = false;
     protected String modelRoot;
     protected String peerRoot;*/
@@ -93,6 +95,11 @@ public class Controller {
     	getModel().setInputPath(inputDir);
     }*/
     
+    public void notifyMultiCorpusChanged() {
+    	currentMultiCorpus = new MultiCorpus(getModel().getMultiCorpusModels().size());
+    	getModel().getMultiCorpusModels().add(currentMultiCorpus);
+    }
+    
     public void notifyCorpusChanged(String summaryInputPath, List<String> summaryNames, String inputCorpusPath, List<String> docNames) {
     	int i = 0;
     	boolean notAll  = true;
@@ -103,8 +110,7 @@ public class Controller {
     		i++;	
     	}
     	//if (!one_Summary_Per_Doc) {
-	    	Corpus corpus = new Corpus(corpusList.size());
-	    	corpusList.add(corpus);
+	    	Corpus corpus = new Corpus(currentMultiCorpus.size());
 	    	//this.docNames = docNames;
 	    	if (!notAll) { /** Si tous les documents txt du dossier */
 	    		docNames.clear();
@@ -120,45 +126,7 @@ public class Controller {
 	    	corpus.setInputPath(inputCorpusPath);
 	    	corpus.setSummaryNames(summaryNames);
 	    	corpus.setSummaryPath(summaryInputPath);
-    	/*}
-    	else {
-	    	if (!notAll) { //Si tous les documents txt du dossier
-	    		docNames.clear();
-	    		File f = new File(inputCorpusPath);
-	        	File[] lf = f.listFiles();
-	        	for (int j = 0; j<lf.length; j++) {
-	        		//if (Tools.getFileExtension(lf[j]).equals("txt")) {
-	        			Corpus c = new Corpus(corpusList.size());
-	        			List<String> l = new ArrayList<String>();
-	        			l.add(lf[j].getName());
-	        			c.setDocNames(l);
-	        	    	c.setInputPath(inputCorpusPath);
-	        	    	List<String> listSummaryNames = new ArrayList<String>();
-	        	    	listSummaryNames.add(summaryNames.get(j));
-	        	    	c.setSummaryNames(summaryNames);
-	        	    	c.setSummaryPath(summaryInputPath);
-	        			c.setModel(model);
-	        			corpusList.add(c);
-	        		//}
-	        	}
-	    	}
-	    	else {
-	    		for (int j = 0;j<docNames.size();j++) {
-	    			Corpus c = new Corpus(corpusList.size());
-        			List<String> l = new ArrayList<String>();
-        			l.add(docNames.get(j));
-        			c.setDocNames(l);
-        	    	c.setInputPath(inputCorpusPath);
-        	    	List<String> listSummaryNames = new ArrayList<String>();
-        	    	listSummaryNames.add(summaryNames.get(j));
-        	    	c.setSummaryNames(listSummaryNames);
-        	    	c.setSummaryPath(summaryInputPath);
-        			c.setModel(model);
-        			corpusList.add(c);
-	    		}
-	    	}
-    	}*/
-    	getModel().setCorpusModels(corpusList);
+    	    currentMultiCorpus.add(corpus);
     }
 
     public void notifyOutputPathChanged(String outputDir) {

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public class DirichletSmoothing extends Smoothing{
@@ -18,7 +18,7 @@ public class DirichletSmoothing extends Smoothing{
 	private double firstSentenceConceptsFactor;
 	
 	public DirichletSmoothing (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, 
-			Dictionnary index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts,
+			Index index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts,
 			double firstSentenceConceptsFactor)
 	{
 		super (sentences, vocab_card, index);

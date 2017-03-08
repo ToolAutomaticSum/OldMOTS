@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public class DirichletUniqueProbSmoothing extends Smoothing{
@@ -18,7 +18,7 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 	private double firstSentenceConceptsFactor;
 	
 	public DirichletUniqueProbSmoothing (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, 
-			Dictionnary index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts,
+			Index index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts,
 			double firstSentenceConceptsFactor)
 	{
 		super (sentences, vocab_card, index);
@@ -35,7 +35,7 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 	
 	private void buildDistrib()
 	{
-		double log2 = Math.log(2.);
+		//double log2 = Math.log(2.);
 		this.distrib = new TreeMap <NGram, Double> ();
 		for (SentenceModel sent : this.sentences)
 		{
@@ -91,10 +91,8 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 
 	}
 	
-	
 	@Override
 	public double getSmoothedProb(NGram ng) {
-		// TODO Auto-generated method stub
 		Double dProb = this.distrib.get(ng);
 		double probSource = this.corpusDistrib.get(ng);
 		double divider = this.ngram_total_occs + this.delta;

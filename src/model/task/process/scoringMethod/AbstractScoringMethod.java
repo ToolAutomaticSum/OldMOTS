@@ -5,24 +5,21 @@ import java.util.Map;
 import model.task.process.AbstractProcess;
 import optimize.Individu;
 import optimize.SupportADNException;
-import textModeling.wordIndex.Dictionnary;
-import textModeling.wordIndex.WordIndex;
+import textModeling.wordIndex.Index;
 
 public abstract class AbstractScoringMethod extends Individu {
 
 	protected AbstractProcess currentProcess;
 	
-	protected Dictionnary dictionnary;
-	protected Map<Integer, String> hashMapWord;
+	protected Index dictionnary;
 	
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
 	}
 
-	public void init(AbstractProcess currentProcess, Dictionnary dictionnary, Map<Integer, String> hashMapWord) throws Exception {
+	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
 		this.currentProcess = currentProcess;
 		this.dictionnary = dictionnary;
-		this.hashMapWord = hashMapWord;
 		
 		if (dictionnary.isEmpty())
 			throw new Exception("Dictionnary is empty !");
@@ -50,11 +47,11 @@ public abstract class AbstractScoringMethod extends Individu {
 		return inputType;
 	}*/
 
-	public Map<String, WordIndex> getDictionnary() {
+	public Index getIndex() {
 		return dictionnary;
 	}
 
-	public void setDictionnary(Dictionnary dictionnary) {
+	public void setIndex(Index dictionnary) {
 		this.dictionnary = dictionnary;
 	}
 }

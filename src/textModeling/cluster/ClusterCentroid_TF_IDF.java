@@ -9,7 +9,7 @@ import java.util.Map;
 import jgibblda.Pair;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.WordIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 import tools.wordFilters.WordFilter;
@@ -24,7 +24,7 @@ public class ClusterCentroid_TF_IDF extends ClusterCentroid {
 	 */
 	private static final long serialVersionUID = -1760296591762349834L;
 
-	public ClusterCentroid_TF_IDF(int id, Dictionnary dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
+	public ClusterCentroid_TF_IDF(int id, Index dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
 		super(id, dictionnary, hashMapWord, nbMaxWord, thresholdCluster);
 	}
 
@@ -61,7 +61,7 @@ public class ClusterCentroid_TF_IDF extends ClusterCentroid {
 			double idf = ((WordTF_IDF)dictionnary.get(wordIndex.getWord())).getIdf();
 			//System.out.println(wordIndex.getWord());
 			if (idf > thresholdCluster) {
-				listScoreWord.add(new Pair(wordIndex, wordIndex.getTf(id)*idf));
+				listScoreWord.add(new Pair(wordIndex, wordIndex.getTf()*idf));
 			}
 		}
 		Collections.sort(listScoreWord);

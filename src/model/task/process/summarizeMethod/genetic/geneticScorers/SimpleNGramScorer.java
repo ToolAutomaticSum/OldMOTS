@@ -5,13 +5,12 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import model.Model;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
 
@@ -20,8 +19,8 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 	private TreeMap <NGram, Double> nGram_weights;
 	
 	
-	public SimpleNGramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, HashMap<Integer, String> hashMapWord, InvertedIndex invertedIndex, Dictionnary index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, null, index, null, null, null, window, fsc_factor);
+	public SimpleNGramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, corpus, null, index, null, null, null, window, fsc_factor);
 		this.constructNGramWeights ();
 	}
 	

@@ -2,7 +2,7 @@ package textModeling.wordIndex.TF_IDF;
 
 import java.util.HashMap;
 
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.WordIndex;
 
 public class WordTF_IDF extends WordIndex {
@@ -11,43 +11,37 @@ public class WordTF_IDF extends WordIndex {
 	 * 
 	 */
 	private static final long serialVersionUID = -2186642315849071658L;
-	//protected double tf = getListWord().size();
 
 	protected int nbDocumentWithWordSeen;
 	
 	/**
-	 * Tf et Idf par documents : Key = idDoc
+	 * Tf et Idf par documents : Key = idCorpus
 	 */
-	private HashMap<Integer, Integer> occurences = new HashMap<Integer, Integer>();
-	//protected double[] listTf;
-	//protected int tf;
-	//protected int nbSentence;
+	private HashMap<Integer, Integer> docOccurences = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> corpusOccurences = new HashMap<Integer, Integer>();
 
-	public WordTF_IDF(String word, Dictionnary dictionnary, int iD/*, int nbSentence*/) {
-		super(word, dictionnary, iD);
-		//listTf = new double[nbSentence];
-		//this.nbSentence = nbSentence;
+	public WordTF_IDF(String word, Index dictionnary) {
+		super(word, dictionnary);
 	}
 
-	public WordTF_IDF(String word, Dictionnary dictionnary, int iD, int nbDocumentWithWordSeen) {
-		super(word, dictionnary, iD);
+	public WordTF_IDF(String word, Index dictionnary, int nbDocumentWithWordSeen) {
+		super(word, dictionnary);
 		this.nbDocumentWithWordSeen = nbDocumentWithWordSeen;
-		//this.nbSentence = nbSentence;
 	}
-
-	/*public double getTf(int sentence) {
-		return listTf[sentence]/nbWordTotal;
-	}*/
 	
-	public void addDocumentOccurence(int idDoc) {
-		if (!occurences.containsKey(idDoc))
-			occurences.put(idDoc, 1);
+	public void addDocumentOccurence(int idCorpus, int idDoc) {
+		if (!corpusOccurences.containsKey(idCorpus))
+			corpusOccurences.put(idCorpus, 1);
 		else
-			occurences.put(idDoc, occurences.get(idDoc)+1);
+			corpusOccurences.put(idCorpus, corpusOccurences.get(idCorpus)+1);
+		if (!docOccurences.containsKey(idDoc))
+			docOccurences.put(idDoc, 1);
+		else
+			docOccurences.put(idDoc, docOccurences.get(idDoc)+1);
 	}
 	
 	public int getNbDocumentWithWordSeen() {
-		return nbDocumentWithWordSeen+occurences.size();
+		return nbDocumentWithWordSeen+docOccurences.size();
 	}
 	
 	public double getIdf() {
@@ -57,54 +51,19 @@ public class WordTF_IDF extends WordIndex {
 		return Math.log10(dictionnary.getNbDocument()/getNbDocumentWithWordSeen());
 	}
 	
-	public double getTf(int idDoc) {
-		return (double)occurences.get(idDoc)/(double)dictionnary.getDocNbWord().get(idDoc);
+	public double getTfDocument(int idDoc) {
+		return (double)corpusOccurences.get(idDoc);
+	}
+	
+	public double getTfCorpus(int idCorpus) {
+		return (double)corpusOccurences.get(idCorpus);
 	}
 	
 	public double getTf() {
-		int nbWord = 0;
-		for (int i : dictionnary.getDocNbWord().keySet()) {
-			nbWord+=dictionnary.getDocNbWord().get(i);
-		}
-		return (double)size()/(double)nbWord;
+		return (double)size();
 	}
 	
 	public HashMap<Integer, Integer> getOccurence() {
-		return occurences;
+		return docOccurences;
 	}
-	/*public int getNbDocumentWithWordSeen() {
-		return nbDocumentWithWordSeen;
-	}
-
-
-	public void setNbDocumentWithWordSeen(int nbDocumentWithWordSeen) {
-		this.nbDocumentWithWordSeen = nbDocumentWithWordSeen;
-	}*/
-
-
-	/*public int getNbDocument() {
-		return nbSentence;
-	}
-
-
-	public void setNbDocument(int nbSentence) {
-		this.nbSentence = nbSentence;
-	}*/
-	
-	/*public double getTfIdf(int sentence) {
-		return getTf(sentence)*getIdf();
-	}*/
-	
-	/*public void actualizeTf(int doc, int nbWord) {
-		if (doc < listTf.length) {
-			int countTf = 0; 
-			int i = doc;
-			while (i > 0) {
-				countTf += listTf[i];
-				i--;
-			}
-			listTf[doc] = getListWord().size() - countTf;
-			nbWordTotal = nbWord;
-		}
-	}*/
 }

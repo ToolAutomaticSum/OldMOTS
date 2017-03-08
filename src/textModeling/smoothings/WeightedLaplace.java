@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public class WeightedLaplace extends Smoothing {
@@ -14,7 +14,7 @@ public class WeightedLaplace extends Smoothing {
 	private int window;
 	private int ngram_total_occs;
 	
-	public WeightedLaplace (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, Dictionnary index)
+	public WeightedLaplace (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, Index index)
 	{
 		super (sentences, vocab_card, index);
 		this.window = window;

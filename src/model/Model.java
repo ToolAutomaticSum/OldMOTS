@@ -14,6 +14,7 @@ import model.task.postProcess.EvaluationROUGE;
 import model.task.preProcess.AbstractPreProcess;
 import model.task.process.AbstractProcess;
 import textModeling.Corpus;
+import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 
 public class Model extends Observable {
@@ -30,8 +31,8 @@ public class Model extends Observable {
 	protected Map<String,Integer> processIDs = new HashMap<String, Integer>();
 	protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
 	//protected List<String> docNames;
-	protected List<Corpus> corpusModels = new ArrayList<Corpus>();
-	protected Corpus currentCorpus;
+	protected List<MultiCorpus> multiCorpusModels = new ArrayList<MultiCorpus>();
+	protected MultiCorpus currentMultiCorpus;
 	//protected List<String> summary = new ArrayList<String>();
 	protected boolean bRougeEvaluation = false;
 	protected String modelRoot;
@@ -52,11 +53,11 @@ public class Model extends Observable {
 			}
 			
 			//dictionnary.clear();
-			loadCorpusModels();
+			loadMultiCorpusModels();
 			
-			Iterator<Corpus> corpusIt = corpusModels.iterator();
-			while (corpusIt.hasNext()) {
-				currentCorpus = corpusIt.next();
+			Iterator<MultiCorpus> multiCorpusIt = multiCorpusModels.iterator();
+			while (multiCorpusIt.hasNext()) {
+				currentMultiCorpus = multiCorpusIt.next();
 				preProIt = preProcess.iterator();
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
@@ -68,13 +69,13 @@ public class Model extends Observable {
 					p.finish();
 				}				
 
-				System.out.println(currentCorpus);
+				System.out.println(currentMultiCorpus);
 			}
 			
-			corpusIt = corpusModels.iterator();
-			while (corpusIt.hasNext()) {
-				currentCorpus = corpusIt.next();		
-				System.out.println("Corpus : " + currentCorpus.getiD());
+			multiCorpusIt = multiCorpusModels.iterator();
+			while (multiCorpusIt.hasNext()) {
+				currentMultiCorpus = multiCorpusIt.next();		
+				System.out.println("Corpus : " + currentMultiCorpus.getiD());
 				
 				Iterator<AbstractProcess> proIt = process.iterator();
 				while (proIt.hasNext()) {
@@ -86,7 +87,7 @@ public class Model extends Observable {
 					setChanged();
 					
 					if (p.getSummary() != null) {
-						List<SentenceModel> summary = p.getSummary().get(currentCorpus.getiD());
+						List<SentenceModel> summary = p.getSummary().get(currentMultiCorpus.getiD());
 						Collections.sort(summary);
 						notifyObservers(SentenceModel.listSentenceModelToString(summary));
 					}
@@ -107,10 +108,13 @@ public class Model extends Observable {
 		}
 	}
 	
-	protected void loadCorpusModels() {
-		Iterator<Corpus> corpusIt = corpusModels.iterator();
-		while (corpusIt.hasNext()) {
-			corpusIt.next().loadDocumentModels();
+	protected void loadMultiCorpusModels() {
+		Iterator<MultiCorpus> multiCorpusIt = multiCorpusModels.iterator();
+		while (multiCorpusIt.hasNext()) {
+			Iterator<Corpus> corpusIt = multiCorpusIt.next().iterator();
+			while (corpusIt.hasNext()) {
+				corpusIt.next().loadDocumentModels();
+			}
 		}
 	}
 	
@@ -220,7 +224,7 @@ public class Model extends Observable {
 		preProcess.clear();
 		processIDs.clear();
 		processOption.clear();
-		corpusModels.clear();
+		multiCorpusModels.clear();
 		//dictionnary.clear();
 	}
 
@@ -288,19 +292,19 @@ public class Model extends Observable {
 		this.preProcess = preProcess;
 	}
 
-	public List<Corpus> getCorpusModels() {
-		return corpusModels;
+	public List<MultiCorpus> getMultiCorpusModels() {
+		return multiCorpusModels;
 	}
 
-	public void setCorpusModels(List<Corpus> corpusModels) {
-		this.corpusModels = corpusModels;
+	public void setCorpusModels(List<MultiCorpus> multiCorpusModels) {
+		this.multiCorpusModels = multiCorpusModels;
 	}
 
-	public Corpus getDocumentModels() {
-		return currentCorpus;
+	public MultiCorpus getCurrentMultiCorpus() {
+		return currentMultiCorpus;
 	}
 
-	public void setDocumentModels(Corpus currentCorpus) {
-		this.currentCorpus = currentCorpus;
+	public void setCurrentMultiCorpus(MultiCorpus currentMultiCorpus) {
+		this.currentMultiCorpus = currentMultiCorpus;
 	}
 }

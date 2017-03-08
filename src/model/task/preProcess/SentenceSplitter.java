@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import exception.LacksOfFeatures;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -31,25 +32,28 @@ public class SentenceSplitter extends AbstractPreProcess {
 	}
 	
 	private void splitParagraphIntoSentence() {
-		int iD = 0;
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
-				iterator.setText(paragraphModel.getParagraph());
-				int start = iterator.first();
-				int nbSentence = 0;
-				for (int end = iterator.next();
-				    end != BreakIterator.DONE;
-				    start = end, end = iterator.next()) {
-					paragraphModel.add(new SentenceModel(paragraphModel.getParagraph().substring(start,end), iD, paragraphModel));
-					iD++;
-					nbSentence++;
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			int iD = 0;
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				Iterator<ParagraphModel> paragraphIt = textModel.iterator();
+				while (paragraphIt.hasNext()) {
+					ParagraphModel paragraphModel = paragraphIt.next();
+					BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+					iterator.setText(paragraphModel.getParagraph());
+					int start = iterator.first();
+					int nbSentence = 0;
+					for (int end = iterator.next();
+					    end != BreakIterator.DONE;
+					    start = end, end = iterator.next()) {
+						paragraphModel.add(new SentenceModel(paragraphModel.getParagraph().substring(start,end), iD, paragraphModel));
+						iD++;
+						nbSentence++;
+					}
+					paragraphModel.setNbSentence(nbSentence);
 				}
-				paragraphModel.setNbSentence(nbSentence);
 			}
 		}
 	}

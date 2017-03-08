@@ -18,6 +18,7 @@ import exception.SizeException;
 import model.task.preProcess.stanfordNLP.StanfordNLPSimplePreProcess;
 import reader_writer.Reader;
 import reader_writer.Writer;
+import textModeling.Corpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -102,35 +103,42 @@ public class GenerateTextModel extends AbstractPreProcess {
 		
 		//int i = 0;
 		nbSentence = 0;
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			
-			//BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp" + i + ".txt")));
-
-			Reader r = new Reader(textModel.getDocumentFilePath(), true);
-			r.open();
-			String text = r.read();
-
-			while (text != null)
-	        {
-				ParagraphModel paragraph = new ParagraphModel("", textModel);
-				liveParagraphProcess(paragraph, text, stopWordsProcess, textStemmer);
-				textModel.add(paragraph);
-				textModel.setNbSentence(paragraph.getNbSentence()+textModel.getNbSentence());
-				text = r.read();
-	        }
-			//w.close();
-			//i++;
+		
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				
+				//BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getModel().getOutputPath() + "\\modelLDA\\temp" + i + ".txt")));
+	
+				Reader r = new Reader(textModel.getDocumentFilePath(), true);
+				r.open();
+				String text = r.read();
+	
+				while (text != null)
+		        {
+					ParagraphModel paragraph = new ParagraphModel("", textModel);
+					liveParagraphProcess(paragraph, text, stopWordsProcess, textStemmer);
+					textModel.add(paragraph);
+					textModel.setNbSentence(paragraph.getNbSentence()+textModel.getNbSentence());
+					text = r.read();
+		        }
+				//w.close();
+				//i++;
+			}
 		}
 	}
 	
 	private void normalProcess() throws Exception {
-		Iterator<TextModel> textIt = getModel().getDocumentModels().iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			if (textModel != null) {
-				loadText(textModel, limitSize);
+		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		while (corpusIt.hasNext()) {
+			Iterator<TextModel> textIt = corpusIt.next().iterator();
+			while (textIt.hasNext()) {
+				TextModel textModel = textIt.next();
+				if (textModel != null) {
+					loadText(textModel, limitSize);
+				}
 			}
 		}
 		

@@ -11,7 +11,7 @@ import model.task.process.scoringMethod.ScoreBasedOut;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.LDA.WordLDA;
 import tools.PairSentenceScore;
 import tools.vector.ToolsVector;
@@ -35,9 +35,9 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 	}
 	
 	@Override
-	public void init(AbstractProcess currentProcess, Dictionnary dictionnary, Map<Integer, String> hashMapWord)
+	public void init(AbstractProcess currentProcess, Index dictionnary)
 			throws Exception {
-		super.init(currentProcess, dictionnary, hashMapWord);
+		super.init(currentProcess, dictionnary);
 		
 		if (dictionnary.values().iterator().next().getClass() != WordLDA.class)
 			throw new Exception("Dictionnary need WordLDA !");
@@ -47,7 +47,7 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 	public void computeScores() throws Exception {
 		double[] averageVector = new double[K];
 		
-		int nbText = getCurrentProcess().getModel().getDocumentModels().size();
+		int nbText = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).size();
 		for (int i = 0; i<K;i++) {
 			for (int j=0;j<nbText;j++) {
 				averageVector[i]+=theta[j][i];
@@ -59,7 +59,7 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 		
 		//int i = 0; //Sentence variable
 		
-		Iterator<TextModel> textIt = getCurrentProcess().getModel().getDocumentModels().iterator();
+		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {			
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();

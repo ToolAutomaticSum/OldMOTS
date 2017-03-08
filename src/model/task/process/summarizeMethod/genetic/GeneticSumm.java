@@ -16,7 +16,7 @@ import optimize.SupportADNException;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 
 public class GeneticSumm extends AbstractSummarizeMethod {
@@ -56,7 +56,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	private GeneticIndividualScorer scorer;
 	private ArrayList<SentenceModel> ss = new ArrayList<SentenceModel>();
 	private int maxSummLength;
-	private String idClust;
+	//private String idClust;
 		
 	public GeneticSumm (int id) throws SupportADNException {
 		super(id);
@@ -107,18 +107,16 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		FileOutputStream fw = new FileOutputStream("./fitness_scores.txt", true);
 		OutputStreamWriter osr = new OutputStreamWriter (fw, "UTF-8");
 		//BufferedWriter output = new BufferedWriter(fw);
-		double mean = 0;
+		/*double mean = 0;
 		for (Double d : this.populationScore)
 		{
 			mean += d;
 		}
-		mean /= (double)this.populationScore.size();
+		mean /= (double)this.populationScore.size();*/
 		osr.write(df.format(this.generationsNb)+"\t"+this.bestSummaryScore+"\n");
 		osr.flush();
 		osr.close();
 		}catch(IOException ioe){ioe.printStackTrace();}
-		
-		
 		
 		return this.bestSummary.getGenes();
 	}
@@ -127,7 +125,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	{
 		for (int curr_indiv = 0; curr_indiv < this.populationNb ; curr_indiv++)
 		{
-			for (TextModel doc : getModel().getDocumentModels())
+			for (TextModel doc : getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()))
 				this.ss.addAll(doc.getSentence());
 			GeneticIndividual gi = new GeneticIndividual(this.ss, this.maxSummLength);
 			this.population.add(gi);
@@ -259,7 +257,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		for (int i = 0; i < this.mutationNumber; i++)
 		{
 			ss.clear();
-			for (TextModel doc : getModel().getDocumentModels())
+			for (TextModel doc : getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()))
 				this.ss.addAll(doc.getSentence());
 			mutationRandomNb = (int) (Math.random() * (this.maxMutatedGenes)) + 1;
 			randomI = (int) (Math.random() * pop.size());
@@ -268,14 +266,14 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	
 		return mutants;
 	}
-	
+
 	private ArrayList<GeneticIndividual> createRandom()
 	{
 		ArrayList<GeneticIndividual> randoms = new ArrayList<GeneticIndividual> ();
 		
 		for (int i = this.population.size(); i <= this.populationNb; i ++)
 		{
-			for (TextModel doc : getModel().getDocumentModels())
+			for (TextModel doc : getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()))
 				this.ss.addAll(doc.getSentence());
 			randoms.add(new GeneticIndividual (this.ss, this.maxSummLength));
 		}
@@ -300,7 +298,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		cl = Class.forName("model.task.process.summarizeMethod.genetic.geneticScorers." + geneticScorer);
 	    //Class types = new Class{Integer.class};
 	    @SuppressWarnings("rawtypes")
-		Constructor ct = cl.getConstructor(HashMap.class, Corpus.class, HashMap.class, InvertedIndex.class, Dictionnary.class, Double.class, Double.class, Double.class, Integer.class, Double.class);
+		Constructor ct = cl.getConstructor(HashMap.class, Corpus.class, InvertedIndex.class, Index.class, Double.class, Double.class, Double.class, Integer.class, Double.class);
 	    
 	    Double divWeight = null;
 	    Double delta = null;
@@ -333,7 +331,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	    	
 	    }
 	    
-	    Object o = ct.newInstance(null, getModel().getDocumentModels(), getCurrentProcess().getHashMapWord(), new InvertedIndex(getCurrentProcess().getDictionnary()), getCurrentProcess().getDictionnary(), divWeight, delta, firstSentenceConceptsFactor, window, fsc_factor);
+	    Object o = ct.newInstance(null, getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()), new InvertedIndex(getCurrentProcess().getDictionnary()), getCurrentProcess().getDictionnary(), divWeight, delta, firstSentenceConceptsFactor, window, fsc_factor);
 	    return (GeneticIndividualScorer) o;
 	}
 }

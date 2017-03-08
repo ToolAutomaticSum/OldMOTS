@@ -3,14 +3,14 @@ package textModeling.smoothings;
 import java.util.ArrayList;
 
 import textModeling.SentenceModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
 public abstract class Smoothing {
 
 	protected double vocab_card;
 	protected ArrayList<SentenceModel> sentences;
-	protected Dictionnary index;
+	protected Index index;
 	protected int summNbTokens;
 	
 	/**
@@ -18,7 +18,7 @@ public abstract class Smoothing {
 	 * @param sentences
 	 * @param vocab_card doesn't need to be set since the beginning, can be set afterwards, but before distribution computation
 	 */
-	public Smoothing (ArrayList<SentenceModel> sentences, int vocab_card, Dictionnary index)
+	public Smoothing (ArrayList<SentenceModel> sentences, int vocab_card, Index index)
 	{
 		this.index = index;
 		this.sentences = sentences;

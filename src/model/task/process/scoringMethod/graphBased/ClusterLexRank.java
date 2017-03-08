@@ -6,20 +6,20 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import model.task.process.AbstractProcess;
-import model.task.process.scoringMethod.Centroid;
+import model.task.process.scoringMethod.CentroidError;
 import model.task.process.scoringMethod.ScoreBasedOut;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
 import textModeling.cluster.ClusterCentroid;
 import textModeling.graphBased.GraphSentenceBased;
 import textModeling.graphBased.NodeGraphSentenceBased;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import tools.PairSentenceScore;
 import tools.Tools;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 import tools.vector.ToolsVector;
 
-public class ClusterLexRank extends Centroid implements ScoreBasedOut {
+public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 
 	static {
 		supportADN = new HashMap<String, Class<?>>();
@@ -61,9 +61,9 @@ public class ClusterLexRank extends Centroid implements ScoreBasedOut {
 	}
 	
 	@Override
-	public void init(AbstractProcess currentProcess, Dictionnary dictionnary, Map<Integer, String> hashMapWord)
+	public void init(AbstractProcess currentProcess, Index dictionnary)
 			throws Exception {
-		super.init(currentProcess, dictionnary, hashMapWord);
+		super.init(currentProcess, dictionnary);
 		
 		dumpingParameter = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.DumpingParameter.getName());
 		epsilon = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.Epsilon.getName());

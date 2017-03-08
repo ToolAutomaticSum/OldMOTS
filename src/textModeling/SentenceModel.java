@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 import textModeling.wordIndex.WordIndex;
 
@@ -113,7 +113,7 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 		this.score = score;
 	}
 
-	public ArrayList<NGram> getNGrams(int n, Dictionnary index) {
+	public ArrayList<NGram> getNGrams(int n, Index index) {
 		ArrayList <NGram> ngrams_list = new ArrayList<NGram> () ;
 		WordModel u;
 		

@@ -1,15 +1,13 @@
 package model.task.process.summarizeMethod.genetic.geneticScorers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import model.Model;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.WordIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
@@ -22,8 +20,8 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 	//private int nbWordsInIndividual;
 	//private int nbMaxWords;
 	
-	public JSUnigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, HashMap<Integer, String> hashMapWord, InvertedIndex invertedIndex, Dictionnary index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, null, invertedIndex, index, null, delta, null, null, null);
+	public JSUnigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, null, invertedIndex, index, null, delta, null, null, null);
 	}
 	
 	public void init() {

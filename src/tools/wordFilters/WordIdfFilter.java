@@ -1,15 +1,15 @@
 package tools.wordFilters;
 
 import textModeling.WordModel;
-import textModeling.wordIndex.Dictionnary;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class WordIdfFilter extends WordFilter {
 
 	private double threshold;
-	private Dictionnary dico;
+	private Index dico;
 	
-	public WordIdfFilter (Dictionnary dico, double absoluteThreshold)
+	public WordIdfFilter (Index dico, double absoluteThreshold)
 	{
 		this.threshold = absoluteThreshold;
 		this.dico = dico;
