@@ -21,14 +21,12 @@ import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.WordIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 import tools.PairSentenceScore;
-import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class Centroid extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 
 	protected double[] centroid;
 	protected int nbMaxWordInCentroid;
 	protected InvertedIndex invertIndex;
-	protected SentenceSimilarityMetric sim;
 	protected Map<SentenceModel, double[]> sentenceCaracteristic;
 	protected ArrayList<PairSentenceScore> sentencesScores;
 	
@@ -38,11 +36,8 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 	
 	private void init() throws Exception {
 		nbMaxWordInCentroid = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbMaxWordInCentroid"));
-		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 		invertIndex = new InvertedIndex(getCurrentProcess().getIndex());
-		
 	}
 
 	@Override
@@ -68,7 +63,7 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 							score += value;
 						}
 					}
-					sentenceModel.setScore(score); //Ajout du score à la phrase
+					sentenceModel.setScore(score); //Ajout du score ï¿½ la phrase
 					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 				}
 			}
