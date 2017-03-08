@@ -8,12 +8,12 @@ import tools.vector.ToolsVector;
 
 public class CosineSimilarity extends SentenceSimilarityMetric {
 
-	public CosineSimilarity(Map<SentenceModel, double[]> sentenceCaracteristic) {
-		super(sentenceCaracteristic);
+	public CosineSimilarity() {
+		super();
 	}
 
 	@Override
-	public double computeSimilarity(SentenceModel s1, SentenceModel s2) throws VectorDimensionException {
-		return ToolsVector.cosineSimilarity(sentenceCaracteristic.get(s1), sentenceCaracteristic.get(s2));
+	public double computeSimilarity(double[] s1, double[] s2) throws VectorDimensionException {
+		return ToolsVector.cosineSimilarity(s1, s2);
 	}
 }

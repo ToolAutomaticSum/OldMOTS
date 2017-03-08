@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +21,6 @@ import reader_writer.Writer;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
-import tools.sentenceSimilarity.SentenceSimilarityMetric;
 import tools.vector.ToolsVector;
 
 public class Tools {
@@ -257,16 +255,6 @@ public class Tools {
 	    }
 
 	    return in.getSuperclass();
-	}
-	
-	public static SentenceSimilarityMetric instanciateSentenceSimilarity(String similarityMethod, Map<SentenceModel, double[]> sentenceCaracteristic) throws Exception {
-		Class<?> cl;
-		cl = Class.forName("tools.sentenceSimilarity." + similarityMethod);
-	    //Class types = new Class{Integer.class};
-	    @SuppressWarnings("rawtypes")
-		Constructor ct = cl.getConstructor(Map.class);
-	    Object o = ct.newInstance(sentenceCaracteristic);
-	    return (SentenceSimilarityMetric) o;
 	}
 	
 	/**

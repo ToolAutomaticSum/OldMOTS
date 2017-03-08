@@ -8,12 +8,8 @@ import java.util.Map.Entry;
 
 import model.task.process.VectorCaracteristicBasedIn;
 import optimize.SupportADNException;
-
-import java.util.TreeSet;
-
 import textModeling.SentenceModel;
 import tools.PairSentenceScore;
-import tools.Tools;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicBasedIn, ScoreBasedIn/*, VectorQueryBasedIn*/ {
@@ -29,7 +25,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 	private ArrayList <SentenceModel> summary;
 	private int actualSummaryLength;
 	
-	private TreeSet<PairSentenceScore> sentencesScores;
+	private ArrayList<PairSentenceScore> sentencesScores;
 	private Map<SentenceModel,double[]> sentenceCaracteristic;
 	
 	private HashMap<SentenceModel, Double> sentencesBaseScores;
@@ -46,7 +42,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = Tools.instanciateSentenceSimilarity(similarityMethod, sentenceCaracteristic);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 		
 		if (nbCharSizeOrNbSentenceSize)
 			this.maxSummLength = size;
@@ -174,7 +170,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		for (SentenceModel p1 : this.summary)
 		{
 			double valSim;
-			if ( (valSim = sim.computeSimilarity(p1, p)) >= maxSim)
+			if ( (valSim = sim.computeSimilarity(sentenceCaracteristic.get(p1), sentenceCaracteristic.get(p))) >= maxSim)
 			{
 				maxSim = valSim;
 			}
@@ -187,7 +183,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 	}
 
 	@Override
-	public void setScore(TreeSet<PairSentenceScore> score) {
+	public void setScore(ArrayList<PairSentenceScore> score) {
 		sentencesScores = score;
 	}
 

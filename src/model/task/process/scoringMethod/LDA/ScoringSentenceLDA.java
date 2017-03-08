@@ -1,9 +1,9 @@
 package model.task.process.scoringMethod.LDA;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 import model.task.process.AbstractProcess;
 import model.task.process.scoringMethod.AbstractScoringMethod;
@@ -28,7 +28,7 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 	protected double[][] theta; //Document/Topic score
 	protected int nbSentence;
 	
-	protected TreeSet<PairSentenceScore> sentencesScores;
+	protected ArrayList<PairSentenceScore> sentencesScores;
 
 	public ScoringSentenceLDA(int id) throws Exception {
 		super(id);
@@ -55,7 +55,7 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 			averageVector[i]/=nbText;
 		}
 		
-		sentencesScores = new TreeSet<PairSentenceScore>();
+		sentencesScores = new ArrayList<PairSentenceScore>();
 		
 		//int i = 0; //Sentence variable
 		
@@ -78,7 +78,7 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 	}
 
 	@Override
-	public TreeSet<PairSentenceScore> getScore() {
+	public ArrayList<PairSentenceScore> getScore() {
 		return sentencesScores;
 	}
 

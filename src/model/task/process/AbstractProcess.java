@@ -1,12 +1,9 @@
 package model.task.process;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import model.Model;
 import model.task.AbstractTaskModel;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.process.ILP.BiGramListBasedOut;
@@ -31,8 +28,7 @@ import tools.Tools;
 public abstract class AbstractProcess extends Optimize implements AbstractTaskModel {
 
 	protected Integer summarizeCorpusId;
-	protected Model model;
-	protected Index index = new Index();
+	protected Index index;
 	
 	protected AbstractSummarizeMethod sentenceSelection;
 	protected AbstractScoringMethod scoringMethod;
@@ -48,6 +44,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	
 	@Override
 	public void init() throws Exception {
+		index = new Index();
 		summarizeCorpusId = Integer.parseInt(getModel().getProcessOption(id, "CorpusIdToSummarize"));
 	}
 	
@@ -142,13 +139,6 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		allSentenceList.clear();
 	}
 	
-	/*public List<AbstractPreProcess> getPreProcess() {
-		return preProcess;
-	}
-	public void setPreProcess(List<AbstractPreProcess> preProcess) {
-		this.preProcess = preProcess;
-	}*/
-	
 	public List<AbstractPostProcess> getPostProcess() {
 		return postProcess;
 	}
@@ -216,17 +206,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			return score;
 	}
 	
-	@Override
-	public Model getModel() {
-		return model;
-	}
-
-	@Override
-	public void setModel(Model model) {
-		this.model = model;
-	}
-
-	public Index getDictionnary() {
+	public Index getIndex() {
 		return index;
 	}
 

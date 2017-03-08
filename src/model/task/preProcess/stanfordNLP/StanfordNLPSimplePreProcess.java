@@ -55,7 +55,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess{
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {
 				TextModel textModel = textIt.next();
-				System.out.println(textModel.getDocumentFilePath());
+				//System.out.println(textModel.getDocumentFilePath());
 				Iterator<ParagraphModel> parIt = textModel.iterator();
 				while (parIt.hasNext()) {
 					ParagraphModel parModel = parIt.next();

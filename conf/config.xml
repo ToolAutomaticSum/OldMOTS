@@ -32,24 +32,6 @@
 				<SUMMARY ID="0">D0801-A.M.100.A.E</SUMMARY>
 				<SUMMARY ID="0">D0801-A.M.100.A.G</SUMMARY>
 			</CORPUS>
-			<CORPUS ID="1">
-				<INPUT_PATH>G:\Thèse\TAL\Corpus\TAC2008_Update_Summarization_Documents\UpdateSumm08_test_docs_files\D0802A\D0802A-A</INPUT_PATH>
-				<DOCUMENT ID="0">ALL</DOCUMENT>
-				<SUMMARY_PATH>G:\Thèse\TAL\Corpus\TAC2008_Update_Summarization_Documents\UpdateSumm08_eval\ROUGE\models</SUMMARY_PATH>
-				<SUMMARY ID="0">D0802-A.M.100.A.A</SUMMARY>
-				<SUMMARY ID="0">D0802-A.M.100.A.C</SUMMARY>
-				<SUMMARY ID="0">D0802-A.M.100.A.E</SUMMARY>
-				<SUMMARY ID="0">D0802-A.M.100.A.H</SUMMARY>
-			</CORPUS>
-			<CORPUS ID="2">
-				<INPUT_PATH>G:\Thèse\TAL\Corpus\TAC2008_Update_Summarization_Documents\UpdateSumm08_test_docs_files\D0803A\D0803A-A</INPUT_PATH>
-				<DOCUMENT ID="0">ALL</DOCUMENT>
-				<SUMMARY_PATH>G:\Thèse\TAL\Corpus\TAC2008_Update_Summarization_Documents\UpdateSumm08_eval\ROUGE\models</SUMMARY_PATH>
-				<SUMMARY ID="0">D0803-A.M.100.A.A</SUMMARY>
-				<SUMMARY ID="0">D0803-A.M.100.A.B</SUMMARY>
-				<SUMMARY ID="0">D0803-A.M.100.A.D</SUMMARY>
-				<SUMMARY ID="0">D0803-A.M.100.A.F</SUMMARY>
-			</CORPUS>
 		</MULTICORPUS>
 		<PREPROCESS NAME="GenerateTextModel">
 			<OPTION NAME="StanfordNLP">true</OPTION>
@@ -59,21 +41,18 @@
 		<PREPROCESS NAME="StopWordsRemover">
 			<OPTION NAME="StopWordListPath">doc\StopWords</OPTION>
 		</PREPROCESS>
-		<!--PREPROCESS NAME="TextStemming"></PREPROCESS-->
 		<PROCESS NAME="TF_IDF.TF_IDF">
 			<OPTION NAME="CorpusIdToSummarize">0</OPTION>
 			<OPTION NAME="LoadModel">false</OPTION>
-			<!--OPTION NAME="PathModel">doc/TF_IDF/TF_IDF_Model.txt</OPTION-->
-			<SUMMARIZE_METHOD NAME="genetic.GeneticSumm">
-				<OPTION NAME="ParentsNumber">100</OPTION>
-				<OPTION NAME="HybridationNumber">100</OPTION>
-				<OPTION NAME="MutationNumber">100</OPTION>
-				<OPTION NAME="RandomNumber">100</OPTION>
-				<OPTION NAME="MaxSummLenght">100</OPTION>
-				<OPTION NAME="GenerationsNb">100</OPTION>
-				<OPTION NAME="MaxMutatedGenes">100</OPTION>
-				<OPTION NAME="GeneticScorerMethod">CosDivScorer</OPTION>
-				<OPTION NAME="DivWeight">0.3</OPTION>
+			<SCORING_METHOD NAME="TF_IDF.Centroid">
+				<OPTION NAME="NbMaxWordInCentroid">20</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+			</SCORING_METHOD>
+			<SUMMARIZE_METHOD NAME="MMR">
+				<OPTION NAME="CharLimitBoolean">true</OPTION>
+				<OPTION NAME="Size">250</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>

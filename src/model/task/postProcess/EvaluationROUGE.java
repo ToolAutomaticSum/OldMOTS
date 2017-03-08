@@ -78,6 +78,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	public void process() throws IOException {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
+				@SuppressWarnings("unused")
 				Process proc = Runtime.getRuntime().exec(
 			        "perl " + rougePath + "/ROUGE-1.5.5.pl" + 
 			        "-e " + rougePath + "/data" +

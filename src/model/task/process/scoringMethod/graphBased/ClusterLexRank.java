@@ -1,9 +1,9 @@
 package model.task.process.scoringMethod.graphBased;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 import model.task.process.AbstractProcess;
 import model.task.process.scoringMethod.CentroidError;
@@ -15,7 +15,6 @@ import textModeling.graphBased.GraphSentenceBased;
 import textModeling.graphBased.NodeGraphSentenceBased;
 import textModeling.wordIndex.Index;
 import tools.PairSentenceScore;
-import tools.Tools;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 import tools.vector.ToolsVector;
 
@@ -44,7 +43,7 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 		}
 	}
 	
-	private TreeSet<PairSentenceScore> sentencesScores;
+	private ArrayList<PairSentenceScore> sentencesScores;
 	private double dumpingParameter;
 	private double epsilon;
 	
@@ -73,7 +72,7 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		SentenceSimilarityMetric sim = Tools.instanciateSentenceSimilarity(similarityMethod, sentenceCaracteristic);
+		SentenceSimilarityMetric sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 		
 		/** Création de la liste des graphes associés à chaque cluster de listCluster */
 		listGraph = new HashMap<Integer, GraphSentenceBased>();
@@ -83,7 +82,7 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 			ClusterCentroid cluster = itCluster.next();
 			if (cluster.size() > 1) {
 				//System.out.println(cluster);
-				GraphSentenceBased graph = new GraphSentenceBased(graphThreshold, sim);
+				GraphSentenceBased graph = new GraphSentenceBased(graphThreshold, sentenceCaracteristic, sim);
 				listGraph.put(cluster.getId(), graph);
 				
 				int sentenceId = 0;
@@ -102,7 +101,7 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 
 	@Override
 	public void computeScores() throws Exception {
-		sentencesScores = new TreeSet<PairSentenceScore>(); 
+		sentencesScores = new ArrayList<PairSentenceScore>(); 
 		
 		for (int i = 0; i<listCluster.size();i++) {
 			GraphSentenceBased graph = listGraph.get(i);
@@ -147,7 +146,7 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 	}
 
 	@Override
-	public TreeSet<PairSentenceScore> getScore() {
+	public ArrayList<PairSentenceScore> getScore() {
 		return sentencesScores;
 	}
 }

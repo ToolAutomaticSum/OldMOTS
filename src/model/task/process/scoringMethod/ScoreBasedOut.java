@@ -1,10 +1,10 @@
 package model.task.process.scoringMethod;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import tools.PairSentenceScore;
 
 public interface ScoreBasedOut {
 
-	public TreeSet<PairSentenceScore> getScore();
+	public ArrayList<PairSentenceScore> getScore();
 }

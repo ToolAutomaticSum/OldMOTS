@@ -3,7 +3,6 @@ package model.task.process.summarizeMethod;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 import optimize.SupportADNException;
 import textModeling.SentenceModel;
@@ -11,7 +10,7 @@ import tools.PairSentenceScore;
 
 public class BestIsBetter extends AbstractSummarizeMethod implements ScoreBasedIn {
 
-	private TreeSet<PairSentenceScore> sentenceScore;
+	private ArrayList<PairSentenceScore> sentenceScore;
 	private boolean nbCharSizeOrNbSentenceSize;
 	private int maxSummLength;
 	private int nbSentenceInSummary;
@@ -61,7 +60,7 @@ public class BestIsBetter extends AbstractSummarizeMethod implements ScoreBasedI
 	}
 
 	@Override
-	public void setScore(TreeSet<PairSentenceScore> score) {
+	public void setScore(ArrayList<PairSentenceScore> score) {
 		this.sentenceScore = score;
 	}
 }

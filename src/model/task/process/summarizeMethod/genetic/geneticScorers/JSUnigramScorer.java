@@ -45,7 +45,7 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 		int current_occ;
 		this.sourceDistribution = new TreeMap <Integer, Double> ();
 		this.sourceOccurences = new TreeMap <Integer, Integer> ();
-		for ( WordIndex indexKey : invertedIndex.getClustWordIndex().get(0))
+		for ( WordIndex indexKey : invertedIndex.getCorpusWordIndex().get(cd.getiD()))
 		{
 			current_cti = (WordTF_IDF) indexKey;
 			current_idf = current_cti.getIdf();

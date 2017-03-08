@@ -25,7 +25,7 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		 * Finds maxIdf in index for this cluster (for future normalization)
 		 */
 		this.maxIdf = 0;
-		ArrayList<WordIndex> indexKeys = this.invertedIndex.getClustWordIndex().get(0);
+		ArrayList<WordIndex> indexKeys = this.invertedIndex.getCorpusWordIndex().get(cd.getiD());
 		for (WordIndex key : indexKeys)
 		{
 			WordTF_IDF w = (WordTF_IDF)(key);

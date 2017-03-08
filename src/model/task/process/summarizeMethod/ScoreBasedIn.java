@@ -1,10 +1,10 @@
 package model.task.process.summarizeMethod;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import tools.PairSentenceScore;
 
 public interface ScoreBasedIn {
 
-	public void setScore(TreeSet<PairSentenceScore> score);
+	public void setScore(ArrayList<PairSentenceScore> score);
 }

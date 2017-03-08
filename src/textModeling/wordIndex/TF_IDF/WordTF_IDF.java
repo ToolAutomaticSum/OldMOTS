@@ -52,7 +52,7 @@ public class WordTF_IDF extends WordIndex {
 	}
 	
 	public double getTfDocument(int idDoc) {
-		return (double)corpusOccurences.get(idDoc);
+		return (double)docOccurences.get(idDoc);
 	}
 	
 	public double getTfCorpus(int idCorpus) {
@@ -63,7 +63,7 @@ public class WordTF_IDF extends WordIndex {
 		return (double)size();
 	}
 	
-	public HashMap<Integer, Integer> getOccurence() {
-		return docOccurences;
+	public HashMap<Integer, Integer> getCorpusOccurence() {
+		return corpusOccurences;
 	}
 }

@@ -104,4 +104,8 @@ public class TextModel extends ArrayList<ParagraphModel> {
 	public int getTextID() {
 		return textID;
 	}
+
+	public Corpus getParentCorpus() {
+		return parentCorpus;
+	}
 }

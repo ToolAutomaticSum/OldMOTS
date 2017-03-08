@@ -43,7 +43,6 @@ public class PairSentenceScore implements Comparable <PairSentenceScore>{
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return score + "\t" + phrase.toString() + "\n";
 	}
 }

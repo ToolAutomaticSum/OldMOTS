@@ -331,7 +331,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	    	
 	    }
 	    
-	    Object o = ct.newInstance(null, getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()), new InvertedIndex(getCurrentProcess().getDictionnary()), getCurrentProcess().getDictionnary(), divWeight, delta, firstSentenceConceptsFactor, window, fsc_factor);
+	    Object o = ct.newInstance(null, getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()), new InvertedIndex(getCurrentProcess().getIndex()), getCurrentProcess().getIndex(), divWeight, delta, firstSentenceConceptsFactor, window, fsc_factor);
 	    return (GeneticIndividualScorer) o;
 	}
 }

@@ -1,8 +1,9 @@
 package model.task.process.scoringMethod.TF_IDF;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 import model.task.process.AbstractProcess;
 import model.task.process.VectorCaracteristicBasedIn;
@@ -20,7 +21,7 @@ import tools.PairSentenceScore;
 public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 
 	protected Map<SentenceModel, double[]> sentenceCaracteristic;
-	protected TreeSet<PairSentenceScore> sentencesScores;
+	protected ArrayList<PairSentenceScore> sentencesScores;
 	protected double cosineThreshold;
 	
 	public ScoringSentenceTF_IDF(int id) throws SupportADNException {
@@ -35,7 +36,7 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 	
 	@Override
 	public void computeScores() throws Exception {		
-		sentencesScores = new TreeSet<PairSentenceScore>();
+		sentencesScores = new ArrayList<PairSentenceScore>();
 		
 		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {			
@@ -50,7 +51,7 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						double temp = sentenceCaracteristic.get(sentenceModel)[dictionnary.get(word.getmLemma()).getId()];
+						double temp = sentenceCaracteristic.get(sentenceModel)[index.get(word.getmLemma()).getId()];
 						if (temp  > cosineThreshold)
 							score+= temp;
 					}
@@ -59,11 +60,12 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 				}
 			}
 		}
+		Collections.sort(sentencesScores);
 		System.out.println(sentencesScores);
 	}
-
+	
 	@Override
-	public TreeSet<PairSentenceScore> getScore() {
+	public ArrayList<PairSentenceScore> getScore() {
 		return sentencesScores;
 	}
 

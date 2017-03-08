@@ -1,7 +1,5 @@
 package model.task.process.scoringMethod;
 
-import java.util.Map;
-
 import model.task.process.AbstractProcess;
 import optimize.Individu;
 import optimize.SupportADNException;
@@ -11,7 +9,7 @@ public abstract class AbstractScoringMethod extends Individu {
 
 	protected AbstractProcess currentProcess;
 	
-	protected Index dictionnary;
+	protected Index index;
 	
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
@@ -19,7 +17,7 @@ public abstract class AbstractScoringMethod extends Individu {
 
 	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
 		this.currentProcess = currentProcess;
-		this.dictionnary = dictionnary;
+		this.index = dictionnary;
 		
 		if (dictionnary.isEmpty())
 			throw new Exception("Dictionnary is empty !");
@@ -48,10 +46,10 @@ public abstract class AbstractScoringMethod extends Individu {
 	}*/
 
 	public Index getIndex() {
-		return dictionnary;
+		return index;
 	}
 
 	public void setIndex(Index dictionnary) {
-		this.dictionnary = dictionnary;
+		this.index = dictionnary;
 	}
 }

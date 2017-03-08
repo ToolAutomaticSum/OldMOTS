@@ -72,7 +72,6 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 	
 	private void buildWeightsAndSentences()
 	{
-		int wordId = 0;
 		this.bigram_weights = new ArrayList<Double> ();
 		this.bigrams_in_sentence = new ArrayList<ArrayList<Integer> > ();
 		this.bigrams = new ArrayList<NGram> ();
@@ -96,7 +95,6 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 						if (!index.containsKey(w.getmLemma()))
 							index.put(w.getmLemma(), new WordIndex(w.getmLemma(), index));
 						index.get(w.getmLemma()).add(w);
-						wordId++;
 					}
 					//On construit le set des bigrams dans la phrase
 					ArrayList <Integer> sentence_bigrams = new ArrayList <Integer> ();

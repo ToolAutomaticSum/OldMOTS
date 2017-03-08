@@ -67,7 +67,6 @@ public class CommandView extends AbstractView {
 			        NodeList multiCorpusList = task.getElementsByTagName("MULTICORPUS");
 			        for (int l = 0; l<multiCorpusList.getLength(); l++) {
 			        	if(multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {
-			        		Element multiCorpus = (Element) multiCorpusList.item(l);
 			        		getCtrl().notifyMultiCorpusChanged();
 			        		
 					        NodeList corpusList = task.getElementsByTagName("CORPUS");

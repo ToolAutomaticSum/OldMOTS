@@ -21,7 +21,7 @@ public class CosineScorer extends GeneticIndividualScorer{
 
 	@Override
 	public double computeScore(GeneticIndividual gi) {	
-		ArrayList<WordIndex> listWordIndex = invertedIndex.getClustWordIndex().get(0);
+		ArrayList<WordIndex> listWordIndex = invertedIndex.getCorpusWordIndex().get(cd.getiD());
 		ArrayList<WordIndex> giIndexKeys = new ArrayList<WordIndex> ();
 		HashMap<Integer, Double> giFrequencies = new HashMap<Integer, Double> ();
 		this.computeGiIndexKeysAndFrequencies (giIndexKeys, giFrequencies, gi);

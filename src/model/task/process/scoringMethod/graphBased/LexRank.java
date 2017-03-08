@@ -1,9 +1,9 @@
 package model.task.process.scoringMethod.graphBased;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 import exception.LacksOfFeatures;
 import model.task.process.AbstractProcess;
@@ -19,7 +19,6 @@ import textModeling.graphBased.GraphSentenceBased;
 import textModeling.graphBased.NodeGraphSentenceBased;
 import textModeling.wordIndex.Index;
 import tools.PairSentenceScore;
-import tools.Tools;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class LexRank extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
@@ -49,7 +48,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 	
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
 	
-	private TreeSet<PairSentenceScore> sentencesScores;
+	private ArrayList<PairSentenceScore> sentencesScores;
 	private double dumpingParameter = 0.85;
 	private double epsilon = 0.01;
 	
@@ -76,9 +75,9 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		SentenceSimilarityMetric sim = Tools.instanciateSentenceSimilarity(similarityMethod, sentenceCaracteristic);
+		SentenceSimilarityMetric sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 
-		graph = new GraphSentenceBased(graphThreshold, sim);
+		graph = new GraphSentenceBased(graphThreshold, sentenceCaracteristic, sim);
 		
 		int sentenceId = 0;
 		Iterator<SentenceModel> itSentence = sentenceCaracteristic.keySet().iterator();
@@ -93,7 +92,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 	
 	@Override
 	public void computeScores() throws Exception {
-		sentencesScores = new TreeSet<PairSentenceScore>(); 
+		sentencesScores = new ArrayList<PairSentenceScore>(); 
 		
 		 if (graph != null) {
 			 double[][] tempMat = new double[graph.size()][graph.size()];
@@ -117,7 +116,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 	}
 
 	@Override
-	public TreeSet<PairSentenceScore> getScore() {
+	public ArrayList<PairSentenceScore> getScore() {
 		return sentencesScores;
 	}
 
