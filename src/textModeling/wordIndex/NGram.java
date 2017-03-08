@@ -37,7 +37,7 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 			return -1;
 		for ( int i = 0; i < this.size(); i ++ )
 		{
-			if ( ! ngram.get(i).equals (this.get(i)))
+			if (!ngram.get(i).equals (this.get(i)))
 				return this.get(i).getId().compareTo(ngram.get(i).getId());
 		}
 		return 0;

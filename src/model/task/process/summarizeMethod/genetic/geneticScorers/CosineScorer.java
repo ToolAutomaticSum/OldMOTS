@@ -15,7 +15,7 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 public class CosineScorer extends GeneticIndividualScorer{
 
 	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, invertedIndex, dictionnary, null, null, null, null, null);
+		super(null, corpus, invertedIndex, dictionnary, null, null, null, null, null);
 	}
 
 
@@ -89,13 +89,13 @@ public class CosineScorer extends GeneticIndividualScorer{
 			}
 			if (sumClust == 0 || sumGi == 0)
 			{
-				System.out.println("Problème : giIndexKeys size="+giIndexKeys.size()+" | giFrequencies size="+giFrequencies.size()+
-						" | sumGi="+sumGi+" | clustIndexKeys = "+clustIndexKeys.size());
-				//System.out.println("***************** Début Phrases ****************");
+				System.out.println("Problï¿½me : giIndexKeys size="+giIndexKeys.size()+" | giFrequencies size="+giFrequencies.size()+
+						" |ï¿½sumGi="+sumGi+" | clustIndexKeys = "+clustIndexKeys.size());
+				//System.out.println("***************** Dï¿½but Phrases ****************");
 				for (WordIndex i : giIndexKeys)
 				{
 					cti = (WordTF_IDF) i;
-					System.out.print (i+ " | "+cti.getIdf()+" | "+giFrequencies.get(i)+" ** ");
+					System.out.print (i+ "ï¿½|ï¿½"+cti.getIdf()+" | "+giFrequencies.get(i)+" ** ");
 					
 				}
 				//System.out.println("\n****************** Fin Phrases *****************");

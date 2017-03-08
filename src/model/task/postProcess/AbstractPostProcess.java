@@ -20,7 +20,7 @@ public abstract class AbstractPostProcess extends Individu implements AbstractTa
 	}
 	
 	@Override
-	public abstract void finish();
+	public abstract void finish() throws Exception;
 
 	public AbstractProcess getCurrentProcess() {
 		return currentProcess;

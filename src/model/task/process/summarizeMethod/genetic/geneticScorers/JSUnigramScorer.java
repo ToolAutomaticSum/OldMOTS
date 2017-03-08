@@ -21,7 +21,7 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 	//private int nbMaxWords;
 	
 	public JSUnigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, invertedIndex, index, null, delta, null, null, null);
+		super(null, corpus, invertedIndex, index, null, delta, null, null, null);
 	}
 	
 	public void init() {

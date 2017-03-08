@@ -39,7 +39,6 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	
 	public void computeNGrams_in_sentences()
 	{
-		init();
 		this.ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
 		
 		for (TextModel doc : this.cd)
@@ -174,6 +173,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	
 	@Override
 	public double computeScore(GeneticIndividual gi) {
+		init();
 		TreeMap<NGram, Double> summDistrib = new TreeMap <NGram, Double > ();
 		//this.computeIndividualDistribution(gi, summDistrib);
 		

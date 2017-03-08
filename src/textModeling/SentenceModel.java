@@ -148,8 +148,8 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 				if (!u.isStopWord())
 				{	
 					cond = true;
+					ng.addGram(index.get(u.getmLemma()));
 				}
-				ng.addGram(index.get(u.getmLemma()));
 			}
 			if (cond)
 				ngrams_list.add(ng);

@@ -179,7 +179,7 @@ public class Controller {
     
     public void notifyRougeMeasureChanged(String rougeMeasure) {
     	List<String> listRougeMeasure = new ArrayList<String>();
-    	for (String s : rougeMeasure.split("\n")) {
+    	for (String s : rougeMeasure.split("\t")) {
     		listRougeMeasure.add(s);
 		}
     	evalRouge.setRougeMeasure(listRougeMeasure);

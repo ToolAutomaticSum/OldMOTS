@@ -19,7 +19,7 @@ import textModeling.wordIndex.NGram;
 public class SimpleNGramDiversity extends GeneticIndividualScorer{
 	
 	public SimpleNGramDiversity(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, null, index, null, null, null, window, null);
+		super(null, corpus, null, index, null, null, null, window, null);
 	}
 	
 	@Override

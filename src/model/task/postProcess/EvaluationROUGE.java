@@ -1,9 +1,13 @@
 package model.task.postProcess;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,8 +41,8 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	}
 
 	/**
-	 * Ecrit le fichier system.xml nécessaire au fonction de ROUGE
-	 * ainsi que les différents résumé sous forme de html.
+	 * Ecrit le fichier system.xml nï¿½cessaire au fonction de ROUGE
+	 * ainsi que les diffï¿½rents rï¿½sumï¿½ sous forme de html.
 	 * @throws TransformerException 
 	 * @throws ParserConfigurationException 
 	 */
@@ -52,10 +56,10 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	}
     	
     	boolean modelWrite = false;
-    	// boucle sur les process (1 résumé par process par execution)
+    	// boucle sur les process (1 rï¿½sumï¿½ par process par execution)
 		for (int i = 0; i<getModel().getProcess().size(); i++) {
 			if (getModel().getProcess().get(i).getSummary() != null) {
-				// boucle sur les multiCorpus, 1 exécution de process par multicorpus
+				// boucle sur les multiCorpus, 1 exï¿½cution de process par multicorpus
 				for (int j = 0; j<getModel().getMultiCorpusModels().size();j++) {
 					writeHtmlGeneratedSummary(i, j);
 					if (!modelWrite)
@@ -72,27 +76,30 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	public void process() throws IOException {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
-				@SuppressWarnings("unused")
-				Process proc = Runtime.getRuntime().exec(
-			        "perl " + rougePath + "/ROUGE-1.5.5.pl" + 
-			        "-e " + rougePath + "/data" +
-			        "-c 95 -2 -1 -U -r 1000 -n 4 -w 1.2 -a" +
-			        getModel().getOutputPath() + "/settings" + i + ".xml > " + getModel().getOutputPath() + "test" + i + ".txt");
+				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
+						" -e " + rougePath + File.separator + "data -n 4 -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
+				        getModel().getOutputPath() + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
+				System.out.println(cmd);
+
+				Process proc = Runtime.getRuntime().exec(cmd);
+			    inheritIO(proc.getInputStream(), new PrintStream(new FileOutputStream(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", false)));
+			    inheritIO(proc.getErrorStream(), System.err);
 			}
 		}
 	}
 
 	@Override
-	public void finish() {
+	public void finish() throws Exception {
+		Thread.sleep(1000);
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
-				Reader r = new Reader(getModel().getOutputPath() + "test" + i + ".txt", true);
+				Reader r = new Reader(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", true);
 				r.open();
 				String t = r.read();
 				while (t != null) {
 					String[] result = t.split(" ");
 					if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_F:")) {
-						currentProcess.setScore(Double.parseDouble(result[3]));
+						getModel().getProcess().get(i).setScore(Double.parseDouble(result[3]));
 						System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
 					}
 					t = r.read();
@@ -147,17 +154,17 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    rootNode.setAttribute("version", "1.55");
 	    document.appendChild(rootNode);
 	    
-	    for (int i = 0; i<getModel().getCurrentMultiCorpus().size(); i++) {
+	    for (int i = 0; i<getModel().getMultiCorpusModels().size(); i++) {
 	    	Element process = document.createElement("EVAL");
 	    	process.setAttribute("ID", "CORPUS_" + i);
 	    	//process.appendChild(document.createTextNode(getModel().getProcess().get(i).getClass().toString()));
 	    	
 	    	Element modelRoot = document.createElement("MODEL-ROOT");
-	    	modelRoot.appendChild(document.createTextNode(/*getModel().getOutputPath() + File.separator +*/ "/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/Output/" + modelRoot));
+	    	modelRoot.appendChild(document.createTextNode(getModel().getOutputPath() + File.separator + this.modelRoot));
 	    	process.appendChild(modelRoot);
 	    	
 	    	Element peerRoot = document.createElement("PEER-ROOT");
-	    	peerRoot.appendChild(document.createTextNode(/*getModel().getOutputPath() + File.separator +*/ "/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/Output/" + peerRoot));
+	    	peerRoot.appendChild(document.createTextNode(getModel().getOutputPath() + File.separator + this.peerRoot));
 	    	process.appendChild(peerRoot);
 	    	
 	    	Element inputFormat = document.createElement("INPUT-FORMAT");
@@ -205,8 +212,19 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    	transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 	    	
 	    	transformer.transform(source, sortie);	
-
 	}
+	
+	private static void inheritIO(final InputStream src, final PrintStream dest) {
+    new Thread(new Runnable() {
+        public void run() {
+            Scanner sc = new Scanner(src);
+            while (sc.hasNextLine()) {
+                dest.println(sc.nextLine());
+            }
+            sc.close();
+        }
+    }).start();
+}
 
 	public String getRougePath() {
 		return rougePath;
