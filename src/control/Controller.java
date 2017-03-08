@@ -8,10 +8,12 @@ import java.util.Map;
 
 import model.Model;
 import model.task.postProcess.AbstractPostProcess;
+import model.task.postProcess.EvaluationROUGE;
 import model.task.preProcess.AbstractPreProcess;
 import model.task.process.AbstractProcess;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.summarizeMethod.AbstractSummarizeMethod;
+import optimize.SupportADNException;
 import textModeling.Corpus;
 import textModeling.MultiCorpus;
 import view.AbstractView;
@@ -31,6 +33,7 @@ public class Controller {
 	protected String processName;
 	protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
 	protected List<String> postProcess = new ArrayList<String>();
+	protected EvaluationROUGE evalRouge;
 	protected MultiCorpus currentMultiCorpus;
 	/*protected boolean bRougeEvaluation = false;
     protected String modelRoot;
@@ -165,16 +168,33 @@ public class Controller {
     	getModel().getProcessByID(getModel().getProcessIDs().get(processName)).getPostProcess().add((AbstractPostProcess) o);
     }
     
-    public void notifyRougeEvaluationChanged(boolean bRougeEvaluation) {
+    public void notifyRougeEvaluationChanged(boolean bRougeEvaluation) throws SupportADNException {
+    	if(bRougeEvaluation)
+    		evalRouge = new EvaluationROUGE(incrementProcessID());
+    	else
+    		evalRouge = null;
+    	getModel().setEvalRouge(evalRouge);
     	getModel().setbRougeEvaluation(bRougeEvaluation);
     }
     
+    public void notifyRougeMeasureChanged(String rougeMeasure) {
+    	List<String> listRougeMeasure = new ArrayList<String>();
+    	for (String s : rougeMeasure.split("\n")) {
+    		listRougeMeasure.add(s);
+		}
+    	evalRouge.setRougeMeasure(listRougeMeasure);
+    }
+    
+    public void notifyRougePathChanged(String rougePath) {
+    	evalRouge.setRougePath(rougePath);
+    }
+    
     public void notifyModelRootChanged(String modelRoot) {
-    	getModel().setModelRoot(modelRoot);
+    	evalRouge.setModelRoot(modelRoot);
     }
     
     public void notifyPeerRootChanged(String peerRoot) {
-    	getModel().setPeerRoot(peerRoot);
+    	evalRouge.setPeerRoot(peerRoot);
     }
     
 	public String getLanguage() {

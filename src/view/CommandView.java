@@ -145,6 +145,8 @@ public class CommandView extends AbstractView {
 		        	if (rougeList.getLength() > 0) {
 		        		getCtrl().notifyRougeEvaluationChanged(true);
 			        	Element rouge = (Element) rougeList.item(0);
+			        	getCtrl().notifyRougeMeasureChanged(rouge.getElementsByTagName("ROUGE-MEASURE").item(0).getTextContent());
+			        	getCtrl().notifyRougePathChanged(rouge.getElementsByTagName("ROUGE-PATH").item(0).getTextContent());
 			        	getCtrl().notifyModelRootChanged(rouge.getElementsByTagName("MODEL-ROOT").item(0).getTextContent());
 			        	getCtrl().notifyPeerRootChanged(rouge.getElementsByTagName("PEER-ROOT").item(0).getTextContent());
 			        }

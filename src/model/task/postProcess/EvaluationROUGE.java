@@ -29,6 +29,8 @@ public class EvaluationROUGE extends AbstractPostProcess {
 
 	private String rougePath = "";
 	private List<String> rougeMeasure = new ArrayList<String>();
+	protected String modelRoot;
+	protected String peerRoot;
 	
 	public EvaluationROUGE(int id) throws SupportADNException {
 		super(id);
@@ -42,15 +44,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	 */
 	@Override
 	public void init() throws LacksOfFeatures, ParserConfigurationException, TransformerException {
-
-		if (OSDetector.isUnix()) {
-			rougePath = getModel().getProcessOption(id, "RougePath");
-			for (String s : getModel().getProcessOption(id, "RougePath").split("\n")) {
-				rougeMeasure.add(s);
-			}
-		}
-		
-		File f = new File(getModel().getOutputPath() + File.separator + getModel().getModelRoot());
+		File f = new File(getModel().getOutputPath() + File.separator + modelRoot);
     	File[] lf = f.listFiles();
     	for (int i = 0; i<lf.length; i++) {
     		if (Tools.getFileExtension(lf[i]).equals("html"))
@@ -109,7 +103,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	
 	private void writeHtmlGeneratedSummary(int processID, int summaryID) {
 		if (getModel().getProcess().get(processID).getSummary() != null) {
-			Writer w = new Writer(getModel().getOutputPath() + File.separator + getModel().getPeerRoot() + File.separator + "T" + getModel().getTaskID() + "_" + String.valueOf(processID/*getModel().getProcess().get(i).getId()*/)+ "_" + String.valueOf(summaryID) + ".html");
+			Writer w = new Writer(getModel().getOutputPath() + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + String.valueOf(processID/*getModel().getProcess().get(i).getId()*/)+ "_" + String.valueOf(summaryID) + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + String.valueOf(processID/*getModel().getProcess().get(i).getId()*/) + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
@@ -124,7 +118,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	
 	private void writeHtmlModelSummary(int summaryID) {
 		for (String modelSummary : getModel().getCurrentMultiCorpus().get(summaryID).getSummaryNames()) {
-    		Writer w = new Writer(getModel().getOutputPath() + File.separator + getModel().getModelRoot() + File.separator + modelSummary.replace(".txt", "") + ".html");
+    		Writer w = new Writer(getModel().getOutputPath() + File.separator + modelRoot + File.separator + modelSummary.replace(".txt", "") + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
@@ -159,11 +153,11 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    	//process.appendChild(document.createTextNode(getModel().getProcess().get(i).getClass().toString()));
 	    	
 	    	Element modelRoot = document.createElement("MODEL-ROOT");
-	    	modelRoot.appendChild(document.createTextNode(/*getModel().getOutputPath() + File.separator +*/ "/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/Output/" + getModel().getModelRoot()));
+	    	modelRoot.appendChild(document.createTextNode(/*getModel().getOutputPath() + File.separator +*/ "/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/Output/" + modelRoot));
 	    	process.appendChild(modelRoot);
 	    	
 	    	Element peerRoot = document.createElement("PEER-ROOT");
-	    	peerRoot.appendChild(document.createTextNode(/*getModel().getOutputPath() + File.separator +*/ "/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/Output/" + getModel().getPeerRoot()));
+	    	peerRoot.appendChild(document.createTextNode(/*getModel().getOutputPath() + File.separator +*/ "/cygdrive/g/theseWorkspace/AutomaticSummarization/doc/Output/" + peerRoot));
 	    	process.appendChild(peerRoot);
 	    	
 	    	Element inputFormat = document.createElement("INPUT-FORMAT");
@@ -183,7 +177,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 
 	    	Element models = document.createElement("MODELS");
 	    	
-	    	/*File f = new File(getModel().getOutputPath() + File.separator + getModel().getModelRoot());
+	    	/*File f = new File(getModel().getOutputPath() + File.separator + modelRoot);
 	    	File[] lf = f.listFiles();
 	    	for (int j = 0; j<lf.length; j++) {
 	    		if (Tools.getFileExtension(lf[j]).equals("html")) {*/
@@ -212,5 +206,37 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	    	
 	    	transformer.transform(source, sortie);	
 
+	}
+
+	public String getRougePath() {
+		return rougePath;
+	}
+
+	public void setRougePath(String rougePath) {
+		this.rougePath = rougePath;
+	}
+
+	public List<String> getRougeMeasure() {
+		return rougeMeasure;
+	}
+
+	public void setRougeMeasure(List<String> rougeMeasure) {
+		this.rougeMeasure = rougeMeasure;
+	}
+
+	public String getModelRoot() {
+		return modelRoot;
+	}
+
+	public void setModelRoot(String modelRoot) {
+		this.modelRoot = modelRoot;
+	}
+
+	public String getPeerRoot() {
+		return peerRoot;
+	}
+
+	public void setPeerRoot(String peerRoot) {
+		this.peerRoot = peerRoot;
 	}
 }

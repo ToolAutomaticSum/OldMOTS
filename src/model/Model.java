@@ -35,8 +35,7 @@ public class Model extends Observable {
 	protected MultiCorpus currentMultiCorpus;
 	//protected List<String> summary = new ArrayList<String>();
 	protected boolean bRougeEvaluation = false;
-	protected String modelRoot;
-	protected String peerRoot;
+	protected EvaluationROUGE evalRouge;
 	
 	public Model() {
 		super();
@@ -94,11 +93,10 @@ public class Model extends Observable {
 				}
 			}
 			if (bRougeEvaluation) {
-				EvaluationROUGE rouge = new EvaluationROUGE(getCtrl().incrementProcessID());
-				rouge.setModel(this);
-				rouge.init();
-				rouge.process();
-				rouge.finish();
+				evalRouge.setModel(this);
+				evalRouge.init();
+				evalRouge.process();
+				evalRouge.finish();
 			}
 		}
 		catch (LacksOfFeatures e) {
@@ -236,22 +234,6 @@ public class Model extends Observable {
 		this.bRougeEvaluation = bRougeEvaluation;
 	}
 
-	public String getModelRoot() {
-		return modelRoot;
-	}
-
-	public void setModelRoot(String modelRoot) {
-		this.modelRoot = modelRoot;
-	}
-
-	public String getPeerRoot() {
-		return peerRoot;
-	}
-
-	public void setPeerRoot(String peerRoot) {
-		this.peerRoot = peerRoot;
-	}
-
 	public int getTaskID() {
 		return taskID;
 	}
@@ -306,5 +288,13 @@ public class Model extends Observable {
 
 	public void setCurrentMultiCorpus(MultiCorpus currentMultiCorpus) {
 		this.currentMultiCorpus = currentMultiCorpus;
+	}
+
+	public EvaluationROUGE getEvalRouge() {
+		return evalRouge;
+	}
+
+	public void setEvalRouge(EvaluationROUGE evalRouge) {
+		this.evalRouge = evalRouge;
 	}
 }
