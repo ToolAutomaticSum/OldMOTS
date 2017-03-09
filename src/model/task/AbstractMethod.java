@@ -1,11 +1,11 @@
 package model.task;
 
-import model.Model;
+import model.SModel;
 
 public abstract class AbstractMethod {
 
 	protected int id;
-	protected Model model;
+	protected SModel model;
 
 	public AbstractMethod(int id) {
 		super();
@@ -20,11 +20,11 @@ public abstract class AbstractMethod {
 		this.id = id;
 	}
 	
-	public Model getModel() {
+	public SModel getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(SModel model) {
 		this.model = model;
 	}
 }

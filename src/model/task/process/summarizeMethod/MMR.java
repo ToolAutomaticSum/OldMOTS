@@ -12,11 +12,9 @@ import textModeling.SentenceModel;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
-public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicBasedIn, ScoreBasedIn/*, VectorQueryBasedIn*/ {
+public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicBasedIn, ScoreBasedIn {
 
-	//private double[][] similarities;
 	private double lambda;
-	//private double[] query;
 	private SentenceSimilarityMetric sim;
 
 	private boolean nbCharSizeOrNbSentenceSize;
@@ -61,19 +59,9 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		
 		for (PairSentenceScore p : this.sentencesScores)
 		{
-			this.sentencesBaseScores.put(p.getPhrase(), p.getScore() * (1./scoreMax));
+			if (p.getScore() != 0)
+				this.sentencesBaseScores.put(p.getPhrase(), p.getScore() * (1./scoreMax));
 		}
-		
-		
-	/*	for (PairSentenceScore p : this.sentencesScores)
-		{
-			System.out.println(p.getScore()+" | "+p.getPhrase().getSentence());
-		}
-		
-		for (Entry<SentenceModel, Double> e: this.sentencesBaseScores.entrySet())
-		{
-			System.out.println("base scores : "+e.getValue()+" | "+e.getKey().getSentence());
-		}*/
 	}
 
 	@Override
@@ -121,24 +109,18 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		if (!this.sentencesBaseScores.isEmpty())
 		{
 			this.scoreAllSentences();
-			//PairSentenceScore bestPair = this.sentencesScores.first();
 			Double scoreMax = Double.NEGATIVE_INFINITY;
-			//System.out.println("min value : " + scoreMax);
 			SentenceModel pMax = null;
 			for (Entry <SentenceModel, Double> e : this.sentencesMMRScores.entrySet())
 			{
 				if (e.getValue().compareTo(scoreMax) > 0)
 				{
-					//System.out.println("Yo mama !");
 					scoreMax = e.getValue();
 					pMax = e.getKey();
 				}
-				//else
-					//System.out.println("Pas Yo mamma du tout !" + e.getValue());
 			}
 			
 			this.summary.add(pMax);
-			//this.sentencesScores.remove(bestPair);
 			this.sentencesBaseScores.remove(pMax);
 
 			if (nbCharSizeOrNbSentenceSize)
@@ -159,11 +141,6 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		}
 	}
 	
-	/*private void scoreSentence (PairSentenceScore p)
-	{
-		p.setScore(this.getNewMMRScore(p.getPhrase()));
-	}*/
-	
 	private Double getMMRScore (SentenceModel p) throws Exception
 	{
 		double maxSim = 0.;
@@ -177,8 +154,6 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		}
 		double score = this.lambda * this.sentencesBaseScores.get(p) - (1. - this.lambda) * maxSim;
 	
-		
-		//System.out.println("Score : "+score+" depuis "+this.sentencesBaseScores.get(p));
 		return score;
 	}
 
@@ -186,11 +161,6 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 	public void setScore(ArrayList<PairSentenceScore> score) {
 		sentencesScores = score;
 	}
-
-	/*@Override
-	public void setVectorQuery(double[] vectorQuery) {
-		query = vectorQuery;
-	}*/
 
 	@Override
 	public void setVectorCaracterisic(Map<SentenceModel, double[]> sentenceCaracteristic) {

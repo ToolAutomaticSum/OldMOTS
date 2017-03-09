@@ -1,6 +1,6 @@
 package model.task.postProcess;
 
-import model.Model;
+import model.SModel;
 import model.task.AbstractTaskModel;
 import model.task.process.AbstractProcess;
 import optimize.Individu;
@@ -9,7 +9,7 @@ import optimize.SupportADNException;
 public abstract class AbstractPostProcess extends Individu implements AbstractTaskModel {
 
 	protected AbstractProcess currentProcess;
-	protected Model model;
+	protected SModel model;
 	
 	public AbstractPostProcess(int id) throws SupportADNException {
 		super(id);	
@@ -31,12 +31,12 @@ public abstract class AbstractPostProcess extends Individu implements AbstractTa
 	}
 	
 	@Override
-	public Model getModel() {
+	public SModel getModel() {
 		return model;
 	}
 	
 	@Override
-	public void setModel(Model model) {
+	public void setModel(SModel model) {
 		this.model = model;
 	}
 }

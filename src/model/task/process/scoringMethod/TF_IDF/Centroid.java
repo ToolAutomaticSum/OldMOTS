@@ -69,8 +69,8 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 			}
 		}
 		Collections.sort(sentencesScores);
-		System.out.println(sentencesScores.size());
-		System.out.println(sentencesScores);
+		//System.out.println(sentencesScores.size());
+		//System.out.println(sentencesScores);
 	}
 	
 	private void calculateCentroid() throws NumberFormatException, LacksOfFeatures {

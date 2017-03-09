@@ -3,11 +3,8 @@ package model.task.process.scoringMethod.TF_IDF;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
 import model.task.process.AbstractProcess;
-import model.task.process.VectorCaracteristicBasedIn;
-import model.task.process.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.scoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
@@ -16,13 +13,13 @@ import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 import textModeling.wordIndex.Index;
+import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 import tools.PairSentenceScore;
 
-public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
+public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements ScoreBasedOut {
 
-	protected Map<SentenceModel, double[]> sentenceCaracteristic;
 	protected ArrayList<PairSentenceScore> sentencesScores;
-	protected double cosineThreshold;
+	protected double tfidfThreshold;
 	
 	public ScoringSentenceTF_IDF(int id) throws SupportADNException {
 		super(id);
@@ -31,7 +28,7 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 	@Override
 	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
 		super.init(currentProcess, dictionnary);
-		cosineThreshold = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "CosineThreshold"));
+		tfidfThreshold = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "TfIdfThreshold"));
 	}
 	
 	@Override
@@ -51,17 +48,20 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						double temp = sentenceCaracteristic.get(sentenceModel)[index.get(word.getmLemma()).getId()];
-						if (temp  > cosineThreshold)
-							score+= temp;
+						if (!word.isStopWord()) {
+							WordTF_IDF w = (WordTF_IDF) index.get(word.getmLemma());
+							double temp = w.getTfCorpus(currentProcess.getSummarizeCorpusId())*w.getIdf();
+							if (temp  > tfidfThreshold)
+								score+= temp;
+						}
 					}
-					sentenceModel.setScore(score); //Ajout du score à la phrase
+					sentenceModel.setScore(score); //Ajout du score ï¿½ la phrase
 					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 				}
 			}
 		}
 		Collections.sort(sentencesScores);
-		System.out.println(sentencesScores);
+		//System.out.println(sentencesScores);
 	}
 	
 	@Override
@@ -69,13 +69,4 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Vect
 		return sentencesScores;
 	}
 
-	@Override
-	public void setVectorCaracterisic(Map<SentenceModel, double[]> sentenceCaracteristic) {
-		this.sentenceCaracteristic = sentenceCaracteristic;
-	}
-
-	@Override
-	public Map<SentenceModel, double[]> getVectorCaracterisic() {
-		return sentenceCaracteristic;
-	}
 }

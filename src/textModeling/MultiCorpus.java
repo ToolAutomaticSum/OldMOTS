@@ -2,7 +2,7 @@ package textModeling;
 
 import java.util.ArrayList;
 
-import model.Model;
+import model.SModel;
 
 public class MultiCorpus extends ArrayList<Corpus> {
 
@@ -12,7 +12,7 @@ public class MultiCorpus extends ArrayList<Corpus> {
 	private static final long serialVersionUID = 5123106615786643432L;
 
 	protected int iD;
-	protected Model model;
+	protected SModel model;
 	/*protected Index index;
 	protected InvertedIndex invertIndex;*/
 	
@@ -20,11 +20,11 @@ public class MultiCorpus extends ArrayList<Corpus> {
 		this.iD = iD;
 	}
 
-	public Model getModel() {
+	public SModel getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(SModel model) {
 		this.model = model;
 	}
 

@@ -17,7 +17,7 @@ import textModeling.Corpus;
 import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 
-public class Model extends Observable {
+public class SModel extends Observable {
 	protected Controller ctrl;
 	
 	protected int taskID;
@@ -37,7 +37,7 @@ public class Model extends Observable {
 	protected boolean bRougeEvaluation = false;
 	protected EvaluationROUGE evalRouge;
 	
-	public Model() {
+	public SModel() {
 		super();
 	}
 
@@ -74,21 +74,25 @@ public class Model extends Observable {
 			multiCorpusIt = multiCorpusModels.iterator();
 			while (multiCorpusIt.hasNext()) {
 				currentMultiCorpus = multiCorpusIt.next();		
-				System.out.println("Corpus : " + currentMultiCorpus.getiD());
+				System.out.println("MultiCorpus : " + currentMultiCorpus.getiD());
 				
 				Iterator<AbstractProcess> proIt = process.iterator();
 				while (proIt.hasNext()) {
 					AbstractProcess p = proIt.next();
 					p.setModel(this);
-					p.init();
-					p.process();
-					p.finish();
-					setChanged();
-					
-					if (p.getSummary() != null) {
-						List<SentenceModel> summary = p.getSummary().get(currentMultiCorpus.getiD());
-						Collections.sort(summary);
-						notifyObservers(SentenceModel.listSentenceModelToString(summary));
+					p.initCorpusToCompress();
+					for (int i : p.getListCorpusId()) {
+						p.setSummarizeIndex(i);
+						p.init();
+						p.process();
+						p.finish();
+						setChanged();
+						
+						if (p.getSummary() != null) {
+							List<SentenceModel> summary = p.getSummary().get(currentMultiCorpus.getiD()).get(p.getSummarizeCorpusId());
+							Collections.sort(summary);
+							notifyObservers(SentenceModel.listSentenceModelToString(summary));
+						}
 					}
 				}
 			}

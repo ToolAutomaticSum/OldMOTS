@@ -45,7 +45,7 @@ public class ParagraphViaLinkedSentenceLDA extends AbstractSummarizeMethod imple
 		
 		List<SentenceModel> summary = new ArrayList<SentenceModel>();
 		if (testRedundant) {
-			//On ajoute le résumé qui est le plus proche du document puis on ajoute le suivant en testant si la redondance est inférieur à 
+			//On ajoute le rï¿½sumï¿½ qui est le plus proche du document puis on ajoute le suivant en testant si la redondance est infï¿½rieur ï¿½ 
 			//getCurrentProcess().setSummary(listGeneratedParagraph.get((int)listParagraphScore.get(0).first));
 			
 			summary.addAll(listGeneratedParagraph.get((int)(listParagraphScore.get(0).first)));
@@ -90,7 +90,7 @@ public class ParagraphViaLinkedSentenceLDA extends AbstractSummarizeMethod imple
 			summary.addAll(listGeneratedParagraph.get((int)listParagraphScore.get(0).first));
 			summary.addAll(listGeneratedParagraph.get((int)listParagraphScore.get(1).first));
 		}
-		getCurrentProcess().getSummary().add(summary);
+		//getCurrentProcess().getSummary().add(summary);
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public class ParagraphViaLinkedSentenceLDA extends AbstractSummarizeMethod imple
 		int nbNonVoidTopic = 0;
 		for (int i = 0; i < listTopic.size(); i++) {
 			if (listTopic.get(i).getScoreCorpus() != 0) {
-				//Tri des phrases des Topics non vide par rapport à leur score sur ce topic
+				//Tri des phrases des Topics non vide par rapport ï¿½ leur score sur ce topic
 				SentenceComparator comparator = new SentenceComparator();
 				comparator.setVectorDimensionToCompare(listTopic.get(i).getId());
 				Collections.sort(listTopic.get(i), comparator);
@@ -119,7 +119,7 @@ public class ParagraphViaLinkedSentenceLDA extends AbstractSummarizeMethod imple
 			}
 		}
 		
-		/* Première étape Version 2 */
+		/* Premiï¿½re ï¿½tape Version 2 */
 		//Choose first sentence via best tanimoto distance with averageDocumentsVector
 		Iterator<SentenceModel> senIt = listTopic.get(0).iterator();
 		int k = 0; //Comparaison sur les X meilleurs phrases (k<X)
@@ -139,7 +139,7 @@ public class ParagraphViaLinkedSentenceLDA extends AbstractSummarizeMethod imple
 		//firstSen.setScore(Tools./*cosineSimilarity*/objectiveFunction(averageVector, (double[]) firstSen.getScore()));
 		removeSentenceListTopic(firstSen, listTopic);
 		
-		// Détermination des phrases suivantes
+		// Dï¿½termination des phrases suivantes
 		int currentTopic = 1;
 		int currentNbSentenceInSummary = 1;
 		while (currentNbSentenceInSummary < sizeSummary) {
@@ -168,7 +168,7 @@ public class ParagraphViaLinkedSentenceLDA extends AbstractSummarizeMethod imple
 			removeSentenceListTopic(firstSen, listTopic);
 			
 			currentNbSentenceInSummary++;
-			if (currentTopic+1 == nbNonVoidTopic) { //Si nombre de topic non nulle < nombre de phrase dans le résumé, il faut prendre plusieurs fois des phrases dans le même topic
+			if (currentTopic+1 == nbNonVoidTopic) { //Si nombre de topic non nulle < nombre de phrase dans le rï¿½sumï¿½, il faut prendre plusieurs fois des phrases dans le mï¿½me topic
 				currentTopic = 0;
 				limitSentenceByTopic++;
 			}

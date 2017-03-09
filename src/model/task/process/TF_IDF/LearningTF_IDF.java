@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import exception.LacksOfFeatures;
 import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import reader_writer.Writer;
@@ -23,7 +24,7 @@ public class LearningTF_IDF extends AbstractProcess {
 	private boolean liveLearning = false;
 	protected List<Corpus> listLearningDoc = new ArrayList<Corpus>();
 	
-	public LearningTF_IDF(int id) throws SupportADNException {
+	public LearningTF_IDF(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
 		summary = null;
 	}
@@ -58,17 +59,12 @@ public class LearningTF_IDF extends AbstractProcess {
 	/**
 	 * Construction du dictionnaire des mots des documents ({@see WordTF_IDF})
 	 */
-	public static void generateDictionary(Corpus listText, Index dictionnary) {
-		
-		/*int nbSentence = 0;
-		for (int i = 0; i < listText.size(); i++) {
-			nbSentence += listText.get(i).getNbSentence();
-		}*/
-		
-		dictionnary.setNbDocument(dictionnary.getNbDocument()+listText.size());
+	public static void generateDictionary(Corpus corpus, Index dictionnary) {
+
+		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.size());
 		
 		//Construction du dictionnaire
-		Iterator<TextModel> textIt = listText.iterator();
+		Iterator<TextModel> textIt = corpus.iterator();
 		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
@@ -77,23 +73,20 @@ public class LearningTF_IDF extends AbstractProcess {
 				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
 				while (sentenceIt.hasNext()) {
 					SentenceModel sentenceModel = sentenceIt.next();
-					/*Set<String> wordSet = new TreeSet<String>();
-					for (int i = 0;i<sentenceModel.size();i++)
-						wordSet.add(sentenceModel.get(i).getmLemma());*/
 					
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						//TODO ajouter filtre à la place de getmLemma
+						//TODO ajouter filtre Ã  la place de getmLemma
 						if (!word.isStopWord()) {
 							if(!dictionnary.containsKey(word.getmLemma())) {
 								WordTF_IDF w = new WordTF_IDF(word.getmLemma(), dictionnary);
-								w.addDocumentOccurence(listText.getiD(), textModel.getTextID());
+								w.addDocumentOccurence(corpus.getiD(), textModel.getTextID());
 								dictionnary.put(word.getmLemma(), w);
 							}
 							else {
 								WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
-								w.addDocumentOccurence(listText.getiD(), textModel.getTextID());
+								w.addDocumentOccurence(corpus.getiD(), textModel.getTextID());
 							}
 							dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 						}
@@ -101,7 +94,7 @@ public class LearningTF_IDF extends AbstractProcess {
 				}
 			}
 		}
-		dictionnary.putCorpusNbDoc(listText.getiD(), listText.size());
+		dictionnary.putCorpusNbDoc(corpus.getiD(), corpus.size());
 	}
 	
 	private void writeTF_IDFModel() {

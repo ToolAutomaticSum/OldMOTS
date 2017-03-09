@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import exception.LacksOfFeatures;
 import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import textModeling.ParagraphModel;
@@ -44,7 +45,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 	private WordFilter filter;
 	private double fsc_factor = 1;
 	
-	public BiGram_ILP(int id) throws SupportADNException {
+	public BiGram_ILP(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
 	}
 
@@ -80,7 +81,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 		ArrayList <Integer> curr_doc_bg_arr;
 		//HashMap <NGram, Integer> firstSentencesConcepts = new HashMap <NGram, Integer> ();
 	
-		System.out.println("Construction du modèle");
+		System.out.println("Construction du modï¿½le");
 		
 		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {
@@ -113,7 +114,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 						if (p.get(0).equals(s))
 							firstSentencesConcepts.put(ng, 1);
 					}
-					//On ajoute le set des bigrams de la phrase à bigrams_in_sentence
+					//On ajoute le set des bigrams de la phrase ï¿½ bigrams_in_sentence
 					bigrams_in_sentence.add(sentence_bigrams);
 					//ss.add(s);
 					//On ajoute le set des bigrams de la phrase au document 
@@ -137,7 +138,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 					else System.out.println("Pas bon");
 				}
 			}
-			//On ajoute this.fsc_factor au poids des bigrammes de la première phrase du document
+			//On ajoute this.fsc_factor au poids des bigrammes de la premiï¿½re phrase du document
 			for (NGram ng : firstSentencesConcepts.keySet())
 			{
 				Integer i = this.bigrams.indexOf(ng);
@@ -157,16 +158,16 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 			if (filter.passFilter(w1) || filter.passFilter(w2) )
 			{
 				NGram ng = new NGram();
-				//TODO Ajouter filtre à la place de getmLemma()
+				//TODO Ajouter filtre ï¿½ la place de getmLemma()
 				ng.addGram(dico.get(w1.getmLemma()));
 				ng.addGram(dico.get(w2.getmLemma()));
 				//if (! ngrams_list.contains(ng));
 				ngrams_list.add(ng);
-				//System.out.println("Pas Filtrée !");
+				//System.out.println("Pas Filtrï¿½e !");
 			}
 			else
 			{
-				//System.out.println("Filtrée ! ");
+				//System.out.println("Filtrï¿½e ! ");
 			}
 		}
 		

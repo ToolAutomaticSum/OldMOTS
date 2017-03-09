@@ -1,9 +1,13 @@
 package model.task.process;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import exception.LacksOfFeatures;
 import model.task.AbstractTaskModel;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.process.ILP.BiGramListBasedOut;
@@ -27,33 +31,40 @@ import tools.Tools;
 
 public abstract class AbstractProcess extends Optimize implements AbstractTaskModel {
 
-	protected Integer summarizeCorpusId;
+	protected int summarizeIndex = 0;
+	protected List<Integer> listCorpusId;
 	protected Index index;
 	
 	protected AbstractSummarizeMethod sentenceSelection;
 	protected AbstractScoringMethod scoringMethod;
 	protected List<AbstractPostProcess> postProcess = new ArrayList<AbstractPostProcess>();
 	protected List<SentenceModel> allSentenceList = new ArrayList<SentenceModel>();
-	//
-	protected List<List<SentenceModel>> summary = new ArrayList<List<SentenceModel>>();
+	
+	//Matrice de résumé : Dimension = MultiCorpus et List Corpus à résumer
+	protected Map<Integer, Map<Integer, List<SentenceModel>>> summary = new HashMap<Integer, Map<Integer, List<SentenceModel>>>();
 	private int sizeSummary = 8;
 	
 	public AbstractProcess(int id) throws SupportADNException {
-		super(id);	
+		super(id);
+	}
+	
+	public final void initCorpusToCompress() throws NumberFormatException, LacksOfFeatures {
+		listCorpusId = new ArrayList<Integer>();
+		for (String corpusId : getModel().getProcessOption(id, "CorpusIdToSummarize").split("\t"))
+			listCorpusId.add(Integer.parseInt(corpusId));
 	}
 	
 	@Override
 	public void init() throws Exception {
 		index = new Index();
-		summarizeCorpusId = Integer.parseInt(getModel().getProcessOption(id, "CorpusIdToSummarize"));
 	}
 	
 	/**
-	 * Appel � super.process() une fois les process effectu�s.
+	 * Appel � super.process() une fois les process effectu�s.
 	 */
 	@Override
 	public void process() throws Exception {
-		for (TextModel text : getModel().getCurrentMultiCorpus().get(summarizeCorpusId)) {
+		for (TextModel text : getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId())) {
 			allSentenceList.addAll(text.getSentence());
 		}
 		
@@ -68,47 +79,63 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			sentenceSelection.setCurrentProcess(this);
 			sentenceSelection.setModel(model);
 			initCompatibilityScoring();
-			summary.add(sentenceSelection.calculateSummary());
+			//Nouveau MultiCorpus
+			if (!summary.containsKey(getModel().getCurrentMultiCorpus().getiD())) {
+				Map<Integer, List<SentenceModel>> map = new HashMap<Integer, List<SentenceModel>>();
+				map.put(getSummarizeCorpusId(), sentenceSelection.calculateSummary());
+				summary.put(getModel().getCurrentMultiCorpus().getiD(), map);
+			}
+			else { //MultiCorpus en cours de travail, parcours de listCorpusId 
+				Map<Integer, List<SentenceModel>> map = summary.get(getModel().getCurrentMultiCorpus().getiD());
+				map.put(getSummarizeCorpusId(), sentenceSelection.calculateSummary());
+			}
 		}
 	}
 	
+	public int getSummarizeIndex() {
+		return summarizeIndex;
+	}
+
+	public void setSummarizeIndex(int summarizeIndex) {
+		this.summarizeIndex = summarizeIndex;
+	}
+
 	protected void initCompatibilityProcess() {
-		for (Class<?> process : Tools.getInheritance(this.getClass())) {
-			for (Class<?> scoring : Tools.getInheritance(scoringMethod.getClass())) {
-				if (process == LdaBasedOut.class && scoring == LdaBasedIn.class) {
-					((LdaBasedIn)scoringMethod).setK(((LdaBasedOut)this).getK());
-					((LdaBasedIn)scoringMethod).setTheta(((LdaBasedOut)this).getTheta());
-					((LdaBasedIn)scoringMethod).setNbSentence(((LdaBasedOut)this).getNbSentence());
-				}
-				else if (process == VectorCaracteristicBasedOut.class && scoring == VectorCaracteristicBasedIn.class) {
-					((VectorCaracteristicBasedIn)scoringMethod).setVectorCaracterisic(((VectorCaracteristicBasedOut)this).getVectorCaracterisic());
-				}
-				else if (process == BiGramListBasedOut.class && scoring == BiGramListBasedIn.class) {
-					((BiGramListBasedIn)scoringMethod).setBiGramsInSentence(((BiGramListBasedOut)this).getBiGramsInSentence());
-					((BiGramListBasedIn)scoringMethod).setBiGrams(((BiGramListBasedOut)this).getBiGrams());
-					((BiGramListBasedIn)scoringMethod).setBiGramWeights(((BiGramListBasedOut)this).getBiGramWeights());
-				}
-			}
+		Set<Class<?>> classProcess = Tools.getInheritance(this.getClass());
+		Set<Class<?>> classScoring = Tools.getInheritance(scoringMethod.getClass());
+		if (classProcess.contains(LdaBasedOut.class) && classScoring.contains(LdaBasedIn.class)) {
+			((LdaBasedIn)scoringMethod).setK(((LdaBasedOut)this).getK());
+			((LdaBasedIn)scoringMethod).setTheta(((LdaBasedOut)this).getTheta());
+			((LdaBasedIn)scoringMethod).setNbSentence(((LdaBasedOut)this).getNbSentence());
+		}
+		if (classProcess.contains(VectorCaracteristicBasedOut.class) && classScoring.contains(VectorCaracteristicBasedIn.class)) {
+			((VectorCaracteristicBasedIn)scoringMethod).setVectorCaracterisic(((VectorCaracteristicBasedOut)this).getVectorCaracterisic());
+		}
+		if (classProcess.contains(BiGramListBasedOut.class) && classScoring.contains(BiGramListBasedIn.class)) {
+			((BiGramListBasedIn)scoringMethod).setBiGramsInSentence(((BiGramListBasedOut)this).getBiGramsInSentence());
+			((BiGramListBasedIn)scoringMethod).setBiGrams(((BiGramListBasedOut)this).getBiGrams());
+			((BiGramListBasedIn)scoringMethod).setBiGramWeights(((BiGramListBasedOut)this).getBiGramWeights());
 		}
 	}
 	
 	protected void initCompatibilityScoring() {
 		if(scoringMethod != null) {
-			for (Class<?> scoring : Tools.getInheritance(scoringMethod.getClass())) {
-				for (Class<?> selection : Tools.getInheritance(sentenceSelection.getClass())) {
-					if (scoring == ScoreBasedOut.class && selection == ScoreBasedIn.class) {
-						((ScoreBasedIn)sentenceSelection).setScore(((ScoreBasedOut)scoringMethod).getScore());
-					}
-					else if (scoring == TopicLdaBasedOut.class && selection == TopicLdaBasedIn.class) {
-						((TopicLdaBasedIn)sentenceSelection).setListTopicLda(((TopicLdaBasedOut)scoringMethod).getListTopicLda());
-					}
-					else if (scoring == VectorCaracteristicBasedOut.class && selection == VectorCaracteristicBasedIn.class) {
-						((VectorCaracteristicBasedIn)sentenceSelection).setVectorCaracterisic(((VectorCaracteristicBasedOut)scoringMethod).getVectorCaracterisic());
-					}
-					else if (scoring == FileModelBasedOut.class && selection == FileModelBasedIn.class) {
-						((FileModelBasedIn)sentenceSelection).setFileModel(((FileModelBasedOut)scoringMethod).getFileModel());
-					}
-				}
+			Set<Class<?>> classSelection = Tools.getInheritance(sentenceSelection.getClass());
+			Set<Class<?>> classScoring = Tools.getInheritance(scoringMethod.getClass());
+			if (classScoring.contains(ScoreBasedOut.class) && classSelection.contains(ScoreBasedIn.class)) {
+				((ScoreBasedIn)sentenceSelection).setScore(((ScoreBasedOut)scoringMethod).getScore());
+			}
+			if (classScoring.contains(TopicLdaBasedOut.class) && classSelection.contains(TopicLdaBasedIn.class)) {
+				((TopicLdaBasedIn)sentenceSelection).setListTopicLda(((TopicLdaBasedOut)scoringMethod).getListTopicLda());
+			}
+			if (classScoring.contains(VectorCaracteristicBasedOut.class) && classSelection.contains(VectorCaracteristicBasedIn.class)) {
+				((VectorCaracteristicBasedIn)sentenceSelection).setVectorCaracterisic(((VectorCaracteristicBasedOut)scoringMethod).getVectorCaracterisic());
+			}
+			if (classScoring.contains(FileModelBasedOut.class) && classSelection.contains(FileModelBasedIn.class)) {
+				((FileModelBasedIn)sentenceSelection).setFileModel(((FileModelBasedOut)scoringMethod).getFileModel());
+			}
+			if (Tools.getInheritance(this.getClass()).contains(VectorCaracteristicBasedOut.class) && classSelection.contains(VectorCaracteristicBasedIn.class)) {
+				((VectorCaracteristicBasedIn)sentenceSelection).setVectorCaracterisic(((VectorCaracteristicBasedOut)this).getVectorCaracterisic());
 			}
 		}
 	}
@@ -147,16 +174,16 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		this.postProcess = postProcess;
 	}
 
-	public List<List<SentenceModel>> getSummary() {
+	public Map<Integer, Map<Integer, List<SentenceModel>>> getSummary() {
 		return summary;
-	}
-
-	public void setSummary(List<List<SentenceModel>> summary) {
-		this.summary = summary;
 	}
 
 	public int getSizeSummary() {
 		return sizeSummary;
+	}
+
+	public List<Integer> getListCorpusId() {
+		return listCorpusId;
 	}
 
 	public void setSizeSummary(int sizeSummary) {
@@ -196,7 +223,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	}
 	
 	/**
-	 * N�cessite utilisation de ROUGE
+	 * N�cessite utilisation de ROUGE
 	 */
 	@Override
 	public double getScore() {
@@ -210,7 +237,11 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		return index;
 	}
 
+	/**
+	 * Retourne l'Id du corpus résumé
+	 * @return
+	 */
 	public Integer getSummarizeCorpusId() {
-		return summarizeCorpusId;
+		return listCorpusId.get(summarizeIndex);
 	}
 }

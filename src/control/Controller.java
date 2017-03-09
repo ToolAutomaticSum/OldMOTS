@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import model.Model;
+import model.SModel;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.postProcess.EvaluationROUGE;
 import model.task.preProcess.AbstractPreProcess;
@@ -20,7 +20,7 @@ import view.AbstractView;
 
 public class Controller {
 
-	private final Model model;
+	private final SModel model;
     private final AbstractView view;
 
 	//private int taskID;
@@ -39,7 +39,7 @@ public class Controller {
     protected String modelRoot;
     protected String peerRoot;*/
     
-    public Controller(Model model, AbstractView view) {
+    public Controller(SModel model, AbstractView view) {
         this.model = model;
         this.view = view;
         model.setCtrl(this);
@@ -245,7 +245,7 @@ public class Controller {
 		this.postProcess = postProcess;
 	}
 
-	public Model getModel() {
+	public SModel getModel() {
 		return model;
 	}
 

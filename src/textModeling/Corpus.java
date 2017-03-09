@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import model.Model;
+import model.SModel;
 
 public class Corpus extends ArrayList<TextModel> {
 
@@ -17,7 +17,7 @@ public class Corpus extends ArrayList<TextModel> {
 	protected int iD;
 	protected String inputPath;
 	protected String summaryPath;
-	protected Model model;
+	protected SModel model;
 	protected List<String> docNames;
 	protected List<String> summaryNames;
 	
@@ -50,11 +50,11 @@ public class Corpus extends ArrayList<TextModel> {
 		return sen;
 	}
 
-	public Model getModel() {
+	public SModel getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(SModel model) {
 		this.model = model;
 	}
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import exception.LacksOfFeatures;
 import model.task.process.AbstractProcess;
 import model.task.process.VectorCaracteristicBasedOut;
 import optimize.SupportADNException;
@@ -25,7 +26,7 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 	private String pathModel;
 	//private String pathCorpus;
 	
-	public TF_IDF(int id) throws SupportADNException {
+	public TF_IDF(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
 	}
 
@@ -50,7 +51,7 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 	}
 	
 	/**
-	 * Génération des vecteurs TF_IDF des phrases, récupérable avec getCaracteristic() de SentenceModel
+	 * GÃ©nÃ©ration des vecteurs TF_IDF des phrases, rÃ©cupÃ©rable avec getCaracteristic() de SentenceModel
 	 * @throws Exception 
 	 */
 	@Override
@@ -72,19 +73,9 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 						WordModel wm = wordIt.next();
 						if (!wm.isStopWord()) {
 							WordTF_IDF word = (WordTF_IDF) index.get(wm.getmLemma());
-							//tfIdfVector[word.getId()]++;
-							tfIdfVector[word.getId()]=word.getTfCorpus(getSummarizeCorpusId());
+							tfIdfVector[word.getId()]=word.getTfCorpus(getSummarizeCorpusId())*word.getIdf();
 						}
 					}
-					wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel wm = wordIt.next();
-						if (!wm.isStopWord()) {
-							WordTF_IDF word = (WordTF_IDF) index.get(wm.getmLemma());
-							tfIdfVector[word.getId()]*=word.getIdf();
-						}
-					}
-					//sentenceModel.getCaracteristic().setdTab(tfIdfVector);//.setScore(score);
 					sentenceCaracteristic.put(sentenceModel, tfIdfVector);
 				}
 			}
