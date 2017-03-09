@@ -14,23 +14,23 @@ import textModeling.TextModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.LDA.WordLDA;
 import tools.PairSentenceScore;
-import tools.vector.ToolsVector;
+import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
-public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBasedIn, ScoreBasedOut {
+public class ScoringLDA extends AbstractScoringMethod implements LdaBasedIn, ScoreBasedOut {
 
 	static {
 		supportADN = new HashMap<String, Class<?>>();
 	}
 	
 	protected Map<SentenceModel, double[]> sentenceCaracteristic;
-	//protected double[] averageVector;
 	protected int K; //nb Topic
 	protected double[][] theta; //Document/Topic score
 	protected int nbSentence;
 	
 	protected ArrayList<PairSentenceScore> sentencesScores;
+	private SentenceSimilarityMetric sim;
 
-	public ScoringSentenceLDA(int id) throws Exception {
+	public ScoringLDA(int id) throws Exception {
 		super(id);
 	}
 	
@@ -38,9 +38,13 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 	public void init(AbstractProcess currentProcess, Index dictionnary)
 			throws Exception {
 		super.init(currentProcess, dictionnary);
-		
+
 		if (dictionnary.values().iterator().next().getClass() != WordLDA.class)
 			throw new Exception("Dictionnary need WordLDA !");
+		
+		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
+		
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 	}
 	
 	@Override
@@ -52,7 +56,7 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 			for (int j=0;j<nbText;j++) {
 				averageVector[i]+=theta[j][i];
 			}
-			averageVector[i]/=nbText;
+			//averageVector[i]/=nbText;
 		}
 		
 		sentencesScores = new ArrayList<PairSentenceScore>();
@@ -68,13 +72,11 @@ public class ScoringSentenceLDA extends AbstractScoringMethod implements LdaBase
 				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
 				while (sentenceIt.hasNext()) {
 					SentenceModel sentenceModel = sentenceIt.next();
-					sentenceModel.setScore(ToolsVector.cosineSimilarity(sentenceCaracteristic.get(sentenceModel), averageVector)); //Ajout du score à la phrase
+					sentenceModel.setScore(sim.computeSimilarity(sentenceCaracteristic.get(sentenceModel), averageVector)); //Ajout du score ï¿½ la phrase
 					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
-					//i++;
 				}
 			}
 		}
-		System.out.println(sentencesScores);
 	}
 
 	@Override

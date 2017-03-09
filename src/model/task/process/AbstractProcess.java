@@ -100,6 +100,9 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		this.summarizeIndex = summarizeIndex;
 	}
 
+	/**
+	 * TODO Ajouter test et throw error si incompatibility
+	 */
 	protected void initCompatibilityProcess() {
 		Set<Class<?>> classProcess = Tools.getInheritance(this.getClass());
 		Set<Class<?>> classScoring = Tools.getInheritance(scoringMethod.getClass());

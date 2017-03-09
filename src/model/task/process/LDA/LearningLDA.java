@@ -13,7 +13,6 @@ import exception.LacksOfFeatures;
 import jgibblda.Estimator;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
-import model.SModel;
 import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import textModeling.Corpus;
@@ -72,7 +71,7 @@ public class LearningLDA extends AbstractProcess {
 		option.est=true;
 		option.estc=false;
 		estimator = new Estimator(option);
-		estimator.estimate();
+		estimator.estimate(true);
 	}
 	
 	@Override
@@ -103,7 +102,6 @@ public class LearningLDA extends AbstractProcess {
 							String word = wordIt.next().toString();
 							if (!word.isEmpty()) {
 								writer.write(word + " ");
-								//System.out.println(word);
 							}
 						}
 					}
@@ -114,7 +112,7 @@ public class LearningLDA extends AbstractProcess {
 		writer.close();   
 	}
 	
-	public static Model ldaModelLearning(SModel model, int K, int alpha, int beta, String outputPath, MultiCorpus currentMultiCorpus) throws IOException {
+	public static Model ldaModelLearning(int K, double alpha, double beta, String outputPath, MultiCorpus currentMultiCorpus) throws IOException {
 		LDACmdOption option = new LDACmdOption();
 		Estimator estimator;
 		
@@ -122,12 +120,10 @@ public class LearningLDA extends AbstractProcess {
 		option.K = K;
 		option.alpha = alpha;
 		option.beta = beta;
-		option.niters = 1000;
-		//option.savestep = 500;
+		option.niters = 200;
 		option.twords = 15;
 		option.dir = outputPath + File.separator + "modelLDA";
 		option.dfile = "temp_"+option.alpha+"_"+option.beta;
-		//estimator.init(option);
 		
 		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
 
@@ -139,6 +135,6 @@ public class LearningLDA extends AbstractProcess {
 		option.est=true;
 		option.estc=false;
 		estimator = new Estimator(option);
-		estimator.estimate();
+		return estimator.estimate(false);
 	}
 }

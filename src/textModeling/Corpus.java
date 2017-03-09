@@ -49,6 +49,13 @@ public class Corpus extends ArrayList<TextModel> {
 		}
 		return sen;
 	}
+	
+	public int getNbSentence() {
+		int nbSentence = 0;
+		for (TextModel t : this)
+			nbSentence += t.getNbSentence();
+		return nbSentence;
+	}
 
 	public SModel getModel() {
 		return model;
