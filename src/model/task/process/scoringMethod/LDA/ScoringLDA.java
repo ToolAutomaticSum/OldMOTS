@@ -6,17 +6,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 import model.task.process.AbstractProcess;
+import model.task.process.VectorCaracteristicBasedIn;
+import model.task.process.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.scoringMethod.ScoreBasedOut;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
+import textModeling.WordModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.LDA.WordLDA;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
-public class ScoringLDA extends AbstractScoringMethod implements LdaBasedIn, ScoreBasedOut {
+public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 
 	static {
 		supportADN = new HashMap<String, Class<?>>();
@@ -24,8 +27,6 @@ public class ScoringLDA extends AbstractScoringMethod implements LdaBasedIn, Sco
 	
 	protected Map<SentenceModel, double[]> sentenceCaracteristic;
 	protected int K; //nb Topic
-	protected double[][] theta; //Document/Topic score
-	protected int nbSentence;
 	
 	protected ArrayList<PairSentenceScore> sentencesScores;
 	private SentenceSimilarityMetric sim;
@@ -35,12 +36,13 @@ public class ScoringLDA extends AbstractScoringMethod implements LdaBasedIn, Sco
 	}
 	
 	@Override
-	public void init(AbstractProcess currentProcess, Index dictionnary)
+	public void init(AbstractProcess currentProcess, Index index)
 			throws Exception {
-		super.init(currentProcess, dictionnary);
+		super.init(currentProcess, index);
 
-		if (dictionnary.values().iterator().next().getClass() != WordLDA.class)
+		if (index.values().iterator().next().getClass() != WordLDA.class)
 			throw new Exception("Dictionnary need WordLDA !");
+		K = ((WordLDA) index.get(1)).getK();
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
@@ -51,19 +53,40 @@ public class ScoringLDA extends AbstractScoringMethod implements LdaBasedIn, Sco
 	public void computeScores() throws Exception {
 		double[] averageVector = new double[K];
 		
-		int nbText = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).size();
-		for (int i = 0; i<K;i++) {
-			for (int j=0;j<nbText;j++) {
-				averageVector[i]+=theta[j][i];
-			}
-			//averageVector[i]/=nbText;
+		int n = 0; //nbWord
+		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
+		while (textIt.hasNext()) {			
+			TextModel textModel = textIt.next();
+			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
+			while (paragraphIt.hasNext()) {
+				ParagraphModel paragraphModel = paragraphIt.next();
+				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
+				while (sentenceIt.hasNext()) {
+					SentenceModel sentenceModel = sentenceIt.next();
+					Iterator<WordModel> wordIt = sentenceModel.iterator();
+					while(wordIt.hasNext()) {
+						WordModel word = wordIt.next();
+						if (!word.isStopWord()) {
+							for (int k = 0; k<K;k++) {
+								WordLDA wLDA = (WordLDA) index.get(word.getmLemma());
+								averageVector[k] += wLDA.getTopicDistribution()[k];
+							}
+							n++;
+						}
+					}
+				}
+			}	
+		}
+		
+		for (int k = 0; k<K;k++) {
+			averageVector[k] /= n;
 		}
 		
 		sentencesScores = new ArrayList<PairSentenceScore>();
 		
 		//int i = 0; //Sentence variable
 		
-		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
+		textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {			
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
@@ -84,18 +107,13 @@ public class ScoringLDA extends AbstractScoringMethod implements LdaBasedIn, Sco
 		return sentencesScores;
 	}
 
-	public void setTheta(double[][] theta) {
-		this.theta = theta;
-	}
-	public void setK(int K) {
-		this.K = K;
-	}
-	public void setNbSentence(int nbSentence) {
-		this.nbSentence = nbSentence;
-	}
-
 	@Override
 	public void setVectorCaracterisic(Map<SentenceModel, double[]> sentenceCaracteristic) {
 		this.sentenceCaracteristic = sentenceCaracteristic;
+	}
+
+	@Override
+	public Map<SentenceModel, double[]> getVectorCaracterisic() {
+		return sentenceCaracteristic;
 	}
 }

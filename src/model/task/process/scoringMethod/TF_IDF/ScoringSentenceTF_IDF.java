@@ -61,7 +61,7 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Scor
 			}
 		}
 		Collections.sort(sentencesScores);
-		//System.out.println(sentencesScores);
+		System.out.println(sentencesScores);
 	}
 	
 	@Override

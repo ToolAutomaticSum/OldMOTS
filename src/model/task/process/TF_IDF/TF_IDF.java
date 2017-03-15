@@ -41,12 +41,23 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 		}
 		else {
 			//pathCorpus = getModel().getProcessOption(id, "PathCorpus");
+			LearningTF_IDF.generateDictionary(getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()), index);
 			for (int i = 0; i<getModel().getCurrentMultiCorpus().size();i++) {
 				if (i!=getSummarizeCorpusId()) {
 					LearningTF_IDF.generateDictionary(getModel().getCurrentMultiCorpus().get(i), index);
 				}
 			}
-			LearningTF_IDF.generateDictionary(getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()), index);
+			/*Writer wr = new Writer(getModel().getOutputPath() + "TF_IDF.txt");
+			wr.open();			
+			for (WordIndex wi : index.values()) {
+				WordTF_IDF w = (WordTF_IDF) wi;
+				wr.write(w.getWord() + "\t" + w.getTfCorpus(getSummarizeCorpusId()) + getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).getNbWord() + "\t" + w.getIdf());
+			}*/
+			/*for (int i = 0; i<getModel().getCurrentMultiCorpus().size();i++) {
+				if (i!=getSummarizeCorpusId()) {
+					LearningTF_IDF.majIDFDictionnary(getModel().getCurrentMultiCorpus().get(i), index);
+				}
+			}*/
 		}
 	}
 	
@@ -57,7 +68,7 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 	@Override
 	public void process() throws Exception {
 		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
-		
+		//int nbWord = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).getNbWord();
 		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();
@@ -67,16 +78,18 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
 				while (sentenceIt.hasNext()) {
 					SentenceModel sentenceModel = sentenceIt.next();
-					double[] tfIdfVector = new double[index.size()];
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel wm = wordIt.next();
-						if (!wm.isStopWord()) {
-							WordTF_IDF word = (WordTF_IDF) index.get(wm.getmLemma());
-							tfIdfVector[word.getId()]=word.getTfCorpus(getSummarizeCorpusId())*word.getIdf();
+					if (sentenceModel.getLength() > 8) {
+						double[] tfIdfVector = new double[index.size()];
+						Iterator<WordModel> wordIt = sentenceModel.iterator();
+						while (wordIt.hasNext()) {
+							WordModel wm = wordIt.next();
+							if (!wm.isStopWord()) {
+								WordTF_IDF word = (WordTF_IDF) index.get(wm.getmLemma());
+								tfIdfVector[word.getId()]+=word.getTfCorpus(getSummarizeCorpusId())*word.getIdf();
+							}
 						}
+						sentenceCaracteristic.put(sentenceModel, tfIdfVector);
 					}
-					sentenceCaracteristic.put(sentenceModel, tfIdfVector);
 				}
 			}
 		}

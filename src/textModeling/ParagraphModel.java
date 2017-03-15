@@ -1,9 +1,10 @@
 package textModeling;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
- * À mettre en place extends ArrayList<SentenceModel>
+ * ï¿½ mettre en place extends ArrayList<SentenceModel>
  * @author Val
  *
  */
@@ -14,24 +15,27 @@ public class ParagraphModel extends ArrayList<SentenceModel> {
 	 */
 	private static final long serialVersionUID = 4074259901680254039L;
 	protected String paragraph;
-	//protected ArrayList<SentenceModel> listSentences = new ArrayList<SentenceModel>();
+	protected Iterator<SentenceModel> it;
 	protected int nbSentence;
 	
 	private TextModel text;
 	
 	public ParagraphModel() {
 		super();
+		it = iterator();
 	}
 
 	public ParagraphModel(String text) {
 		super();
 		paragraph = text;
+		it = iterator();
 	}
 	
 	public ParagraphModel(String text, TextModel textModel) {
 		super();
 		paragraph = text;
 		this.text = textModel;
+		it = iterator();
 	}
 	
 	public TextModel getText() {
@@ -74,5 +78,12 @@ public class ParagraphModel extends ArrayList<SentenceModel> {
 			str+="\t" + get(i).toString() + "\n";
 		}
 		return str;
+	}
+
+	public int getNbWord() {
+		int nbWord = 0;
+		for (SentenceModel s : this)
+			nbWord += s.size();
+		return nbWord;
 	}
 }

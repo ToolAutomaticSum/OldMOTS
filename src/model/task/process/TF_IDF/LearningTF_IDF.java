@@ -97,6 +97,35 @@ public class LearningTF_IDF extends AbstractProcess {
 		dictionnary.putCorpusNbDoc(corpus.getiD(), corpus.size());
 	}
 	
+	public static void majIDFDictionnary(Corpus corpus, Index dictionnary) {
+		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.size());
+		
+		//Construction du dictionnaire
+		Iterator<TextModel> textIt = corpus.iterator();
+		while (textIt.hasNext()) {
+			TextModel textModel = textIt.next();
+			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
+			while (paragraphIt.hasNext()) {
+				ParagraphModel paragraphModel = paragraphIt.next();
+				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
+				while (sentenceIt.hasNext()) {
+					SentenceModel sentenceModel = sentenceIt.next();
+					Iterator<WordModel> wordIt = sentenceModel.iterator();
+					while (wordIt.hasNext()) {
+						WordModel word = wordIt.next();
+						//TODO ajouter filtre à la place de getmLemma
+						if (!word.isStopWord() && dictionnary.containsKey(word.getmLemma())) {
+							WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
+							w.addDocumentOccurence(corpus.getiD(), textModel.getTextID());
+							dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
+						}
+					}
+				}
+			}
+		}
+		dictionnary.putCorpusNbDoc(corpus.getiD(), corpus.size());
+	}
+	
 	private void writeTF_IDFModel() {
 		Writer w = new Writer(pathModel + File.separator + "TF_IDF_Model.txt");
 		w.open();

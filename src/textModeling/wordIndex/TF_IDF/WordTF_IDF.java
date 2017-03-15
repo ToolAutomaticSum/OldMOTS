@@ -48,7 +48,7 @@ public class WordTF_IDF extends WordIndex {
 		/**
 		 * Smooth IDF (1+log à la place de log simple) si rencontre de mot inconnu du dictionnaire
 		 */
-		return Math.log(dictionnary.getNbDocument()/getNbDocumentWithWordSeen());
+		return Math.log(index.getNbDocument()/getNbDocumentWithWordSeen());
 	}
 	
 	public double getTfDocument(int idDoc) {

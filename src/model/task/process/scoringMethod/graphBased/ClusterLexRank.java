@@ -47,15 +47,15 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 	private double dumpingParameter;
 	private double epsilon;
 	
-	/** Associé à listCluster issu de Centroid */
+	/** AssociÃ© Ã  listCluster issu de Centroid */
 	private Map<Integer, GraphSentenceBased> listGraph;
 	private double graphThreshold = 0;
 	
 	public ClusterLexRank(int id) throws Exception {
 		super(id);
 		
-		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.DumpingParameter.getName(), 0.85));
-		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.Epsilon.getName(), 0.01));
+		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.DumpingParameter.getName(), 0.15));
+		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.Epsilon.getName(), 0.0000001));
 		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.GraphThreshold.getName(), Double.parseDouble(getModel().getProcessOption(id, ClusterLexRank_Parameter.GraphThreshold.getName()))));
 	}
 	
@@ -74,7 +74,7 @@ public class ClusterLexRank extends CentroidError implements ScoreBasedOut {
 		
 		SentenceSimilarityMetric sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 		
-		/** Création de la liste des graphes associés à chaque cluster de listCluster */
+		/** Crï¿½ation de la liste des graphes associï¿½s ï¿½ chaque cluster de listCluster */
 		listGraph = new HashMap<Integer, GraphSentenceBased>();
 		
 		Iterator<ClusterCentroid> itCluster = listCluster.values().iterator();

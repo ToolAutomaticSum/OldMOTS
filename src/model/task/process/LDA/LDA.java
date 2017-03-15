@@ -11,19 +11,20 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import exception.VectorDimensionException;
-import jgibblda.Inferencer;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
 import model.task.process.AbstractProcess;
+import model.task.process.VectorCaracteristicBasedOut;
 import optimize.parameter.Parameter;
 import textModeling.Corpus;
+import textModeling.MultiCorpus;
 import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 import textModeling.wordIndex.LDA.WordLDA;
 
-public class LDA extends AbstractProcess implements LdaBasedOut {
+public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut {
 	
 	static {
 		supportADN = new HashMap<String, Class<?>>();
@@ -50,13 +51,13 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 	//Vecteur de la phrases obtenue par moyenne des vecteurs des mots de la phrases
 	protected double[][] matSentenceTopic; //Sentence/Topic
 	
-	private Inferencer inferencer;
+	//private Inferencer inferencer;
 	private Model newModel;
 	private Integer idMultiCorpusTrnModel = null;
-	private Model trnModel;
+	//private Model trnModel;
 	
 	private int nbSentence;
-	private double[][] theta;
+	private double[] theta;
 	private int K;
 	
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
@@ -66,7 +67,7 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 	}
 	
 	/**
-	 * Calcul des topics sur le/les documents � r�sumer
+	 * Calcul des topics sur le/les documents à résumer
 	 */
 	@Override
 	public void init() throws Exception {
@@ -81,20 +82,28 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 		option.estc = false;
 		option.inf = true;
 		option.dir = getModel().getOutputPath()  + File.separator + "modelLDA";
-		option.dfile = "temp.txt.gz"; //TODO à changer
+		option.dfile = "temp.txt.gz";
+		option.niters = 100;
 		option.twords = 20;
-		K = getModel().getCurrentMultiCorpus().size();
+		K = (int) Math.round(Math.sqrt(getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).getNbSentence()));
 		option.K = K;
 		option.alpha = adn.getParameterValue(Double.class, InferenceLDA_Parameter.alpha.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Alpha"));
 		option.beta = adn.getParameterValue(Double.class, InferenceLDA_Parameter.beta.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Beta"));
-
-		if (idMultiCorpusTrnModel == null || idMultiCorpusTrnModel != getModel().getCurrentMultiCorpus().getiD()) {	
-			trnModel = LearningLDA.ldaModelLearning(option.K, option.alpha, option.beta, getModel().getOutputPath(), getModel().getCurrentMultiCorpus());
-			idMultiCorpusTrnModel = getModel().getCurrentMultiCorpus().getiD();
-		}
-		inferencer = new Inferencer(option, trnModel);
+		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
+		option.dir = "/home/valnyz/Documents" + File.separator + "modelLDA";
+		option.dfile = "temp.txt.gz"; //TODO à changer
 		
-		newModel = inferencer.inference(false);
+		MultiCorpus temp = new MultiCorpus(getModel().getCurrentMultiCorpus().getiD());
+		temp.add(getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()));
+		
+		/*if (idMultiCorpusTrnModel == null || idMultiCorpusTrnModel != getModel().getCurrentMultiCorpus().getiD()) {
+			//trnModel = LearningLDA.ldaModelLearning(option.K, option.alpha, option.beta, getModel().getOutputPath(), temp);
+			//trnModel = LearningLDA.ldaModelLearning(option.K, option.alpha, option.beta, getModel().getOutputPath(), getModel().getCurrentMultiCorpus());
+			idMultiCorpusTrnModel = getModel().getCurrentMultiCorpus().getiD();
+		}*/
+		//Inferencer inferencer = new Inferencer(option);
+		
+		newModel = LearningLDA.ldaModelLearning(option.K,  option.alpha, option.beta, getModel().getOutputPath(), temp);//inferencer.inference(false);
 	}
 	
 	/**
@@ -104,27 +113,24 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 	 */
 	@Override
 	public void process() throws Exception {
-		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
-		
-		generateDictionary();
+
+		System.gc();
 		File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt");
 		f.delete();		//Suppression de tempInputFile
 		
-		double valeurLimiteTopic = 0.01;
-		int t = 0; //document variable
 		nbSentence = 0;
 		K = newModel.K;
-		theta = newModel.theta;
-		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
-		while (textIt.hasNext()) {
-			nbSentence+=textIt.next().getNbSentence();
-			//Parcours de theta, si valeur topic < X => valeur topic = 0;
-			for (int topic = 0; topic < theta[t].length; topic++) {
-				if (theta[t][topic] < valeurLimiteTopic)
-					theta[t][topic] = 0;
+
+		theta = new double[K];
+		for (int k = 0; k<K; k++) {
+			for (int m = 0; m<newModel.M; m++) {
+				theta[k] += newModel.theta[m][k];
 			}
-			t++;
+			theta[k]/=newModel.M;
 		}
+		generateDictionary();
+		
+		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
 		
 		generateMatSentenceTopic();
 		
@@ -140,8 +146,10 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 	}
 	
 	private void generateDictionary() {
+		//int n = 0; //nbWords;
 		//Construction du dictionnaire
-		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
+		Corpus corpus = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId());
+		Iterator<TextModel> textIt = corpus.iterator();
 		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();
 			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
@@ -153,10 +161,14 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						if(!index.containsKey(word.getmLemma())) {
-							index.put(word.getmLemma(), new WordLDA(word.getmLemma(), index, newModel.K));
+						//TODO ajouter filtre à la place de getmLemma
+						if (!word.isStopWord()) {
+							if(!index.containsKey(word.getmLemma())) {
+								WordLDA w = new WordLDA(word.getmLemma(), index, newModel.K, theta);
+								index.put(word.getmLemma(), w, newModel.data.localDict.getID(word.getmLemma()));
+							}
+							index.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 						}
-						index.get(word.getmLemma()).add(word);
 					}
 				}
 			}
@@ -165,29 +177,27 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 		//Ajout dans le dictionnaire des IDs et des Topic Distribution
 		for (int w = 0; w < newModel.V; w++){ //Boucle sur le nombre de mot du vocabulaire local
 			String word = newModel.data.localDict.getWord(w);
-			WordLDA wordEmbeddings;
+			WordLDA wLDA;
 			if(index.containsKey(word)) {
-				wordEmbeddings = (WordLDA) index.get(word);
-				wordEmbeddings.setId(w);
-			}
-			else {
-				wordEmbeddings = new WordLDA(word, index, newModel.K);
-				index.put(word, wordEmbeddings);
-			}
-			for (int k = 0; k < newModel.K; k++){ //Boucle sur le nombre de Topic
-				if (newModel.data.localDict.contains(w)){
-					wordEmbeddings.getTopicDistribution()[k] = newModel.phi[k][w];
+				wLDA = (WordLDA) index.get(w);
+				//double temp = 0;
+				for (int k = 0; k < newModel.K; k++){ //Boucle sur le nombre de Topic
+					//System.out.println(k + "\t" + theta[k] + "\t" + newModel.phi[k][w] + "\t" + wLDA.size() + "\t" + n);
+					wLDA.getTopicDistribution()[k] = newModel.phi[k][w];
+					//temp+=wLDA.getTopicDistribution()[k];
 				}
-			}//end foreach word
+				//for (int k = 0; k < newModel.K; k++)
+				//	wLDA.getTopicDistribution()[k]/=temp;
+			}
 		}
 	}
 	
 	private void writeTempInputFile() throws IOException {
-		new File(getModel().getOutputPath() + File.separator + "modelLDA").mkdir();
+		new File("/home/valnyz/Documents" + File.separator + "modelLDA").mkdir();
 		
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                 new GZIPOutputStream(
-                    new FileOutputStream(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt.gz")), "UTF-8"));
+                    new FileOutputStream("/home/valnyz/Documents" + File.separator + "modelLDA" + File.separator + "temp.txt.gz")), "UTF-8"));
 
 		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {
@@ -213,10 +223,10 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 	 * Ajout des caractéristiques de la phrase comme étant la moyenne des vecteurs de chaque mot la composant
 	 * @throws VectorDimensionException
 	 */
-	private void generateMatSentenceTopic() throws VectorDimensionException {		
+	private void generateMatSentenceTopic() throws VectorDimensionException {
+		nbSentence = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).getNbSentence();
 		matSentenceTopic = new double[nbSentence][K];
 		
-		int t = 0; //document variable
 		int i = 0; //sentence variable
 		int l = 1; //optional parameter to configure handicap for long sentences
 
@@ -230,38 +240,23 @@ public class LDA extends AbstractProcess implements LdaBasedOut {
 				while (sentenceIt.hasNext()) {
 					SentenceModel sentenceModel = sentenceIt.next();
 					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					int j = 0; //length of the sentence
+					int n = 0; //length of the sentence
 					while (wordIt.hasNext()) {
 						WordModel word = wordIt.next();
-						WordLDA wordLDA = (WordLDA) index.get(word.getmLemma());
-						for (int k = 0; k<K; k++)
-							matSentenceTopic[i][k] += wordLDA.getTopicDistribution()[k]*theta[t][k];
-						j++;
+						if (!word.isStopWord()) {
+							WordLDA wordLDA = (WordLDA) index.get(word.getmLemma());
+							for (int k = 0; k<K; k++)
+								matSentenceTopic[i][k] += wordLDA.getTopicDistribution()[k];
+							n++;
+						}
 					}
-					
 					for (int k = 0; k<K; k++) //topic loop
-						matSentenceTopic[i][k] /= j^l;
+						matSentenceTopic[i][k] = matSentenceTopic[i][k]*theta[k]/(Math.pow(n,l));
 					sentenceCaracteristic.put(sentenceModel,matSentenceTopic[i]);
 					i++;
 				}
 			}
-			t++;
 		}
-	}
-	
-	@Override
-	public double[][] getTheta() {
-		return theta;
-	}
-
-	@Override
-	public int getK() {
-		return K;
-	}
-
-	@Override
-	public int getNbSentence() {
-		return nbSentence;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import org.w3c.dom.NodeList;
 
 import exception.LacksOfFeatures;
 import model.task.preProcess.stanfordNLP.StanfordNLPSimplePreProcess;
+import reader_writer.Reader;
 import textModeling.Corpus;
 import textModeling.TextModel;
 import tools.Tools;
@@ -50,6 +51,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 	
 	@Override
 	public void finish() {
+		preProcess = null;
 	}
 
 	@Override
@@ -118,8 +120,18 @@ public class GenerateTextModel extends AbstractPreProcess {
 				else
 					return false;
 			}
-			else
-				return false;
+			else {
+				Reader reader = new Reader(textModel.getDocumentFilePath(), true);
+				reader.open();
+				String text = reader.read();
+				String temp = "";
+				while(text != null) {
+					temp += text;
+					text = reader.read();
+				}
+				textModel.setText(temp + "\n");
+				return true;
+			}
 		} else 
 			return true;
 	}

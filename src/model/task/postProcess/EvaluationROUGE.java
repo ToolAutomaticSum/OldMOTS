@@ -119,7 +119,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			"<body bgcolor=\"white\">\n");
 			for (int j = 0; j<getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId).size(); j++) {
 				w.write("<a name=\""+ String.valueOf(j) + "\">[" + String.valueOf(j) + "]</a> <a href=\"#" + String.valueOf(j) + 
-						"\" id=" + String.valueOf(j) + ">" + getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId).get(j).getSentence() + "</a>\n");
+						"\" id=" + String.valueOf(j) + ">" + getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId).get(j).toString() + "</a>\n");
 			}
 			w.write("</body>\n</html>");
 			w.close();
@@ -212,17 +212,17 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	transformer.transform(source, sortie);	
 	}
 	
-	private static void inheritIO(final InputStream src, final PrintStream dest) {
-    new Thread(new Runnable() {
-        public void run() {
-            Scanner sc = new Scanner(src);
-            while (sc.hasNextLine()) {
-                dest.println(sc.nextLine());
-            }
-            sc.close();
-        }
-    }).start();
-}
+	public static void inheritIO(final InputStream src, final PrintStream dest) {
+	    new Thread(new Runnable() {
+	        public void run() {
+	            Scanner sc = new Scanner(src);
+	            while (sc.hasNextLine()) {
+	                dest.println(sc.nextLine());
+	            }
+	            sc.close();
+	        }
+	    }).start();
+	}
 
 	public String getRougePath() {
 		return rougePath;

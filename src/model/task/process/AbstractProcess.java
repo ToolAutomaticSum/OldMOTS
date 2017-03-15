@@ -64,6 +64,8 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	 */
 	@Override
 	public void process() throws Exception {
+		System.out.println("Process Corpus " + + getSummarizeCorpusId());
+		
 		for (TextModel text : getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId())) {
 			allSentenceList.addAll(text.getSentence());
 		}
@@ -108,8 +110,6 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		Set<Class<?>> classScoring = Tools.getInheritance(scoringMethod.getClass());
 		if (classProcess.contains(LdaBasedOut.class) && classScoring.contains(LdaBasedIn.class)) {
 			((LdaBasedIn)scoringMethod).setK(((LdaBasedOut)this).getK());
-			((LdaBasedIn)scoringMethod).setTheta(((LdaBasedOut)this).getTheta());
-			((LdaBasedIn)scoringMethod).setNbSentence(((LdaBasedOut)this).getNbSentence());
 		}
 		if (classProcess.contains(VectorCaracteristicBasedOut.class) && classScoring.contains(VectorCaracteristicBasedIn.class)) {
 			((VectorCaracteristicBasedIn)scoringMethod).setVectorCaracterisic(((VectorCaracteristicBasedOut)this).getVectorCaracterisic());

@@ -99,9 +99,9 @@ public class LearningLDA extends AbstractProcess {
 					while (senIt.hasNext()) {
 						Iterator<WordModel> wordIt = senIt.next().iterator();
 						while (wordIt.hasNext()) {
-							String word = wordIt.next().toString();
-							if (!word.isEmpty()) {
-								writer.write(word + " ");
+							WordModel word = wordIt.next();
+							if (!word.isStopWord()) {
+								writer.write(word.getmLemma() + " ");
 							}
 						}
 					}
@@ -120,10 +120,10 @@ public class LearningLDA extends AbstractProcess {
 		option.K = K;
 		option.alpha = alpha;
 		option.beta = beta;
-		option.niters = 200;
+		option.niters = 600;
 		option.twords = 15;
 		option.dir = outputPath + File.separator + "modelLDA";
-		option.dfile = "temp_"+option.alpha+"_"+option.beta;
+		option.dfile = "temp.txt";
 		
 		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
 
@@ -135,6 +135,6 @@ public class LearningLDA extends AbstractProcess {
 		option.est=true;
 		option.estc=false;
 		estimator = new Estimator(option);
-		return estimator.estimate(false);
+		return estimator.estimate(true);
 	}
 }

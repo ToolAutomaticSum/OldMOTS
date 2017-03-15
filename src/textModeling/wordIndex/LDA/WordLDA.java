@@ -6,6 +6,7 @@ import textModeling.wordIndex.WordIndex;
 public class WordLDA extends WordIndex{
 	
 	private int K;
+	private double[] theta;
 	
 	/**
 	 * 
@@ -13,10 +14,18 @@ public class WordLDA extends WordIndex{
 	private static final long serialVersionUID = 2881569573918395518L;
 	private double[] topicDistribution;
 	
-	public WordLDA(String word, Index dictionnary, int nbTopic) {
+	/*public WordLDA(String word, Index dictionnary, int nbTopic) {
 		super(word, dictionnary);
 		this.K = nbTopic;
 		this.topicDistribution = new double[K];
+		this.theta = new double[K];
+	}*/
+
+	public WordLDA(String word, Index dictionnary, int nbTopic, double[] theta) {
+		super(word, dictionnary);
+		this.K = nbTopic;
+		this.topicDistribution = new double[K];
+		this.theta = theta;
 	}
 	
 	public WordLDA(String word, Index dictionnary, double[] topicDistribution) {

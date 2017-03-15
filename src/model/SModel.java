@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -90,7 +89,7 @@ public class SModel extends Observable {
 						
 						if (p.getSummary() != null) {
 							List<SentenceModel> summary = p.getSummary().get(currentMultiCorpus.getiD()).get(p.getSummarizeCorpusId());
-							Collections.sort(summary);
+							//Collections.sort(summary);
 							notifyObservers(SentenceModel.listSentenceModelToString(summary));
 						}
 					}

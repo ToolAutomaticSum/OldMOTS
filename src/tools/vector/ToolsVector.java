@@ -15,10 +15,9 @@ public class ToolsVector {
 	}
 	
 	static public double norme(double[] a) {
-		int n = a.length;
 	    double res = 0.0 ;
-	    for (--n; n >= 0; --n) {
-	        res += a[n] * a[n] ;
+	    for (int i=0; i<a.length; i++) {
+	        res += a[i] * a[i] ;
 	    }
 	    return Math.sqrt(res) ;
 	}
@@ -32,15 +31,12 @@ public class ToolsVector {
 	
 	static public double cosineSimilarity(double[] a, double[] b) throws VectorDimensionException {
 		if (a.length == b.length) {
-			double n = 0; //numérateur scalar(a,b);
-			double normeA = 0; //norme de a;
-			double normeB = 0; //norme de b;
-			for (int i = 0; i<a.length; i++) {
-				n+=a[i]*b[i];
-				normeA+=Math.pow(a[i],2);
-				normeB+=Math.pow(b[i],2);
-			}
-			return n/(Math.sqrt(normeA)*Math.sqrt(normeB));
+			double a1 = scalar(a,b);
+			double a2 = norme(a);
+			double a3 = norme(b);
+			double a4 = a2*a3;
+			double a5 = a1 / a4;
+			return a5; //scalar(a,b)/(norme(a)*norme(b));
 		} else
 			throw new VectorDimensionException();
 	}
@@ -86,4 +82,12 @@ public class ToolsVector {
                 temp[j][i] = m[i][j];
         return temp;
     }
+	
+	public static void printVector(double [] v){
+		System.out.print("[");
+		for (int i = 0; i < v.length; i++) {
+			System.out.print(" " + v[i]);
+		}
+		System.out.println(" ]");
+	}
 }

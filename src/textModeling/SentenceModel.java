@@ -51,7 +51,10 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 	}
 
 	public String getSentence() {
-		return sentence;
+		String txt = "";
+		for (WordModel w : this)
+			txt += w.toString() + " ";
+		return txt;
 	}
 
 	public void setSentence(String sentence) {
@@ -91,7 +94,7 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 		String str = "";
 		Iterator<SentenceModel> it = list.iterator();
 		while (it.hasNext())
-			str += it.next().getSentence() + "\n";
+			str += it.next().toString() + "\n";
 		return str;
 	}
 

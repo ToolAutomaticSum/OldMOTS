@@ -3,7 +3,7 @@ package textModeling.wordIndex;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import textModeling.wordIndex.TF_IDF.WordTF_IDF;
+import textModeling.WordModel;
 
 public class InvertedIndex {
 	
@@ -24,13 +24,14 @@ public class InvertedIndex {
 		this.corpusWordIndex = new HashMap <Integer, ArrayList<WordIndex>>();
 		for (WordIndex indexKey : dico.values())
 		{
-			WordTF_IDF cti = (WordTF_IDF) indexKey;
-			for (Integer corpusId : cti.getCorpusOccurence().keySet())
+			for (WordModel wm : indexKey)
 			{
+				int corpusId = wm.getSentence().getParagraph().getText().getParentCorpus().getiD();
 				if (this.corpusWordIndex.containsKey(corpusId))
 				{
 					currWordList = this.corpusWordIndex.get(corpusId);
-					currWordList.add(indexKey);
+					if (!currWordList.contains(indexKey))
+						currWordList.add(indexKey);
 				}
 				else
 				{

@@ -121,6 +121,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 			}
 			
 			this.summary.add(pMax);
+			System.out.println(getMMRScore(pMax));
 			this.sentencesBaseScores.remove(pMax);
 
 			if (nbCharSizeOrNbSentenceSize)

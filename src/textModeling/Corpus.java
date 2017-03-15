@@ -20,6 +20,7 @@ public class Corpus extends ArrayList<TextModel> {
 	protected SModel model;
 	protected List<String> docNames;
 	protected List<String> summaryNames;
+	protected SentenceModel currentSentence;
 	
 	public Corpus(int iD) {
 		this.iD = iD;
@@ -48,6 +49,13 @@ public class Corpus extends ArrayList<TextModel> {
 			}
 		}
 		return sen;
+	}
+	
+	public int getNbWord() {
+		int nbWord = 0;
+		for (TextModel t : this)
+			nbWord += t.getNbWord();
+		return nbWord;
 	}
 	
 	public int getNbSentence() {
@@ -109,5 +117,13 @@ public class Corpus extends ArrayList<TextModel> {
 		}
 		String str = "Corpus " + iD + " \n" + current + "\n";
 		return str;
+	}
+
+	public List<String> getAllStringSentence() {
+		List<String> allSentenceList = new ArrayList<String>();
+		for (TextModel text : this) {
+			allSentenceList.addAll(text.getStringSentence());
+		}
+		return allSentenceList;
 	}
 }

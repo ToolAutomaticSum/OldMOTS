@@ -59,9 +59,6 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 	@Override
 	public void process() throws Exception {
 		this.buildWeightsAndSentences();
-		//this.buildModel();
-		//this.writeModelToTmpFile();
-		//this.runGLPK();	
 		
 		super.process();
 	}
@@ -69,6 +66,9 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 	@Override
 	public void finish() throws Exception {
 		super.finish();
+		bigram_weights = null;
+		bigrams_in_sentence = null;
+		bigrams = null;
 	}
 	
 	private void buildWeightsAndSentences()
@@ -79,9 +79,8 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 		int ind;
 		ArrayList <NGram> curr_bg_arr;
 		ArrayList <Integer> curr_doc_bg_arr;
-		//HashMap <NGram, Integer> firstSentencesConcepts = new HashMap <NGram, Integer> ();
-	
-		System.out.println("Construction du mod�le");
+
+		System.out.println("Construction du modèle");
 		
 		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
 		while (textIt.hasNext()) {

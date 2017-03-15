@@ -36,6 +36,9 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 		
 		buildModel();
 		writeModelToTmpFile();
+		bigram_weights = null;
+		bigrams_in_sentence = null;
+		bigrams = null; 
 	}
 
 	public void buildModel()

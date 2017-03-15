@@ -2,8 +2,10 @@ package textModeling.graphBased;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
+import reader_writer.Writer;
 import textModeling.SentenceModel;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
@@ -25,20 +27,37 @@ public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 		this.threshold = threshold;
 		this.sentenceCaracteristic = sentenceCaracteristic;
 		this.sim = sim;
+		
+		int sentenceId = 0;
+		Iterator<SentenceModel> itSentence = sentenceCaracteristic.keySet().iterator();
+		while (itSentence.hasNext()) {
+			this.add(new NodeGraphSentenceBased(sentenceId, itSentence.next()));
+			sentenceId++;
+		}
 	}
 
 	public void generateGraph() throws Exception {
 		matAdj = new double[this.size()][this.size()];
 		degree = new int[this.size()];
-		
+		Writer w = new Writer("/home/valnyz/similarity.txt");
+		w.open();
 		for (int i = 0; i<this.size(); i++) {
 			for (int j = 0; j<this.size(); j++) {
 				matAdj[i][j] = sim.computeSimilarity(sentenceCaracteristic.get(this.get(i).getCurrentSentence()), sentenceCaracteristic.get(this.get(j).getCurrentSentence()));
 				if (matAdj[i][j] > threshold) {
 					this.get(i).addAdjacentSentence(this.get(j).getCurrentSentence(), matAdj[i][j]);
+					matAdj[i][j] = 1;
 					degree[i]++;
 				} else
 					matAdj[i][j] = 0;
+			}
+		}
+
+		for (int i = 0; i<this.size(); i++) {
+			w.write(String.valueOf(getDegree()[i]) + "\n");
+			for (int j = 0; j<this.size(); j++) {
+				if (matAdj[i][j] > threshold)
+					w.write(this.get(i).getCurrentSentence().toString() + "\n" + this.get(j).getCurrentSentence().toString() + "\n" + this.get(i).getAdjacentSentence().get(this.get(j).getCurrentSentence()) + "\n");
 			}
 		}
 	}
