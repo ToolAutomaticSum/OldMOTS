@@ -6,7 +6,6 @@ import java.util.TreeMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.smoothings.DirichletUniqueProbSmoothing;
@@ -25,31 +24,29 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
 	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, index, null, delta, firstSentenceConceptsFactor,
-				null, null);
+		super(null, corpus, null, index, null, delta, firstSentenceConceptsFactor, null, null);
 	}
+	
+	@Override
+	public void init() {
+		//System.out.println("JS Bigram scorer initialization");
+		this.computeNGrams_in_sentences();
 		
-		public void init() {
-			System.out.println("JS Bigram scorer initialization");
-			this.computeNGrams_in_sentences();
-			
-			this.computeSourceDistribution ();
-			System.out.println("JS Bigram scorer initialized");
-		}
+		this.computeSourceDistribution ();
+		//System.out.println("JS Bigram scorer initialized");
 		
-		public void computeNGrams_in_sentences()
-		{
-			init();
+		//System.out.println(index);
+	}
+	
+	public void computeNGrams_in_sentences()
+	{
 		this.ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
 		
 		for (TextModel doc : this.cd)
 		{
-			for (ParagraphModel para : doc)
+			for (SentenceModel p : doc)
 			{
-				for (SentenceModel p : para)
-				{
-					this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
-				}
+				this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
 			}
 		}
 	}
@@ -85,7 +82,7 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 					}
 					this.nbBiGramsInSource++;
 					
-					if (p.getParagraph().indexOf(p) == 1)
+					if (p.getText().indexOf(p) == 1)
 					{
 						//System.out.println("Premiere pos");
 						this.firstSentencesConcepts.put(ng, 1);
@@ -93,7 +90,7 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 				}
 			//}
 		}
-		System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
+		//System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
 		
 		for (NGram ng : this.firstSentencesConcepts.keySet())
 		{
@@ -117,7 +114,7 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 				//System.out.println(" : "+this.sourceDistribution.get(ng)+" | "+this.sourceOccurences.get(ng));
 			//}
 		}*/
-		System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
+		//System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
 		for (NGram ng : this.sourceOccurences.keySet())
 		{
 			this.sourceDistribution.put(ng, (double)this.sourceOccurences.get(ng) / modified_nbBiGramsInSource );

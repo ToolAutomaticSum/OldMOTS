@@ -71,8 +71,26 @@ public class Index extends HashMap<Integer, WordIndex> {
 		return super.get(hashMapIndex.get(key));
 	}
 	
-	@Override
-	public boolean containsKey(Object key) {
+	public boolean containsKey(String key) {
 		return hashMapIndex.containsKey(key);
+	}
+	
+	@Override
+	public WordIndex remove(Object key) {
+		System.out.println("Remove !!");
+		return super.remove(key);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString();
+	}
+	
+	@Override
+	public void clear() {
+		hashMapIndex.clear();
+		super.clear();
+		nbDoc = 0;
+		corpusNbDoc.clear();
 	}
 }

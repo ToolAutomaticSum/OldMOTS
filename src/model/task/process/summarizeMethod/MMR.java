@@ -7,13 +7,29 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import model.task.process.VectorCaracteristicBasedIn;
+import model.task.process.scoringMethod.TF_IDF.Centroid.Centroid_Parameter;
 import optimize.SupportADNException;
+import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicBasedIn, ScoreBasedIn {
+	
+	public static enum MMR_Parameter {
+		Lambda("Lambda");
 
+		private String name;
+
+		private MMR_Parameter(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
+	
 	private double lambda;
 	private SentenceSimilarityMetric sim;
 
@@ -31,12 +47,18 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 	
 	public MMR(int id) throws SupportADNException {
 		super(id);
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("Lambda", Double.class);
 	}
 	
-	public void init() throws Exception {
+	@Override
+	public void initADN() throws Exception {
+		getCurrentProcess().getADN().putParameter(new Parameter<Double>(MMR_Parameter.Lambda.getName(), Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Lambda"))));
+		getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMaxValue(1.0);
+		getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMinValue(0.6);
+	
 		nbCharSizeOrNbSentenceSize = Boolean.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
-		lambda = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Lambda"));
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
@@ -46,6 +68,10 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 			this.maxSummLength = size;
 		else
 			this.nbSentenceInSummary = size;
+	}
+	
+	public void init() throws Exception {
+		lambda = getCurrentProcess().getADN().getParameterValue(Double.class, MMR_Parameter.Lambda.getName());
 		
 		this.sentencesBaseScores = new HashMap<SentenceModel, Double>();
 		this.sentencesMMRScores = new HashMap<SentenceModel, Double>();
@@ -74,7 +100,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		int cnt = 0;
 		while (this.selectNextSentence())
 		{
-			System.out.println("Iteration " + cnt + " : " + this.sentencesBaseScores.size());
+			//System.out.println("Iteration " + cnt + " : " + this.sentencesBaseScores.size());
 			cnt ++;
 		}
 		
@@ -86,7 +112,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		HashMap <SentenceModel, Double> sentencesBaseScores_new = new HashMap <SentenceModel, Double> (this.sentencesBaseScores);
 		for (SentenceModel p : this.sentencesBaseScores.keySet())
 		{
-			if (p.size() + this.actualSummaryLength > this.maxSummLength)
+			if (p.getNbMot() + this.actualSummaryLength > this.maxSummLength)
 			{
 				sentencesBaseScores_new.remove(p);
 			}
@@ -121,11 +147,11 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 			}
 			
 			this.summary.add(pMax);
-			System.out.println(getMMRScore(pMax));
+			//System.out.println(getMMRScore(pMax));
 			this.sentencesBaseScores.remove(pMax);
 
 			if (nbCharSizeOrNbSentenceSize)
-				this.actualSummaryLength += pMax.size();
+				this.actualSummaryLength += pMax.getNbMot();
 			else
 				this.actualSummaryLength++;
 			return true;

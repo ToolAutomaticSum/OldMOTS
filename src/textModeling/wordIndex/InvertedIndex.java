@@ -3,8 +3,6 @@ package textModeling.wordIndex;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import textModeling.WordModel;
-
 public class InvertedIndex {
 	
 	//List of indexKey of every Cluster
@@ -24,9 +22,7 @@ public class InvertedIndex {
 		this.corpusWordIndex = new HashMap <Integer, ArrayList<WordIndex>>();
 		for (WordIndex indexKey : dico.values())
 		{
-			for (WordModel wm : indexKey)
-			{
-				int corpusId = wm.getSentence().getParagraph().getText().getParentCorpus().getiD();
+			for (Integer corpusId : indexKey.getCorpusOccurences().keySet()) {
 				if (this.corpusWordIndex.containsKey(corpusId))
 				{
 					currWordList = this.corpusWordIndex.get(corpusId);

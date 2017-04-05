@@ -15,6 +15,8 @@ public abstract class AbstractSummarizeMethod extends Individu {
 		super(id);
 	}
 	
+	public abstract void initADN() throws Exception;
+	
 	public abstract List<SentenceModel> calculateSummary() throws Exception;
 
 	public AbstractProcess getCurrentProcess() {
@@ -23,10 +25,5 @@ public abstract class AbstractSummarizeMethod extends Individu {
 
 	public void setCurrentProcess(AbstractProcess currentProcess) {
 		this.currentProcess = currentProcess;
-		currentProcess.getSupportADN().putAll(supportADN);
-	}
-	
-	public boolean isQueryBased() {
-		return this.getClass() == VectorQueryBasedIn.class;
 	}
 }

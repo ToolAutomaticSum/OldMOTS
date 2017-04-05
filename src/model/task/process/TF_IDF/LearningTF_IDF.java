@@ -10,7 +10,6 @@ import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import reader_writer.Writer;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -48,12 +47,12 @@ public class LearningTF_IDF extends AbstractProcess {
 				generateDictionary(c, index);
 		}
 		else
-			generateDictionary(getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()), index);
+			generateDictionary(getCorpusToSummarize(), index);
 	}
 
 	@Override
 	public void finish() throws Exception {
-		writeTF_IDFModel();
+		writeIDFModel(pathModel, index);
 	}
 	
 	/**
@@ -67,29 +66,25 @@ public class LearningTF_IDF extends AbstractProcess {
 		Iterator<TextModel> textIt = corpus.iterator();
 		while (textIt.hasNext()) {
 			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
-					
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel word = wordIt.next();
-						//TODO ajouter filtre à la place de getmLemma
-						if (!word.isStopWord()) {
-							if(!dictionnary.containsKey(word.getmLemma())) {
-								WordTF_IDF w = new WordTF_IDF(word.getmLemma(), dictionnary);
-								w.addDocumentOccurence(corpus.getiD(), textModel.getTextID());
-								dictionnary.put(word.getmLemma(), w);
-							}
-							else {
-								WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
-								w.addDocumentOccurence(corpus.getiD(), textModel.getTextID());
-							}
-							dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
+			Iterator<SentenceModel> sentenceIt = textModel.iterator();
+			while (sentenceIt.hasNext()) {
+				SentenceModel sentenceModel = sentenceIt.next();
+				
+				Iterator<WordModel> wordIt = sentenceModel.iterator();
+				while (wordIt.hasNext()) {
+					WordModel word = wordIt.next();
+					//TODO ajouter filtre à la place de getmLemma
+					if (!word.isStopWord()) {
+						if(!dictionnary.containsKey(word.getmLemma())) {
+							WordTF_IDF w = new WordTF_IDF(word.getmLemma(), dictionnary);
+							w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
+							dictionnary.put(word.getmLemma(), w);
 						}
+						else {
+							WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
+							w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
+						}
+						dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}
 				}
 			}
@@ -98,41 +93,45 @@ public class LearningTF_IDF extends AbstractProcess {
 	}
 	
 	public static void majIDFDictionnary(Corpus corpus, Index dictionnary) {
-		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.size());
+		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.getNbDocument());
 		
 		//Construction du dictionnaire
-		Iterator<TextModel> textIt = corpus.iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel word = wordIt.next();
-						//TODO ajouter filtre à la place de getmLemma
-						if (!word.isStopWord() && dictionnary.containsKey(word.getmLemma())) {
-							WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
-							w.addDocumentOccurence(corpus.getiD(), textModel.getTextID());
-							dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
-						}
+		for (TextModel text : corpus) {
+			Iterator<SentenceModel> sentenceIt = text.iterator();
+			while (sentenceIt.hasNext()) {
+				SentenceModel sentenceModel = sentenceIt.next();
+				Iterator<WordModel> wordIt = sentenceModel.iterator();
+				while (wordIt.hasNext()) {
+					WordModel word = wordIt.next();
+					//TODO ajouter filtre à la place de getmLemma
+					if (!word.isStopWord() && dictionnary.containsKey(word.getmLemma())) {
+						WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
+						w.addDocumentOccurence(corpus.getiD(), text.getiD());
+						dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}
 				}
 			}
-		}
+	}
 		dictionnary.putCorpusNbDoc(corpus.getiD(), corpus.size());
 	}
 	
-	private void writeTF_IDFModel() {
-		Writer w = new Writer(pathModel + File.separator + "TF_IDF_Model.txt");
+	public static void writeIDFModel(String path, Index index) {
+		Writer w = new Writer(path + File.separator + "TF_IDF_Model.txt");
 		w.open();
 		w.write(String.valueOf(index.getNbDocument()) + "\n");
 		for (WordIndex wordIndex : index.values()) {
 			WordTF_IDF word = (WordTF_IDF) wordIndex;
 			w.write(word.getWord() + "\t" + word.getId() + "\t" + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf() + "\n");
+		}
+	}
+	
+	public static void writeTF_IDFModel(String path, Index index, int corpusId) {
+		Writer w = new Writer(path + File.separator + "TF_IDF_Model.txt");
+		w.open();
+		w.write(String.valueOf(index.getNbDocument()) + "\n");
+		for (WordIndex wordIndex : index.values()) {
+			WordTF_IDF word = (WordTF_IDF) wordIndex;
+			w.write(word.getWord() + "\t" + word.getId() + "\t" + word.getTfCorpus(corpusId) + "\t" + word.getIdf() + "\n");
 		}
 	}
 }

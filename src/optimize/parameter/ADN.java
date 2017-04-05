@@ -103,4 +103,14 @@ public class ADN extends HashMap<String, Class<?>> implements Comparable<ADN> {
 		}
 		return enfant;
 	}
+	
+	public HashMap<String, Parameter<Class<?>>> getMapNameParam() {
+		return mapNameParam;
+	}
+
+	public void putAllADN(ADN a) {
+		super.putAll(a);
+		for (String s : a.keySet())
+			mapNameParam.put(s, null);
+	}
 }

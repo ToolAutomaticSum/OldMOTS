@@ -16,8 +16,12 @@ import org.w3c.dom.NodeList;
 import exception.LacksOfFeatures;
 import model.task.preProcess.stanfordNLP.StanfordNLPSimplePreProcess;
 import reader_writer.Reader;
+import reader_writer.Writer;
 import textModeling.Corpus;
+import textModeling.MultiCorpus;
+import textModeling.SentenceModel;
 import textModeling.TextModel;
+import textModeling.WordModel;
 import tools.Tools;
 
 /**
@@ -40,18 +44,12 @@ public class GenerateTextModel extends AbstractPreProcess {
 		stanford = Boolean.parseBoolean(getModel().getProcessOption(id, "StanfordNLP"));
 		
 		// TODO remplacer preProcess par filtre � appliquer aux lignes lues --> Moins de co�t computationnel
-		preProcess.add(new ParagraphSplitter(getModel().getCtrl().incrementProcessID()));
 		if (stanford)
 			preProcess.add(new StanfordNLPSimplePreProcess(getModel().getCtrl().incrementProcessID()));
 		else {
 			preProcess.add(new SentenceSplitter(getModel().getCtrl().incrementProcessID()));
 			preProcess.add(new WordSplitter(getModel().getCtrl().incrementProcessID()));
 		}
-	}
-	
-	@Override
-	public void finish() {
-		preProcess = null;
 	}
 
 	@Override
@@ -88,6 +86,13 @@ public class GenerateTextModel extends AbstractPreProcess {
 			p.finish();
 		}
 	}
+
+	@Override
+	public void finish() {
+		preProcess = null;
+		new File(getModel().getOutputPath()+File.separator+"temp").mkdir();
+		GenerateTextModel.writeTempDocumentBySentence(getModel().getOutputPath()+File.separator+"temp", getModel().getCurrentMultiCorpus());
+	}
 	
 	public static boolean loadText(TextModel textModel) throws Exception {
 		if (textModel.getText().equals("")) {
@@ -106,12 +111,12 @@ public class GenerateTextModel extends AbstractPreProcess {
 						        for (int j = 0; j<pList.getLength(); j++) {
 						        	if(pList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 						        		Element p = (Element) pList.item(j);
-						        		textModel.setText(textModel.getText() + p.getTextContent().replace("\n", " ").replace("  ", " ") + "\n");
+						        		textModel.setText(textModel.getText() + p.getTextContent().replace(":",".").replace("\n", " ").replace("  ", " ") + "\n");
 						        	}
 						        }
 					        }
 					        else {
-					        	textModel.setText(textModel.getText() + task.getTextContent().replace("\n", "").replace("   ", "\n").replace("  ", " ") + "\n");
+					        	textModel.setText(textModel.getText() + task.getTextContent().replace(":",".").replace("\n", " ").replace("  ", " ") + "\n");
 							}
 						}
 					}
@@ -126,10 +131,12 @@ public class GenerateTextModel extends AbstractPreProcess {
 				String text = reader.read();
 				String temp = "";
 				while(text != null) {
-					temp += text;
+					//System.out.println(temp.length());
+					temp += text + "\n";
 					text = reader.read();
 				}
 				textModel.setText(temp + "\n");
+				System.out.println("Lecture terminée.");
 				return true;
 			}
 		} else 
@@ -142,5 +149,58 @@ public class GenerateTextModel extends AbstractPreProcess {
 
 	public void setPreProcess(List<AbstractPreProcess> preProcess) {
 		this.preProcess = preProcess;
+	}
+	
+	public static void writeTempDocumentBySentence(String outputPath, MultiCorpus mc) {
+		Iterator<Corpus> corpusIt = mc.iterator();
+		while (corpusIt.hasNext()) {
+			Corpus corpus = corpusIt.next();
+			Iterator<TextModel> textIt = corpus.iterator();
+			while (textIt.hasNext()) {
+				TextModel text = textIt.next();
+				new File(outputPath + File.separator + corpus.getCorpusName()).mkdir();
+				Writer w = new Writer(outputPath + File.separator + corpus.getCorpusName() + File.separator + text.getTextName());
+				w.open();
+				
+				Iterator<SentenceModel> senIt = text.iterator();
+				while (senIt.hasNext()) {
+					SentenceModel sen = senIt.next();
+					w.write("[Sen=" + sen.toString() + File.separator + "%%" + File.separator + "NbMot="+sen.size()+"]" + sen.getSentence() + "\n");
+				}
+				w.close();
+			}
+			corpus.clear();
+		}
+	}
+	
+	public static Corpus readTempDocument(String inputPath, Corpus c) {
+		c.clear();
+		File corpusDoc = new File(inputPath + File.separator + c.getCorpusName());
+		for (File textFile : corpusDoc.listFiles()) {
+			TextModel text = new TextModel(c, textFile.getAbsolutePath());
+			Reader r = new Reader(textFile.getAbsolutePath(), true);
+			r.open();
+			int id=0;
+			String s = r.read();
+			while (s != null) {
+				String[] tabs =  s.split("]");
+				if (tabs.length == 2) {
+					String[] label =  tabs[0].split(File.separator + "%%" + File.separator);
+					//System.out.println(label[0].split("=")[1]);
+					SentenceModel sen = new SentenceModel(label[0].split("=")[1], id, text);
+					sen.setNbMot(Integer.parseInt(label[1].split("=")[1]));
+					text.add(sen);
+					String[] word = tabs[1].split(" ");
+					for (String w : word) {
+						sen.add(new WordModel(w));
+					}
+				}
+				s = r.read();
+				id++;
+			}
+			r.close();
+			c.add(text);
+		}
+		return c;
 	}
 }

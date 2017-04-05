@@ -1,0 +1,54 @@
+package model.task.process.wordEmbeddings;
+
+import java.io.File;
+
+import org.deeplearning4j.models.embeddings.learning.impl.elements.SkipGram;
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
+import org.deeplearning4j.models.word2vec.VocabWord;
+import org.deeplearning4j.models.word2vec.Word2Vec;
+import org.deeplearning4j.text.sentenceiterator.FileSentenceIterator;
+import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
+import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
+
+import model.task.process.AbstractProcess;
+import model.task.process.wordEmbeddings.ld4j.SentenceIterator;
+import model.task.process.wordEmbeddings.ld4j.TokenizerFactory;
+import optimize.SupportADNException;
+
+public class LearningWordToVecModel extends AbstractProcess {
+		
+	public LearningWordToVecModel(int id) throws SupportADNException {
+		super(id);
+	}
+
+	@Override
+	public void init() throws Exception {
+		super.init();
+	}
+	
+	@Override
+	public void process() throws Exception {
+		SentenceIterator sentenceIterator = new SentenceIterator(corpusToSummarize);
+        TokenizerFactory tokenizerFactory = new TokenizerFactory();
+ 
+        Word2Vec vec = new Word2Vec.Builder()
+                .minWordFrequency(2)
+                .layerSize(300)
+                .windowSize(5)
+                .seed(42)
+                .epochs(3)
+                .elementsLearningAlgorithm(new SkipGram<VocabWord>())
+                .iterate(sentenceIterator)
+                .tokenizerFactory(tokenizerFactory)
+                .build();
+        vec.fit();
+ 
+        WordVectorSerializer.writeWordVectors(vec, getModel().getOutputPath() + File.separator + "word2vec.bin");
+	}
+	
+	@Override
+	public void finish() throws Exception {
+		index.clear();
+		corpusToSummarize.clear();
+	}
+}

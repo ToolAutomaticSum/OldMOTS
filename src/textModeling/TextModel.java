@@ -1,10 +1,11 @@
 package textModeling;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TextModel extends ArrayList<ParagraphModel> {
+public class TextModel extends ArrayList<SentenceModel> {
 	
 	/**
 	 * 
@@ -15,10 +16,11 @@ public class TextModel extends ArrayList<ParagraphModel> {
 	private int textID = iD;
 	private Corpus parentCorpus;
 	protected String documentFilePath;
+	protected String textName;
 	
 	protected int textSize = 0;
 	protected String text = "";
-	//protected ArrayList<ParagraphModel> listParagraph = new ArrayList<ParagraphModel>();
+
 	protected int nbSentence;
 	
 	public TextModel(Corpus parentCorpus, String filePath) {
@@ -26,6 +28,7 @@ public class TextModel extends ArrayList<ParagraphModel> {
 		this.parentCorpus = parentCorpus;
 		iD++;
 		documentFilePath = filePath;
+		textName = documentFilePath.split(File.separator)[documentFilePath.split(File.separator).length-1];
 	}
 	
 	public String getDocumentFilePath() {
@@ -45,16 +48,13 @@ public class TextModel extends ArrayList<ParagraphModel> {
 	}
 	
 	public SentenceModel getSentenceByID(int id) {
-		int current = id;
 		boolean notFind = true;
 		SentenceModel sen = null;
-		Iterator<ParagraphModel> parIt = /*listParagraph*/this.iterator();
-		while (notFind && parIt.hasNext()) {
-			ParagraphModel par = parIt.next();
-			if (par.size() <= current)
-				current -= par.size();
-			else {
-				sen = par.get(current);
+		Iterator<SentenceModel> senIt = this.iterator();
+		while (notFind && senIt.hasNext()) {
+			SentenceModel sent = senIt.next();
+			if (sent.getiD() == id) {
+				sen = sent;
 				notFind = false;
 			}
 		}
@@ -63,28 +63,24 @@ public class TextModel extends ArrayList<ParagraphModel> {
 
 	public List<SentenceModel> getSentence() {
 		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
-		for (ParagraphModel p : this) {
-			for (SentenceModel s : p) {
-				if (!s.getSentence().equals(""))
-					listSentence.add(s);
-			}
+		for (SentenceModel s : this) {
+			if (!s.getSentence().equals(""))
+				listSentence.add(s);
 		}
 		return listSentence;
 	}
 	
 	public List<String> getStringSentence() {
 		List<String> listSentence = new ArrayList<String>();
-		for (ParagraphModel p : this) {
-			for (SentenceModel s : p) {
-				if (!s.getSentence().equals(""))
-					listSentence.add(s.getSentence());
-			}
+		for (SentenceModel s : this) {
+			if (!s.getSentence().equals(""))
+				listSentence.add(s.getSentence());
 		}
 		return listSentence;
 	}
 
 	public boolean isEmpty() {
-		return (/*listParagraph*/this.size() == 0);
+		return (this.size() == 0);
 	}
 
 	public int getNbSentence() {
@@ -107,13 +103,12 @@ public class TextModel extends ArrayList<ParagraphModel> {
 	public String toString() {
 		String str = "";
 		for (int i = 0; i<size(); i++) {
-			str+="Paragraphe " + i + " : \n";
 			str+=get(i).toString() + "\n";
 		}
 		return str;
 	}
 
-	public int getTextID() {
+	public int getiD() {
 		return textID;
 	}
 
@@ -123,8 +118,12 @@ public class TextModel extends ArrayList<ParagraphModel> {
 
 	public int getNbWord() {
 		int nbWord = 0;
-		for (ParagraphModel p : this)
-			nbWord += p.getNbWord();
+		for (SentenceModel p : this)
+			nbWord += p.size();
 		return nbWord;
+	}
+
+	public String getTextName() {
+		return textName;
 	}
 }

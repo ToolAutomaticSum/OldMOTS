@@ -32,4 +32,8 @@ public abstract class GeneticIndividualScorer {
 	}
 	
 	public abstract double computeScore(GeneticIndividual gi);
+	
+	public void init() {
+		
+	}
 }

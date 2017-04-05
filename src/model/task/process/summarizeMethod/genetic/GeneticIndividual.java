@@ -45,12 +45,12 @@ public class GeneticIndividual {
 			remainingLength = maxTotalLength - this.genesTotalLength;
 			for (int i = 0; i < listSentence.size(); i++)
 			{
-				if (listSentence.get(i).getLength() > remainingLength)
+				if (listSentence.get(i).getNbMot() > remainingLength)
 				{
 					listSentence.remove(i);
 					i--;
 				}
-				else if (listSentence.get(i).getLength()==0) {
+				else if (listSentence.get(i).getNbMot()==0) {
 					listSentence.remove(i);
 					i--;
 				}
@@ -60,7 +60,7 @@ public class GeneticIndividual {
 			
 			randIndex = (int) (Math.random() * listSentence.size());
 			this.genes.add(listSentence.get(randIndex));
-			this.genesTotalLength += listSentence.get(randIndex).getLength();
+			this.genesTotalLength += listSentence.get(randIndex).getNbMot();
 			listSentence.remove(randIndex);
 		}
 	}
@@ -82,7 +82,7 @@ public class GeneticIndividual {
 			if (this.genes.size() == 0)
 				break;
 			geneId = (int) (Math.random() * this.genes.size());
-			this.genesTotalLength -= this.genes.get(geneId).size();
+			this.genesTotalLength -= this.genes.get(geneId).getNbMot();
 			this.genes.remove(geneId);
 			i--;
 		}
@@ -160,7 +160,7 @@ public class GeneticIndividual {
 			remainingLength = maxTotalLength - this.genesTotalLength;
 			for (int i = 0; i < sa.size(); i++)
 			{
-				if (sa.get(i).size() > remainingLength)
+				if (sa.get(i).getNbMot() > remainingLength)
 				{
 					sa.remove(i);
 					i--;
@@ -172,7 +172,7 @@ public class GeneticIndividual {
 			
 			randIndex = (int) (Math.random() * sa.size());
 			this.genes.add(sa.get(randIndex));
-			this.genesTotalLength += sa.get(randIndex).size();
+			this.genesTotalLength += sa.get(randIndex).getNbMot();
 			sa.remove(randIndex);
 		}
 	}

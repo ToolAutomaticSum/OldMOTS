@@ -18,8 +18,9 @@ public class BestIsBetter extends AbstractSummarizeMethod implements ScoreBasedI
 	public BestIsBetter(int id) throws SupportADNException {
 		super(id);
 	}
-
-	public void init() throws Exception {
+	
+	@Override
+	public void initADN() throws Exception {
 		nbCharSizeOrNbSentenceSize = Boolean.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
 	
@@ -30,9 +31,7 @@ public class BestIsBetter extends AbstractSummarizeMethod implements ScoreBasedI
 	}
 	
 	@Override
-	public List<SentenceModel> calculateSummary() throws Exception {
-		init();
-		
+	public List<SentenceModel> calculateSummary() throws Exception {		
 		List<SentenceModel> summary = new ArrayList<SentenceModel>();
 		
 		if (nbCharSizeOrNbSentenceSize) {
@@ -40,11 +39,11 @@ public class BestIsBetter extends AbstractSummarizeMethod implements ScoreBasedI
 			Iterator<PairSentenceScore> senIt = sentenceScore.iterator();
 			while (senIt.hasNext() && size < maxSummLength) {
 				SentenceModel sen = senIt.next().getPhrase();
-				size+=sen.size();
+				size+=sen.getNbMot();
 				if (size < maxSummLength)
 					summary.add(sen);
 				else
-					size -= sen.size();
+					size -= sen.getNbMot();
 			}
 		}
 		else {

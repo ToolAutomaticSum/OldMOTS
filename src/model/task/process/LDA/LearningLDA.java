@@ -17,7 +17,6 @@ import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import textModeling.Corpus;
 import textModeling.MultiCorpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -93,16 +92,13 @@ public class LearningLDA extends AbstractProcess {
 		while (corpusIt.hasNext()) {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {
-				Iterator<ParagraphModel> parIt = textIt.next().iterator();
-				while (parIt.hasNext()) {
-					Iterator<SentenceModel> senIt = parIt.next().iterator();
-					while (senIt.hasNext()) {
-						Iterator<WordModel> wordIt = senIt.next().iterator();
-						while (wordIt.hasNext()) {
-							WordModel word = wordIt.next();
-							if (!word.isStopWord()) {
-								writer.write(word.getmLemma() + " ");
-							}
+				Iterator<SentenceModel> senIt = textIt.next().iterator();
+				while (senIt.hasNext()) {
+					Iterator<WordModel> wordIt = senIt.next().iterator();
+					while (wordIt.hasNext()) {
+						WordModel word = wordIt.next();
+						if (!word.isStopWord()) {
+							writer.write(word.getmLemma() + " ");
 						}
 					}
 				}

@@ -22,6 +22,10 @@ public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
 	}
 	
 	@Override
+	public void initADN() throws Exception {
+	}
+	
+	@Override
 	public ArrayList<SentenceModel> calculateSummary() {
 		runGLPK();
 		
@@ -32,7 +36,7 @@ public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
 		
 		for (Integer i : ind_selected_sentences)
 		{
-			summary.add(getCurrentProcess().getSentenceList().get(i));
+			summary.add(getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i));
 		}
 		
 		this.eraseTmpFiles();

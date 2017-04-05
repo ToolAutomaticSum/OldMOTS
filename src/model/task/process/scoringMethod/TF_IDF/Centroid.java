@@ -2,6 +2,7 @@ package model.task.process.scoringMethod.TF_IDF;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import model.task.process.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.scoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
-import textModeling.ParagraphModel;
+import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -24,6 +25,20 @@ import tools.PairSentenceScore;
 
 public class Centroid extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 
+	public static enum Centroid_Parameter {
+		NbMaxWordInCentroid("NbMaxWordInCentroid");
+
+		private String name;
+
+		private Centroid_Parameter(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
+	
 	protected double[] centroid;
 	protected int nbMaxWordInCentroid;
 	protected InvertedIndex invertIndex;
@@ -32,40 +47,45 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 	
 	public Centroid(int id) throws SupportADNException {
 		super(id);
-	}
-	
-	private void init() throws Exception {
-		nbMaxWordInCentroid = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbMaxWordInCentroid"));
-		
-		invertIndex = new InvertedIndex(getCurrentProcess().getIndex());
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("NbMaxWordInCentroid", Integer.class);
 	}
 
+	@Override
+	public void initADN() throws Exception {
+		int n = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbMaxWordInCentroid"));
+		getCurrentProcess().getADN().putParameter(new Parameter<Integer>(Centroid_Parameter.NbMaxWordInCentroid.getName(), n));
+		getCurrentProcess().getADN().getParameter(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName()).setMaxValue(2*n+1);
+		getCurrentProcess().getADN().getParameter(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName()).setMinValue(1);
+	}
+
+	private void init() throws Exception {
+		nbMaxWordInCentroid = getCurrentProcess().getADN().getParameterValue(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName());
+		invertIndex = new InvertedIndex(getCurrentProcess().getIndex());
+	}
+	
 	@Override
 	public void computeScores() throws Exception {
 		init();
 		calculateCentroid();
 		sentencesScores = new ArrayList<PairSentenceScore>();
 		
-		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
+		Iterator<TextModel> textIt = getCurrentProcess().getCorpusToSummarize().iterator();
 		while (textIt.hasNext()) {			
 			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
-					double score = 0;
-					//TODO filtre
-					for (WordModel w : sentenceModel) {
-						if (!w.isStopWord()) {
-							double value= centroid[index.getKeyId(w.getmLemma())];
-							score += value;
-						}
+			Iterator<SentenceModel> sentenceIt = textModel.iterator();
+			while (sentenceIt.hasNext()) {
+				SentenceModel sentenceModel = sentenceIt.next();
+				double score = 0;
+				//TODO filtre
+				for (WordModel w : sentenceModel) {
+					if (!w.isStopWord()) {
+						double value= centroid[index.getKeyId(w.getmLemma())];
+						score += value;
 					}
-					sentenceModel.setScore(score); //Ajout du score � la phrase
-					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 				}
+				sentenceModel.setScore(score); //Ajout du score � la phrase
+				sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 			}
 		}
 		Collections.sort(sentencesScores);
@@ -96,7 +116,7 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 		
 		for (Pair p : listBestWord) {
 			centroid[(int)p.first] = (double) p.second;
-			System.out.println(index.get((int)p.first).getWord());
+			//System.out.println(index.get((int)p.first).getWord());
 		}
 	}
 

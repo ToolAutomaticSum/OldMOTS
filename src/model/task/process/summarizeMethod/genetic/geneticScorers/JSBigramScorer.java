@@ -6,7 +6,6 @@ import java.util.TreeMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.smoothings.DirichletSmoothing;
@@ -29,12 +28,13 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 				null, null);	
 	}
 	
+	@Override
 	public void init() {
-		System.out.println("JS Bigram scorer initialization.");
+		//System.out.println("JS Bigram scorer initialization.");
 		this.computeNGrams_in_sentences();
 		
 		this.computeSourceDistribution ();
-		System.out.println("JS Bigram scorer initialized.");
+		//System.out.println("JS Bigram scorer initialized.");
 	}
 	
 	public void computeNGrams_in_sentences()
@@ -43,11 +43,9 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		
 		for (TextModel doc : this.cd)
 		{
-			for (ParagraphModel para : doc) {
-				for (SentenceModel p : para)
-				{
-					this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
-				}
+			for (SentenceModel p : doc)
+			{
+				this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
 			}
 		}
 	}
@@ -82,7 +80,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 					this.nbBiGramsInSource++;
 					
 					
-					if (p.getParagraph().indexOf(p) == 1)
+					if (p.getText().indexOf(p) == 1)
 					{
 						//System.out.println("Premiere pos");
 						this.firstSentencesConcepts.put(ng, 1);
@@ -90,7 +88,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 				}
 			//}
 		}
-		System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
+		//System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
 		
 		for (NGram ng : this.firstSentencesConcepts.keySet())
 		{
@@ -114,7 +112,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 				//System.out.println(" : "+this.sourceDistribution.get(ng)+" | "+this.sourceOccurences.get(ng));
 			//}
 		}*/
-		System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
+		//System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
 		for (NGram ng : this.sourceOccurences.keySet())
 		{
 			this.sourceDistribution.put(ng, (double)this.sourceOccurences.get(ng) / modified_nbBiGramsInSource );
@@ -173,7 +171,6 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	
 	@Override
 	public double computeScore(GeneticIndividual gi) {
-		init();
 		TreeMap<NGram, Double> summDistrib = new TreeMap <NGram, Double > ();
 		//this.computeIndividualDistribution(gi, summDistrib);
 		

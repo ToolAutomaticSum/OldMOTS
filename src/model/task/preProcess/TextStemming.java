@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import model.task.preProcess.snowballStemmer.SnowballStemmer;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -50,16 +49,12 @@ public class TextStemming extends AbstractPreProcess {
 	}
 	
 	private void stemmWord(TextModel textModel) {
-		Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-		while (paragraphIt.hasNext()) {
-			ParagraphModel paragraphModel = paragraphIt.next();
-			Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					stemming(wordIt.next());	
-				}
+		Iterator<SentenceModel> sentenceIt = textModel.iterator();
+		while (sentenceIt.hasNext()) {
+			SentenceModel sentenceModel = sentenceIt.next();
+			Iterator<WordModel> wordIt = sentenceModel.iterator();
+			while (wordIt.hasNext()) {
+				stemming(wordIt.next());	
 			}
 		}
 	}

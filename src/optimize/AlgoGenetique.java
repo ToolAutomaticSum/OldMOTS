@@ -8,20 +8,9 @@ import java.util.Random;
 
 import optimize.parameter.ADN;
 import optimize.parameter.Parameter;
+import reader_writer.Writer;
 
 public class AlgoGenetique extends Optimize {
-
-	private static HashMap<String, Class<?>> supportADN = new HashMap<String, Class<?>>();
-
-	static {
-		supportADN.put("CHANCE_MUTATION", Double.class);
-		supportADN.put("POURCENTAGE_MEILLEURS", Double.class);
-		supportADN.put("POURCENTAGE_RESTE", Double.class);
-		supportADN.put("NB_POPULATION", Integer.class);
-		supportADN.put("NB_GENERATION_MAX", Integer.class);
-		supportADN.put("NB_ELITE_A_GARDER", Integer.class);
-		supportADN.put("VAL_MIN", Double.class);
-	}
 	
 	public static enum AGParameter {
 		CHANCE_MUTATION("CHANCE_MUTATION"),
@@ -42,15 +31,25 @@ public class AlgoGenetique extends Optimize {
 		}
 	}
 	
-	private ADN adn = new ADN(supportADN);
-	
+	private Writer writer;
 	private Optimize optimize;
 	private HashMap<String, Class<?>> supportPopulationADN;
 	private List<ADN> population = new ArrayList<ADN>();
 	private List<ADN> solution = new ArrayList<ADN>();
 	
-	public AlgoGenetique(int id, double chanceMutation, double pourcentageMeilleur, double pourcentageReste, int taillePopulation, int nbGenerationMax, double valFitnessMin, Optimize opti) throws SupportADNException {
+	public AlgoGenetique(int id, double chanceMutation, double pourcentageMeilleur, double pourcentageReste, int taillePopulation, int nbGenerationMax, double valFitnessMin, Optimize opti) throws Exception {
 		super(id);
+
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("CHANCE_MUTATION", Double.class);
+		supportADN.put("POURCENTAGE_MEILLEURS", Double.class);
+		supportADN.put("POURCENTAGE_RESTE", Double.class);
+		supportADN.put("NB_POPULATION", Integer.class);
+		supportADN.put("NB_GENERATION_MAX", Integer.class);
+		supportADN.put("NB_ELITE_A_GARDER", Integer.class);
+		supportADN.put("VAL_MIN", Double.class);
+		
+		adn = new ADN(supportADN);
 		adn.putParameter(new Parameter<Double>("CHANCE_MUTATION", chanceMutation));
 		adn.putParameter(new Parameter<Double>("POURCENTAGE_MEILLEURS", pourcentageMeilleur));
 		adn.putParameter(new Parameter<Double>("POURCENTAGE_RESTE", pourcentageReste));
@@ -62,12 +61,19 @@ public class AlgoGenetique extends Optimize {
 	
 		this.optimize = opti;
 		supportPopulationADN = opti.getSupportADN();
+		
+		writer = new Writer("resultGenetique.txt");
+	}
+	
+	@Override
+	public void initADN() throws Exception {
 	}
 	
 	/**
 	 * Construction de la population initiale
 	 */
 	public void init() {
+		writer.open();
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i = 0; i<adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName()); i++) {
 			ADN temp = optimize.generateAleaADN(rand);
@@ -110,12 +116,14 @@ public class AlgoGenetique extends Optimize {
 	}
 	
 	public void evaluationPopulation() throws Exception {
+		int i = 0;
+		
 		for (ADN individu : population) {
 			optimize.setADN(individu);
-			optimize.init();
 			optimize.optimize();
 			individu.setScore(optimize.getScore());
-			//System.out.println(individu);
+			//writer.write(i + "\n" + individu + "\n" + optimize.getScore());
+			//System.out.println(i++ + "\n" + individu);
 			//System.out.println(individu.getScore());
 		}
 	}
@@ -124,7 +132,7 @@ public class AlgoGenetique extends Optimize {
 		Random random = new Random(System.currentTimeMillis());
 		evaluationPopulation();
 		Collections.sort(population);
-		System.out.println(population.get(0) + "" + population.get(0).getScore());
+		//System.out.println(population.get(0) + "" + population.get(0).getScore());
 		Double fitness_moyen = 0.0;
 
 		List<ADN> nextPopulation = new ArrayList<ADN>();
@@ -134,8 +142,8 @@ public class AlgoGenetique extends Optimize {
 	    	nextPopulation.add(individu);
 	    	if (individu.getScore() > adn.getParameterValue(Double.class, AGParameter.VAL_MIN.getName()))
 	    		solution.add(individu);
-	    	if (i%10 == 0)
-	    		System.out.println(individu.getScore());
+	    	if (i<20)
+	    		writer.write(i + "\n" + individu + individu.getScore());
 	    	i++;
 	    }
     	fitness_moyen/= adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName());
@@ -153,9 +161,11 @@ public class AlgoGenetique extends Optimize {
 	
 	@Override
 	public void optimize() throws Exception {
+
 		int i = 0;
 		boolean solutionFind = false;
 		while ((!solutionFind) && i < adn.getParameterValue(Integer.class, AGParameter.NB_GENERATION_MAX.getName())) {
+			writer.write("Iteration " + i);
 			System.out.println("Iteration " + i);
 			solutionFind = evoluer();
 			i++;
@@ -163,6 +173,7 @@ public class AlgoGenetique extends Optimize {
 		
 		for (int j = 0; j<solution.size(); j++) 
 			System.out.println(solution.get(j));
+		writer.close();
 	}
 	
 	@Override

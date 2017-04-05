@@ -82,7 +82,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
 						" -e " + rougePath + File.separator + "data -n 4 -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
 				        getModel().getOutputPath() + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
-				System.out.println(cmd);
+				//System.out.println(cmd);
 
 				Process proc = Runtime.getRuntime().exec(cmd);
 			    inheritIO(proc.getInputStream(), new PrintStream(new FileOutputStream(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", false)));
@@ -95,6 +95,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	@Override
 	public void finish() throws Exception {
 		if (OSDetector.isUnix()) {
+			Thread.sleep(100);
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
 				Reader r = new Reader(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", true);
 				r.open();
@@ -102,7 +103,8 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				while (t != null) {
 					String[] result = t.split(" ");
 					if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_F:")) {
-						getModel().getProcess().get(i).setScore(Double.parseDouble(result[3]));
+						if (result[1].equals("ROUGE-2"))
+							getModel().getProcess().get(i).setScore(Double.parseDouble(result[3]));
 						System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
 					}
 					t = r.read();

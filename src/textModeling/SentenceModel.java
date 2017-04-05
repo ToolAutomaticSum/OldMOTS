@@ -15,45 +15,45 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 	 */
 	private static final long serialVersionUID = 4028010227097874686L;
 	protected String sentence;
+	protected int nbMot;
+	public int getNbMot() {
+		return nbMot;
+	}
+
+	public void setNbMot(int nbMot) {
+		this.nbMot = nbMot;
+	}
+
 	protected int iD;
 	protected double score;
-	//protected Caracteristic caracteristic;
-	
-	//protected ArrayList<WordModel> listWord = new ArrayList<WordModel>();
-
-	private ParagraphModel paragraph;
+	protected TextModel text;
 	
 	public SentenceModel() {
 		super();
-		//caracteristic = new Caracteristic();
 	}
 	
-	public SentenceModel(String text) {
+	public SentenceModel(String sen) {
 		super();
-		sentence = text;
-		//caracteristic = new Caracteristic();
+		sentence = sen;
 	}
 	
-	public SentenceModel(String text, int iD, ParagraphModel paragraph) {
+	public SentenceModel(String sen, int iD, TextModel text) {
 		super();
-		sentence = text;
+		sentence = sen;
 		this.iD = iD;
-		this.paragraph = paragraph;
-		//caracteristic = new Caracteristic();
+		this.text = text;
 	}
 
-	public ParagraphModel getParagraph() {
-		return paragraph;
-	}
-
-	public void setParagraph(ParagraphModel paragraph) {
-		this.paragraph = paragraph;
-	}
-
+	/**
+	 * 
+	 * @return Sentence as a list of lemme without stopword
+	 */
 	public String getSentence() {
 		String txt = "";
-		for (WordModel w : this)
-			txt += w.toString() + " ";
+		for (WordModel w : this) {
+			if (!w.isStopWord())
+				txt += w.toString() + " ";
+		}
 		return txt;
 	}
 
@@ -85,6 +85,9 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 		this.caracteristic = caracteristic;
 	}*/
 
+	/**
+	 * @return full sentence
+	 */
 	@Override
 	public String toString() {
 		return sentence;
@@ -120,19 +123,16 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 		ArrayList <NGram> ngrams_list = new ArrayList<NGram> () ;
 		WordModel u;
 		
-		if (n == 1)
-		{
-			for (WordModel u1 : this)
-			{
-				
+		if (n == 1) {
+			for (WordModel u1 : this) {
 				NGram ng = new NGram();
-			//	System.out.println(ng);
-				if (!u1.isStopWord())
-				{
-				//	System.out.println(index);
-					WordIndex uIndex = index.get(u1.getmLemma()); 
-					ng.addGram(uIndex);
-					ngrams_list.add(ng);
+				if (!u1.isStopWord()) {
+					WordIndex w = index.get(u1.getmLemma());
+					if (w != null) {
+						WordIndex uIndex = index.get(u1.getmLemma()); 
+						ng.addGram(uIndex);
+						ngrams_list.add(ng);
+					}
 				}
 			}
 			return ngrams_list;
@@ -148,10 +148,18 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 			{
 				//System.out.println("j : "+j);
 				u = this.get(j);
+
 				if (!u.isStopWord())
 				{	
 					cond = true;
-					ng.addGram(index.get(u.getmLemma()));
+					WordIndex w = index.get(u.getmLemma());
+					if (w != null)
+						ng.addGram(w);
+					else {
+						System.out.println("BREAK!!!" + u.getmLemma());
+						cond = false;
+						break;
+					}
 				}
 			}
 			if (cond)
@@ -164,12 +172,24 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 	}
 	
 	public double getPosScore() {
-		if (paragraph.size() > 1)
-			return (double)(paragraph.size() - 1 - paragraph.indexOf(this)) / (double)(paragraph.size() - 1);
+		if (text.size() > 1)
+			return (double)(text.size() - 1 - text.indexOf(this)) / (double)(text.size() - 1);
 		else
 			return 1;
 	}
 	
+	public int getPosition() {
+		return (text.indexOf(this)+1);
+	}
+	
+	public TextModel getText() {
+		return text;
+	}
+
+	public void setText(TextModel text) {
+		this.text = text;
+	}
+
 	public int getLength() {
 		int n = 0;
 		for (WordModel w : this) {
@@ -177,5 +197,10 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 				n++;
 		}
 		return n;
+	}
+	
+	@Override
+	public int size() {
+		return super.size();
 	}
 }

@@ -1,6 +1,7 @@
 package textModeling.wordIndex;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import textModeling.WordModel;
 
@@ -12,6 +13,24 @@ public class WordIndex extends ArrayList<WordModel>{
 	private String word;
 	private Integer iD;
 	protected Index index;
+	
+	/**
+	 * Tf et Idf par documents : Key = idCorpus
+	 */
+	protected HashMap<Integer, Integer> docOccurences = new HashMap<Integer, Integer>();
+	protected HashMap<Integer, Integer> corpusOccurences = new HashMap<Integer, Integer>();
+
+	public Integer getiD() {
+		return iD;
+	}
+
+	public HashMap<Integer, Integer> getDocOccurences() {
+		return docOccurences;
+	}
+
+	public HashMap<Integer, Integer> getCorpusOccurences() {
+		return corpusOccurences;
+	}
 
 	public WordIndex(String word, Index index) {
 		super();
@@ -43,8 +62,32 @@ public class WordIndex extends ArrayList<WordModel>{
 		this.index = dictionnary;
 	}
 	
+	public void addDocumentOccurence(int idCorpus, int idDoc) {
+		if (!corpusOccurences.containsKey(idCorpus))
+			corpusOccurences.put(idCorpus, 1);
+		else
+			corpusOccurences.put(idCorpus, corpusOccurences.get(idCorpus)+1);
+		if (!docOccurences.containsKey(idDoc))
+			docOccurences.put(idDoc, 1);
+		else
+			docOccurences.put(idDoc, docOccurences.get(idDoc)+1);
+	}
+	
+	public double getTfDocument(int idDoc) {
+		return (double)docOccurences.get(idDoc);
+	}
+	
+	public double getTfCorpus(int idCorpus) {
+		return (double)corpusOccurences.get(idCorpus);
+	}
+	
 	@Override
 	public boolean equals(Object arg0) {
 		return super.equals(arg0);
+	}
+	
+	@Override
+	public String toString() {
+		return word;
 	}
 }

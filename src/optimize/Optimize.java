@@ -7,9 +7,9 @@ public abstract class Optimize extends Individu {
 	public Optimize(int id) throws SupportADNException {
 		super(id);
 	}
-
-	public abstract void init() throws Exception;
 	
+	public abstract void initADN() throws Exception;
+
 	public abstract void optimize() throws Exception;
 	
 	public abstract double getScore();

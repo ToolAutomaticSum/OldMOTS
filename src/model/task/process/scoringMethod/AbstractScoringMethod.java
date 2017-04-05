@@ -14,6 +14,8 @@ public abstract class AbstractScoringMethod extends Individu {
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
 	}
+	
+	public abstract void initADN() throws Exception;
 
 	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
 		this.currentProcess = currentProcess;
@@ -38,7 +40,6 @@ public abstract class AbstractScoringMethod extends Individu {
 
 	public void setCurrentProcess(AbstractProcess currentProcess) {
 		this.currentProcess = currentProcess;
-		currentProcess.getSupportADN().putAll(supportADN);
 	}
 
 	/*public String getInputType() {

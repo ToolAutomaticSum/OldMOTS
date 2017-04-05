@@ -16,7 +16,6 @@ import edu.stanford.nlp.util.CoreMap;
 import exception.LacksOfFeatures;
 import model.task.preProcess.AbstractPreProcess;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -55,45 +54,37 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess{
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {
 				TextModel textModel = textIt.next();
-				//System.out.println(textModel.getDocumentFilePath());
-				Iterator<ParagraphModel> parIt = textModel.iterator();
-				while (parIt.hasNext()) {
-					ParagraphModel parModel = parIt.next();
-					int nbSentence = 0;
-					// read some text in the text variable
-					String text = parModel.getParagraph();
-					// create an empty Annotation just with the given text
-					Annotation document = new Annotation(text);
-					// run all Annotators on this text
-					pipeline.annotate(document);
-					// these are all the sentences in this document
-					// a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
-					List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-					for(CoreMap sentence: sentences) {
-						if (!sentence.toString().replace("_", "").isEmpty()) {
-							SentenceModel sen = new SentenceModel(sentence.toString(), iD, parModel);
-							// traversing the words in the current sentence
-							// a CoreLabel is a CoreMap with additional token-specific methods
-							for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
-								String w = token.get(TextAnnotation.class);
-								if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
-									WordModel word = new WordModel();
-									word.setmForm(w);
-									word.setSentence(sen);
-									word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
-									//System.out.println(token.get(LemmaAnnotation.class));
-									word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
-									word.setWord(w);
-									sen.add(word);
-								}
+				// read some text in the text variable
+				String text = textModel.getText();
+				// create an empty Annotation just with the given text
+				Annotation document = new Annotation(text);
+				// run all Annotators on this text
+				pipeline.annotate(document);
+				// these are all the sentences in this document
+				// a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
+				List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+				for(CoreMap sentence: sentences) {
+					if (!sentence.toString().replace("_", "").isEmpty()) {
+						SentenceModel sen = new SentenceModel(sentence.toString().replace("\n",  "\t"), iD, textModel);
+						// traversing the words in the current sentence
+						// a CoreLabel is a CoreMap with additional token-specific methods
+						for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
+							String w = token.get(TextAnnotation.class);
+							if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
+								WordModel word = new WordModel();
+								word.setmForm(w);
+								word.setSentence(sen);
+								word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
+								//System.out.println(token.get(LemmaAnnotation.class));
+								word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
+								word.setWord(w);
+								sen.add(word);
 							}
-							if (sen.getLength() > 0)
-								parModel.add(sen);
-							iD++;
-							nbSentence++;
 						}
+						if (sen.getLength() > 7)
+							textModel.add(sen);
+						iD++;
 					}
-					parModel.setNbSentence(nbSentence);
 				}
 			}
 		}

@@ -35,7 +35,7 @@ public class CommandView extends AbstractView {
 
 	@Override
 	public void display() {
-		//Différent notify à faire
+		//DiffÃ©rent notify Ã  faire
 		loadConfiguration(args[1]);
 		getCtrl().run();
 	}
@@ -43,6 +43,10 @@ public class CommandView extends AbstractView {
 	@Override
 	public void close() {
 
+	}
+	
+	public void init() {
+		loadConfiguration(args[1]);		
 	}
 	
 	private String loadConfiguration(String configFilePath) {

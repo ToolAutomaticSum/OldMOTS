@@ -7,7 +7,6 @@ import java.util.TreeSet;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.wordIndex.Index;
@@ -33,28 +32,26 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 		{
 			TreeSet <NGram> curr_doc_nGram = new TreeSet <NGram>();
 			TreeSet<NGram> fsc_set = new TreeSet<NGram> ();
-			for (ParagraphModel para : doc) {
-				for (SentenceModel p : para)
+			for (SentenceModel p : doc)
+			{
+				TreeSet <NGram> curr_phrase_ngram_list = new TreeSet <NGram> (p.getNGrams(this.window, this.index));
+				
+				if (doc.indexOf(p) == 1)
 				{
-					TreeSet <NGram> curr_phrase_ngram_list = new TreeSet <NGram> (p.getNGrams(this.window, this.index));
-					
-					if (para.indexOf(p) == 1)
+					for (NGram ng : curr_phrase_ngram_list)//ArrayList => TreeMap doc, only one instance of a bigram per document
 					{
-						for (NGram ng : curr_phrase_ngram_list)//ArrayList => TreeMap doc, only one instance of a bigram per document
+						if (this.nGram_weights.containsKey(ng))//If ngram already in ngram_weights, add 1.
 						{
-							if (this.nGram_weights.containsKey(ng))//If ngram already in ngram_weights, add 1.
-							{
-								this.nGram_weights.put(ng, this.nGram_weights.get(ng) + (1. + this.fsc_factor));
-							}
-							else //Else put it with 1 value
-							{
-								this.nGram_weights.put(ng, 1.);
-							}
+							this.nGram_weights.put(ng, this.nGram_weights.get(ng) + (1. + this.fsc_factor));
+						}
+						else //Else put it with 1 value
+						{
+							this.nGram_weights.put(ng, 1.);
 						}
 					}
-					else
-						curr_doc_nGram.addAll(curr_phrase_ngram_list);
 				}
+				else
+					curr_doc_nGram.addAll(curr_phrase_ngram_list);
 			}
 			for (NGram ng : curr_doc_nGram)
 			{

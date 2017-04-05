@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import optimize.SupportADNException;
@@ -13,10 +12,6 @@ import textModeling.wordIndex.NGram;
 
 public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramListBasedIn, FileModelBasedOut {
 
-	static {
-		supportADN = new HashMap<String, Class<?>>();
-	}
-	
 	private ArrayList<Double> bigram_weights;
 	private ArrayList<ArrayList<Integer>> bigrams_in_sentence;
 	private ArrayList<NGram> bigrams; 
@@ -27,6 +22,10 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 	
 	public GenerateModel_ILP(int id) throws SupportADNException {
 		super(id);
+	}
+	
+	@Override
+	public void initADN() throws Exception {
 	}
 
 	@Override
@@ -53,9 +52,9 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 			else*/
 				objective += "+ "+this.bigram_weights.get(i)+" c"+i+" ";
 		}
-		for (int i = 0; i < getCurrentProcess().getSentenceList().size(); i++)
+		for (int i = 0; i < getCurrentProcess().getCorpusToSummarize().getAllSentence().size(); i++)
 		{
-			double length = getCurrentProcess().getSentenceList().get(i).size() / 1000.;
+			double length = getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i).size() / 1000.;
 			objective += "- "+length+" s"+i+" ";
 		}
 		texte+=objective+"\n\nSubject To\n";
@@ -86,9 +85,9 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 		}
 		
 		String length_constraint = "length: ";
-		for (int i = 0; i < getCurrentProcess().getSentenceList().size(); i++)
+		for (int i = 0; i < getCurrentProcess().getCorpusToSummarize().getAllSentence().size(); i++)
 		{
-			int length = getCurrentProcess().getSentenceList().get(i).size();
+			int length = getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i).getNbMot();
 			if ( i == 0 )
 				length_constraint += length+" s"+i;
 			else
@@ -101,7 +100,7 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 		{
 			texte += "c"+i+"\n";
 		}
-		for (int j = 0; j < getCurrentProcess().getSentenceList().size(); j++)
+		for (int j = 0; j < getCurrentProcess().getCorpusToSummarize().getAllSentence().size(); j++)
 		{
 			texte += "s"+j+"\n";
 		}

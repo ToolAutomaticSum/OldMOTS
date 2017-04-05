@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import exception.VectorDimensionException;
 import reader_writer.Writer;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import tools.vector.ToolsVector;
@@ -34,7 +33,7 @@ public class Tools {
 	static public String enleverPonctuation(String str) {
 		if (!str.contentEquals("-"))
 			str = str.replaceAll("-","wwwwwwww");
-	    str = str.replaceAll("[\\p{Punct}\n¹©²¬¨¡³º®¶¼¤ª§¦±¯¢£«»¿’]",""); //\\d enlever digit
+	    str = str.replaceAll("[\\p{Punct}\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]",""); //\\d enlever digit
 	    return str.replaceAll("wwwwwwww","-");
 	}
 	
@@ -82,19 +81,13 @@ public class Tools {
 	
 	static public void writeDocumentBySentence(TextModel doc) {
 		String str = "";
-		int p = 1; // paragraphe variable
 		int s = 1; // sentence variable
-		Iterator<ParagraphModel> parIt = doc.iterator();
-		while (parIt.hasNext()) {
-			ParagraphModel par = parIt.next();
-			if (par.getNbSentence() != 0) {
-				str+="p" + p + "\n";
-				Iterator<SentenceModel> senIt = par.iterator();
-				while (senIt.hasNext()) {
-					str+=s + "\t" + senIt.next().getSentence() + "\n";
-					s++;
-				}
-				p++;
+		Iterator<SentenceModel> senIt = doc.iterator();
+		while (senIt.hasNext()) {
+			SentenceModel sen = senIt.next();
+			while (senIt.hasNext()) {
+				str+=s + "\t" + sen.getSentence() + "\n";
+				s++;
 			}
 		}
 		Writer w = new Writer("doc.txt");
@@ -107,7 +100,7 @@ public class Tools {
 	 * 
 	 * @param filename
 	 * @param parameters
-	 * @param xy, première colonne toujours égale à x, ensuite une colonne par y
+	 * @param xy, premiï¿½re colonne toujours ï¿½gale ï¿½ x, ensuite une colonne par y
 	 * @throws IOException
 	 */
 	static public void javaHistogramGnuPlot(String filename, Map<String, String> parameters, double[][] xy) throws IOException{
@@ -168,12 +161,12 @@ public class Tools {
 		    }
 	    }
 	    out.println("set key right bottom");
-	    String string = "plot \"data.dat\" using 2 title \"Topic N°1\"";
+	    String string = "plot \"data.dat\" using 2 title \"Topic Nï¿½1\"";
 	    if (xy.length>2) {
 	    	int j = 2;
 		   	for (int k = 2; k<xy.length; k++) {
 		    	if (xy[k] != null && xy[k][0] != 0) {
-		    		string += ", \"\" using " + (j+1) + " lc " + (j+1) +" title \"Topic N°" + (k) + "\"";
+		    		string += ", \"\" using " + (j+1) + " lc " + (j+1) +" title \"Topic Nï¿½" + (k) + "\"";
 		    		j++;
 		    	}
 		    }

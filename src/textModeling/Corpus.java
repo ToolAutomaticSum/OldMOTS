@@ -15,18 +15,19 @@ public class Corpus extends ArrayList<TextModel> {
 	private static final long serialVersionUID = -3211824677893360515L;
 
 	protected int iD;
+	protected String corpusName;
 	protected String inputPath;
 	protected String summaryPath;
 	protected SModel model;
 	protected List<String> docNames;
 	protected List<String> summaryNames;
-	protected SentenceModel currentSentence;
 	
 	public Corpus(int iD) {
 		this.iD = iD;
 	}
 	
 	public void loadDocumentModels() {
+		corpusName = inputPath.split(File.separator)[inputPath.split(File.separator).length-1];
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
@@ -125,5 +126,21 @@ public class Corpus extends ArrayList<TextModel> {
 			allSentenceList.addAll(text.getStringSentence());
 		}
 		return allSentenceList;
+	}
+	
+	public List<SentenceModel> getAllSentence() {
+		List<SentenceModel> allSentenceList = new ArrayList<SentenceModel>();
+		for (TextModel text : this) {
+			allSentenceList.addAll(text.getSentence());
+		}
+		return allSentenceList;
+	}
+
+	public String getCorpusName() {
+		return corpusName;
+	}
+	
+	public int getNbDocument() {
+		return docNames.size();
 	}
 }

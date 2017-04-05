@@ -25,21 +25,49 @@ public class SModel extends Observable {
 	//protected String inputPath;
 	protected String outputPath;
 	
+	/**
+	 * Liste des AbstractPreProcess a appliquer aux documents avant de résumer.
+	 */
 	protected List<AbstractPreProcess> preProcess = new ArrayList<AbstractPreProcess>();
+	/**
+	 * Liste des méthodes de résumé automatique.
+	 */
 	protected List<AbstractProcess> process = new ArrayList<AbstractProcess>();
+	/**
+	 * Map des noms des AbstractMethod (Process, PreProcess, PostProcess, ScoringMethod, SummarizeMethod) (utiliser .class à la place ?) et de leurs IDs.
+	 */
 	protected Map<String,Integer> processIDs = new HashMap<String, Integer>();
+	/**
+	 * Liste des options associés à chaque AbstractMethod, une Map par AbstractMethod (Map sous la forme String (nom de l'option) String (valeur sous forme de String))
+	 */
 	protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
 	//protected List<String> docNames;
+	/**
+	 * Liste des MultiCorpus sur lesquels appliqués les AbstractProcess
+	 */
 	protected List<MultiCorpus> multiCorpusModels = new ArrayList<MultiCorpus>();
+	/**
+	 * MultiCorpus en cours de résumé
+	 */
 	protected MultiCorpus currentMultiCorpus;
 	//protected List<String> summary = new ArrayList<String>();
 	protected boolean bRougeEvaluation = false;
+	/**
+	 * PostProcess permettant le calcul du score ROUGE
+	 */
 	protected EvaluationROUGE evalRouge;
 	
+	/**
+	 * Constructeur simple
+	 */
 	public SModel() {
 		super();
 	}
 
+	/**
+	 * Applique les PreProcess {@link #preProcess} sur les MultiCorpus {@link #multiCorpusModels}
+	 * Lance l'exécution des AbstractProcess dans {@link #process} sur les MultiCorpus {@link #multiCorpusModels}
+	 */
 	public void run() {
 		try {
 			Iterator<AbstractPreProcess> preProIt = preProcess.iterator();
@@ -80,6 +108,7 @@ public class SModel extends Observable {
 					AbstractProcess p = proIt.next();
 					p.setModel(this);
 					p.initCorpusToCompress();
+					p.initADN();
 					for (int i : p.getListCorpusId()) {
 						p.setSummarizeIndex(i);
 						p.init();
@@ -87,7 +116,7 @@ public class SModel extends Observable {
 						p.finish();
 						setChanged();
 						
-						if (p.getSummary() != null) {
+						if (p.getSummary().get(currentMultiCorpus.getiD()) != null) {
 							List<SentenceModel> summary = p.getSummary().get(currentMultiCorpus.getiD()).get(p.getSummarizeCorpusId());
 							//Collections.sort(summary);
 							notifyObservers(SentenceModel.listSentenceModelToString(summary));
@@ -109,7 +138,7 @@ public class SModel extends Observable {
 		}
 	}
 	
-	protected void loadMultiCorpusModels() {
+	public void loadMultiCorpusModels() {
 		Iterator<MultiCorpus> multiCorpusIt = multiCorpusModels.iterator();
 		while (multiCorpusIt.hasNext()) {
 			Iterator<Corpus> corpusIt = multiCorpusIt.next().iterator();
@@ -119,37 +148,9 @@ public class SModel extends Observable {
 		}
 	}
 	
-   /* protected void loadDocumentModels() {
-		//List<TextModel> documentModels = new ArrayList<TextModel>();
-		
-		Iterator<String> it = docNames.iterator();
-		while (it.hasNext()) {
-			corpusModels.add(new TextModel(inputPath + File.separator + it.next()));
-		}
-		
-    	//setDocumentModels(documentModels);
-    }*/
-	
 	public Controller getCtrl() {
 		return ctrl;
 	}
-	
-	/*public SentenceModel getSentenceByID(int id) {
-		int current = id;
-		boolean notFind = true;
-		SentenceModel sen = null;
-		Iterator<TextModel> textIt = corpusModels.iterator();
-		while (notFind && textIt.hasNext()) {
-			TextModel text = textIt.next();
-			if (text.getNbSentence() <= current)
-				current -= text.getNbSentence();
-			else {
-				sen = text.getSentenceByID(id);
-				notFind = false;
-			}
-		}
-		return sen;
-	}*/
 	
 	public void setCtrl(Controller ctrl) {
 		this.ctrl = ctrl;

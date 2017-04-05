@@ -6,7 +6,6 @@ import java.util.List;
 
 import exception.LacksOfFeatures;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -39,24 +38,19 @@ public class WordSplitter extends AbstractPreProcess {
 	}
 	
 	private void splitSentenceIntoWord(TextModel textModel) {
-		Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-		while (paragraphIt.hasNext()) {
-			ParagraphModel paragraphModel = paragraphIt.next();
-			Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				String[] words = sentenceModel.getSentence().split(" ");
-				for (int i = 0;i<words.length;i++) {
-					WordModel word = new WordModel();
-					word.setSentence(sentenceModel);
-					word.setWord(Tools.enleverPonctuation(words[i]));
-					sentenceModel.add(word);
-					textModel.setTextSize(textModel.getTextSize()+1);
-				}
-				if (sentenceModel.size() < 6) {
-					sentenceIt.remove();
-					paragraphModel.setNbSentence(paragraphModel.getNbSentence()-1);
-				}
+		Iterator<SentenceModel> sentenceIt = textModel.iterator();
+		while (sentenceIt.hasNext()) {
+			SentenceModel sentenceModel = sentenceIt.next();
+			String[] words = sentenceModel.getSentence().split(" ");
+			for (int i = 0;i<words.length;i++) {
+				WordModel word = new WordModel();
+				word.setSentence(sentenceModel);
+				word.setWord(Tools.enleverPonctuation(words[i]));
+				sentenceModel.add(word);
+				textModel.setTextSize(textModel.getTextSize()+1);
+			}
+			if (sentenceModel.size() < 6) {
+				sentenceIt.remove();
 			}
 		}
 	}

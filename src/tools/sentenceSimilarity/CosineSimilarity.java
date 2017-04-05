@@ -11,6 +11,9 @@ public class CosineSimilarity extends SentenceSimilarityMetric {
 
 	@Override
 	public double computeSimilarity(double[] s1, double[] s2) throws VectorDimensionException {
-		return ToolsVector.cosineSimilarity(s1, s2);
+		double temp = ToolsVector.cosineSimilarity(s1, s2);
+		if (temp > 1)
+			temp = 1.0;
+		return temp;
 	}
 }

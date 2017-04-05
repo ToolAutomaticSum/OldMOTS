@@ -24,6 +24,11 @@ public class WordModel {
 	public WordModel() {
 		super();
 	}
+	
+	public WordModel(String mLemma) {
+		super();
+		this.mLemma = mLemma;
+	}
 
 	public WordModel(String mID, String mForm, String mLemma, String mCPosTag, String mPosTag) {
 		super();

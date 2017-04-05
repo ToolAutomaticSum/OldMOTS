@@ -39,11 +39,14 @@ public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 	public void generateGraph() throws Exception {
 		matAdj = new double[this.size()][this.size()];
 		degree = new int[this.size()];
-		Writer w = new Writer("/home/valnyz/similarity.txt");
+		Writer w = new Writer("similarity.txt");
 		w.open();
 		for (int i = 0; i<this.size(); i++) {
 			for (int j = 0; j<this.size(); j++) {
-				matAdj[i][j] = sim.computeSimilarity(sentenceCaracteristic.get(this.get(i).getCurrentSentence()), sentenceCaracteristic.get(this.get(j).getCurrentSentence()));
+				if (i==j)
+					matAdj[i][j] = 1.0;
+				else
+					matAdj[i][j] = sim.computeSimilarity(sentenceCaracteristic.get(this.get(i).getCurrentSentence()), sentenceCaracteristic.get(this.get(j).getCurrentSentence()));
 				if (matAdj[i][j] > threshold) {
 					this.get(i).addAdjacentSentence(this.get(j).getCurrentSentence(), matAdj[i][j]);
 					matAdj[i][j] = 1;

@@ -1,7 +1,6 @@
 package model.task.process.scoringMethod.LDA;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -10,20 +9,15 @@ import model.task.process.VectorCaracteristicBasedIn;
 import model.task.process.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.scoringMethod.ScoreBasedOut;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 import textModeling.wordIndex.Index;
-import textModeling.wordIndex.LDA.WordLDA;
+import textModeling.wordIndex.WordVector;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
-
-	static {
-		supportADN = new HashMap<String, Class<?>>();
-	}
 	
 	protected Map<SentenceModel, double[]> sentenceCaracteristic;
 	protected int K; //nb Topic
@@ -36,17 +30,20 @@ public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteri
 	}
 	
 	@Override
+	public void initADN() throws Exception {
+		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
+		
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+	}
+	
+	@Override
 	public void init(AbstractProcess currentProcess, Index index)
 			throws Exception {
 		super.init(currentProcess, index);
 
-		if (index.values().iterator().next().getClass() != WordLDA.class)
+		if (index.values().iterator().next().getClass() != WordVector.class)
 			throw new Exception("Dictionnary need WordLDA !");
-		K = ((WordLDA) index.get(1)).getK();
-		
-		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
-		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		K = ((WordVector) index.get(1)).getDimension();
 	}
 	
 	@Override
@@ -54,28 +51,24 @@ public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteri
 		double[] averageVector = new double[K];
 		
 		int n = 0; //nbWord
-		Iterator<TextModel> textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
+		Iterator<TextModel> textIt = getCurrentProcess().getCorpusToSummarize().iterator();
 		while (textIt.hasNext()) {			
 			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while(wordIt.hasNext()) {
-						WordModel word = wordIt.next();
-						if (!word.isStopWord()) {
-							for (int k = 0; k<K;k++) {
-								WordLDA wLDA = (WordLDA) index.get(word.getmLemma());
-								averageVector[k] += wLDA.getTopicDistribution()[k];
-							}
-							n++;
+			Iterator<SentenceModel> sentenceIt = textModel.iterator();
+			while (sentenceIt.hasNext()) {
+				SentenceModel sentenceModel = sentenceIt.next();
+				Iterator<WordModel> wordIt = sentenceModel.iterator();
+				while(wordIt.hasNext()) {
+					WordModel word = wordIt.next();
+					if (!word.isStopWord()) {
+						for (int k = 0; k<K;k++) {
+							WordVector wLDA = (WordVector) index.get(word.getmLemma());
+							averageVector[k] += wLDA.getWordVector()[k];
 						}
+						n++;
 					}
 				}
-			}	
+			}
 		}
 		
 		for (int k = 0; k<K;k++) {
@@ -86,18 +79,14 @@ public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteri
 		
 		//int i = 0; //Sentence variable
 		
-		textIt = getCurrentProcess().getModel().getCurrentMultiCorpus().get(getCurrentProcess().getSummarizeCorpusId()).iterator();
+		textIt = getCurrentProcess().getCorpusToSummarize().iterator();
 		while (textIt.hasNext()) {			
 			TextModel textModel = textIt.next();
-			Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-			while (paragraphIt.hasNext()) {
-				ParagraphModel paragraphModel = paragraphIt.next();
-				Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
-					sentenceModel.setScore(sim.computeSimilarity(sentenceCaracteristic.get(sentenceModel), averageVector)); //Ajout du score � la phrase
-					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
-				}
+			Iterator<SentenceModel> sentenceIt = textModel.iterator();
+			while (sentenceIt.hasNext()) {
+				SentenceModel sentenceModel = sentenceIt.next();
+				sentenceModel.setScore(sim.computeSimilarity(sentenceCaracteristic.get(sentenceModel), averageVector)); //Ajout du score � la phrase
+				sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 			}
 		}
 	}

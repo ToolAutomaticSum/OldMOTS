@@ -11,7 +11,7 @@ import model.task.process.VectorCaracteristicBasedIn;
 import model.task.process.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.scoringMethod.ScoreBasedOut;
-import model.task.process.scoringMethod.graphBased.ClusterLexRank.ClusterLexRank_Parameter;
+import model.task.process.scoringMethod.TF_IDF.Centroid.Centroid_Parameter;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
@@ -24,16 +24,9 @@ import tools.vector.ToolsVector;
 
 public class LexRank extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 
-	static {
-		supportADN = new HashMap<String, Class<?>>();
-		supportADN.put("dumpingParameter", Double.class);
-		supportADN.put("epsilon", Double.class);
-		supportADN.put("graphThreshold", Double.class);
-	}
-
 	public static enum LexRank_Parameter {
 		DumpingParameter("DumpingParameter"),
-		Epsilon("Epsilon"),
+		//Epsilon("Epsilon"),
 		GraphThreshold("GraphThreshold");
 
 		private String name;
@@ -58,19 +51,30 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 	
 	public LexRank(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
-		}
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("DumpingParameter", Double.class);
+		//supportADN.put("Epsilon", Double.class);
+		supportADN.put("GraphThreshold", Double.class);
+	}
+	
+	@Override
+	public void initADN() throws Exception {
+		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), 0.15));
+		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMaxValue(0.6);
+		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMinValue(0.0);
+		//getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.Epsilon.getName(), 0.0001));
+		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.GraphThreshold.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.GraphThreshold.getName()))));
+		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.GraphThreshold.getName()).setMaxValue(0.6);
+		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.GraphThreshold.getName()).setMinValue(0.0);
+	}
 
 	@Override
 	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
 		super.init(currentProcess, dictionnary);
 		
-		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.DumpingParameter.getName(), 0.15));
-		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.Epsilon.getName(), 0.000001));
-		adn.putParameter(new Parameter<Double>(ClusterLexRank_Parameter.GraphThreshold.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.GraphThreshold.getName()))));
-		
-		dumpingParameter = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.DumpingParameter.getName());
-		epsilon = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.Epsilon.getName());
-		graphThreshold = adn.getParameterValue(Double.class, ClusterLexRank_Parameter.GraphThreshold.getName());
+		dumpingParameter = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.DumpingParameter.getName());
+		epsilon = 0.00001;	///getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.Epsilon.getName());
+		graphThreshold = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.GraphThreshold.getName());
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
@@ -90,8 +94,8 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 			 double[][] matAdj = graph.getMatAdj();
 			 int[] degree = graph.getDegree();
 
-			 for (int j=0;j<graph.size();j++) {
-				 for (int k=0;k<graph.size();k++) {
+			 for (int j=0;j<graph.size();j++) { //phrases courantes
+				 for (int k=0;k<graph.size();k++) { //phrases adjencete
 					 tempMat[j][k] = matAdj[j][k]/degree[k];
 				 }
 			 }
@@ -108,7 +112,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 		 }
 		 
 		 Collections.sort(sentencesScores);
-		 System.out.println(sentencesScores);
+		 //System.out.println(sentencesScores);
 	}
 
 	@Override
@@ -131,11 +135,11 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 		double[] pt = new double[matSize];
 		double normeDiff;
 		for (int i = 0; i<matSize; i++)
-			pt[i] = 1.0 / matSize;
+			pt[i] = 1.0 / (double)matSize;
 		for (int i = 0; i<matSize; i++)
 			for (int j = 0; j<matSize; j++)
-				matAdj[i][j] = dampingFactor / matSize + (1-dampingFactor)*matAdj[i][j];
-		ToolsVector.transposeMatrix(matAdj);
+				matAdj[i][j] = dampingFactor / (double)matSize + (1-dampingFactor)*matAdj[i][j];
+		//ToolsVector.transposeMatrix(matAdj);
 		int n = 0;
 		do {
 			for (int i = 0; i<matSize; i++)
@@ -143,14 +147,16 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 			//Parcours des phrases (phrase courante i)
 			for (int i = 0; i<matSize; i++) {
 				pt[i] = 0;
-				for (int j = 0; j<matSize; j++) //parcours des phrases adjacentes j
-					pt[i] += matAdj[i][j] * ptprec[j];
+				for (int j = 0; j<matSize; j++) { //parcours des phrases adjacentes j
+					if (i!=j)
+						pt[i] += matAdj[i][j] * ptprec[j];
+				}
 			}
 			n++;
-			System.out.println("Itération " + n);
 			normeDiff = ToolsVector.norme(ToolsVector.soustraction(pt, ptprec));
-			System.out.println(normeDiff);
+			//System.out.println(normeDiff);
 		} while (normeDiff > epsilon);
+		//System.out.println("Itération " + n);
 		return pt;
 	}
 }

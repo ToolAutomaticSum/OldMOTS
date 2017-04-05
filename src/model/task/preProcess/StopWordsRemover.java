@@ -8,7 +8,6 @@ import java.util.List;
 import exception.LacksOfFeatures;
 import grammaticalWords.GrammaticalWordsMap;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -18,7 +17,7 @@ public class StopWordsRemover extends AbstractPreProcess {
 	GrammaticalWordsMap gramWordsMap;
 	
 	/**
-	 * ProcessOption lié StopWordListPath, String.
+	 * ProcessOption liï¿½ StopWordListPath, String.
 	 */
 	public StopWordsRemover(int id) {
 		super(id);
@@ -46,21 +45,17 @@ public class StopWordsRemover extends AbstractPreProcess {
 	}
 	
 	public void removeGramWords(TextModel textModel) {
-		Iterator<ParagraphModel> paragraphIt = textModel.iterator();
-		while (paragraphIt.hasNext()) {
-			ParagraphModel paragraphModel = paragraphIt.next();
-			Iterator<SentenceModel> sentenceIt = paragraphModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel word = wordIt.next();
-					if (gramWordsMap.detectGramWords(word.getWord()) != 0) {
-						word.setStopWord(true);
-						//word.setmLemma("___");
-					} else if (word.getWord().matches("\\p{Digit}+"))
-						word.setStopWord(true);
-				}
+		Iterator<SentenceModel> sentenceIt = textModel.iterator();
+		while (sentenceIt.hasNext()) {
+			SentenceModel sentenceModel = sentenceIt.next();
+			Iterator<WordModel> wordIt = sentenceModel.iterator();
+			while (wordIt.hasNext()) {
+				WordModel word = wordIt.next();
+				if (gramWordsMap.detectGramWords(word.getWord()) != 0) {
+					word.setStopWord(true);
+					//word.setmLemma("___");
+				}/* else if (word.getWord().matches("\\p{Digit}+"))
+					word.setStopWord(true);*/
 			}
 		}
 	}

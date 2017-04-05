@@ -9,15 +9,11 @@ import optimize.parameter.ADN;
 import optimize.parameter.Parameter;
 
 public abstract class Individu extends AbstractMethod {
-	public static HashMap<String, Class<?>> supportADN;
+	public HashMap<String, Class<?>> supportADN;
 	protected ADN adn;
 	
 	public Individu(int id) throws SupportADNException {
 		super(id);
-		
-		if (supportADN == null)
-			throw new SupportADNException();
-		adn = new ADN(supportADN);
 	}
 	
 	public ADN getADN() {

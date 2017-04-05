@@ -1,5 +1,6 @@
 package model.task.process;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import exception.LacksOfFeatures;
+import model.SModel;
 import model.task.AbstractTaskModel;
 import model.task.postProcess.AbstractPostProcess;
+import model.task.preProcess.GenerateTextModel;
 import model.task.process.ILP.BiGramListBasedOut;
 import model.task.process.LDA.LdaBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
@@ -24,8 +27,10 @@ import model.task.process.summarizeMethod.ScoreBasedIn;
 import model.task.process.summarizeMethod.TopicLdaBasedIn;
 import optimize.Optimize;
 import optimize.SupportADNException;
+import optimize.parameter.ADN;
+import textModeling.Corpus;
+import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
-import textModeling.TextModel;
 import textModeling.wordIndex.Index;
 import tools.Tools;
 
@@ -35,10 +40,11 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	protected List<Integer> listCorpusId;
 	protected Index index;
 	
+	protected Corpus corpusToSummarize;
+	
 	protected AbstractSummarizeMethod sentenceSelection;
 	protected AbstractScoringMethod scoringMethod;
 	protected List<AbstractPostProcess> postProcess = new ArrayList<AbstractPostProcess>();
-	protected List<SentenceModel> allSentenceList = new ArrayList<SentenceModel>();
 	
 	//Matrice de résumé : Dimension = MultiCorpus et List Corpus à résumer
 	protected Map<Integer, Map<Integer, List<SentenceModel>>> summary = new HashMap<Integer, Map<Integer, List<SentenceModel>>>();
@@ -46,6 +52,9 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	
 	public AbstractProcess(int id) throws SupportADNException {
 		super(id);
+
+		index = new Index();
+		supportADN = new HashMap<String, Class<?>>();
 	}
 	
 	public final void initCorpusToCompress() throws NumberFormatException, LacksOfFeatures {
@@ -54,9 +63,24 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			listCorpusId.add(Integer.parseInt(corpusId));
 	}
 	
+	public void initADN() throws Exception {
+		if (scoringMethod != null)
+			scoringMethod.setCurrentProcess(this);
+		if (sentenceSelection != null)
+			sentenceSelection.setCurrentProcess(this);
+
+		adn = new ADN(supportADN);
+
+		if (scoringMethod != null)
+			scoringMethod.initADN();
+
+		if (sentenceSelection != null)
+			sentenceSelection.initADN();
+	}
+	
 	@Override
 	public void init() throws Exception {
-		index = new Index();
+		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()));
 	}
 	
 	/**
@@ -64,20 +88,16 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	 */
 	@Override
 	public void process() throws Exception {
-		System.out.println("Process Corpus " + + getSummarizeCorpusId());
+		System.out.println("Process Corpus " + getSummarizeCorpusId());
 		
-		for (TextModel text : getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId())) {
-			allSentenceList.addAll(text.getSentence());
-		}
-		
-		if (!(scoringMethod == null)) {
+		if (scoringMethod != null) {
 			scoringMethod.setCurrentProcess(this);
 			scoringMethod.setModel(model);
 			initCompatibilityProcess();
 			scoringMethod.init(this, index);
 			scoringMethod.computeScores();
 		}
-		if (!(sentenceSelection == null)) {
+		if (sentenceSelection != null) {
 			sentenceSelection.setCurrentProcess(this);
 			sentenceSelection.setModel(model);
 			initCompatibilityScoring();
@@ -166,7 +186,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		}
 		
 		index.clear();
-		allSentenceList.clear();
+		corpusToSummarize.clear();
 	}
 	
 	public List<AbstractPostProcess> getPostProcess() {
@@ -198,7 +218,11 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	}
 
 	public void setSentenceSelection(AbstractSummarizeMethod sentenceSelection) {
-		this.sentenceSelection = sentenceSelection;
+		if (sentenceSelection != null) {
+			this.sentenceSelection = sentenceSelection;
+			if (sentenceSelection.getSupportADN() != null)
+				supportADN.putAll(sentenceSelection.getSupportADN());
+		}
 	}
 
 	public AbstractScoringMethod getScoringMethod() {
@@ -206,27 +230,41 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	}
 
 	public void setScoringMethod(AbstractScoringMethod scoringMethod) {
-		this.scoringMethod = scoringMethod;
-	}
-
-	public List<SentenceModel> getSentenceList() {
-		return allSentenceList;
-	}
-
-	public void setSentenceList(List<SentenceModel> allSentenceList) {
-		this.allSentenceList = allSentenceList;
+		if (scoringMethod != null) {
+			this.scoringMethod = scoringMethod;
+			if (scoringMethod.getSupportADN() != null)
+				supportADN.putAll(scoringMethod.getSupportADN());
+		}
 	}
 	
+	public Corpus getCorpusToSummarize() {
+		return corpusToSummarize;
+	}
+
 	@Override
-	public void optimize() throws Exception {
-		setModel(getModel());
-		init();
-		process();
-		finish();
+	public void optimize() throws Exception {		
+		Iterator<MultiCorpus> multiCorpusIt = getModel().getMultiCorpusModels().iterator();
+		while (multiCorpusIt.hasNext()) {
+			getModel().setCurrentMultiCorpus(multiCorpusIt.next());		
+			System.out.println("MultiCorpus : " + getModel().getCurrentMultiCorpus().getiD());
+
+			this.initCorpusToCompress();
+			for (int i : this.getListCorpusId()) {
+				this.setSummarizeIndex(i);
+				
+				this.init();
+				this.process();
+				this.finish();
+			}
+		}
+		getModel().getEvalRouge().setModel(getModel());
+		getModel().getEvalRouge().init();
+		getModel().getEvalRouge().process();
+		getModel().getEvalRouge().finish();
 	}
 	
 	/**
-	 * N�cessite utilisation de ROUGE
+	 * Nécessite utilisation de ROUGE
 	 */
 	@Override
 	public double getScore() {
@@ -246,5 +284,14 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	 */
 	public Integer getSummarizeCorpusId() {
 		return listCorpusId.get(summarizeIndex);
+	}
+	
+	@Override
+	public void setModel(SModel model) {
+		super.setModel(model);
+		if (scoringMethod != null)
+			scoringMethod.setModel(model);
+		if (sentenceSelection != null)
+			sentenceSelection.setModel(model);
 	}
 }

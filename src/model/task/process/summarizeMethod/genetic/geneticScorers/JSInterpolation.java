@@ -6,7 +6,6 @@ import java.util.TreeMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
-import textModeling.ParagraphModel;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.smoothings.Interpolation;
@@ -41,20 +40,18 @@ public class JSInterpolation extends GeneticIndividualScorer{
 		int curr_occ;
 		for (TextModel doc : this.cd)
 		{
-			for ( ParagraphModel para : doc) {
-				for (SentenceModel p : para)
+			for (SentenceModel p : doc)
+			{
+				ArrayList<NGram> curr_ngrams_list = p.getNGrams(2, this.index);
+				for (NGram ng : curr_ngrams_list)
 				{
-					ArrayList<NGram> curr_ngrams_list = p.getNGrams(2, this.index);
-					for (NGram ng : curr_ngrams_list)
-					{
-						if (this.sourceOccurences.containsKey(ng))
-							this.sourceOccurences.put (ng, this.sourceOccurences.get(ng) + 1);
-						else
-							this.sourceOccurences.put (ng, 1);
-						this.nbBiGramsInSource++;
-					}
-					this.ss.add(p);
+					if (this.sourceOccurences.containsKey(ng))
+						this.sourceOccurences.put (ng, this.sourceOccurences.get(ng) + 1);
+					else
+						this.sourceOccurences.put (ng, 1);
+					this.nbBiGramsInSource++;
 				}
+				this.ss.add(p);
 			}
 		}
 		System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);

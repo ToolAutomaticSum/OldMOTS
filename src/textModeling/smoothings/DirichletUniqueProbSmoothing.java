@@ -47,6 +47,8 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 				ngram belongs to the sourceDistribution if we want parallel lists*/
 				//if (this.sourceDistribution.containsKey(ng))
 				//{
+					if(ng.get(0) == null)
+						System.out.println(sent);
 					if (this.distrib.containsKey(ng))
 					{
 			//			this.distrib.put(ng, this.distrib.get(ng) + 1.);
