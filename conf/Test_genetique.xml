@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>doc</INPUT_PATH>
+		<OUTPUT_PATH>doc/Output</OUTPUT_PATH>
+		<MULTICORPUS ID="0">
+			<CORPUS ID="0">
+				<INPUT_PATH>/home/valnyz/Documents</INPUT_PATH>
+				<DOCUMENT ID="0">test1.txt</DOCUMENT>
+				<SUMMARY_PATH>/home/valnyz/git/TAC_2009/UpdateSumm09_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY ID="0">D0901-A.M.100.A.A</SUMMARY>
+				<SUMMARY ID="0">D0901-A.M.100.A.C</SUMMARY>
+				<SUMMARY ID="0">D0901-A.M.100.A.F</SUMMARY>
+				<SUMMARY ID="0">D0901-A.M.100.A.H</SUMMARY>
+			</CORPUS>
+		</MULTICORPUS>
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="StopWordsRemover">
+			<OPTION NAME="StopWordListPath">doc/StopWords</OPTION>
+		</PREPROCESS>
+		<PROCESS NAME="TF_IDF.TF_IDF">
+			<OPTION NAME="CorpusIdToSummarize">0</OPTION>
+			<OPTION NAME="LoadModel">false</OPTION>
+			<SUMMARIZE_METHOD NAME="genetic.GeneticSumm">
+				<OPTION NAME="ParentsNumber">80</OPTION>
+				<OPTION NAME="HybridationNumber">80</OPTION>
+				<OPTION NAME="MutationNumber">160</OPTION>
+				<OPTION NAME="RandomNumber">0</OPTION>
+				<OPTION NAME="MaxSummLenght">100</OPTION>
+				<OPTION NAME="GenerationsNb">160</OPTION>
+				<OPTION NAME="MaxMutatedGenes">1</OPTION>
+				<OPTION NAME="GeneticScorerMethod">JSBigramScorer</OPTION>
+				<OPTION NAME="FirstSentenceConceptsFactor">1.0</OPTION>
+				<OPTION NAME="Delta">0.0005</OPTION>
+			</SUMMARIZE_METHOD>
+		</PROCESS>
+		<ROUGE_EVALUATION>
+			<ROUGE-MEASURE>ROUGE-1	ROUGE-2	ROUGE-SU4</ROUGE-MEASURE>
+			<ROUGE-PATH>lib/ROUGE-1.5.5/RELEASE-1.5.5</ROUGE-PATH>
+			<MODEL-ROOT>models</MODEL-ROOT>
+			<PEER-ROOT>systems</PEER-ROOT>
+		</ROUGE_EVALUATION>
+	</TASK>
+</CONFIG>

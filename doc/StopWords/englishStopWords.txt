@@ -77,7 +77,6 @@ ours	0
 ourselves	0
 out	0
 over	0
-own	0
 same	0
 she	0
 should	0
@@ -324,3 +323,4 @@ would	0
 yes	0
 no	0
 will	0
+--	0

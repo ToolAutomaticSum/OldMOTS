@@ -8,7 +8,7 @@ import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 
-public class TextStemming extends AbstractPreProcess {
+public class TextStemming extends AbstractPreProcess implements Lemmatizer {
 	
 	SnowballStemmer stemmer;
 	
@@ -91,7 +91,7 @@ public class TextStemming extends AbstractPreProcess {
 	    }
 	}
 	
-	public String stemming(String word) {
+	public String getLemma(String word) {
 		int repeat = 1;
 		String currentWord = word + " ";
 		StringBuffer input = new StringBuffer();

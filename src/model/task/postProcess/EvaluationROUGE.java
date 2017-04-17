@@ -80,7 +80,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
-						" -e " + rougePath + File.separator + "data -n 4 -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
+						" -e " + rougePath + File.separator + "data -n 2 -x -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
 				        getModel().getOutputPath() + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
 				//System.out.println(cmd);
 

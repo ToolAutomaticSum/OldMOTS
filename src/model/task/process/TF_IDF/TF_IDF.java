@@ -40,7 +40,7 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 			LearningTF_IDF.generateDictionary(corpusToSummarize, index);
 			for (Corpus c : getModel().getCurrentMultiCorpus()) {
 				if (c!=corpusToSummarize) {
-					Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c);
+					Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, readStopWords);
 					LearningTF_IDF.majIDFDictionnary(temp, index);
 					temp.clear();
 				}

@@ -6,14 +6,14 @@ import org.deeplearning4j.models.embeddings.learning.impl.elements.SkipGram;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.word2vec.VocabWord;
 import org.deeplearning4j.models.word2vec.Word2Vec;
-import org.deeplearning4j.text.sentenceiterator.FileSentenceIterator;
-import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
-import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 
 import model.task.process.AbstractProcess;
+import model.task.process.wordEmbeddings.ld4j.MultiCorpusSentenceIterator;
 import model.task.process.wordEmbeddings.ld4j.SentenceIterator;
 import model.task.process.wordEmbeddings.ld4j.TokenizerFactory;
 import optimize.SupportADNException;
+import textModeling.Corpus;
+import textModeling.MultiCorpus;
 
 public class LearningWordToVecModel extends AbstractProcess {
 		
@@ -43,12 +43,46 @@ public class LearningWordToVecModel extends AbstractProcess {
                 .build();
         vec.fit();
  
-        WordVectorSerializer.writeWordVectors(vec, getModel().getOutputPath() + File.separator + "word2vec.bin");
+        WordVectorSerializer.writeWord2VecModel(vec, getModel().getOutputPath() + File.separator + "word2vec.bin");
 	}
 	
 	@Override
 	public void finish() throws Exception {
 		index.clear();
 		corpusToSummarize.clear();
+	}
+	
+	public static void learnWordToVecMultiCorpus(Word2Vec vec, MultiCorpus multiCorpus) {
+		MultiCorpusSentenceIterator sentenceIterator = new MultiCorpusSentenceIterator(multiCorpus);
+        TokenizerFactory tokenizerFactory = new TokenizerFactory();
+
+        /**TokenizerFactory first then SentenceIterator, use to build sequenceIterator inside the class.*/
+        vec.setTokenizerFactory(tokenizerFactory); 
+        vec.setSentenceIter(sentenceIterator);
+        vec.buildVocab();
+        try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        vec.fit();
+	}
+	
+	public static void learnWordToVec(Word2Vec vec, Corpus corpusToSummarize) {
+		SentenceIterator sentenceIterator = new SentenceIterator(corpusToSummarize);
+        TokenizerFactory tokenizerFactory = new TokenizerFactory();
+
+        /**TokenizerFactory first then SentenceIterator, use to build sequenceIterator inside the class.*/
+        vec.setTokenizerFactory(tokenizerFactory); 
+        vec.setSentenceIter(sentenceIterator);
+        vec.buildVocab();
+        try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        vec.fit();
 	}
 }

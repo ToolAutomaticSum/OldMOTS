@@ -4,8 +4,7 @@ public class TokenPreProcess implements org.deeplearning4j.text.tokenization.tok
 
 	@Override
 	public String preProcess(String token) {
-		// TODO Auto-generated method stub
-		return null;
+		return token;
 	}
 
 }

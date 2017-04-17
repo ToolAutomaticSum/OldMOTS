@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import exception.LacksOfFeatures;
 import model.task.process.summarizeMethod.AbstractSummarizeMethod;
@@ -52,6 +53,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	private GeneticIndividualScorer scorer;
 	private ArrayList<SentenceModel> ss = new ArrayList<SentenceModel>();
 	private int maxSummLength;
+	private Random rand;
 	//private String idClust;
 		
 	public GeneticSumm (int id) throws SupportADNException {
@@ -71,13 +73,20 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	}
 	
 	public void init() throws Exception {
+		rand = new Random(System.currentTimeMillis());
+		for (TextModel doc : getCurrentProcess().getCorpusToSummarize())
+			this.ss.addAll(doc.getSentence());
 		this.scorer = instanciateGeneticScorer(getCurrentProcess().getModel().getProcessOption(id, "GeneticScorerMethod"));
 		this.scorer.init();
-		this.bestSummary = new GeneticIndividual(this.ss, this.maxSummLength);
+		this.bestSummary = new GeneticIndividual(rand, this.ss, this.maxSummLength);
 		this.bestSummaryScore = 0;
 		
 		this.population = new ArrayList<GeneticIndividual>();
 		this.populationScore = new ArrayList<Double>();
+	}
+	
+	public void finish() {
+		ss.clear();
 	}
 	
 	@Override
@@ -89,45 +98,36 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		for (int curr_generation = 0; curr_generation < this.generationsNb; curr_generation++)
 		{
 			this.scoreCurrentPopulation();
-			//System.out.println("Meilleur score à la "+curr_generation+"ème génération : "+this.bestSummaryScore);
-			/*System.out.println("**************************************************");
-			
-			for (Double d : this.populationScore)
-			{
-				System.out.println(d);
-			}*/
-			
-			//System.out.println("**************************************************");
-			
+			System.out.println("Meilleur score à la "+curr_generation+"ème génération : "+this.bestSummaryScore);
 			this.createNewGeneration();
 		}
 		
 		DecimalFormat df = new DecimalFormat ("0.000");
 		try{
-		FileOutputStream fw = new FileOutputStream("./fitness_scores.txt", true);
-		OutputStreamWriter osr = new OutputStreamWriter (fw, "UTF-8");
-		//BufferedWriter output = new BufferedWriter(fw);
-		/*double mean = 0;
-		for (Double d : this.populationScore)
-		{
-			mean += d;
+			FileOutputStream fw = new FileOutputStream("./fitness_scores.txt", true);
+			OutputStreamWriter osr = new OutputStreamWriter (fw, "UTF-8");
+			//BufferedWriter output = new BufferedWriter(fw);
+			/*double mean = 0;
+			for (Double d : this.populationScore)
+			{
+				mean += d;
+			}
+			mean /= (double)this.populationScore.size();*/
+			osr.write(df.format(this.generationsNb)+"\t"+this.bestSummaryScore+"\n");
+			osr.flush();
+			osr.close();
 		}
-		mean /= (double)this.populationScore.size();*/
-		osr.write(df.format(this.generationsNb)+"\t"+this.bestSummaryScore+"\n");
-		osr.flush();
-		osr.close();
-		}catch(IOException ioe){ioe.printStackTrace();}
-		
+		catch(IOException ioe){
+			ioe.printStackTrace();
+		}
+		finish();
 		return this.bestSummary.getGenes();
 	}
 	
 	private void initializePopulation ()
 	{
-		for (int curr_indiv = 0; curr_indiv < this.populationNb ; curr_indiv++)
-		{
-			for (TextModel doc : getCurrentProcess().getCorpusToSummarize())
-				this.ss.addAll(doc.getSentence());
-			GeneticIndividual gi = new GeneticIndividual(this.ss, this.maxSummLength);
+		for (int curr_indiv = 0; curr_indiv < this.populationNb ; curr_indiv++)	{
+			GeneticIndividual gi = new GeneticIndividual(rand, this.ss, this.maxSummLength);
 			this.population.add(gi);
 		}
 		
@@ -163,7 +163,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		if (maxScore > this.bestSummaryScore)
 		{
 			this.bestSummaryScore = maxScore;
-			this.bestSummary = new GeneticIndividual (this.population.get(maxIndex));
+			this.bestSummary = new GeneticIndividual (rand, this.population.get(maxIndex));
 		}
 	}
 	
@@ -202,7 +202,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 			
 			for (int j = 0; j < this.populationNb/this.parentsNumber; j++)
 			{
-				random1 = (int) (Math.random() * selectables.size());
+				random1 = (int) (rand.nextDouble() * selectables.size());
 				selec1 = selectables.get(random1);
 				tournaments.get(i).add(selec1);
 				selectables.remove(random1);
@@ -241,9 +241,9 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		
 		for (int i = 0; i < this.hybridationNumber; i++)
 		{
-			randomP1 = (int) (Math.random() * parents.size());
-			randomP2 = (int) (Math.random() * parents.size());
-			hybrids.add(new GeneticIndividual (this.ss, this.maxSummLength, parents.get(randomP1), parents.get(randomP2)));
+			randomP1 = (int) (rand.nextDouble() * parents.size());
+			randomP2 = (int) (rand.nextDouble() * parents.size());
+			hybrids.add(new GeneticIndividual (rand, this.ss, this.maxSummLength, parents.get(randomP1), parents.get(randomP2)));
 		}
 		
 		return hybrids;
@@ -256,12 +256,9 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		ArrayList<GeneticIndividual> mutants = new ArrayList<GeneticIndividual> ();
 		for (int i = 0; i < this.mutationNumber; i++)
 		{
-			ss.clear();
-			for (TextModel doc : getCurrentProcess().getCorpusToSummarize())
-				this.ss.addAll(doc.getSentence());
-			mutationRandomNb = (int) (Math.random() * (this.maxMutatedGenes)) + 1;
-			randomI = (int) (Math.random() * pop.size());
-			mutants.add(new GeneticIndividual (this.ss, this.maxSummLength, pop.get(randomI), mutationRandomNb));
+			mutationRandomNb = (int) (rand.nextDouble() * (this.maxMutatedGenes)) + 1;
+			randomI = (int) (rand.nextDouble() * pop.size());
+			mutants.add(new GeneticIndividual (rand, this.ss, this.maxSummLength, pop.get(randomI), mutationRandomNb));
 		}
 	
 		return mutants;
@@ -273,9 +270,7 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		
 		for (int i = this.population.size(); i <= this.populationNb; i ++)
 		{
-			for (TextModel doc : getCurrentProcess().getCorpusToSummarize())
-				this.ss.addAll(doc.getSentence());
-			randoms.add(new GeneticIndividual (this.ss, this.maxSummLength));
+			randoms.add(new GeneticIndividual (rand, this.ss, this.maxSummLength));
 		}
 		return randoms;
 	}

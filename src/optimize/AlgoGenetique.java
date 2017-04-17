@@ -62,7 +62,7 @@ public class AlgoGenetique extends Optimize {
 		this.optimize = opti;
 		supportPopulationADN = opti.getSupportADN();
 		
-		writer = new Writer("resultGenetique.txt");
+		writer = new Writer("resultGenetique"+ optimize.getClass() +".txt");
 	}
 	
 	@Override
@@ -77,7 +77,6 @@ public class AlgoGenetique extends Optimize {
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i = 0; i<adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName()); i++) {
 			ADN temp = optimize.generateAleaADN(rand);
-			//System.out.println(temp);
 			population.add(temp);
 		}
 	}
@@ -116,15 +115,11 @@ public class AlgoGenetique extends Optimize {
 	}
 	
 	public void evaluationPopulation() throws Exception {
-		int i = 0;
-		
 		for (ADN individu : population) {
 			optimize.setADN(individu);
 			optimize.optimize();
 			individu.setScore(optimize.getScore());
-			//writer.write(i + "\n" + individu + "\n" + optimize.getScore());
-			//System.out.println(i++ + "\n" + individu);
-			//System.out.println(individu.getScore());
+			System.out.println(individu);
 		}
 	}
 	
@@ -132,7 +127,6 @@ public class AlgoGenetique extends Optimize {
 		Random random = new Random(System.currentTimeMillis());
 		evaluationPopulation();
 		Collections.sort(population);
-		//System.out.println(population.get(0) + "" + population.get(0).getScore());
 		Double fitness_moyen = 0.0;
 
 		List<ADN> nextPopulation = new ArrayList<ADN>();
@@ -187,7 +181,6 @@ public class AlgoGenetique extends Optimize {
 	
 	@Override
 	public double getScore() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

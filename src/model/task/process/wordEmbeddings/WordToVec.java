@@ -1,7 +1,6 @@
 package model.task.process.wordEmbeddings;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,10 +8,11 @@ import java.util.Map;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
 import org.deeplearning4j.models.word2vec.Word2Vec;
 
-import model.task.postProcess.AbstractPostProcess;
+import model.task.preProcess.GenerateTextModel;
 import model.task.process.AbstractProcess;
 import model.task.process.VectorCaracteristicBasedOut;
 import optimize.SupportADNException;
+import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -23,6 +23,7 @@ public class WordToVec extends AbstractProcess implements VectorCaracteristicBas
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
 	private int dimension;
 	private boolean modelLoad = false;
+	private Word2Vec vec;
 	
 	public WordToVec(int id) throws SupportADNException {
 		super(id);
@@ -35,38 +36,64 @@ public class WordToVec extends AbstractProcess implements VectorCaracteristicBas
 		/**
 		 * Demande trop de ram, à tester sur serveur ou avec plus de ram.
 		 */
-		/**
-		 * TODO Ajouter option nom modèle à charger
-		 */
 		if (!modelLoad) {
-			File gModel = new File(getModel().getOutputPath() + File.separator + "word2vec.bin"/*"/home/valnyz/Documents/GoogleNews-vectors-negative300.bin.gz"*/);
-			Word2Vec vec = WordVectorSerializer.readWord2VecModel(gModel, false);
-	
-		    boolean bDimension = true;
-		    
-			//Construire index à partir de Word2Vec object
-		    for (TextModel text : corpusToSummarize) {
-				Iterator<SentenceModel> sentenceIt = text.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel wm = wordIt.next();
-						if (!wm.isStopWord() && !index.containsKey(wm.getmLemma())) {
-							if (vec.hasWord(wm.getmLemma())) {
-								if (bDimension) {
-									dimension = vec.getWordVector(wm.getmLemma()).length;
-									bDimension = false;
-								}
-								index.put(0, new WordVector(wm.getmLemma(), index, vec.getWordVector(wm.getmLemma())));
-							}
-						}
-					}
-				}
+			//File gModel = new File(getModel().getProcessOption(id, "ModelPath"));
+			System.out.println(getModel().getProcessOption(id, "ModelPath"));
+			vec = WordVectorSerializer.readWord2VecModel(getModel().getProcessOption(id, "ModelPath"), true);
+			
+		    System.out.println(vec.vocab().numWords());
+		   
+		    System.out.println("Load Pre-trained Model");
+		    //vec = null;
+		    modelLoad = true;
+		    vec.getConfiguration().setAllowParallelTokenization(false);
+			for (Corpus c : getModel().getCurrentMultiCorpus()) {
+				c = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, readStopWords);
+				//LearningWordToVecModel.learnWordToVec(vec, temp);
+				//System.out.println(c.getCorpusName() + "\t" + vec.vocab().numWords());
+				//temp.clear();
+			}
+		    LearningWordToVecModel.learnWordToVecMultiCorpus(vec, getModel().getCurrentMultiCorpus());
+		    for (Corpus c : getModel().getCurrentMultiCorpus()) {
+		    	if (c != corpusToSummarize)
+		    		c.clear();
 		    }
-		    vec = null;
+		    	
+		    System.out.println(vec.vocab().numWords());
 		    modelLoad = true;
 		}
+
+	    boolean bDimension = true;
+
+	    int nbMotText = 0;
+	    int nbMotWE = 0;
+		//Construire index à partir de Word2Vec object
+	    for (TextModel text : corpusToSummarize) {
+			Iterator<SentenceModel> sentenceIt = text.iterator();
+			while (sentenceIt.hasNext()) {
+				SentenceModel sentenceModel = sentenceIt.next();
+				Iterator<WordModel> wordIt = sentenceModel.iterator();
+				while (wordIt.hasNext()) {
+					WordModel wm = wordIt.next();
+					nbMotText++;
+					if (!wm.isStopWord() && !index.containsKey(wm.getmLemma())) {
+						if (vec.hasWord(wm.getmLemma())) {
+							nbMotWE++;
+							if (bDimension) {
+								dimension = vec.getWordVector(wm.getmLemma()).length;
+								bDimension = false;
+							}
+							index.put(0, new WordVector(wm.getmLemma(), index, vec.getWordVector(wm.getmLemma())));
+						}
+						else 
+							System.out.println(wm.getmLemma());
+					}
+				}
+			}
+	    }
+	    System.out.println("Modèle chargé !");
+	    System.out.println(nbMotText);
+	    System.out.println(nbMotWE);
 	}
 	
 	@Override
@@ -96,32 +123,6 @@ public class WordToVec extends AbstractProcess implements VectorCaracteristicBas
 		super.process();
 	}
 	
-	@Override
-	public void finish() throws Exception {
-		Iterator<AbstractPostProcess> postProIt = postProcess.iterator();
-		while (postProIt.hasNext()) {
-			AbstractPostProcess p = postProIt.next();
-			p.setModel(getModel());
-			p.setCurrentProcess(this);
-			p.init();
-		}
-		
-		postProIt = postProcess.iterator();
-		while (postProIt.hasNext()) {
-			AbstractPostProcess p = postProIt.next();
-			p.process();
-		}
-		
-		postProIt = postProcess.iterator();
-		while (postProIt.hasNext()) {
-			AbstractPostProcess p = postProIt.next();
-			p.finish();
-		}
-		
-		//index.clear();
-		corpusToSummarize.clear();
-	}
-
 	@Override
 	public Map<SentenceModel, double[]> getVectorCaracterisic() {
 		return sentenceCaracteristic;

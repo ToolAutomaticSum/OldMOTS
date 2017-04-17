@@ -86,6 +86,8 @@ public class LearningTF_IDF extends AbstractProcess {
 						}
 						dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}
+					else if (!dictionnary.containsKey(word.getmLemma()))
+						dictionnary.put(word.getmLemma(), new WordIndex(word.getmLemma(), dictionnary));
 				}
 			}
 		}
@@ -109,6 +111,8 @@ public class LearningTF_IDF extends AbstractProcess {
 						w.addDocumentOccurence(corpus.getiD(), text.getiD());
 						dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}
+					//else
+					//	dictionnary.put(word.getmLemma(), new WordIndex(word.getmLemma(), dictionnary));
 				}
 			}
 	}

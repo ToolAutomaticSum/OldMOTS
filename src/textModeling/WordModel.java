@@ -168,10 +168,7 @@ public class WordModel {
 
 	@Override
 	public String toString() {
-		if (stopWord)
-			return "";
-		else
-			return mLemma;
+		return mLemma;
 	}
 	
 	public String toFullString() {

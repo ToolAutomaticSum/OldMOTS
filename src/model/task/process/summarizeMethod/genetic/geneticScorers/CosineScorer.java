@@ -60,9 +60,7 @@ public class CosineScorer extends GeneticIndividualScorer{
 			int i = 0;
 			i++;
 		}
-		
 	}
-	
 	
 	public double cosineSimilarity (ArrayList<WordIndex> giIndexKeys, HashMap<Integer, Double> giFrequencies, ArrayList<WordIndex> clustIndexKeys)
 	{

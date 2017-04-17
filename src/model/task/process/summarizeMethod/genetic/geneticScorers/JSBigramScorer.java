@@ -19,6 +19,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	private TreeMap <NGram, Double> sourceDistribution;
 	private TreeMap <NGram, Double> sourceOccurences;
 	private TreeMap <NGram, Integer> firstSentencesConcepts;
+	
 	private int nbBiGramsInSource;
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
@@ -62,65 +63,60 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		this.nbBiGramsInSource = 0;
 		double modified_nbBiGramsInSource = 0.;
 		
-		//for (DocumentTTG doc : this.cd.getDocuments())
-		//{
-			//for (Phrase p : doc.getPhrases())
-			for (SentenceModel p : this.ngrams_in_sentences.keySet())
+		for (SentenceModel p : this.ngrams_in_sentences.keySet())
+		{
+			//System.out.println("phrase pos : "+p.getPosition());
+			ArrayList<NGram> curr_ngrams_list = this.ngrams_in_sentences.get(p);
+					//p.getNGrams(2, this.index, this.filter);
+			//ArrayList<NGram> curr_ngrams_list = p.getBiGrams( this.index, this.filter);
+			for (NGram ng : curr_ngrams_list)
 			{
-				//System.out.println("phrase pos : "+p.getPosition());
-				ArrayList<NGram> curr_ngrams_list = this.ngrams_in_sentences.get(p);
-						//p.getNGrams(2, this.index, this.filter);
-				//ArrayList<NGram> curr_ngrams_list = p.getBiGrams( this.index, this.filter);
-				for (NGram ng : curr_ngrams_list)
-				{
-					if (this.sourceOccurences.containsKey(ng)) //If ng already counted, add 1
-						this.sourceOccurences.put (ng, this.sourceOccurences.get(ng) + 1.);
-					else //If ng not already counted, put 1
-						this.sourceOccurences.put (ng, 1.);
-					this.nbBiGramsInSource++;
-					
-					
-					if (p.getText().indexOf(p) == 1)
-					{
-						//System.out.println("Premiere pos");
-						this.firstSentencesConcepts.put(ng, 1);
-					}
+				if (!this.sourceOccurences.containsKey(ng)) { //If ng not already counted, put 1
+					this.sourceOccurences.put(ng, 1.);
 				}
-			//}
+				else //If ng already counted, add 1
+					this.sourceOccurences.put(ng, this.sourceOccurences.get(ng) + 1.);
+				this.nbBiGramsInSource++;
+				
+				if (p.getPosScore() == 1)
+				{
+					if (this.firstSentencesConcepts.containsKey(ng))
+						this.firstSentencesConcepts.put(ng, this.firstSentencesConcepts.get(ng) + 1);
+					else
+						this.firstSentencesConcepts.put(ng, 1);
+				}
+			}
 		}
-		//System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
+		
+		System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
 		
 		for (NGram ng : this.firstSentencesConcepts.keySet())
 		{
 			double d = this.sourceOccurences.get(ng);
 			modified_nbBiGramsInSource += this.firstSentenceConceptsFactor * d;
-		///	System.out.println(this.firstSentenceConceptsFactor * d);
 			this.sourceOccurences.put(ng, d + this.firstSentenceConceptsFactor * d);
 		}
 		
 		modified_nbBiGramsInSource += this.nbBiGramsInSource;
 		
-		//System.out.println("Début affichage distrib : ");
-		/*this.nbBiGramsInSource = 0;
-		for (NGram ng : this.sourceOccurences.keySet())
+		TreeMap <NGram, Double> sourceOcc_copy = new TreeMap <NGram, Double> ();
+		sourceOcc_copy.putAll(this.sourceOccurences);
+		for (NGram ng: sourceOcc_copy.keySet())
 		{
-			curr_occ = this.sourceOccurences.get(ng);
-			//if (curr_occ > 2) {
-				this.sourceDistribution.put(ng, (double)this.sourceOccurences.get(ng) );
-				this.nbBiGramsInSource += curr_occ;
+			double curr_occ = this.sourceOccurences.get(ng);
+			if (curr_occ <= 2) {
+				this.sourceOccurences.remove(ng);
+				//this.nbBiGramsInSource += curr_occ;
+				modified_nbBiGramsInSource -= curr_occ;
 				//ng.printNGram();
 				//System.out.println(" : "+this.sourceDistribution.get(ng)+" | "+this.sourceOccurences.get(ng));
-			//}
-		}*/
-		//System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
+			}
+		}
+		System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
 		for (NGram ng : this.sourceOccurences.keySet())
 		{
 			this.sourceDistribution.put(ng, (double)this.sourceOccurences.get(ng) / modified_nbBiGramsInSource );
 		}
-		
-
-		//System.out.println("Fin affichage distrib : ");
-		
 	}
 	
 	
@@ -177,9 +173,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		//this.smoothing = new WeightedLaplace (2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.filter);
 		this.smoothing = new DirichletSmoothing(2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.sourceDistribution, this.firstSentencesConcepts, this.firstSentenceConceptsFactor);
 		//this.smoothing = new GoodTuring(2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.filter);
-		
-		
-	
+			
 		double jsd = this.jensenShanonDivergence (gi, summDistrib);
 		
 		return jsd;

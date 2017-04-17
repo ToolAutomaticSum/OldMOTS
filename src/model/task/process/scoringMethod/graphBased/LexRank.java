@@ -11,7 +11,6 @@ import model.task.process.VectorCaracteristicBasedIn;
 import model.task.process.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import model.task.process.scoringMethod.ScoreBasedOut;
-import model.task.process.scoringMethod.TF_IDF.Centroid.Centroid_Parameter;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
@@ -59,7 +58,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 	
 	@Override
 	public void initADN() throws Exception {
-		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), 0.15));
+		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DumpingParameter.getName()))));
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMaxValue(0.6);
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMinValue(0.0);
 		//getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.Epsilon.getName(), 0.0001));

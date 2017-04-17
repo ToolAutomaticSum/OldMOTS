@@ -51,7 +51,7 @@ public class StopWordsRemover extends AbstractPreProcess {
 			Iterator<WordModel> wordIt = sentenceModel.iterator();
 			while (wordIt.hasNext()) {
 				WordModel word = wordIt.next();
-				if (gramWordsMap.detectGramWords(word.getWord()) != 0) {
+				if (gramWordsMap.detectGramWords(word.getmLemma()) != 0) {
 					word.setStopWord(true);
 					//word.setmLemma("___");
 				}/* else if (word.getWord().matches("\\p{Digit}+"))

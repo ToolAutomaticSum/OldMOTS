@@ -53,6 +53,8 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 		for (WordModel w : this) {
 			if (!w.isStopWord())
 				txt += w.toString() + " ";
+			else
+				txt += "%%" + w.toString() + " ";
 		}
 		return txt;
 	}
@@ -138,10 +140,10 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 			return ngrams_list;
 		}
 		
-		
 		for (int i = 0; i < this.size() - n + 1; i++)
 		{
 			boolean cond = false;
+			boolean stopWord = false; //Un stopWord par Ngram
 			NGram ng = new NGram ();
 			//System.out.println("Sentence size : "+this.unitesLexWVides.size());
 			for (int j = i; j < i + n; j++)
@@ -149,8 +151,7 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 				//System.out.println("j : "+j);
 				u = this.get(j);
 
-				if (!u.isStopWord())
-				{	
+				if ((!stopWord && !u.isStopWord()) || (!stopWord && u.isStopWord()) || (stopWord && !u.isStopWord())) {
 					cond = true;
 					WordIndex w = index.get(u.getmLemma());
 					if (w != null)
@@ -160,7 +161,10 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 						cond = false;
 						break;
 					}
-				}
+					if (u.isStopWord())
+						stopWord = true;
+				} else
+					cond = false;
 			}
 			if (cond)
 				ngrams_list.add(ng);

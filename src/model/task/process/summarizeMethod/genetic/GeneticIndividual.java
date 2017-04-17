@@ -1,6 +1,7 @@
 package model.task.process.summarizeMethod.genetic;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import model.task.process.summarizeMethod.genetic.geneticScorers.GeneticIndividualScorer;
 import textModeling.SentenceModel;
@@ -10,14 +11,16 @@ public class GeneticIndividual {
 	private ArrayList<SentenceModel> genes;
 	private int genesTotalLength;
 	private Double score;
+	private Random rand;
 	
 	public ArrayList <SentenceModel> getGenes()
 	{
 		return this.genes;
 	}
 	
-	public GeneticIndividual (GeneticIndividual gi)
+	public GeneticIndividual (Random rand, GeneticIndividual gi)
 	{
+		this.rand = rand;
 		this.genesTotalLength = gi.genesTotalLength;
 		this.genes = new ArrayList<SentenceModel> (gi.genes);
 		if (gi.score == null)
@@ -32,14 +35,17 @@ public class GeneticIndividual {
 	 * @param ss
 	 * @param maxTotalLength
 	 */
-	public GeneticIndividual (ArrayList<SentenceModel> listSentence, int maxTotalLength)
+	public GeneticIndividual (Random rand, ArrayList<SentenceModel> listSentence, int maxTotalLength)
 	{
-		int remainingLength;
-		int randIndex;
+		this.rand = rand;
 		this.genesTotalLength = 0;
 		this.genes = new ArrayList<SentenceModel>();
 		this.score = null;
 		
+		this.completeIndividual(listSentence, maxTotalLength);
+		/*
+		int remainingLength;
+		int randIndex;
 		while ( (this.genesTotalLength < maxTotalLength) && (listSentence.size() != 0) )
 		{
 			remainingLength = maxTotalLength - this.genesTotalLength;
@@ -58,11 +64,11 @@ public class GeneticIndividual {
 			if (listSentence.size() == 0)
 				break;
 			
-			randIndex = (int) (Math.random() * listSentence.size());
+			randIndex = (int) (rand.nextDouble() * listSentence.size());
 			this.genes.add(listSentence.get(randIndex));
 			this.genesTotalLength += listSentence.get(randIndex).getNbMot();
 			listSentence.remove(randIndex);
-		}
+		}*/
 	}
 	
 	/**
@@ -71,8 +77,9 @@ public class GeneticIndividual {
 	 * @param maxTotalLength
 	 * @param indiv
 	 */
-	public GeneticIndividual (ArrayList<SentenceModel> listSentence, int maxTotalLength, GeneticIndividual indiv, int genesMutationNb)//double mutationProb)
+	public GeneticIndividual (Random rand, ArrayList<SentenceModel> listSentence, int maxTotalLength, GeneticIndividual indiv, int genesMutationNb)//double mutationProb)
 	{
+		this.rand = rand;
 		int geneId;
 		this.genesTotalLength = indiv.genesTotalLength;
 		this.genes = new ArrayList<SentenceModel>(indiv.genes);
@@ -81,14 +88,14 @@ public class GeneticIndividual {
 		{
 			if (this.genes.size() == 0)
 				break;
-			geneId = (int) (Math.random() * this.genes.size());
+			geneId = (int) (rand.nextDouble() * this.genes.size());
 			this.genesTotalLength -= this.genes.get(geneId).getNbMot();
 			this.genes.remove(geneId);
 			i--;
 		}
 		/*for (int i = 0; i < this.genes.size(); i++)
 		{
-			if (Math.random() < mutationProb)
+			if (rand.nextDouble() < mutationProb)
 			{
 				this.genesTotalLength -= this.genes.get(i).getNbWords();
 				this.genes.remove(i);
@@ -106,8 +113,9 @@ public class GeneticIndividual {
 	 * @param parent1
 	 * @param parent2
 	 */
-	public GeneticIndividual (ArrayList<SentenceModel> listSentence, int maxTotalLength, GeneticIndividual parent1, GeneticIndividual parent2)
+	public GeneticIndividual (Random rand, ArrayList<SentenceModel> listSentence, int maxTotalLength, GeneticIndividual parent1, GeneticIndividual parent2)
 	{
+		this.rand = rand;
 		this.score = null;
 		ArrayList<SentenceModel> union = new ArrayList<SentenceModel>();
 		
@@ -170,7 +178,7 @@ public class GeneticIndividual {
 			if (sa.size() == 0)
 				break;
 			
-			randIndex = (int) (Math.random() * sa.size());
+			randIndex = (int) (rand.nextDouble() * sa.size());
 			this.genes.add(sa.get(randIndex));
 			this.genesTotalLength += sa.get(randIndex).getNbMot();
 			sa.remove(randIndex);

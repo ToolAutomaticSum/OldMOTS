@@ -6,6 +6,12 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -269,5 +275,32 @@ public class Tools {
 				}
 			}
 		}
+	}
+	
+	public static boolean isUTF8MisInterpreted( String input ) {
+        //convenience overload for the most common UTF-8 misinterpretation
+        //which is also the case in your question
+		return isUTF8MisInterpreted( input, "Windows-1252");  
+	}
+
+	public static boolean isUTF8MisInterpreted( String input, String encoding) {
+		CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
+		CharsetEncoder encoder = Charset.forName(encoding).newEncoder();
+		ByteBuffer tmp;
+		try {
+		    tmp = encoder.encode(CharBuffer.wrap(input));
+		}
+		
+		catch(CharacterCodingException e) {
+		    return false;
+		}
+
+		try {
+		    decoder.decode(tmp);
+		    return true;
+		}
+		catch(CharacterCodingException e){
+		    return false;
+		}       
 	}
 }

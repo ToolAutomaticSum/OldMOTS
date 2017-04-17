@@ -41,6 +41,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	protected Index index;
 	
 	protected Corpus corpusToSummarize;
+	protected boolean readStopWords = false;
 	
 	protected AbstractSummarizeMethod sentenceSelection;
 	protected AbstractScoringMethod scoringMethod;
@@ -80,7 +81,14 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	
 	@Override
 	public void init() throws Exception {
-		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()));
+		try {
+			readStopWords = Boolean.parseBoolean(getModel().getProcessOption(id, "ReadStopWords"));
+		}
+		catch (LacksOfFeatures e) {
+			System.out.println("ReadStopWords = false");
+			readStopWords = false;
+		}
+		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()), readStopWords);
 	}
 	
 	/**
@@ -135,6 +143,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			((VectorCaracteristicBasedIn)scoringMethod).setVectorCaracterisic(((VectorCaracteristicBasedOut)this).getVectorCaracterisic());
 		}
 		if (classProcess.contains(BiGramListBasedOut.class) && classScoring.contains(BiGramListBasedIn.class)) {
+			((BiGramListBasedIn)scoringMethod).setBiGramsIds(((BiGramListBasedOut)this).getBiGramsIds());
 			((BiGramListBasedIn)scoringMethod).setBiGramsInSentence(((BiGramListBasedOut)this).getBiGramsInSentence());
 			((BiGramListBasedIn)scoringMethod).setBiGrams(((BiGramListBasedOut)this).getBiGrams());
 			((BiGramListBasedIn)scoringMethod).setBiGramWeights(((BiGramListBasedOut)this).getBiGramWeights());

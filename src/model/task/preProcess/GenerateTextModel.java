@@ -32,6 +32,7 @@ import tools.Tools;
 public class GenerateTextModel extends AbstractPreProcess {
 
 	private boolean stanford = false;
+	private Lemmatizer lemm = null;
 	
 	protected List<AbstractPreProcess> preProcess = new ArrayList<AbstractPreProcess>();
 	
@@ -44,11 +45,13 @@ public class GenerateTextModel extends AbstractPreProcess {
 		stanford = Boolean.parseBoolean(getModel().getProcessOption(id, "StanfordNLP"));
 		
 		// TODO remplacer preProcess par filtre � appliquer aux lignes lues --> Moins de co�t computationnel
-		if (stanford)
-			preProcess.add(new StanfordNLPSimplePreProcess(getModel().getCtrl().incrementProcessID()));
+		if (stanford) {
+			preProcess.add(new StanfordNLPSimplePreProcess(id));
+			lemm=(StanfordNLPSimplePreProcess)preProcess.get(0);
+		}
 		else {
-			preProcess.add(new SentenceSplitter(getModel().getCtrl().incrementProcessID()));
-			preProcess.add(new WordSplitter(getModel().getCtrl().incrementProcessID()));
+			preProcess.add(new SentenceSplitter(id));
+			preProcess.add(new WordSplitter(id));
 		}
 	}
 
@@ -173,7 +176,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 		}
 	}
 	
-	public static Corpus readTempDocument(String inputPath, Corpus c) {
+	public static Corpus readTempDocument(String inputPath, Corpus c, boolean readStopWords) {
 		c.clear();
 		File corpusDoc = new File(inputPath + File.separator + c.getCorpusName());
 		for (File textFile : corpusDoc.listFiles()) {
@@ -192,7 +195,23 @@ public class GenerateTextModel extends AbstractPreProcess {
 					text.add(sen);
 					String[] word = tabs[1].split(" ");
 					for (String w : word) {
-						sen.add(new WordModel(w));
+						WordModel wm;
+						if (w.startsWith("%%")) {
+							if (readStopWords) {
+								w = w.replace("%%", "");
+								wm = new WordModel(w);
+								wm.setStopWord(true);
+								wm.setmLemma(w);	
+								wm.setSentence(sen);
+								sen.add(wm);
+							}
+						}
+						else {
+							wm = new WordModel(w);		
+							wm.setmLemma(w);	
+							wm.setSentence(sen);
+							sen.add(wm);
+						}
 					}
 				}
 				s = r.read();
@@ -203,4 +222,9 @@ public class GenerateTextModel extends AbstractPreProcess {
 		}
 		return c;
 	}
+	
+	public Lemmatizer getLemm() {
+		return lemm;
+	}
+
 }
