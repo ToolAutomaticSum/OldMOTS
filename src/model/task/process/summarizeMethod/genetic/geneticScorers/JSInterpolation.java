@@ -21,10 +21,9 @@ public class JSInterpolation extends GeneticIndividualScorer{
 	private int nbBiGramsInSource;
 	private Smoothing smoothing;
 	private Smoothing smoothingSource;
-	private ArrayList<SentenceModel> ss;
 	
-	public JSInterpolation(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, invertedIndex, index, null, delta, null, null, null);
+	public JSInterpolation(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, ss, corpus, invertedIndex, index, null, delta, null, null, null);
 	}
 	
 	public void init() {

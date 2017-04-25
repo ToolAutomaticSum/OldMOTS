@@ -2,12 +2,14 @@ package model.task.process.summarizeMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.summarizeMethod.genetic.ScoringThread;
+import reader_writer.Writer;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
-import textModeling.TextModel;
 import textModeling.smoothings.DirichletSmoothing;
 import textModeling.smoothings.Smoothing;
 import textModeling.wordIndex.Index;
@@ -19,13 +21,14 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	private TreeMap <NGram, Double> sourceDistribution;
 	private TreeMap <NGram, Double> sourceOccurences;
 	private TreeMap <NGram, Integer> firstSentencesConcepts;
+	private ScoringThread threads_tab[];
 	
 	private int nbBiGramsInSource;
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, index, null, delta, firstSentenceConceptsFactor,
+	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, ss, corpus, null, index, null, delta, firstSentenceConceptsFactor,
 				null, null);	
 	}
 	
@@ -36,18 +39,21 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		
 		this.computeSourceDistribution ();
 		//System.out.println("JS Bigram scorer initialized.");
+		Writer w = new Writer("sourceDistribution.txt");
+		w.open();
+		for(Entry<NGram, Double>  ng : sourceOccurences.entrySet())
+			w.write(ng.getKey() + "\t" + ng.getValue() + "\t" + sourceDistribution.get(ng.getKey()) + "\n");
+		w.close();
+		System.out.println("Source Distribution OK !!");
 	}
 	
 	public void computeNGrams_in_sentences()
 	{
 		this.ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
 		
-		for (TextModel doc : this.cd)
+		for (SentenceModel p : ss)
 		{
-			for (SentenceModel p : doc)
-			{
-				this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
-			}
+			this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
 		}
 	}
 	
@@ -99,19 +105,20 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		
 		modified_nbBiGramsInSource += this.nbBiGramsInSource;
 		
-		TreeMap <NGram, Double> sourceOcc_copy = new TreeMap <NGram, Double> ();
+		/*TreeMap <NGram, Double> sourceOcc_copy = new TreeMap <NGram, Double> ();
 		sourceOcc_copy.putAll(this.sourceOccurences);
 		for (NGram ng: sourceOcc_copy.keySet())
 		{
 			double curr_occ = this.sourceOccurences.get(ng);
-			if (curr_occ <= 2) {
+			if (curr_occ < 2) {
 				this.sourceOccurences.remove(ng);
 				//this.nbBiGramsInSource += curr_occ;
 				modified_nbBiGramsInSource -= curr_occ;
 				//ng.printNGram();
 				//System.out.println(" : "+this.sourceDistribution.get(ng)+" | "+this.sourceOccurences.get(ng));
 			}
-		}
+		}*/
+		
 		System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
 		for (NGram ng : this.sourceOccurences.keySet())
 		{
@@ -119,10 +126,30 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		}
 	}
 	
+	@Override
+	public void computeScore(ArrayList<GeneticIndividual> population) {
+		int cpt = 0;
+		threads_tab = new ScoringThread[population.size()];
+		for (GeneticIndividual gi : population)
+		{
+			threads_tab[cpt] = new ScoringThread(gi, this.sourceDistribution, this.firstSentencesConcepts, this.index, this.firstSentenceConceptsFactor, this.delta);
+			threads_tab[cpt].start();
+			cpt++;
+		}
+		
+		cpt = 0;
+		
+		for (ScoringThread st : threads_tab) {
+			try {
+				st.join();
+			}catch (InterruptedException ie) {
+				ie.printStackTrace();
+				System.exit(-1);
+			}
+		}
+	}
 	
-	
-	
-	private double jensenShanonDivergence (GeneticIndividual gi, TreeMap<NGram, Double> summDistrib)//, int summNbTokens)
+	private double jensenShanonDivergence(GeneticIndividual gi, TreeMap<NGram, Double> summDistrib)//, int summNbTokens)
 	{
 		double divergence = 0;
 		//Double dProbSumm;
@@ -159,12 +186,22 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 			divergence += probSource * Math.log(sourceOp) / log2;
 		}
 		
-		
-		
 		return 1 - divergence / 2.;
 	}
 
 	
+	public TreeMap<NGram, Double> getSourceDistribution() {
+		return sourceDistribution;
+	}
+
+	public TreeMap<NGram, Double> getSourceOccurences() {
+		return sourceOccurences;
+	}
+
+	public TreeMap<NGram, Integer> getFirstSentencesConcepts() {
+		return firstSentencesConcepts;
+	}
+
 	@Override
 	public double computeScore(GeneticIndividual gi) {
 		TreeMap<NGram, Double> summDistrib = new TreeMap <NGram, Double > ();

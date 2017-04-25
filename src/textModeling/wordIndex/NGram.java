@@ -81,7 +81,7 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 	
 	@Override
 	public String toString() {
-		return super.toString() + "\n" + hashCode();
+		return super.toString();
 	}
 	
 /*	public String toString()

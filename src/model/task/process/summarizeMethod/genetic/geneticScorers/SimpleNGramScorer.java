@@ -18,8 +18,8 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 	private TreeMap <NGram, Double> nGram_weights;
 	
 	
-	public SimpleNGramScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, index, null, null, null, window, fsc_factor);
+	public SimpleNGramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, ss, corpus, null, index, null, null, null, window, fsc_factor);
 		this.constructNGramWeights ();
 	}
 	

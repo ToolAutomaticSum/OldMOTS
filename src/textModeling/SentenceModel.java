@@ -16,13 +16,7 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 	private static final long serialVersionUID = 4028010227097874686L;
 	protected String sentence;
 	protected int nbMot;
-	public int getNbMot() {
-		return nbMot;
-	}
-
-	public void setNbMot(int nbMot) {
-		this.nbMot = nbMot;
-	}
+	protected ArrayList<NGram> listNGram;
 
 	protected int iD;
 	protected double score;
@@ -120,8 +114,8 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 	public void setScore(double score) {
 		this.score = score;
 	}
-
-	public ArrayList<NGram> getNGrams(int n, Index index) {
+	
+	private void getListNGrams(int n, Index index) {
 		ArrayList <NGram> ngrams_list = new ArrayList<NGram> () ;
 		WordModel u;
 		
@@ -137,42 +131,48 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 					}
 				}
 			}
-			return ngrams_list;
 		}
-		
-		for (int i = 0; i < this.size() - n + 1; i++)
-		{
-			boolean cond = false;
-			boolean stopWord = false; //Un stopWord par Ngram
-			NGram ng = new NGram ();
-			//System.out.println("Sentence size : "+this.unitesLexWVides.size());
-			for (int j = i; j < i + n; j++)
+		else {
+			for (int i = 0; i < this.size() - n + 1; i++)
 			{
-				//System.out.println("j : "+j);
-				u = this.get(j);
-
-				if ((!stopWord && !u.isStopWord()) || (!stopWord && u.isStopWord()) || (stopWord && !u.isStopWord())) {
-					cond = true;
-					WordIndex w = index.get(u.getmLemma());
-					if (w != null)
-						ng.addGram(w);
-					else {
-						System.out.println("BREAK!!!" + u.getmLemma());
+				boolean cond = false;
+				boolean stopWord = false; //Un stopWord par Ngram
+				NGram ng = new NGram ();
+				//System.out.println("Sentence size : "+this.unitesLexWVides.size());
+				for (int j = i; j < i + n; j++)
+				{
+					//System.out.println("j : "+j);
+					u = this.get(j);
+	
+					if ((!stopWord && !u.isStopWord()) || (!stopWord && u.isStopWord()) || (stopWord && !u.isStopWord())) {
+						cond = true;
+						WordIndex w = index.get(u.getmLemma());
+						if (w != null)
+							ng.addGram(w);
+						else {
+							System.out.println("BREAK!!!" + u.getmLemma());
+							cond = false;
+							break;
+						}
+						if (u.isStopWord())
+							stopWord = true;
+					} else
 						cond = false;
-						break;
-					}
-					if (u.isStopWord())
-						stopWord = true;
-				} else
-					cond = false;
+				}
+				if (cond)
+					ngrams_list.add(ng);
+				//else
+					//System.out.println("Filtrée !");
 			}
-			if (cond)
-				ngrams_list.add(ng);
-			//else
-				//System.out.println("Filtrée !");
 		}
+		listNGram = ngrams_list;
 		
-		return ngrams_list;
+	}
+
+	public ArrayList<NGram> getNGrams(int n, Index index) {
+		if(listNGram == null)
+			getListNGrams(n, index);
+		return listNGram;
 	}
 	
 	public double getPosScore() {
@@ -201,6 +201,14 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 				n++;
 		}
 		return n;
+	}
+
+	public int getNbMot() {
+		return nbMot;
+	}
+
+	public void setNbMot(int nbMot) {
+		this.nbMot = nbMot;
 	}
 	
 	@Override

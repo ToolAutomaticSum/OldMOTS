@@ -192,6 +192,14 @@ public class GeneticIndividual {
 		return scorer.computeScore(this);
 	}
 	
+	public Double getScore() {
+		return score;
+	}
+
+	public void setScore(Double score) {
+		this.score = score;
+	}
+
 	@Override
 	public boolean equals (Object o)
 	{

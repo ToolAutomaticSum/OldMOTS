@@ -23,8 +23,8 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, null, index, null, delta, firstSentenceConceptsFactor, null, null);
+	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, ss, corpus, null, index, null, delta, firstSentenceConceptsFactor, null, null);
 	}
 	
 	@Override
@@ -41,13 +41,10 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	public void computeNGrams_in_sentences()
 	{
 		this.ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
-		
-		for (TextModel doc : this.cd)
+	
+		for (SentenceModel p : ss)
 		{
-			for (SentenceModel p : doc)
-			{
-				this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
-			}
+			this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
 		}
 	}
 	

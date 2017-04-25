@@ -62,7 +62,6 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 		super.init();
 		fscFactor = adn.getParameterValue(Double.class, BiGramILP_Parameter.fscFactor.getName());
 		minSenLength = adn.getParameterValue(Integer.class, BiGramILP_Parameter.minSenLength.getName());
-		
 	}
 
 	@Override

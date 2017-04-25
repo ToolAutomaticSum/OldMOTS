@@ -7,7 +7,7 @@ import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
-public class DirichletSmoothing extends Smoothing{
+public class DirichletSmoothing extends Smoothing {
 
 	private TreeMap <NGram, Double> distrib;
 	private TreeMap <NGram, Double> corpusDistrib;
@@ -58,6 +58,7 @@ public class DirichletSmoothing extends Smoothing{
 				//}
 			}
 		}
+		
 		if ( this.firstSentencesConcepts != null )
 		{
 			for (NGram ng : this.distrib.keySet())
@@ -80,7 +81,7 @@ public class DirichletSmoothing extends Smoothing{
 		double probSource = this.corpusDistrib.get(ng);
 		double divider = this.ngram_total_occs + this.delta;
 		
-		dProb = dProb== null ? this.delta * probSource / divider : (dProb + this.delta * probSource) / divider;
+		dProb = (dProb== null) ? this.delta * probSource / divider : (dProb + this.delta * probSource) / divider;
 		return dProb;
 	}
 	

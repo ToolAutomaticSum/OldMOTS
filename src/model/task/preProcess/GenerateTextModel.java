@@ -22,6 +22,7 @@ import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
+import textModeling.filter.UniteLexStopListFilter;
 import tools.Tools;
 
 /**
@@ -31,6 +32,7 @@ import tools.Tools;
  */
 public class GenerateTextModel extends AbstractPreProcess {
 
+	private String stopWordListFile;
 	private boolean stanford = false;
 	private Lemmatizer lemm = null;
 	
@@ -42,6 +44,13 @@ public class GenerateTextModel extends AbstractPreProcess {
 
 	@Override
 	public void init() throws LacksOfFeatures {
+
+		try {
+			stopWordListFile = getModel().getProcessOption(id, "StopWordListFile");
+		}
+		catch (LacksOfFeatures e) {
+			stopWordListFile = null;
+		}
 		stanford = Boolean.parseBoolean(getModel().getProcessOption(id, "StanfordNLP"));
 		
 		// TODO remplacer preProcess par filtre � appliquer aux lignes lues --> Moins de co�t computationnel
@@ -93,6 +102,20 @@ public class GenerateTextModel extends AbstractPreProcess {
 	@Override
 	public void finish() {
 		preProcess = null;
+		
+		if (stopWordListFile != null) {
+			UniteLexStopListFilter filter = new UniteLexStopListFilter(stopWordListFile);
+			for(Corpus corpus : getModel().getCurrentMultiCorpus()) {
+				for(TextModel text : corpus) {
+					for(SentenceModel sen : text) {
+						for(WordModel word : sen)
+							if(!filter.passFilter(word))
+								word.setStopWord(true);
+					}
+				}
+			}
+		}
+		
 		new File(getModel().getOutputPath()+File.separator+"temp").mkdir();
 		GenerateTextModel.writeTempDocumentBySentence(getModel().getOutputPath()+File.separator+"temp", getModel().getCurrentMultiCorpus());
 	}

@@ -1,5 +1,6 @@
 package model.task.process.summarizeMethod.genetic.geneticScorers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
@@ -13,8 +14,8 @@ public class LengthScorer extends GeneticIndividualScorer{
 
 	
 
-	public LengthScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, null, null, null, null, null, null, null);
+	public LengthScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Override

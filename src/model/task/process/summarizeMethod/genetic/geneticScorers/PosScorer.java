@@ -1,5 +1,6 @@
 package model.task.process.summarizeMethod.genetic.geneticScorers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
@@ -10,8 +11,8 @@ import textModeling.wordIndex.InvertedIndex;
 
 public class PosScorer extends GeneticIndividualScorer{
 
-	public PosScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, null, null, null, null, null, null, null, null);
+	public PosScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, null, null, null, null, null, null, null, null, null);
 	}
 	
 	@Override

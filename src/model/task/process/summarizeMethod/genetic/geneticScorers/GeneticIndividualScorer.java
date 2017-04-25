@@ -1,9 +1,11 @@
 package model.task.process.summarizeMethod.genetic.geneticScorers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
+import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 
@@ -17,8 +19,10 @@ public abstract class GeneticIndividualScorer {
 	protected HashMap <GeneticIndividualScorer, Double> scorers;
 	protected Integer window;
 	protected Double fsc_factor;
+	protected ArrayList<SentenceModel> ss;
 	
-	public GeneticIndividualScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public GeneticIndividualScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		this.ss = ss;
 		this.index = index;
 		this.invertedIndex = invertedIndex;
 		this.divWeight = divWeight;
@@ -33,6 +37,8 @@ public abstract class GeneticIndividualScorer {
 	
 	public abstract double computeScore(GeneticIndividual gi);
 	
+	public void computeScore(ArrayList<GeneticIndividual> population) {}
+
 	public void init() {
 		
 	}

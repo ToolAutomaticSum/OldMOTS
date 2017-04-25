@@ -14,8 +14,8 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class CosineScorer extends GeneticIndividualScorer{
 
-	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
-		super(null, corpus, invertedIndex, dictionnary, null, null, null, null, null);
+	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+		super(null, ss, corpus, invertedIndex, dictionnary, null, null, null, null, null);
 	}
 
 
