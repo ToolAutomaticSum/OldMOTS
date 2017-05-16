@@ -4,6 +4,6 @@ import textModeling.WordModel;
 
 public abstract class WordFilter {
 
-	public abstract boolean passFilter (WordModel w);
+	public abstract boolean passFilter(WordModel w);
 
 }

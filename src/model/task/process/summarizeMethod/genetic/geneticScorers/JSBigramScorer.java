@@ -132,7 +132,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		threads_tab = new ScoringThread[population.size()];
 		for (GeneticIndividual gi : population)
 		{
-			threads_tab[cpt] = new ScoringThread(gi, this.sourceDistribution, this.firstSentencesConcepts, this.index, this.firstSentenceConceptsFactor, this.delta);
+			threads_tab[cpt] = new ScoringThread(gi, ngrams_in_sentences, this.sourceDistribution, this.firstSentencesConcepts, this.index, this.firstSentenceConceptsFactor, this.delta);
 			threads_tab[cpt].start();
 			cpt++;
 		}
@@ -208,7 +208,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		//this.computeIndividualDistribution(gi, summDistrib);
 		
 		//this.smoothing = new WeightedLaplace (2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.filter);
-		this.smoothing = new DirichletSmoothing(2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.sourceDistribution, this.firstSentencesConcepts, this.firstSentenceConceptsFactor);
+		this.smoothing = new DirichletSmoothing(2, this.delta, summDistrib.size(), ngrams_in_sentences, gi.getGenes(), this.index, this.sourceDistribution, this.firstSentencesConcepts, this.firstSentenceConceptsFactor);
 		//this.smoothing = new GoodTuring(2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.filter);
 			
 		double jsd = this.jensenShanonDivergence (gi, summDistrib);

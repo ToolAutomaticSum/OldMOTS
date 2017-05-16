@@ -15,6 +15,13 @@ public class CSIS extends AbstractSummarizeMethod {
 	public CSIS(int id) throws SupportADNException {
 		super(id);
 	}
+
+	@Override
+	public AbstractSummarizeMethod makeCopy() throws Exception {
+		CSIS p = new CSIS(id);
+		initCopy(p);
+		return p;
+	}
 	
 	@Override
 	public void initADN() throws Exception {

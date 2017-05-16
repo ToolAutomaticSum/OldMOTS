@@ -9,6 +9,8 @@ public abstract class Optimize extends Individu {
 	}
 	
 	public abstract void initADN() throws Exception;
+	
+	public abstract void initOptimize() throws Exception;
 
 	public abstract void optimize() throws Exception;
 	

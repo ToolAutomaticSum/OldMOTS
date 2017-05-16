@@ -34,8 +34,12 @@ import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import tools.Tools;
 
-public abstract class AbstractProcess extends Optimize implements AbstractTaskModel {
+public abstract class AbstractProcess extends Optimize implements AbstractTaskModel, Runnable {
 
+	private Thread t;
+	private AbstractProcess[] threads = null;
+	int nbThreads = 0;
+	
 	protected int summarizeIndex = 0;
 	protected List<Integer> listCorpusId;
 	protected Index index;
@@ -58,12 +62,26 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		supportADN = new HashMap<String, Class<?>>();
 	}
 	
+	public abstract AbstractProcess makeCopy() throws Exception;
+	
+	protected final void initCopy(AbstractProcess p) throws Exception {
+		p.setListCorpusId(new ArrayList<Integer>(listCorpusId));
+		p.setReadStopWords(readStopWords);
+		p.setSupportADN(new HashMap<String, Class<?>>(supportADN));
+		//p.setADN(new ADN(p.getSupportADN()));
+		p.setSentenceSelection(sentenceSelection.makeCopy());
+		if (scoringMethod != null)
+			p.setScoringMethod(scoringMethod.makeCopy());
+		p.setPostProcess(postProcess);
+		p.setSummary(summary);
+	}
+	
 	public final void initCorpusToCompress() throws NumberFormatException, LacksOfFeatures {
 		listCorpusId = new ArrayList<Integer>();
 		for (String corpusId : getModel().getProcessOption(id, "CorpusIdToSummarize").split("\t"))
 			listCorpusId.add(Integer.parseInt(corpusId));
 	}
-	
+
 	public void initADN() throws Exception {
 		if (scoringMethod != null)
 			scoringMethod.setCurrentProcess(this);
@@ -88,15 +106,40 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			System.out.println("ReadStopWords = false");
 			readStopWords = false;
 		}
-		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()), readStopWords);
+		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", getCurrentMultiCorpus().get(getSummarizeCorpusId()), readStopWords);
+		System.out.println("Corpus " + corpusToSummarize.getiD() + " read");
+	}
+	
+	public void start() {
+		System.out.println("Starting " +  this.getClass() + " " + getSummarizeCorpusId());
+		t = new Thread (this, this.getClass() + " " + getSummarizeCorpusId());
+		t.start();
+   }
+	
+	public void join() throws InterruptedException {
+		t.join();
+	}
+	
+	@Override
+	public void run() {
+		try {
+			init();
+			process();
+			finish();
+			getModel().setModelChanged();
+			getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId())));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
-	 * Appel � super.process() une fois les process effectu�s.
+	 * Appel à super.process() une fois les process effectués.
 	 */
 	@Override
 	public void process() throws Exception {
-		System.out.println("Process Corpus " + getSummarizeCorpusId());
+		//System.out.println("Process Corpus " + getSummarizeCorpusId());
 		
 		if (scoringMethod != null) {
 			scoringMethod.setCurrentProcess(this);
@@ -110,14 +153,26 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			sentenceSelection.setModel(model);
 			initCompatibilityScoring();
 			//Nouveau MultiCorpus
-			if (!summary.containsKey(getModel().getCurrentMultiCorpus().getiD())) {
+			boolean test;
+			List<SentenceModel> sum = sentenceSelection.calculateSummary();
+			System.out.println("Summary size " + sum.size() + " corpus " + getSummarizeCorpusId() + " MultiCorpus " + currentMultiCorpus.getiD() + " is ok.");
+			
+			synchronized(summary) {
+				test = summary.containsKey(getCurrentMultiCorpus().getiD());
+			}
+			if (!test) {
 				Map<Integer, List<SentenceModel>> map = new HashMap<Integer, List<SentenceModel>>();
-				map.put(getSummarizeCorpusId(), sentenceSelection.calculateSummary());
-				summary.put(getModel().getCurrentMultiCorpus().getiD(), map);
+				map.put(getSummarizeCorpusId(), sum);
+				synchronized(summary) {
+					summary.put(getCurrentMultiCorpus().getiD(), map);
+				}
 			}
 			else { //MultiCorpus en cours de travail, parcours de listCorpusId 
-				Map<Integer, List<SentenceModel>> map = summary.get(getModel().getCurrentMultiCorpus().getiD());
-				map.put(getSummarizeCorpusId(), sentenceSelection.calculateSummary());
+				Map<Integer, List<SentenceModel>> map;
+				synchronized(summary) {
+					map = summary.get(getCurrentMultiCorpus().getiD());
+				}
+				map.put(getSummarizeCorpusId(), sum);
 			}
 		}
 	}
@@ -179,6 +234,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			AbstractPostProcess p = postProIt.next();
 			p.setModel(getModel());
 			p.setCurrentProcess(this);
+			p.setCurrentMultiCorpus(currentMultiCorpus);
 			p.init();
 		}
 		
@@ -249,27 +305,66 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	public Corpus getCorpusToSummarize() {
 		return corpusToSummarize;
 	}
+	
+	@Override
+	public void initOptimize() throws Exception {
+		this.initCorpusToCompress();
+		if (getModel().isMultiThreading()) {
+			if (getModel().getMultiCorpusModels().size() != 1)
+				throw new Exception("Too much MultiCorpus for MultiThreading Optimize");
+			else
+				currentMultiCorpus = getModel().getMultiCorpusModels().get(0);
+
+			nbThreads = getListCorpusId().size();
+			threads = new AbstractProcess[nbThreads];
+
+			threads[0] = this;
+			for (int i=0; i<nbThreads; i++) {
+				if (i != 0)
+					threads[i] = this.makeCopy();
+				threads[i].setADN(new ADN(this.getADN()));
+				threads[i].setCurrentMultiCorpus(new MultiCorpus(currentMultiCorpus));
+				threads[i].setModel(getModel());
+				threads[i].setSummarizeIndex(this.getListCorpusId().get(i));
+				threads[i].initADN();
+			}
+		}
+	}
 
 	@Override
 	public void optimize() throws Exception {		
 		Iterator<MultiCorpus> multiCorpusIt = getModel().getMultiCorpusModels().iterator();
 		while (multiCorpusIt.hasNext()) {
-			getModel().setCurrentMultiCorpus(multiCorpusIt.next());		
-			System.out.println("MultiCorpus : " + getModel().getCurrentMultiCorpus().getiD());
-
-			this.initCorpusToCompress();
-			for (int i : this.getListCorpusId()) {
-				this.setSummarizeIndex(i);
-				
-				this.init();
-				this.process();
-				this.finish();
+			MultiCorpus multiCorpus = multiCorpusIt.next();
+			getModel().setCurrentMultiCorpus(multiCorpus);
+			
+			System.out.println("MultiCorpus : " + multiCorpus.getiD());
+			
+			if (getModel().isMultiThreading()) {
+				threads[0].start();
+				for (int i=1; i<nbThreads; i++) {
+					threads[i].setADN(new ADN(this.getADN()));
+					threads[i].start();
+				}
+				for (int i=0; i<nbThreads; i++) {
+					threads[i].join();
+				}
 			}
+			else {
+				for (int i : this.getListCorpusId()) {
+					this.setCurrentMultiCorpus(multiCorpus);
+					this.setSummarizeIndex(i);
+					this.init();
+					this.process();
+					this.finish();
+				}
+			}
+			getModel().setCurrentMultiCorpus(multiCorpus);
+			getModel().getEvalRouge().setModel(getModel());
+			getModel().getEvalRouge().init();
+			getModel().getEvalRouge().process();
+			getModel().getEvalRouge().finish();
 		}
-		getModel().getEvalRouge().setModel(getModel());
-		getModel().getEvalRouge().init();
-		getModel().getEvalRouge().process();
-		getModel().getEvalRouge().finish();
 	}
 	
 	/**
@@ -295,6 +390,15 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		return listCorpusId.get(summarizeIndex);
 	}
 	
+	
+	public void setListCorpusId(List<Integer> listCorpusId) {
+		this.listCorpusId = listCorpusId;
+	}
+
+	public void setReadStopWords(boolean readStopWords) {
+		this.readStopWords = readStopWords;
+	}
+	
 	@Override
 	public void setModel(SModel model) {
 		super.setModel(model);
@@ -302,5 +406,9 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 			scoringMethod.setModel(model);
 		if (sentenceSelection != null)
 			sentenceSelection.setModel(model);
+	}
+
+	public void setSummary(Map<Integer, Map<Integer, List<SentenceModel>>> summary) {
+		this.summary = summary;
 	}
 }

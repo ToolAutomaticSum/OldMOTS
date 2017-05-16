@@ -19,13 +19,13 @@ import org.w3c.dom.NodeList;
 
 public class CommandView extends AbstractView {
 	
-	private String[] args;
+	private String confFilePath;
 	
 	private static final Logger logger = Logger.getLogger("Logger"); 
 	
-	public CommandView(String[] args) {
+	public CommandView(String confFilePath) {
 		super();
-		this.args = args;
+		this.confFilePath = confFilePath;
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public class CommandView extends AbstractView {
 	@Override
 	public void display() {
 		//Différent notify à faire
-		loadConfiguration(args[1]);
+		loadConfiguration(confFilePath);
 		getCtrl().run();
 	}
 
@@ -46,7 +46,7 @@ public class CommandView extends AbstractView {
 	}
 	
 	public void init() {
-		loadConfiguration(args[1]);		
+		loadConfiguration(confFilePath);		
 	}
 	
 	private String loadConfiguration(String configFilePath) {
@@ -67,7 +67,12 @@ public class CommandView extends AbstractView {
 			        getCtrl().notifyLanguageChanged(task.getElementsByTagName("LANGUAGE").item(0).getTextContent());
 			        //getCtrl().notifyInputPathChanged(task.getElementsByTagName("INPUT_PATH").item(0).getTextContent());
 			        getCtrl().notifyOutputPathChanged(task.getElementsByTagName("OUTPUT_PATH").item(0).getTextContent());
-			        
+			        try {
+			        	getCtrl().notifyMultiThreadBoolChanged(Boolean.parseBoolean(task.getElementsByTagName("MULTITHREADING").item(0).getTextContent()));
+			        } catch ( Exception e) {
+			        	getCtrl().notifyMultiThreadBoolChanged(false);
+			        }
+			        	
 			        NodeList multiCorpusList = task.getElementsByTagName("MULTICORPUS");
 			        for (int l = 0; l<multiCorpusList.getLength(); l++) {
 			        	if(multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {

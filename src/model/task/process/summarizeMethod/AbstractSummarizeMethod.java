@@ -1,5 +1,6 @@
 package model.task.process.summarizeMethod;
 
+import java.util.HashMap;
 import java.util.List;
 
 import model.task.process.AbstractProcess;
@@ -13,6 +14,15 @@ public abstract class AbstractSummarizeMethod extends Individu {
 	
 	public AbstractSummarizeMethod(int id) throws SupportADNException {
 		super(id);
+	}
+	
+	public abstract AbstractSummarizeMethod makeCopy() throws Exception;
+	
+	protected void initCopy(AbstractSummarizeMethod p) {
+		p.setCurrentProcess(currentProcess);
+		if (supportADN != null)
+			p.setSupportADN(new HashMap<String, Class<?>>(supportADN));
+		p.setModel(model);
 	}
 	
 	public abstract void initADN() throws Exception;

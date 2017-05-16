@@ -20,6 +20,13 @@ public class BestIsBetter extends AbstractSummarizeMethod implements ScoreBasedI
 	}
 	
 	@Override
+	public AbstractSummarizeMethod makeCopy() throws Exception {
+		BestIsBetter p = new BestIsBetter(id);
+		initCopy(p);
+		return p;
+	}
+	
+	@Override
 	public void initADN() throws Exception {
 		nbCharSizeOrNbSentenceSize = Boolean.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));

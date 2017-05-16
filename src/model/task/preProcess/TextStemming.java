@@ -34,7 +34,7 @@ public class TextStemming extends AbstractPreProcess implements Lemmatizer {
 
 	@Override
 	public void process() {
-		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
 		while (corpusIt.hasNext()) {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {

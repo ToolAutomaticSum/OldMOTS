@@ -31,7 +31,7 @@ public class SentenceSplitter extends AbstractPreProcess {
 	}
 	
 	private void splitParagraphIntoSentence() {
-		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
 		while (corpusIt.hasNext()) {
 			int iD = 0;
 			Iterator<TextModel> textIt = corpusIt.next().iterator();

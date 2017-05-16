@@ -67,4 +67,8 @@ public class Parameter<T> {
 	public String toString() {
 		return parameterName + " : " + parameterValue.toString();
 	}
+	
+	public String toValueString() {
+		return parameterValue.toString();
+	}
 }

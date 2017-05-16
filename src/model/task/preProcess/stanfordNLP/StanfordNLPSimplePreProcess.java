@@ -56,7 +56,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess implements L
 	public void process() throws Exception {
 		int iD = 0;
 		
-		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
 		while (corpusIt.hasNext()) {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {

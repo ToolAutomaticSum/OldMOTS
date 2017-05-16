@@ -26,6 +26,15 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 	public TF_IDF(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
 	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		TF_IDF p = new TF_IDF(id);
+		initCopy(p);
+		p.setLoadModel(loadModel);
+		p.setPathModel(pathModel);
+		return p;
+	}
 
 	@Override
 	public void init() throws Exception {
@@ -38,11 +47,12 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 		}
 		else {
 			LearningTF_IDF.generateDictionary(corpusToSummarize, index);
-			for (Corpus c : getModel().getCurrentMultiCorpus()) {
+			for (Corpus c : getCurrentMultiCorpus()) {
 				if (c!=corpusToSummarize) {
 					Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, readStopWords);
 					LearningTF_IDF.majIDFDictionnary(temp, index);
-					temp.clear();
+					if (!getModel().isMultiThreading())
+						temp.clear();
 				}
 			}
 			//LearningTF_IDF.writeTF_IDFModel("/home/valnyz", index, corpusToSummarize.getiD());
@@ -92,6 +102,14 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 			}
 			text = r.read();
         }
+	}
+
+	public void setLoadModel(boolean loadModel) {
+		this.loadModel = loadModel;
+	}
+
+	public void setPathModel(String pathModel) {
+		this.pathModel = pathModel;
 	}
 
 	@Override

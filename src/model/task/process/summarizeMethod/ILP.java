@@ -22,6 +22,13 @@ public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
 	}
 	
 	@Override
+	public AbstractSummarizeMethod makeCopy() throws Exception {
+		ILP p = new ILP(id);
+		initCopy(p);
+		return p;
+	}
+	
+	@Override
 	public void initADN() throws Exception {
 	}
 	

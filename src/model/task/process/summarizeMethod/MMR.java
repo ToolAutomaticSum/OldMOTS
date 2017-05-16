@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import model.task.process.VectorCaracteristicBasedIn;
-import model.task.process.scoringMethod.TF_IDF.Centroid.Centroid_Parameter;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
@@ -48,14 +47,21 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 	public MMR(int id) throws SupportADNException {
 		super(id);
 		supportADN = new HashMap<String, Class<?>>();
-		supportADN.put("Lambda", Double.class);
+		//supportADN.put("Lambda", Double.class);
+	}
+	
+	@Override
+	public AbstractSummarizeMethod makeCopy() throws Exception {
+		MMR p = new MMR(id);
+		initCopy(p);
+		return p;
 	}
 	
 	@Override
 	public void initADN() throws Exception {
-		getCurrentProcess().getADN().putParameter(new Parameter<Double>(MMR_Parameter.Lambda.getName(), Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Lambda"))));
-		getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMaxValue(1.0);
-		getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMinValue(0.6);
+		//getCurrentProcess().getADN().putParameter(new Parameter<Double>(MMR_Parameter.Lambda.getName(), Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Lambda"))));
+		//getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMaxValue(1.0);
+		//getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMinValue(0.5);
 	
 		nbCharSizeOrNbSentenceSize = Boolean.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
@@ -71,7 +77,7 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 	}
 	
 	public void init() throws Exception {
-		lambda = getCurrentProcess().getADN().getParameterValue(Double.class, MMR_Parameter.Lambda.getName());
+		lambda = 0.7;//getCurrentProcess().getADN().getParameterValue(Double.class, MMR_Parameter.Lambda.getName());
 		
 		this.sentencesBaseScores = new HashMap<SentenceModel, Double>();
 		this.sentencesMMRScores = new HashMap<SentenceModel, Double>();
@@ -174,6 +180,9 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		for (SentenceModel p1 : this.summary)
 		{
 			double valSim;
+
+			if(sentenceCaracteristic.get(p1) == null)
+				System.out.println("Prout");
 			if ( (valSim = sim.computeSimilarity(sentenceCaracteristic.get(p1), sentenceCaracteristic.get(p))) >= maxSim)
 			{
 				maxSim = valSim;

@@ -6,17 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Iterator;
+import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import exception.LacksOfFeatures;
 import jgibblda.Estimator;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
+import model.task.preProcess.GenerateTextModel;
 import model.task.process.AbstractProcess;
 import optimize.SupportADNException;
 import textModeling.Corpus;
-import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -30,13 +30,18 @@ public class LearningLDA extends AbstractProcess {
 	private Estimator estimator;
 	
 	/**
-	 * ProcessOption li� NbTopicsLDA, int.
+	 * ProcessOption lié NbTopicsLDA, int.
 	 * @throws SupportADNException 
 	 * @throws LacksOfFeatures 
 	 * @throws NumberFormatException 
 	 */
 	public LearningLDA(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);	
+	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		throw new Exception("No copy allowed !");
 	}
 	
 	@Override
@@ -49,10 +54,11 @@ public class LearningLDA extends AbstractProcess {
 		//option.savestep = 500;
 		option.twords = 15;
 		option.dir = getModel().getOutputPath() + File.separator + "modelLDA";
-		option.dfile = "temp_"+option.alpha+"_"+option.beta;
+		option.dfile = "tempCorpus-all.gz";
 		//estimator.init(option);
 		
-		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
+		option.modelName = "LDA_model_"+option.K+"_"+option.alpha+"_"+option.beta;
+		System.out.println(option.modelName);
 		if (newModel)
 			option.est = true;
 		else {
@@ -61,42 +67,41 @@ public class LearningLDA extends AbstractProcess {
 		}
 		
 		super.init();
-		writeTempInputFile(getModel().getCurrentMultiCorpus(), getModel().getOutputPath());
+		writeTempInputFile(option.modelName, "-all", getCurrentMultiCorpus(), readStopWords, getModel().getOutputPath());
 	}
 	
 	@Override
 	public void process() throws FileNotFoundException, IOException {
-		option.dfile = "temp.txt";
+		option.dfile = "temp" + option.modelName + ".gz";
 		option.est=true;
 		option.estc=false;
 		estimator = new Estimator(option);
 		estimator.estimate(true);
 	}
-	
+
 	@Override
 	public void finish() throws Exception {
 		super.finish();
-		File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt");
-		f.delete();
+		//File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp" + option.modelName + ".gz");
+		//f.delete();
 	}
-	
-	private static void writeTempInputFile(MultiCorpus currentMultiCorpus, String outputPath) throws IOException {
+
+	public static void writeTempInputFile(String modelName, String corpusId, List<Corpus> listCorpus, boolean readStopWords, String outputPath) throws IOException {
 		new File(outputPath + File.separator + "modelLDA").mkdir();
-		
+
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                 new GZIPOutputStream(
-                    new FileOutputStream(outputPath + File.separator + "modelLDA" + File.separator + "temp.txt")), "UTF-8"));
-
-		writer.write(String.valueOf(currentMultiCorpus.size()) + "\n");
-		Iterator<Corpus> corpusIt = currentMultiCorpus.iterator();
-		while (corpusIt.hasNext()) {
-			Iterator<TextModel> textIt = corpusIt.next().iterator();
-			while (textIt.hasNext()) {
-				Iterator<SentenceModel> senIt = textIt.next().iterator();
-				while (senIt.hasNext()) {
-					Iterator<WordModel> wordIt = senIt.next().iterator();
-					while (wordIt.hasNext()) {
-						WordModel word = wordIt.next();
+                    new FileOutputStream(outputPath + File.separator + "modelLDA" + File.separator + "tempCorpus" + corpusId + ".gz")), "UTF-8"));
+		int nbDoc = 0;
+		for (Corpus c : listCorpus)
+			nbDoc += c.getNbDocument();
+		
+		writer.write(String.valueOf(nbDoc) + "\n");
+		for (Corpus c : listCorpus) {
+			c = GenerateTextModel.readTempDocument(outputPath + File.separator + "temp", c, readStopWords);
+			for (TextModel t : c) {
+				for (SentenceModel s : t) {
+					for (WordModel word : s) {
 						if (!word.isStopWord()) {
 							writer.write(word.getmLemma() + " ");
 						}
@@ -107,29 +112,34 @@ public class LearningLDA extends AbstractProcess {
 		}
 		writer.close();   
 	}
-	
-	public static Model ldaModelLearning(int K, double alpha, double beta, String outputPath, MultiCorpus currentMultiCorpus) throws IOException {
+
+	public synchronized static Model ldaModelLearning(String modelName, String corpusId, List<Corpus> listCorpus, boolean readStopWords, int K, double alpha, double beta, String outputPath) throws IOException {
 		LDACmdOption option = new LDACmdOption();
 		Estimator estimator;
-		
+
 		option.inf = false;
 		option.K = K;
 		option.alpha = alpha;
 		option.beta = beta;
-		option.niters = 600;
+		option.niters = 500;
 		option.twords = 15;
 		option.dir = outputPath + File.separator + "modelLDA";
-		option.dfile = "temp.txt";
+		option.dfile = "tempCorpus" + corpusId + ".gz";
 		
-		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
+		option.modelName = modelName;//"LDA_model_"+option.K+"_"+option.alpha+"_"+option.beta;
 
 		option.est = true;
-
-		writeTempInputFile(currentMultiCorpus, outputPath);
+		option.estc = false;
+		if (new File(outputPath + File.separator + "modelLDA" + File.separator + modelName + ".wordmap.gz").exists()) {
+			System.out.println("Model already exist, don't need to relearn it !");
+			Model trnModel = new Model(option);
+	        trnModel.init(false);
+			return trnModel;
+		}
 		
-		option.dfile = "temp.txt";
-		option.est=true;
-		option.estc=false;
+		if (!new File("tempCorpus" + corpusId + ".gz").exists())
+			writeTempInputFile(modelName, corpusId, listCorpus, readStopWords, outputPath);
+		
 		estimator = new Estimator(option);
 		return estimator.estimate(true);
 	}

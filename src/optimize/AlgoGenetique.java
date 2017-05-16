@@ -73,7 +73,16 @@ public class AlgoGenetique extends Optimize {
 	 * Construction de la population initiale
 	 */
 	public void init() {
+		try {
+			optimize.initOptimize();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		writer.open();
+		for (String s : optimize.getADN().keySet())
+			writer.write(s + "\t");
+		writer.write("\n");
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i = 0; i<adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName()); i++) {
 			ADN temp = optimize.generateAleaADN(rand);
@@ -119,6 +128,7 @@ public class AlgoGenetique extends Optimize {
 			optimize.setADN(individu);
 			optimize.optimize();
 			individu.setScore(optimize.getScore());
+			writer.write(individu.toValueString() + "\t" + individu.getScore() + "\n");
 			System.out.println(individu);
 		}
 	}
@@ -137,7 +147,7 @@ public class AlgoGenetique extends Optimize {
 	    	if (individu.getScore() > adn.getParameterValue(Double.class, AGParameter.VAL_MIN.getName()))
 	    		solution.add(individu);
 	    	if (i<20)
-	    		writer.write(i + "\n" + individu + individu.getScore());
+	    		System.out.println(i + "\n" + individu + individu.getScore());
 	    	i++;
 	    }
     	fitness_moyen/= adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName());
@@ -159,7 +169,7 @@ public class AlgoGenetique extends Optimize {
 		int i = 0;
 		boolean solutionFind = false;
 		while ((!solutionFind) && i < adn.getParameterValue(Integer.class, AGParameter.NB_GENERATION_MAX.getName())) {
-			writer.write("Iteration " + i);
+			writer.write("Iteration " + i + "\n");
 			System.out.println("Iteration " + i);
 			solutionFind = evoluer();
 			i++;
@@ -182,5 +192,9 @@ public class AlgoGenetique extends Optimize {
 	@Override
 	public double getScore() {
 		return 0;
+	}
+
+	@Override
+	public void initOptimize() throws Exception {
 	}
 }

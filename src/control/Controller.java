@@ -93,10 +93,10 @@ public class Controller {
     	getModel().setLanguage(language);
     }
     
-    /*public void notifyInputPathChanged(String inputDir) {
-    	this.inputDir = inputDir;
-    	getModel().setInputPath(inputDir);
-    }*/
+    public void notifyMultiThreadBoolChanged(boolean multithread) {
+    	System.out.println("Multithread " + multithread);
+    	getModel().setMultiThreading(multithread);
+    }
     
     public void notifyMultiCorpusChanged() {
     	currentMultiCorpus = new MultiCorpus(getModel().getMultiCorpusModels().size());

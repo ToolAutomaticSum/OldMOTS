@@ -7,7 +7,6 @@ import java.util.TreeSet;
 
 import exception.LacksOfFeatures;
 import model.task.process.AbstractProcess;
-import model.task.process.scoringMethod.graphBased.LexRank.LexRank_Parameter;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
@@ -47,6 +46,13 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 		supportADN = new HashMap<String, Class<?>>();
 		supportADN.put(BiGramILP_Parameter.fscFactor.getName(), Double.class);
 		supportADN.put(BiGramILP_Parameter.minSenLength.getName(), Integer.class);
+	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		BiGram_ILP p = new BiGram_ILP(id);
+		initCopy(p);
+		return p;
 	}
 	
 	@Override
@@ -92,6 +98,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut{
 		System.out.println("Construction du modèle");
 
 		TreeSet <NGram> first_sentence_concepts = new TreeSet <NGram> ();
+		
 		for (TextModel text : corpusToSummarize)
 		{
 			curr_doc_bg_set = new TreeSet <NGram> ();

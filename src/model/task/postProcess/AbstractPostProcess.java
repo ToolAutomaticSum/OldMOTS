@@ -9,7 +9,6 @@ import optimize.SupportADNException;
 public abstract class AbstractPostProcess extends Individu implements AbstractTaskModel {
 
 	protected AbstractProcess currentProcess;
-	protected SModel model;
 	
 	public AbstractPostProcess(int id) throws SupportADNException {
 		super(id);	
@@ -28,15 +27,5 @@ public abstract class AbstractPostProcess extends Individu implements AbstractTa
 
 	public void setCurrentProcess(AbstractProcess currentProcess) {
 		this.currentProcess = currentProcess;
-	}
-	
-	@Override
-	public SModel getModel() {
-		return model;
-	}
-	
-	@Override
-	public void setModel(SModel model) {
-		this.model = model;
 	}
 }

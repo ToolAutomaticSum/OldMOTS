@@ -2,7 +2,6 @@ package model.task.process.TF_IDF;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import exception.LacksOfFeatures;
@@ -18,14 +17,17 @@ import textModeling.wordIndex.WordIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class LearningTF_IDF extends AbstractProcess {
-
 	protected String pathModel;
 	private boolean liveLearning = false;
 	protected List<Corpus> listLearningDoc = new ArrayList<Corpus>();
 	
 	public LearningTF_IDF(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
-		summary = null;
+	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		throw new Exception("No copy allowed !");
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class LearningTF_IDF extends AbstractProcess {
 		pathModel = getModel().getProcessOption(id, "PathModel");
 		liveLearning = Boolean.parseBoolean(getModel().getProcessOption(id, "LiveLearning"));
 		if (liveLearning) {
-			listLearningDoc.addAll(getModel().getCurrentMultiCorpus());
+			listLearningDoc.addAll(getCurrentMultiCorpus());
 			listLearningDoc.remove(getSummarizeCorpusId());
 		}
 	}
@@ -59,20 +61,11 @@ public class LearningTF_IDF extends AbstractProcess {
 	 * Construction du dictionnaire des mots des documents ({@see WordTF_IDF})
 	 */
 	public static void generateDictionary(Corpus corpus, Index dictionnary) {
-
 		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.size());
-		
 		//Construction du dictionnaire
-		Iterator<TextModel> textIt = corpus.iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel word = wordIt.next();
+		for (TextModel textModel : corpus) {
+			for (SentenceModel sentenceModel : textModel) {
+				for (WordModel word : sentenceModel) {
 					//TODO ajouter filtre à la place de getmLemma
 					if (!word.isStopWord()) {
 						if(!dictionnary.containsKey(word.getmLemma())) {
@@ -94,17 +87,12 @@ public class LearningTF_IDF extends AbstractProcess {
 		dictionnary.putCorpusNbDoc(corpus.getiD(), corpus.size());
 	}
 	
-	public static void majIDFDictionnary(Corpus corpus, Index dictionnary) {
-		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.getNbDocument());
-		
+	public  static void majIDFDictionnary(Corpus corpus, Index dictionnary) {
+		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.getNbDocument());			
 		//Construction du dictionnaire
 		for (TextModel text : corpus) {
-			Iterator<SentenceModel> sentenceIt = text.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel word = wordIt.next();
+			for (SentenceModel sentenceModel : text) {
+				for (WordModel word : sentenceModel) {
 					//TODO ajouter filtre à la place de getmLemma
 					if (!word.isStopWord() && dictionnary.containsKey(word.getmLemma())) {
 						WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
@@ -115,7 +103,7 @@ public class LearningTF_IDF extends AbstractProcess {
 					//	dictionnary.put(word.getmLemma(), new WordIndex(word.getmLemma(), dictionnary));
 				}
 			}
-	}
+		}
 		dictionnary.putCorpusNbDoc(corpus.getiD(), corpus.size());
 	}
 	

@@ -18,12 +18,24 @@ import textModeling.wordIndex.NGram;
 
 public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramListBasedIn, FileModelBasedOut {
 
+	/**
+	 * BiGramListBasedIn
+	 */
 	private HashMap<NGram, Double> bigram_weights;
+	/**
+	 * BiGramListBasedIn
+	 */
 	private ArrayList<TreeSet<NGram>> bigrams_in_sentence;
+	/**
+	 * BiGramListBasedIn
+	 */
 	private ArrayList<NGram> bigrams; 
 	//Give an id to each NGram
 	private TreeMap <NGram, Integer> bigrams_ids;
 	
+	/**
+	 * Modèle des BiGram construit dans computeScores
+	 */
 	private String model;
 	
 	private Integer maxSummLength;
@@ -31,6 +43,13 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 	
 	public GenerateModel_ILP(int id) throws SupportADNException {
 		super(id);
+	}
+	
+	@Override
+	public AbstractScoringMethod makeCopy() throws Exception {
+		GenerateModel_ILP p = new GenerateModel_ILP(id);
+		initCopy(p);
+		return p;
 	}
 	
 	@Override

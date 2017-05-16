@@ -3,7 +3,6 @@ package model.task.process.scoringMethod.TF_IDF;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +51,13 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 	}
 
 	@Override
+	public AbstractScoringMethod makeCopy() throws Exception {
+		Centroid p = new Centroid(id);
+		initCopy(p);
+		return p;
+	}
+	
+	@Override
 	public void initADN() throws Exception {
 		int n = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbMaxWordInCentroid"));
 		getCurrentProcess().getADN().putParameter(new Parameter<Integer>(Centroid_Parameter.NbMaxWordInCentroid.getName(), n));
@@ -70,12 +76,8 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 		calculateCentroid();
 		sentencesScores = new ArrayList<PairSentenceScore>();
 		
-		Iterator<TextModel> textIt = getCurrentProcess().getCorpusToSummarize().iterator();
-		while (textIt.hasNext()) {			
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
+		for (TextModel textModel : getCurrentProcess().getCorpusToSummarize()) {
+			for (SentenceModel sentenceModel : textModel) {
 				double score = 0;
 				//TODO filtre
 				for (WordModel w : sentenceModel) {

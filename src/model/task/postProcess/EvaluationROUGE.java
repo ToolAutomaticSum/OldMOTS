@@ -114,7 +114,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	}
 	
 	private void writeHtmlGeneratedSummary(int processID, int multiCorpusId, int corpusId) {
-		if (getModel().getProcess().get(processID).getSummary() != null) {
+		if (getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId) != null) {
 			Writer w = new Writer(getModel().getOutputPath() + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + processID + "</title></head>" +
@@ -126,6 +126,8 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			w.write("</body>\n</html>");
 			w.close();
 		}
+		else
+			System.out.println("Summary corpus " + corpusId + " MultiCorpus " + multiCorpusId + " is null.");
 	}
 	
 	private void writeHtmlModelSummary(int multiCorpusId, int corpusId) {
@@ -134,7 +136,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			w.open();
 			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
-			Reader r = new Reader( getModel().getCurrentMultiCorpus().get(multiCorpusId).getSummaryPath() + File.separator + modelSummary, true);
+			Reader r = new Reader(getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryPath() + File.separator + modelSummary, true);
 			r.open();
 			int j = 0;
 			String text = r.read();
@@ -188,7 +190,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	
 		    	Element models = document.createElement("MODELS");
 	    	
-		    	for (String modelSummaryName : getModel().getCurrentMultiCorpus().get(corpusId).getSummaryNames()) {
+		    	for (String modelSummaryName : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryNames()) {
 		    		Element modelSummary = document.createElement("M");
 		    		modelSummary.setAttribute("ID", String.valueOf(multiCorpusId) + String.valueOf(corpusId));
 		    		modelSummary.appendChild(document.createTextNode(modelSummaryName.replace(".txt", "") + ".html"));

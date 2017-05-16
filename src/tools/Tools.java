@@ -39,7 +39,7 @@ public class Tools {
 	static public String enleverPonctuation(String str) {
 		if (!str.contentEquals("-"))
 			str = str.replaceAll("-","wwwwwwww");
-	    str = str.replaceAll("[\\p{Punct}\n�����������������������]",""); //\\d enlever digit
+	    str = str.replaceAll("[\\p{Punct}()\n�����������������������]",""); //\\d enlever digit
 	    return str.replaceAll("wwwwwwww","-");
 	}
 	

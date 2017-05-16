@@ -2,18 +2,17 @@ package textModeling;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import model.SModel;
 
-public class Corpus extends ArrayList<TextModel> {
+public class Corpus implements List<TextModel>{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3211824677893360515L;
-
+	private List<TextModel> listTextModel = new ArrayList<TextModel>();
+	
 	protected int iD;
 	protected String corpusName;
 	protected String inputPath;
@@ -26,12 +25,28 @@ public class Corpus extends ArrayList<TextModel> {
 		this.iD = iD;
 	}
 	
+	public Corpus(Corpus c) {
+		this.iD = c.getiD();
+		this.corpusName = c.getCorpusName();
+		this.inputPath = c.getInputPath();
+		this.summaryPath = c.getSummaryPath();
+		this.model = c.getModel();
+		this.docNames = new ArrayList<String>(c.getDocNames());
+		this.summaryNames = new ArrayList<String>(c.getSummaryNames());
+		
+		for (TextModel t : c) {
+			TextModel text = new TextModel(t);
+			text.setParentCorpus(this);
+			this.listTextModel.add(text);
+		}
+	}
+	
 	public void loadDocumentModels() {
 		corpusName = inputPath.split(File.separator)[inputPath.split(File.separator).length-1];
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
-			this.add(new TextModel(this, inputPath + File.separator + docName));
+			listTextModel.add(new TextModel(this, inputPath + File.separator + docName));
 		}
     }
 	
@@ -142,5 +157,120 @@ public class Corpus extends ArrayList<TextModel> {
 	
 	public int getNbDocument() {
 		return docNames.size();
+	}
+
+	@Override
+	public boolean add(TextModel e) {
+		return listTextModel.add(e);
+	}
+
+	@Override
+	public void add(int index, TextModel element) {
+		listTextModel.add(index, element);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends TextModel> c) {
+		return listTextModel.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends TextModel> c) {
+		return listTextModel.addAll(index, c);
+	}
+
+	@Override
+	public void clear() {
+		listTextModel.clear();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return listTextModel.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return listTextModel.containsAll(c);
+	}
+
+	@Override
+	public TextModel get(int index) {
+		return listTextModel.get(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return listTextModel.indexOf(o);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return listTextModel.isEmpty();
+	}
+	
+	@Override
+	public Iterator<TextModel> iterator() {
+		return listTextModel.iterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return listTextModel.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<TextModel> listIterator() {
+		return listTextModel.listIterator();
+	}
+
+	@Override
+	public ListIterator<TextModel> listIterator(int index) {
+		return listTextModel.listIterator(index);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		return listTextModel.remove(o);
+	}
+
+	@Override
+	public TextModel remove(int index) {
+		return listTextModel.remove(index);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return listTextModel.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return listTextModel.retainAll(c);
+	}
+
+	@Override
+	public TextModel set(int index, TextModel element) {
+		return listTextModel.set(index, element);
+	}
+
+	@Override
+	public int size() {
+		return listTextModel.size();
+	}
+
+	@Override
+	public List<TextModel> subList(int fromIndex, int toIndex) {
+		return listTextModel.subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return listTextModel.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return listTextModel.toArray(a);
 	}
 }

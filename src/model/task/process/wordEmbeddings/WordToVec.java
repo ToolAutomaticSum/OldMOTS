@@ -21,12 +21,22 @@ import textModeling.wordIndex.WordVector;
 public class WordToVec extends AbstractProcess implements VectorCaracteristicBasedOut {
 
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
+	
 	private int dimension;
 	private boolean modelLoad = false;
 	private Word2Vec vec;
 	
 	public WordToVec(int id) throws SupportADNException {
 		super(id);
+	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		WordToVec p = new WordToVec(id);
+		initCopy(p);
+		p.setDimension(dimension);
+		p.setModelLoad(modelLoad);
+		return p;
 	}
 	
 	@Override
@@ -46,15 +56,15 @@ public class WordToVec extends AbstractProcess implements VectorCaracteristicBas
 		    System.out.println("Load Pre-trained Model");
 		    //vec = null;
 		    modelLoad = true;
-		    vec.getConfiguration().setAllowParallelTokenization(false);
-			for (Corpus c : getModel().getCurrentMultiCorpus()) {
+		    
+			for (Corpus c : getCurrentMultiCorpus()) {
 				c = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, readStopWords);
 				//LearningWordToVecModel.learnWordToVec(vec, temp);
 				//System.out.println(c.getCorpusName() + "\t" + vec.vocab().numWords());
 				//temp.clear();
 			}
-		    LearningWordToVecModel.learnWordToVecMultiCorpus(vec, getModel().getCurrentMultiCorpus());
-		    for (Corpus c : getModel().getCurrentMultiCorpus()) {
+			LearningWordToVecModel.learnWordToVecMultiCorpus(vec, getCurrentMultiCorpus());
+		    for (Corpus c : getCurrentMultiCorpus()) {
 		    	if (c != corpusToSummarize)
 		    		c.clear();
 		    }
@@ -100,14 +110,10 @@ public class WordToVec extends AbstractProcess implements VectorCaracteristicBas
 	public void process() throws Exception {
 		sentenceCaracteristic = new HashMap<SentenceModel, double[]>();
 		for (TextModel text : corpusToSummarize) {
-			Iterator<SentenceModel> sentenceIt = text.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
+			for (SentenceModel sentenceModel : text) {
 				double[] sentenceVector = new double[dimension];
 				//int nbMot = 0;
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel wm = wordIt.next();
+				for (WordModel wm : sentenceModel) {
 					if (!wm.isStopWord() && index.containsKey(wm.getmLemma())) {
 						//System.out.println(index.getKeyId(wm.getmLemma()));
 						WordVector word = (WordVector) index.get(wm.getmLemma());
@@ -121,6 +127,14 @@ public class WordToVec extends AbstractProcess implements VectorCaracteristicBas
 			}
 		}
 		super.process();
+	}
+	
+	public void setDimension(int dimension) {
+		this.dimension = dimension;
+	}
+
+	public void setModelLoad(boolean modelLoad) {
+		this.modelLoad = modelLoad;
 	}
 	
 	@Override

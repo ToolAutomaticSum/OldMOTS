@@ -9,7 +9,7 @@ import optimize.parameter.ADN;
 import optimize.parameter.Parameter;
 
 public abstract class Individu extends AbstractMethod {
-	public HashMap<String, Class<?>> supportADN;
+	protected HashMap<String, Class<?>> supportADN;
 	protected ADN adn;
 	
 	public Individu(int id) throws SupportADNException {
@@ -32,12 +32,16 @@ public abstract class Individu extends AbstractMethod {
 		return supportADN;
 	}
 	
+	public void setSupportADN(HashMap<String, Class<?>> supportADN) {
+		this.supportADN = supportADN;
+	}
+
 	public final ADN generateAleaADN(Random random) {
 		ADN aleaADN = new ADN(supportADN);
 		Iterator<String> parameterIt = adn.keySet().iterator();
 		while (parameterIt.hasNext()) {
 			String parameterName = parameterIt.next();
-			if (adn.getParameterClass(parameterName) == Integer.class)
+			if (aleaADN.getParameterClass(parameterName) == Integer.class)
 				aleaADN.putParameter(generateGenericAleaParameter(random, adn.getParameter(Integer.class, parameterName)));
 			else if (aleaADN.getParameterClass(parameterName) == Boolean.class)
 				aleaADN.putParameter(generateGenericAleaParameter(random, adn.getParameter(Boolean.class, parameterName)));

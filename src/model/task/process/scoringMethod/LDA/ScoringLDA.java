@@ -1,7 +1,7 @@
 package model.task.process.scoringMethod.LDA;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
 
 import model.task.process.AbstractProcess;
@@ -19,14 +19,32 @@ import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 	
+	/**
+	 * VectorCaracteristicBased
+	 */
 	protected Map<SentenceModel, double[]> sentenceCaracteristic;
 	protected int K; //nb Topic
 	
+	/**
+	 * ScoreBasedOut
+	 */
 	protected ArrayList<PairSentenceScore> sentencesScores;
+	/**
+	 * Instancié dans init via SimilarityMethod dans conf xml
+	 */
 	private SentenceSimilarityMetric sim;
 
 	public ScoringLDA(int id) throws Exception {
 		super(id);
+		
+		supportADN = new HashMap<String, Class<?>>();
+	}
+	
+	@Override
+	public AbstractScoringMethod makeCopy() throws Exception {
+		ScoringLDA p = new ScoringLDA(id);
+		initCopy(p);
+		return p;
 	}
 	
 	@Override
@@ -43,7 +61,7 @@ public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteri
 
 		if (index.values().iterator().next().getClass() != WordVector.class)
 			throw new Exception("Dictionnary need WordLDA !");
-		K = ((WordVector) index.get(1)).getDimension();
+		K = ((WordVector) index.get(index.keySet().iterator().next())).getDimension();
 	}
 	
 	@Override
@@ -51,15 +69,9 @@ public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteri
 		double[] averageVector = new double[K];
 		
 		int n = 0; //nbWord
-		Iterator<TextModel> textIt = getCurrentProcess().getCorpusToSummarize().iterator();
-		while (textIt.hasNext()) {			
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while(wordIt.hasNext()) {
-					WordModel word = wordIt.next();
+		for (TextModel textModel : getCurrentProcess().getCorpusToSummarize()) {
+			for (SentenceModel sentenceModel : textModel) {
+				for (WordModel word : sentenceModel) {
 					if (!word.isStopWord()) {
 						for (int k = 0; k<K;k++) {
 							WordVector wLDA = (WordVector) index.get(word.getmLemma());
@@ -79,12 +91,8 @@ public class ScoringLDA extends AbstractScoringMethod implements VectorCaracteri
 		
 		//int i = 0; //Sentence variable
 		
-		textIt = getCurrentProcess().getCorpusToSummarize().iterator();
-		while (textIt.hasNext()) {			
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
+		for (TextModel textModel : getCurrentProcess().getCorpusToSummarize()) {
+			for (SentenceModel sentenceModel : textModel) {
 				sentenceModel.setScore(sim.computeSimilarity(sentenceCaracteristic.get(sentenceModel), averageVector)); //Ajout du score � la phrase
 				sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
 			}

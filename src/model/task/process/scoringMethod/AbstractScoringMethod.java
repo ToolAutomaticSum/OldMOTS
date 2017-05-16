@@ -1,5 +1,7 @@
 package model.task.process.scoringMethod;
 
+import java.util.HashMap;
+
 import model.task.process.AbstractProcess;
 import optimize.Individu;
 import optimize.SupportADNException;
@@ -13,6 +15,15 @@ public abstract class AbstractScoringMethod extends Individu {
 	
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
+	}
+	
+	public abstract AbstractScoringMethod makeCopy() throws Exception;
+	
+	protected void initCopy(AbstractScoringMethod p) {
+		p.setCurrentProcess(currentProcess);
+		p.setIndex(index);
+		p.setSupportADN(new HashMap<String, Class<?>>(supportADN));
+		p.setModel(model);
 	}
 	
 	public abstract void initADN() throws Exception;

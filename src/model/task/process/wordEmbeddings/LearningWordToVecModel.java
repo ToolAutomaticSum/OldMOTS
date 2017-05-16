@@ -20,6 +20,11 @@ public class LearningWordToVecModel extends AbstractProcess {
 	public LearningWordToVecModel(int id) throws SupportADNException {
 		super(id);
 	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		throw new Exception("No copy allowed !");
+	}
 
 	@Override
 	public void init() throws Exception {
@@ -60,12 +65,6 @@ public class LearningWordToVecModel extends AbstractProcess {
         vec.setTokenizerFactory(tokenizerFactory); 
         vec.setSentenceIter(sentenceIterator);
         vec.buildVocab();
-        try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         vec.fit();
 	}
 	

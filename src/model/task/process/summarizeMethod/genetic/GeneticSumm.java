@@ -61,6 +61,13 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	}
 	
 	@Override
+	public AbstractSummarizeMethod makeCopy() throws Exception {
+		GeneticSumm p = new GeneticSumm(id);
+		initCopy(p);
+		return p;
+	}
+	
+	@Override
 	public void initADN() throws Exception {
 		this.parentsNumber = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "ParentsNumber"));
 		this.hybridationNumber = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "HybridationNumber"));
@@ -102,7 +109,10 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 		{
 			this.scoreCurrentPopulation();
 			System.out.println("Meilleur score à la "+curr_generation+"ème génération : "+this.bestSummaryScore);
+
+			//double t = System.currentTimeMillis();
 			this.createNewGeneration();
+			//System.out.println(t-System.currentTimeMillis() + "\t" + "NewGene");
 		}
 		
 		DecimalFormat df = new DecimalFormat ("0.000");
@@ -130,7 +140,9 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	private void initializePopulation ()
 	{
 		for (int curr_indiv = 0; curr_indiv < this.populationNb ; curr_indiv++)	{
+			//double t = System.currentTimeMillis();
 			GeneticIndividual gi = new GeneticIndividual(rand, this.ss, this.maxSummLength);
+			//System.out.println(t-System.currentTimeMillis() + "\t" + "Init");
 			this.population.add(gi);
 		}
 		
@@ -174,15 +186,22 @@ public class GeneticSumm extends AbstractSummarizeMethod {
 	
 	private void createNewGeneration ()
 	{
+
+		//double t = System.currentTimeMillis();
 		ArrayList<GeneticIndividual> parents = this.selectParents();
+		//System.out.println(t-System.currentTimeMillis() + "\t" + "Sélection");
 		
+		//t = System.currentTimeMillis();
 		ArrayList<GeneticIndividual> hybrids = this.hybridation(parents);
+		//System.out.println(t-System.currentTimeMillis() + "\t" + "Hybridation");
 		
 		this.population.clear();
 		this.population.addAll(parents);
 		this.population.addAll(hybrids);
 		
+		//t = System.currentTimeMillis();
 		ArrayList<GeneticIndividual> mutants = this.createMutants (this.population);
+		//System.out.println(t-System.currentTimeMillis() + "\t" + "Mutation");
 		//this.population.clear();
 		this.population.addAll(mutants);
 		this.eliminateDoublons();

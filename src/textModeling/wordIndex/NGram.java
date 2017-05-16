@@ -35,12 +35,11 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 			return 1;
 		if ( this.size() < ngram.size() )
 			return -1;
-		if (this.equals(ngram))
-			return 0;
-		else if (this.hashCode() > ngram.hashCode())
-			return 1;
-		else
-			return -1;
+		for (int i=0; i < this.size(); i++) {
+			if(this.get(i).getId() != ngram.get(i).getId())
+				return this.get(i).compareTo(ngram.get(i));
+		}
+		return 0;
 	}
 	
 	@Override
@@ -51,10 +50,11 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 		NGram ngram = (NGram) o;
 		if (ngram.size() != this.size() )
 			return false;
-		if (ngram.hashCode() == this.hashCode())
-			return true;
-		else
-			return false;
+		for (int i=0; i < this.size(); i++) {
+			if(this.get(i).getId() != ngram.get(i).getId())
+				return false;
+		}
+		return true;
 	}
 	
 	public void printNGram ()
@@ -98,13 +98,12 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 	
 	@Override
     public int hashCode() {
-		int code = 0;
-		int i = 1;
+		String word = "";
 		for (WordIndex w : this)
 		{
-			code += Math.pow(w.getWord().hashCode(), (double)i);
+			word += w.getWord() + "_";
 		}
-		return code;
+		return word.hashCode();
 	}
 	
 	

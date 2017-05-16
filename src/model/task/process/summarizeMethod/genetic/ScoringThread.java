@@ -1,6 +1,7 @@
 package model.task.process.summarizeMethod.genetic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
@@ -9,24 +10,28 @@ import textModeling.wordIndex.NGram;
 
 public class ScoringThread extends Thread implements Runnable {
 	private GeneticIndividual gi;
+	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	private TreeMap <NGram, Double> sourceDistribution;
 	private TreeMap <NGram, Integer> firstSentencesConcepts;
 	private double delta;
-	private Index index;
+	//private Index index;
 	private double fsc;
 	
-	public ScoringThread (GeneticIndividual gi, TreeMap <NGram, Double> sourceDistribution, TreeMap <NGram, Integer> firstSentencesConcepts, Index index, double fsc, double delta) {
+	public ScoringThread (GeneticIndividual gi, HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences, TreeMap <NGram, Double> sourceDistribution, TreeMap <NGram, Integer> firstSentencesConcepts, Index index, double fsc, double delta) {
 		this.gi = gi;
+		this.ngrams_in_sentences = ngrams_in_sentences;
 		this.sourceDistribution = sourceDistribution;
 		this.firstSentencesConcepts = firstSentencesConcepts;
-		this.index = index;
+		//this.index = index;
 		this.fsc = fsc;
 		this.delta = delta;
 	}
 
 	public void run() {
+		//double t = System.currentTimeMillis();
 		double js = this.jensenShannon();
 		this.gi.setScore(js);
+		//System.out.println(t-System.currentTimeMillis() + "\t" + "JensenShannon");
 	}
 	
 	private double jensenShannon() {
@@ -92,7 +97,7 @@ public class ScoringThread extends Thread implements Runnable {
 		//System.out.println("distrib : "+distrib);
 		double nb_bi_grams_gi = 0.;
 		for (SentenceModel p : this.gi.getGenes()) {
-			ArrayList <NGram> curr_ngrams_list = p.getNGrams(2, index);
+			ArrayList <NGram> curr_ngrams_list = ngrams_in_sentences.get(p);
 			for (NGram ng : curr_ngrams_list) {
 				//TODO : GROSSE APPROXIMATION : il faut parcourir les bigrams récupérés de la phrase, et non
 				//ngrams in sentence, car là on a toujours 1 comme valeur pour un ngram même si présent plusieurs fois.

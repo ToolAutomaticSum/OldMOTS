@@ -9,10 +9,14 @@ public class WordIdfFilter extends WordFilter {
 	private double threshold;
 	private Index dico;
 	
-	public WordIdfFilter (Index dico, double absoluteThreshold)
+	public WordIdfFilter (Index dico, double absoluteThreshold) throws Exception
 	{
-		this.threshold = absoluteThreshold;
-		this.dico = dico;
+		if (dico.values().toArray()[0].getClass() == WordTF_IDF.class) {
+			this.threshold = absoluteThreshold;
+			this.dico = dico;
+		}
+		else
+			throw new Exception("WordIdfFilter need TfIdf process !");
 	}
 	
 	@Override

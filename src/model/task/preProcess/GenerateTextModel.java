@@ -22,8 +22,8 @@ import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
-import textModeling.filter.UniteLexStopListFilter;
 import tools.Tools;
+import tools.wordFilters.WordStopListFilter;
 
 /**
  * Generate Bag of Words
@@ -66,7 +66,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 
 	@Override
 	public void process() throws Exception {
-		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
 		while (corpusIt.hasNext()) {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {
@@ -104,8 +104,8 @@ public class GenerateTextModel extends AbstractPreProcess {
 		preProcess = null;
 		
 		if (stopWordListFile != null) {
-			UniteLexStopListFilter filter = new UniteLexStopListFilter(stopWordListFile);
-			for(Corpus corpus : getModel().getCurrentMultiCorpus()) {
+			WordStopListFilter filter = new WordStopListFilter(stopWordListFile);
+			for(Corpus corpus : getCurrentMultiCorpus()) {
 				for(TextModel text : corpus) {
 					for(SentenceModel sen : text) {
 						for(WordModel word : sen)
@@ -117,7 +117,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 		}
 		
 		new File(getModel().getOutputPath()+File.separator+"temp").mkdir();
-		GenerateTextModel.writeTempDocumentBySentence(getModel().getOutputPath()+File.separator+"temp", getModel().getCurrentMultiCorpus());
+		GenerateTextModel.writeTempDocumentBySentence(getModel().getOutputPath()+File.separator+"temp", getCurrentMultiCorpus());
 	}
 	
 	public static boolean loadText(TextModel textModel) throws Exception {
@@ -204,6 +204,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 		File corpusDoc = new File(inputPath + File.separator + c.getCorpusName());
 		for (File textFile : corpusDoc.listFiles()) {
 			TextModel text = new TextModel(c, textFile.getAbsolutePath());
+			int nbSentence = 0;
 			Reader r = new Reader(textFile.getAbsolutePath(), true);
 			r.open();
 			int id=0;
@@ -214,6 +215,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 					String[] label =  tabs[0].split(File.separator + "%%" + File.separator);
 					//System.out.println(label[0].split("=")[1]);
 					SentenceModel sen = new SentenceModel(label[0].split("=")[1], id, text);
+					nbSentence++;
 					sen.setNbMot(Integer.parseInt(label[1].split("=")[1]));
 					text.add(sen);
 					String[] word = tabs[1].split(" ");
@@ -240,6 +242,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 				s = r.read();
 				id++;
 			}
+			text.setNbSentence(nbSentence);
 			r.close();
 			c.add(text);
 		}

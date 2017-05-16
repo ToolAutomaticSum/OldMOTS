@@ -23,7 +23,7 @@ public class WordSplitter extends AbstractPreProcess {
 
 	@Override
 	public void process() {
-		Iterator<Corpus> corpusIt = getModel().getCurrentMultiCorpus().iterator();
+		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
 		while (corpusIt.hasNext()) {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {

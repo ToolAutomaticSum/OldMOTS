@@ -8,10 +8,12 @@ public class WordVector extends WordIndex {
 	private static final long serialVersionUID = -2288500102579878483L;
 
 	private double[] wordVector;
-	private static int dimension;
+	private int dimension;
 	
-	public WordVector(String word, Index index) {
+	public WordVector(String word, Index index, int dimension) {
 		super(word, index);
+		this.dimension = dimension;
+		wordVector = new double[dimension];
 	}
 
 	public WordVector(String word, Index index, double[] wordVector) {

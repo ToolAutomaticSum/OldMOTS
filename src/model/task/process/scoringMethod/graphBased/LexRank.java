@@ -38,42 +38,64 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 			return name;
 		}
 	}
-	
+	/**
+	 * VectorCaracteristicBased
+	 */
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
-	
+	/**
+	 * ScoreBasedOut
+	 */
 	private ArrayList<PairSentenceScore> sentencesScores;
+	/**
+	 * Dans ADN
+	 */
 	private double dumpingParameter = 0.85;
+	/**
+	 * Constant
+	 */
 	private double epsilon = 0.00001;
-	
-	private GraphSentenceBased graph;
+	/**
+	 * Dans ADN
+	 */
 	private double graphThreshold = 0;
+	/**
+	 * Construit dans init
+	 */
+	private GraphSentenceBased graph;
 	
 	public LexRank(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
 		supportADN = new HashMap<String, Class<?>>();
-		supportADN.put("DumpingParameter", Double.class);
+		//supportADN.put("DumpingParameter", Double.class);
 		//supportADN.put("Epsilon", Double.class);
-		supportADN.put("GraphThreshold", Double.class);
+		//supportADN.put("GraphThreshold", Double.class);
+	}
+	
+	@Override
+	public AbstractScoringMethod makeCopy() throws Exception {
+		LexRank p = new LexRank(id);
+		initCopy(p);
+		return p;
 	}
 	
 	@Override
 	public void initADN() throws Exception {
-		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DumpingParameter.getName()))));
+		/*getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DumpingParameter.getName()))));
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMaxValue(0.6);
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMinValue(0.0);
 		//getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.Epsilon.getName(), 0.0001));
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.GraphThreshold.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.GraphThreshold.getName()))));
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.GraphThreshold.getName()).setMaxValue(0.6);
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.GraphThreshold.getName()).setMinValue(0.0);
-	}
+	*/}
 
 	@Override
 	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
 		super.init(currentProcess, dictionnary);
 		
-		dumpingParameter = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.DumpingParameter.getName());
+		dumpingParameter = 0.15;//getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.DumpingParameter.getName());
 		epsilon = 0.00001;	///getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.Epsilon.getName());
-		graphThreshold = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.GraphThreshold.getName());
+		graphThreshold = 0.1;//getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.GraphThreshold.getName());
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
@@ -139,7 +161,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 			for (int j = 0; j<matSize; j++)
 				matAdj[i][j] = dampingFactor / (double)matSize + (1-dampingFactor)*matAdj[i][j];
 		//ToolsVector.transposeMatrix(matAdj);
-		int n = 0;
+		//int n = 0;
 		do {
 			for (int i = 0; i<matSize; i++)
 				ptprec[i] = pt[i];
@@ -151,7 +173,7 @@ public class LexRank extends AbstractScoringMethod implements VectorCaracteristi
 						pt[i] += matAdj[i][j] * ptprec[j];
 				}
 			}
-			n++;
+			//n++;
 			normeDiff = ToolsVector.norme(ToolsVector.soustraction(pt, ptprec));
 			//System.out.println(normeDiff);
 		} while (normeDiff > epsilon);

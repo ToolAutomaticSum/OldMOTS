@@ -1,22 +1,58 @@
 package optimize.parameter;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
-public class ADN extends HashMap<String, Class<?>> implements Comparable<ADN> {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8392450232637694377L;
+/**
+ * map Name of param / class of param
+ * @author valnyz
+ *
+ */
+public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
 	
+	/**
+	 * map Name of param / class of param
+	 */
+	private HashMap<String, Class<?>>  mapNameClass = new HashMap<String, Class<?>>();
+	/**
+	 * map name of param / param itself
+	 */
 	private HashMap<String, Parameter<Class<?>>> mapNameParam = new HashMap<String, Parameter<Class<?>>>();
+	
+	
 	private double score = 0;
 	
-	public ADN(HashMap<String, Class<?>> listParam) {
-		super(listParam);
+	public ADN(HashMap<String, Class<?>> supportADN) {
+		mapNameClass = new HashMap<String, Class<?>>(supportADN);
 		for(String s : this.keySet())
 			mapNameParam.put(s, null);
+	}
+	
+	/**
+	 * Constructeur de copie !!
+	 * à voir !
+	 * @param adn
+	 */
+	public ADN(ADN adn) {
+		mapNameClass = new HashMap<String, Class<?>>(adn);
+		for(String parameterName : this.keySet()) {
+			if (adn.getParameterClass(parameterName) == Integer.class) {
+				putParameter(new Parameter<Integer>(parameterName, adn.getParameterValue(Integer.class, parameterName)));
+			}
+			else if (adn.getParameterClass(parameterName) == Boolean.class) {
+				putParameter(new Parameter<Boolean>(parameterName, adn.getParameterValue(Boolean.class, parameterName)));				
+			}
+			else if (adn.getParameterClass(parameterName) == Float.class) {
+				putParameter(new Parameter<Float>(parameterName, adn.getParameterValue(Float.class, parameterName)));				
+			}
+			else if (adn.getParameterClass(parameterName) == Double.class) {
+				putParameter(new Parameter<Double>(parameterName, adn.getParameterValue(Double.class, parameterName)));				
+			}
+		}
 	}
 	
 	public Class<?> getParameterClass(String parameterName) {
@@ -89,6 +125,14 @@ public class ADN extends HashMap<String, Class<?>> implements Comparable<ADN> {
 		return str;
 	}
 	
+	public String toValueString() {
+		String str = "";
+		Iterator<Parameter<Class<?>>> paramIt = mapNameParam.values().iterator();
+		while (paramIt.hasNext())
+			str += paramIt.next().toValueString() + "\t";
+		return str;
+	}
+	
 	public static ADN croisementADN(Random random, ADN pere, ADN mere) {
 		ADN enfant = new ADN(pere);
 		Iterator<String> paramNameIt = enfant.keySet().iterator();
@@ -108,9 +152,74 @@ public class ADN extends HashMap<String, Class<?>> implements Comparable<ADN> {
 		return mapNameParam;
 	}
 
-	public void putAllADN(ADN a) {
-		super.putAll(a);
+	/*public void putAllADN(ADN a) {
+		mapNameClass.putAll(a);
 		for (String s : a.keySet())
 			mapNameParam.put(s, null);
+	}*/
+
+	@Override
+	public void clear() {
+		mapNameParam.clear();
+		mapNameClass.clear();
+	}
+
+	@Override
+	public boolean containsKey(Object arg0) {
+		return mapNameClass.containsKey(arg0);
+	}
+
+	@Override
+	public boolean containsValue(Object arg0) {
+		return mapNameClass.containsValue(arg0);
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Class<?>>> entrySet() {
+		return mapNameClass.entrySet();
+	}
+
+	@Override
+	public Class<?> get(Object arg0) {
+		return mapNameClass.get(arg0);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return mapNameClass.isEmpty();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return mapNameClass.keySet();
+	}
+
+	@Override
+	public Class<?> put(String arg0, Class<?> arg1) {
+		mapNameParam.put(arg0, null);
+		return mapNameClass.put(arg0, arg1);
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends Class<?>> arg0) {
+		mapNameClass.putAll(arg0);
+		for (String s : arg0.keySet())
+			mapNameParam.put(s, null);
+	}
+
+	@Override
+	public Class<?> remove(Object arg0) {
+		mapNameParam.remove(arg0);
+		return mapNameClass.remove(arg0);
+	}
+
+	@Override
+	public int size() {
+		return mapNameClass.size();
+	}
+
+	@Override
+	public Collection<Class<?>> values() {
+		return mapNameClass.values();
 	}
 }

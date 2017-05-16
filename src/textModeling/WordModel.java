@@ -22,16 +22,13 @@ public class WordModel {
 	private String mPDepRel = "_";
 	
 	public WordModel() {
-		super();
 	}
 	
 	public WordModel(String mLemma) {
-		super();
 		this.mLemma = mLemma;
 	}
 
 	public WordModel(String mID, String mForm, String mLemma, String mCPosTag, String mPosTag) {
-		super();
 		this.mID = mID;
 		this.mForm = mForm;
 		this.mLemma = mLemma;
@@ -40,7 +37,6 @@ public class WordModel {
 	}
 
 	public WordModel(String mID, String mForm, String mLemma, String mCPosTag, String mPosTag, String mHead, String mDepRel) {
-		super();
 		this.mID = mID;
 		this.mForm = mForm;
 		this.mLemma = mLemma;
@@ -51,7 +47,6 @@ public class WordModel {
 	}
 	
 	public WordModel(WordModel e) {
-		super();
 		this.mID = e.getmID();
 		this.mForm = e.getmForm();
 		this.mLemma = e.getmLemma();
@@ -59,6 +54,8 @@ public class WordModel {
 		this.mHead = e.getmHead();
 		this.mPosTag = e.getmPosTag();
 		this.mDepRel = e.getmDepRel();
+		this.word = e.getWord();
+		this.stopWord = e.isStopWord();
 	}
 
 	public SentenceModel getSentence() {
@@ -85,7 +82,7 @@ public class WordModel {
 		this.mForm = mForm;
 	}
 
-	public String getmLemma() {
+	public  String getmLemma() {
 		return mLemma;
 	}
 
@@ -158,7 +155,7 @@ public class WordModel {
 		this.setmForm(word);
 	}
 
-	public boolean isStopWord() {
+	public  boolean isStopWord() {
 		return stopWord;
 	}
 

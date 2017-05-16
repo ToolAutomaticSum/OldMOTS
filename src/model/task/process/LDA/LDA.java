@@ -1,22 +1,20 @@
 package model.task.process.LDA;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 import exception.VectorDimensionException;
+import jgibblda.Inferencer;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
 import model.task.process.AbstractProcess;
 import model.task.process.VectorCaracteristicBasedOut;
 import optimize.parameter.Parameter;
-import textModeling.MultiCorpus;
+import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
@@ -25,6 +23,7 @@ import textModeling.wordIndex.WordVector;
 public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut {
 
 	public static enum InferenceLDA_Parameter {
+		K("K"),
 		alpha("Alpha"),
 		beta("Beta");
 
@@ -47,6 +46,7 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 	private Model newModel;
 	//private Model trnModel;
 	
+	private String modelName;
 	private int nbSentence;
 	private double[] theta;
 	private int K;
@@ -56,8 +56,32 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 	public LDA(int id) throws Exception {
 		super(id);
 		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("K", Integer.class);
 		supportADN.put("Alpha", Double.class);
 		supportADN.put("Beta", Double.class);
+	}
+	
+	@Override
+	public AbstractProcess makeCopy() throws Exception {
+		LDA p = new LDA(id);
+		initCopy(p);
+		return p;
+	}
+	
+	@Override
+	public void initADN() throws Exception {
+		super.initADN();
+		int tempK = Integer.parseInt(getModel().getProcessOption(id, InferenceLDA_Parameter.K.getName()));
+		adn.putParameter(new Parameter<Integer>(InferenceLDA_Parameter.K.getName(), tempK));
+		adn.getParameter(Integer.class, InferenceLDA_Parameter.K.getName()).setMaxValue(4*tempK);
+		adn.getParameter(Integer.class, InferenceLDA_Parameter.K.getName()).setMinValue(2);	
+		adn.putParameter(new Parameter<Double>(InferenceLDA_Parameter.alpha.getName(), Double.parseDouble(getModel().getProcessOption(id, InferenceLDA_Parameter.alpha.getName()))));
+		adn.getParameter(Double.class, InferenceLDA_Parameter.alpha.getName()).setMaxValue(1.0);
+		adn.getParameter(Double.class, InferenceLDA_Parameter.alpha.getName()).setMinValue(0.01);	
+		adn.putParameter(new Parameter<Double>(InferenceLDA_Parameter.beta.getName(), Double.parseDouble(getModel().getProcessOption(id, InferenceLDA_Parameter.beta.getName()))));
+		adn.getParameter(Double.class, InferenceLDA_Parameter.beta.getName()).setMaxValue(1.0);
+		adn.getParameter(Double.class, InferenceLDA_Parameter.beta.getName()).setMinValue(0.01);
+	
 	}
 	
 	/**
@@ -65,39 +89,36 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 	 */
 	@Override
 	public void init() throws Exception {
-		adn.putParameter(new Parameter<Double>(InferenceLDA_Parameter.alpha.getName(), Double.parseDouble(getModel().getProcessOption(id, InferenceLDA_Parameter.alpha.getName()))));
-		adn.putParameter(new Parameter<Double>(InferenceLDA_Parameter.beta.getName(), Double.parseDouble(getModel().getProcessOption(id, InferenceLDA_Parameter.beta.getName()))));
-	
 		super.init();
 		
-		writeTempInputFile();
+		//writeTempInputFile();
 		LDACmdOption option = new LDACmdOption();
 		option.est = false;
 		option.estc = false;
 		option.inf = true;
 		option.dir = getModel().getOutputPath()  + File.separator + "modelLDA";
-		option.dfile = "temp.txt.gz";
-		option.niters = 100;
+		option.niters = 400;
 		option.twords = 20;
-		K = (int) Math.round(Math.sqrt(corpusToSummarize.getNbSentence()));
-		option.K = K;
+		option.K = adn.getParameterValue(Integer.class, InferenceLDA_Parameter.K.getName());
 		option.alpha = adn.getParameterValue(Double.class, InferenceLDA_Parameter.alpha.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Alpha"));
 		option.beta = adn.getParameterValue(Double.class, InferenceLDA_Parameter.beta.getName()); //Double.parseDouble(getModel().getProcessOption(id, "Beta"));
-		option.modelName = "LDA_model_"+option.alpha+"_"+option.beta;
-		option.dir = getModel().getOutputPath() + File.separator + "modelLDA";
-		option.dfile = "temp.txt.gz"; //TODO à changer
+		modelName = "LDA_model_"+option.K+"_"+option.alpha+"_"+option.beta;
+		option.modelName = modelName;
+		option.dfile = "tempCorpus" + corpusToSummarize.getiD() + ".gz";
 		
-		MultiCorpus temp = new MultiCorpus(getModel().getCurrentMultiCorpus().getiD());
-		temp.add(getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()));
+		List<Corpus> listCorpus = new ArrayList<Corpus>();
+		for (Corpus c : getCurrentMultiCorpus())
+			//if (c!=corpusToSummarize)
+				listCorpus.add(c);
+		newModel = LearningLDA.ldaModelLearning(modelName, "-all", listCorpus, readStopWords, option.K,  option.alpha, option.beta, getModel().getOutputPath());//inferencer.inference(false);
 		
-		/*if (idMultiCorpusTrnModel == null || idMultiCorpusTrnModel != getModel().getCurrentMultiCorpus().getiD()) {
-			//trnModel = LearningLDA.ldaModelLearning(option.K, option.alpha, option.beta, getModel().getOutputPath(), temp);
-			//trnModel = LearningLDA.ldaModelLearning(option.K, option.alpha, option.beta, getModel().getOutputPath(), getModel().getCurrentMultiCorpus());
-			idMultiCorpusTrnModel = getModel().getCurrentMultiCorpus().getiD();
-		}*/
+		//File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt.gz");
+		//f.delete();
+		
+		//LearningLDA.writeTempInputFile(modelName, String.valueOf(corpusToSummarize.getiD()), Arrays.asList(corpusToSummarize), readStopWords, getModel().getOutputPath());
+		
 		//Inferencer inferencer = new Inferencer(option);
-		
-		newModel = LearningLDA.ldaModelLearning(option.K,  option.alpha, option.beta, getModel().getOutputPath(), temp);//inferencer.inference(false);
+		//newModel = inferencer.inference(false);
 	}
 	
 	/**
@@ -109,8 +130,8 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 	public void process() throws Exception {
 
 		System.gc();
-		File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt");
-		f.delete();		//Suppression de tempInputFile
+		//File f = new File(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp" + modelName + ".gz");
+		//f.delete();		//Suppression de tempInputFile
 		
 		nbSentence = 0;
 		K = newModel.K;
@@ -142,19 +163,12 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 	private void generateDictionary() {
 		//int n = 0; //nbWords;
 		//Construction du dictionnaire
-		Iterator<TextModel> textIt = corpusToSummarize.iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel word = wordIt.next();
-					//TODO ajouter filtre à la place de getmLemma
+		for (TextModel t : corpusToSummarize) {
+			for (SentenceModel s : t) {
+				for (WordModel word : s) {
 					if (!word.isStopWord()) {
 						if(!index.containsKey(word.getmLemma())) {
-							WordVector w = new WordVector(word.getmLemma(), index);
+							WordVector w = new WordVector(word.getmLemma(), index, K);
 							index.put(word.getmLemma(), w, newModel.data.localDict.getID(word.getmLemma()));
 						}
 						index.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
@@ -180,30 +194,6 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 			}
 		}
 	}
-	
-	private void writeTempInputFile() throws IOException {
-		new File(getModel().getOutputPath() + File.separator + "modelLDA").mkdir();
-		
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                new GZIPOutputStream(
-                    new FileOutputStream(getModel().getOutputPath() + File.separator + "modelLDA" + File.separator + "temp.txt.gz")), "UTF-8"));
-
-		Iterator<TextModel> textIt = corpusToSummarize.iterator();
-		while (textIt.hasNext()) {
-			Iterator<SentenceModel> senIt = textIt.next().iterator();
-			while (senIt.hasNext()) {
-				Iterator<WordModel> wordIt = senIt.next().iterator();
-				while (wordIt.hasNext()) {
-					String word = wordIt.next().toString();
-					if (!word.isEmpty()) {
-						writer.write(word + " ");
-					}
-				}
-			}
-			writer.write("\n");
-		}
-		writer.close();   
-	}
 
 	/**
 	 * Ajout des caractéristiques de la phrase comme étant la moyenne des vecteurs de chaque mot la composant
@@ -216,16 +206,11 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 		int i = 0; //sentence variable
 		int l = 1; //optional parameter to configure handicap for long sentences
 
-		Iterator<TextModel> textIt = getModel().getCurrentMultiCorpus().get(getSummarizeCorpusId()).iterator();
-		while (textIt.hasNext()) {
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
+		for (TextModel t : corpusToSummarize) {
+			for (SentenceModel sentenceModel : t) {
 				int n = 0; //length of the sentence
-				while (wordIt.hasNext()) {
-					WordModel word = wordIt.next();
+				//matSentenceTopic[i] = new double[K];
+				for (WordModel word : sentenceModel) {
 					if (!word.isStopWord()) {
 						WordVector wordLDA = (WordVector) index.get(word.getmLemma());
 						for (int k = 0; k<K; k++)
@@ -239,6 +224,14 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 				i++;
 			}
 		}
+	}
+
+	public void setTheta(double[] theta) {
+		this.theta = theta;
+	}
+
+	public void setK(int k) {
+		K = k;
 	}
 
 	@Override

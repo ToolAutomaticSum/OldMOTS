@@ -22,7 +22,7 @@ public class SModel extends Observable {
 	protected int taskID;
 	
 	protected String language;
-	//protected String inputPath;
+
 	protected String outputPath;
 	
 	/**
@@ -34,6 +34,10 @@ public class SModel extends Observable {
 	 */
 	protected List<AbstractProcess> process = new ArrayList<AbstractProcess>();
 	/**
+	 * Matrice des résumés : Dimension = MultiCorpus et ListCorpus à résumer
+	 */
+	//protected Map<Integer, Map<Integer, List<SentenceModel>>> summary = new HashMap<Integer, Map<Integer, List<SentenceModel>>>();
+	/**
 	 * Map des noms des AbstractMethod (Process, PreProcess, PostProcess, ScoringMethod, SummarizeMethod) (utiliser .class à la place ?) et de leurs IDs.
 	 */
 	protected Map<String,Integer> processIDs = new HashMap<String, Integer>();
@@ -41,16 +45,22 @@ public class SModel extends Observable {
 	 * Liste des options associés à chaque AbstractMethod, une Map par AbstractMethod (Map sous la forme String (nom de l'option) String (valeur sous forme de String))
 	 */
 	protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
-	//protected List<String> docNames;
 	/**
 	 * Liste des MultiCorpus sur lesquels appliqués les AbstractProcess
 	 */
 	protected List<MultiCorpus> multiCorpusModels = new ArrayList<MultiCorpus>();
 	/**
-	 * MultiCorpus en cours de résumé
+	 * MultiCorpus en cours de traitement
 	 */
 	protected MultiCorpus currentMultiCorpus;
-	//protected List<String> summary = new ArrayList<String>();
+	/**
+	 * boolean, true if multiThreading
+	 * Multithreading define as one thread for each corpus in the currentMulticorpus
+	 */
+	protected boolean bMultiThreading = false;
+	/**
+	 * boolean, true if ROUGE evaluation
+	 */
 	protected boolean bRougeEvaluation = false;
 	/**
 	 * PostProcess permettant le calcul du score ROUGE
@@ -74,11 +84,9 @@ public class SModel extends Observable {
 			while (preProIt.hasNext()) {
 				AbstractPreProcess p = preProIt.next();
 				p.setModel(this);
-				//p.setCurrentProcess(this);
 				p.init();
 			}
 			
-			//dictionnary.clear();
 			loadMultiCorpusModels();
 			
 			Iterator<MultiCorpus> multiCorpusIt = multiCorpusModels.iterator();
@@ -87,6 +95,7 @@ public class SModel extends Observable {
 				preProIt = preProcess.iterator();
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
+					p.setCurrentMultiCorpus(currentMultiCorpus);
 					p.process();
 				}
 				preProIt = preProcess.iterator();
@@ -105,27 +114,18 @@ public class SModel extends Observable {
 				
 				Iterator<AbstractProcess> proIt = process.iterator();
 				while (proIt.hasNext()) {
+					long time = System.currentTimeMillis();
 					AbstractProcess p = proIt.next();
 					p.setModel(this);
 					p.initCorpusToCompress();
 					p.initADN();
-					for (int i : p.getListCorpusId()) {
-						p.setSummarizeIndex(i);
-						p.init();
-						p.process();
-						p.finish();
-						setChanged();
-						
-						if (p.getSummary().get(currentMultiCorpus.getiD()) != null) {
-							List<SentenceModel> summary = p.getSummary().get(currentMultiCorpus.getiD()).get(p.getSummarizeCorpusId());
-							//Collections.sort(summary);
-							notifyObservers(SentenceModel.listSentenceModelToString(summary));
-						}
-					}
+					runProcess(currentMultiCorpus, p);
+					System.out.println(System.currentTimeMillis() - time);
 				}
 			}
 			if (bRougeEvaluation) {
 				evalRouge.setModel(this);
+				evalRouge.setCurrentMultiCorpus(currentMultiCorpus);
 				evalRouge.init();
 				evalRouge.process();
 				evalRouge.finish();
@@ -138,14 +138,62 @@ public class SModel extends Observable {
 		}
 	}
 	
+	/**
+	 * Instanciation des TextModels dans les corpus
+	 */
 	public void loadMultiCorpusModels() {
-		Iterator<MultiCorpus> multiCorpusIt = multiCorpusModels.iterator();
-		while (multiCorpusIt.hasNext()) {
-			Iterator<Corpus> corpusIt = multiCorpusIt.next().iterator();
-			while (corpusIt.hasNext()) {
-				corpusIt.next().loadDocumentModels();
+		for (MultiCorpus multiC : multiCorpusModels)
+			for (Corpus c : multiC)
+				c.loadDocumentModels();
+	}
+	
+	/**
+	 * Traitement du AbstractProcess p sur le MultiCorpus
+	 * @param multiCorpus
+	 * @param p
+	 * @throws Exception
+	 */
+	public void runProcess(MultiCorpus multiCorpus, AbstractProcess p) throws Exception {
+		if (bMultiThreading) {
+			int nbThreads = p.getListCorpusId().size();
+			
+			AbstractProcess[] threads = new AbstractProcess[nbThreads];
+
+			threads[0] = p;
+			for (int i=0; i<nbThreads; i++) {
+				if (i != 0)
+					threads[i] = p.makeCopy();
+				threads[i].setCurrentMultiCorpus(new MultiCorpus(multiCorpus));
+				threads[i].setModel(this);
+				threads[i].setSummarizeIndex(p.getListCorpusId().get(i));
+				threads[i].initADN();
+			}
+			for (int i=0; i<nbThreads; i++) {
+				threads[i].start();
+			}
+			for (int i=0; i<nbThreads; i++) {
+				threads[i].join();
+			}
+			/*for (int i : p.getListCorpusId()) {
+				setChanged();
+				notifyObservers("Corpus " + i + "\n" + SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i)));
+			}*/
+		}
+		else {
+			for (int i : p.getListCorpusId()) {
+				p.setCurrentMultiCorpus(multiCorpus);
+				p.setSummarizeIndex(i);
+				p.init();
+				p.process();
+				p.finish();
+				setChanged();
+				notifyObservers("Corpus " + i + "\n" + SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i)));
 			}
 		}
+	}
+	
+	public void setModelChanged() {
+		setChanged();
 	}
 	
 	public Controller getCtrl() {
@@ -169,14 +217,6 @@ public class SModel extends Observable {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-
-	/*public Map<String, WordEmbeddings> getDictionnary() {
-		return dictionnary;
-	}
-
-	public void setDictionnary(Map<String, WordEmbeddings> dictionnary) {
-		this.dictionnary = dictionnary;
-	}*/
 
 	public String getProcessOption(int processId, String optionName) throws LacksOfFeatures {
 		if (getProcessOption().get(processId) != null && !getProcessOption().get(processId).isEmpty() && getProcessOption().get(processId).containsKey(optionName)) {
@@ -219,7 +259,6 @@ public class SModel extends Observable {
 	public void clear() {
 		taskID = -1;
 		language = "";
-		//inputPath = "";
 		outputPath = "";
 		
 		process.clear();
@@ -227,7 +266,10 @@ public class SModel extends Observable {
 		processIDs.clear();
 		processOption.clear();
 		multiCorpusModels.clear();
-		//dictionnary.clear();
+	}
+
+	public void setMultiThreading(boolean multiThreading) {
+		this.bMultiThreading = multiThreading;
 	}
 
 	public boolean isbRougeEvaluation() {
@@ -246,14 +288,6 @@ public class SModel extends Observable {
 		this.taskID = taskID;
 	}
 
-	/*public String getInputPath() {
-		return inputPath;
-	}
-
-	public void setInputPath(String inputPath) {
-		this.inputPath = inputPath;
-	}*/
-
 	public String getOutputPath() {
 		return outputPath;
 	}
@@ -261,14 +295,6 @@ public class SModel extends Observable {
 	public void setOutputPath(String outputPath) {
 		this.outputPath = outputPath;
 	}
-
-	/*public List<String> getDocNames() {
-		return docNames;
-	}
-
-	public void setDocNames(List<String> docNames) {
-		this.docNames = docNames;
-	}*/
 
 	public List<AbstractPreProcess> getPreProcess() {
 		return preProcess;
@@ -286,10 +312,6 @@ public class SModel extends Observable {
 		this.multiCorpusModels = multiCorpusModels;
 	}
 
-	public MultiCorpus getCurrentMultiCorpus() {
-		return currentMultiCorpus;
-	}
-
 	public void setCurrentMultiCorpus(MultiCorpus currentMultiCorpus) {
 		this.currentMultiCorpus = currentMultiCorpus;
 	}
@@ -300,5 +322,9 @@ public class SModel extends Observable {
 
 	public void setEvalRouge(EvaluationROUGE evalRouge) {
 		this.evalRouge = evalRouge;
+	}
+
+	public boolean isMultiThreading() {
+		return bMultiThreading;
 	}
 }

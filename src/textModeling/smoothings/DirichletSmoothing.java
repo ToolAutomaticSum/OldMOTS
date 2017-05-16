@@ -1,6 +1,7 @@
 package textModeling.smoothings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 import textModeling.SentenceModel;
@@ -16,14 +17,16 @@ public class DirichletSmoothing extends Smoothing {
 	private int window;
 	private double ngram_total_occs;
 	private double firstSentenceConceptsFactor;
+	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public DirichletSmoothing (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, 
+	public DirichletSmoothing (int window, double delta, int vocab_card, HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences, ArrayList<SentenceModel> sentences, 
 			Index index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts2,
 			double firstSentenceConceptsFactor)
 	{
 		super (sentences, vocab_card, index);
 		this.window = window;
 		this.delta = delta;
+		this.ngrams_in_sentences = ngrams_in_sentences;
 		this.ngram_total_occs = 0.;
 		this.corpusDistrib = corpusDistrib;
 		this.firstSentencesConcepts = firstSentencesConcepts2;
@@ -39,7 +42,7 @@ public class DirichletSmoothing extends Smoothing {
 		for (SentenceModel sent : this.sentences)
 		{
 			//ArrayList <NGram> curr_ngrams_list = sent.getBiGrams(this.index, this.filter);
-			ArrayList <NGram> curr_ngrams_list = sent.getNGrams(this.window, this.index);
+			ArrayList <NGram> curr_ngrams_list = ngrams_in_sentences.get(sent);
 			for (NGram ng : curr_ngrams_list)
 			{
 				/*We filter the sourceDistribution upon every NGram occurrence, so we have to check if this 

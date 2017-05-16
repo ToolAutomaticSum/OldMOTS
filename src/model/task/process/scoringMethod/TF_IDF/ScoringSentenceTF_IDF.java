@@ -3,7 +3,6 @@ package model.task.process.scoringMethod.TF_IDF;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import model.task.process.AbstractProcess;
 import model.task.process.scoringMethod.AbstractScoringMethod;
@@ -43,6 +42,13 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Scor
 	}
 
 	@Override
+	public AbstractScoringMethod makeCopy() throws Exception {
+		ScoringSentenceTF_IDF p = new ScoringSentenceTF_IDF(id);
+		initCopy(p);
+		return p;
+	}
+	
+	@Override
 	public void initADN() throws Exception {
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(ScoringTfIdf_Parameter.TfIdfThreshold.getName(), Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "TfIdfThreshold"))));
 	}
@@ -56,17 +62,10 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Scor
 	@Override
 	public void computeScores() throws Exception {		
 		sentencesScores = new ArrayList<PairSentenceScore>();
-		
-		Iterator<TextModel> textIt = getCurrentProcess().getCorpusToSummarize().iterator();
-		while (textIt.hasNext()) {			
-			TextModel textModel = textIt.next();
-			Iterator<SentenceModel> sentenceIt = textModel.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
+		for (TextModel textModel : getCurrentProcess().getCorpusToSummarize()) {
+			for (SentenceModel sentenceModel : textModel) {
 				double score = 0;
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel word = wordIt.next();
+				for (WordModel word : sentenceModel) {
 					if (!word.isStopWord()) {
 						WordTF_IDF w = (WordTF_IDF) index.get(word.getmLemma());
 						double temp = w.getTfCorpus(currentProcess.getSummarizeCorpusId())*w.getIdf();
@@ -79,7 +78,7 @@ public class ScoringSentenceTF_IDF extends AbstractScoringMethod implements Scor
 			}
 		}
 		Collections.sort(sentencesScores);
-		System.out.println(sentencesScores);
+		//System.out.println(sentencesScores);
 	}
 	
 	@Override

@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import textModeling.WordModel;
 
-public class WordIndex extends ArrayList<WordModel>{
+public class WordIndex extends ArrayList<WordModel> implements Comparable<WordIndex> {
 	/**
 	 * 
 	 */
@@ -82,12 +82,20 @@ public class WordIndex extends ArrayList<WordModel>{
 	}
 	
 	@Override
-	public boolean equals(Object arg0) {
-		return super.equals(arg0);
+	public boolean equals(Object o) {
+		if (o.getClass() != this.getClass())
+			return false;
+		WordIndex wi = (WordIndex) o;
+		return iD == wi.getId() ;
 	}
 	
 	@Override
 	public String toString() {
 		return word;
+	}
+
+	@Override
+	public int compareTo(WordIndex o) {
+		return this.getiD().compareTo(o.getId());
 	}
 }

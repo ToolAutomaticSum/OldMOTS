@@ -1,41 +1,45 @@
 package textModeling;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 import textModeling.wordIndex.WordIndex;
 
-public class SentenceModel extends ArrayList<WordModel> implements Comparable<SentenceModel> {
+public class SentenceModel implements List<WordModel> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4028010227097874686L;
+	private List<WordModel> listWordModel = new ArrayList<WordModel>();
+	
 	protected String sentence;
 	protected int nbMot;
 	protected ArrayList<NGram> listNGram;
-
 	protected int iD;
 	protected double score;
 	protected TextModel text;
 	
-	public SentenceModel() {
-		super();
-	}
-	
 	public SentenceModel(String sen) {
-		super();
 		sentence = sen;
 	}
 	
 	public SentenceModel(String sen, int iD, TextModel text) {
-		super();
 		sentence = sen;
 		this.iD = iD;
 		this.text = text;
+	}
+	
+	public SentenceModel(SentenceModel s) {
+		this.sentence = s.toString();
+		this.iD = s.getiD();
+		this.nbMot = s.getNbMot();
+		for (WordModel w : s) {
+			WordModel word = new WordModel(w);
+			word.setSentence(this);
+			listWordModel.add(word);
+		}
 	}
 
 	/**
@@ -96,15 +100,10 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 			str += it.next().toString() + "\n";
 		return str;
 	}
-
+	
 	@Override
-	public int compareTo(SentenceModel arg0) {
-		if (this.getiD() > arg0.getiD())
-			return 1;
-		else if (this.getiD() < arg0.getiD())
-			return -1;
-		else
-			return 0;
+	public int hashCode() {
+		return (text.getParentCorpus().getiD() + "_" + iD).hashCode();
 	}
 
 	public double getScore() {
@@ -210,9 +209,119 @@ public class SentenceModel extends ArrayList<WordModel> implements Comparable<Se
 	public void setNbMot(int nbMot) {
 		this.nbMot = nbMot;
 	}
-	
+
+	@Override
+	public boolean add(WordModel e) {
+		return listWordModel.add(e);
+	}
+
+	@Override
+	public void add(int index, WordModel element) {
+		listWordModel.add(index, element);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends WordModel> c) {
+		return listWordModel.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends WordModel> c) {
+		return listWordModel.addAll(index, c);
+	}
+
+	@Override
+	public void clear() {
+		listWordModel.clear();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return listWordModel.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return listWordModel.containsAll(c);
+	}
+
+	@Override
+	public WordModel get(int index) {
+		return listWordModel.get(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return listWordModel.indexOf(o);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return listWordModel.isEmpty();
+	}
+
+	@Override
+	public Iterator<WordModel> iterator() {
+		return listWordModel.iterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return listWordModel.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<WordModel> listIterator() {
+		return listWordModel.listIterator();
+	}
+
+	@Override
+	public ListIterator<WordModel> listIterator(int index) {
+		return listWordModel.listIterator(index);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		return listWordModel.remove(o);
+	}
+
+	@Override
+	public WordModel remove(int index) {
+		return listWordModel.remove(index);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return listWordModel.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return listWordModel.retainAll(c);
+	}
+
+	@Override
+	public WordModel set(int index, WordModel element) {
+		return listWordModel.set(index, element);
+	}
+
 	@Override
 	public int size() {
-		return super.size();
+		return listWordModel.size();
+	}
+
+	@Override
+	public List<WordModel> subList(int fromIndex, int toIndex) {
+		return listWordModel.subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return listWordModel.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return listWordModel.toArray(a);
 	}
 }
