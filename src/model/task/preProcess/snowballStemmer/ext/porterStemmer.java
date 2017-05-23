@@ -12,6 +12,7 @@ import model.task.preProcess.snowballStemmer.SnowballStemmer;
 
 public class porterStemmer extends SnowballStemmer {
 
+@SuppressWarnings("unused")
 private static final long serialVersionUID = 1L;
 
         private final static porterStemmer methodObject = new porterStemmer ();
@@ -108,6 +109,7 @@ private static final long serialVersionUID = 1L;
         private int I_p2;
         private int I_p1;
 
+				@SuppressWarnings("unused")
                 private void copy_from(porterStemmer other) {
                     B_Y_found = other.B_Y_found;
                     I_p2 = other.I_p2;
@@ -610,7 +612,8 @@ private static final long serialVersionUID = 1L;
                     return true;
                 }
 
-                public boolean stem() {
+                @SuppressWarnings("unused")
+				public boolean stem() {
             int v_1;
             int v_2;
             int v_3;

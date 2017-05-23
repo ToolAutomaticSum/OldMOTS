@@ -62,7 +62,7 @@ public class AlgoGenetique extends Optimize {
 		this.optimize = opti;
 		supportPopulationADN = opti.getSupportADN();
 		
-		writer = new Writer("resultGenetique"+ optimize.getClass() +".txt");
+		writer = new Writer("resultGenetique"+ optimize.getClass().getSimpleName() +".txt");
 	}
 	
 	@Override
@@ -76,7 +76,6 @@ public class AlgoGenetique extends Optimize {
 		try {
 			optimize.initOptimize();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		writer.open();

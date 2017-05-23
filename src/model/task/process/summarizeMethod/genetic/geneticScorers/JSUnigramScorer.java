@@ -51,7 +51,7 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 			current_cti = (WordTF_IDF) indexKey;
 			current_idf = current_cti.getIdf();
 			
-			current_occ = current_cti.size();
+			current_occ = current_cti.getNbOccurence();
 			if (current_idf != 0)
 			{
 				this.nbWordsInSource += current_occ;

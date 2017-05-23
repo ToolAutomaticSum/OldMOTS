@@ -31,7 +31,7 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 		for (TextModel doc : this.cd)
 		{
 			TreeSet <NGram> curr_doc_nGram = new TreeSet <NGram>();
-			TreeSet<NGram> fsc_set = new TreeSet<NGram> ();
+			//TreeSet<NGram> fsc_set = new TreeSet<NGram> ();
 			for (SentenceModel p : doc)
 			{
 				TreeSet <NGram> curr_phrase_ngram_list = new TreeSet <NGram> (p.getNGrams(this.window, this.index));

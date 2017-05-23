@@ -1,15 +1,15 @@
 package textModeling.wordIndex;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-public class Index extends HashMap<Integer, WordIndex> {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4164985351782026778L;
+public class Index<T extends WordIndex> implements Map<Integer, T> {
 	
-	private HashMap<String, Integer> hashMapIndex = new HashMap<String, Integer>();
+	//private final Class<T> classT;
+	private HashMap<Integer, T> mapWord = new HashMap<Integer, T>();
+	private HashMap<String, Integer> mapIndex = new HashMap<String, Integer>();
 	private int nbDoc;
 	
 	/** TODO Non utilis�, utile ?
@@ -17,14 +17,20 @@ public class Index extends HashMap<Integer, WordIndex> {
 	 */
 	private HashMap<Integer, Integer> corpusNbDoc = new HashMap<Integer, Integer>();
 	
-	public Index() {
+	public Index(/*Class<T> classT*/) {
 		super();
+		//this.classT = classT;
 	}
 
-	public Index(int nbDoc) {
+	public Index(/*Class<T> classT,*/ int nbDoc) {
 		super();
+		//this.classT = classT;
 		this.nbDoc = nbDoc;
 	}
+
+	/*public Class<T> getClassT() {
+		return classT;
+	}*/
 
 	public int getNbDocument() {
 		return nbDoc;
@@ -43,42 +49,45 @@ public class Index extends HashMap<Integer, WordIndex> {
 	}
 	
 	@Override
-	public WordIndex put(Integer key, WordIndex value) {
-		int iD = hashMapIndex.size();
+	public T put(Integer key, T value) {
+		int iD = mapIndex.size();
 		value.setId(iD);
-		hashMapIndex.put(value.getWord(), iD);
-		return super.put(iD, value);
+		mapIndex.put(value.getWord(), iD);
+		return mapWord.put(iD, value);
 	}
 	
-	public WordIndex put(String key, WordIndex value) {
-		int iD = hashMapIndex.size();
+	public T put(String key, T value) {
+		int iD = mapIndex.size();
 		value.setId(iD);
-		hashMapIndex.put(key, iD);
-		return super.put(iD, value);
+		mapIndex.put(key, iD);
+		return mapWord.put(iD, value);
 	}
 
-	public WordIndex put(String key, WordIndex value, int iD) {
+	public T put(String key, T value, int iD) {
 		value.setId(iD);
-		hashMapIndex.put(key, iD);
-		return super.put(iD, value);
+		mapIndex.put(key, iD);
+		return mapWord.put(iD, value);
 	}
 	
 	public Integer getKeyId(String key) {
-		return hashMapIndex.get(key);
-	}
-	
-	public WordIndex get(String key) {
-		return super.get(hashMapIndex.get(key));
-	}
-	
-	public boolean containsKey(String key) {
-		return hashMapIndex.containsKey(key);
+		return mapIndex.get(key);
 	}
 	
 	@Override
-	public WordIndex remove(Object key) {
+	public T get(Object key) {
+		if (key.getClass() != String.class)
+			throw new IncompatibleClassChangeError("key need to be a string when accessing word in the index.");
+		return mapWord.get(mapIndex.get((String)key));
+	}
+	
+	public boolean containsKey(String key) {
+		return mapIndex.containsKey(key);
+	}
+	
+	@Override
+	public T remove(Object key) {
 		System.out.println("Remove !!");
-		return super.remove(key);
+		return mapWord.remove(key);
 	}
 	
 	@Override
@@ -88,9 +97,52 @@ public class Index extends HashMap<Integer, WordIndex> {
 	
 	@Override
 	public void clear() {
-		hashMapIndex.clear();
-		super.clear();
+		mapIndex.clear();
+		mapWord.clear();
 		nbDoc = 0;
 		corpusNbDoc.clear();
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+		return mapWord.containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		return mapWord.containsValue(value);
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<Integer, T>> entrySet() {
+		return mapWord.entrySet();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return mapWord.isEmpty();
+	}
+
+	@Override
+	public Set<Integer> keySet() {
+		return mapWord.keySet();
+	}
+
+	@Override
+	public void putAll(Map<? extends Integer, ? extends T> m) {
+		for (Integer i : m.keySet()) {
+			mapWord.put(i, m.get(i));
+			mapIndex.put(m.get(i).getWord(), i);
+		}
+	}
+
+	@Override
+	public int size() {
+		return mapWord.size();
+	}
+
+	@Override
+	public Collection<T> values() {
+		return mapWord.values();
 	}
 }

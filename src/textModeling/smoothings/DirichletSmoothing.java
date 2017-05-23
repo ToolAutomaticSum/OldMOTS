@@ -14,7 +14,7 @@ public class DirichletSmoothing extends Smoothing {
 	private TreeMap <NGram, Double> corpusDistrib;
 	private TreeMap <NGram, Integer> firstSentencesConcepts;
 	private double delta;
-	private int window;
+	//private int window;
 	private double ngram_total_occs;
 	private double firstSentenceConceptsFactor;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
@@ -24,7 +24,7 @@ public class DirichletSmoothing extends Smoothing {
 			double firstSentenceConceptsFactor)
 	{
 		super (sentences, vocab_card, index);
-		this.window = window;
+		//this.window = window;
 		this.delta = delta;
 		this.ngrams_in_sentences = ngrams_in_sentences;
 		this.ngram_total_occs = 0.;

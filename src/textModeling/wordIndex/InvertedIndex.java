@@ -16,7 +16,7 @@ public class InvertedIndex {
 		return this.corpusWordIndex;
 	}
 	
-	public InvertedIndex (Index dico)
+	public InvertedIndex (Index<WordIndex> dico)
 	{
 		ArrayList<WordIndex> currWordList;
 		this.corpusWordIndex = new HashMap <Integer, ArrayList<WordIndex>>();

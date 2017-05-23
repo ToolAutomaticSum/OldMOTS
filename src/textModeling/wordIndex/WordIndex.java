@@ -1,18 +1,19 @@
 package textModeling.wordIndex;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import textModeling.WordModel;
-
-public class WordIndex extends ArrayList<WordModel> implements Comparable<WordIndex> {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6192277237881669695L;
+/**
+ * change extends to list instead of arraylist ?
+ * voir pour ajouter <T>
+ * @author valnyz
+ *
+ */
+public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<WordIndex> {
+	
 	private String word;
 	private Integer iD;
-	protected Index index;
+	private int nbOccurence = 0;
+	protected Index<?> index;
 	
 	/**
 	 * Tf et Idf par documents : Key = idCorpus
@@ -32,7 +33,7 @@ public class WordIndex extends ArrayList<WordModel> implements Comparable<WordIn
 		return corpusOccurences;
 	}
 
-	public WordIndex(String word, Index index) {
+	public WordIndex(String word, Index<?> index) {
 		super();
 		this.word = word;
 		this.index = index;
@@ -54,15 +55,16 @@ public class WordIndex extends ArrayList<WordModel> implements Comparable<WordIn
 		this.iD = iD;
 	}
 
-	public Index getDictionnary() {
+	public Index<?> getDictionnary() {
 		return index;
 	}
 
-	public void setDictionnary(Index dictionnary) {
+	public void setDictionnary(Index<?> dictionnary) {
 		this.index = dictionnary;
 	}
 	
 	public void addDocumentOccurence(int idCorpus, int idDoc) {
+		nbOccurence++;
 		if (!corpusOccurences.containsKey(idCorpus))
 			corpusOccurences.put(idCorpus, 1);
 		else
@@ -79,6 +81,10 @@ public class WordIndex extends ArrayList<WordModel> implements Comparable<WordIn
 	
 	public double getTfCorpus(int idCorpus) {
 		return (double)corpusOccurences.get(idCorpus);
+	}
+	
+	public int getNbOccurence() {
+		return nbOccurence;
 	}
 	
 	@Override

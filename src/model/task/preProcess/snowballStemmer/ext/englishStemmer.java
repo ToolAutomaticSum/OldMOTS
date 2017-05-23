@@ -12,6 +12,7 @@ import model.task.preProcess.snowballStemmer.SnowballStemmer;
 
 public class englishStemmer extends SnowballStemmer {
 
+@SuppressWarnings("unused")
 private static final long serialVersionUID = 1L;
 
         private final static englishStemmer methodObject = new englishStemmer ();
@@ -169,6 +170,7 @@ private static final long serialVersionUID = 1L;
         private int I_p2;
         private int I_p1;
 
+        		@SuppressWarnings("unused")
                 private void copy_from(englishStemmer other) {
                     B_Y_found = other.B_Y_found;
                     I_p2 = other.I_p2;
@@ -176,7 +178,8 @@ private static final long serialVersionUID = 1L;
                     super.copy_from(other);
                 }
 
-                private boolean r_prelude() {
+                @SuppressWarnings("unused")
+				private boolean r_prelude() {
             int v_1;
             int v_2;
             int v_3;

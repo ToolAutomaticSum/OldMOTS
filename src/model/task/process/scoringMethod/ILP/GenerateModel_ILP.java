@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import model.task.process.ILP.BiGram_ILP.BiGramILP_Parameter;
+import model.task.process.old.ILP.BiGram_ILP.BiGramILP_Parameter;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import optimize.SupportADNException;
 import textModeling.SentenceModel;
@@ -29,7 +29,7 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 	/**
 	 * BiGramListBasedIn
 	 */
-	private ArrayList<NGram> bigrams; 
+	//private ArrayList<NGram> bigrams; 
 	//Give an id to each NGram
 	private TreeMap <NGram, Integer> bigrams_ids;
 	
@@ -65,7 +65,7 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 		writeModelToTmpFile();
 		bigram_weights = null;
 		bigrams_in_sentence = null;
-		bigrams = null; 
+		//bigrams = null; 
 	}
 	
 	public void buildModel()
@@ -185,10 +185,10 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 		this.bigrams_in_sentence = bigrams_in_sentence;
 	}
 
-	@Override
+	/*@Override
 	public void setBiGrams(ArrayList<NGram> bigrams) {
 		this.bigrams = bigrams;		
-	}
+	}*/
 
 	@Override
 	public String getFileModel() {

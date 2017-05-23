@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import model.task.process.summarizeMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
-import textModeling.TextModel;
 import textModeling.smoothings.DirichletUniqueProbSmoothing;
 import textModeling.smoothings.Smoothing;
 import textModeling.wordIndex.Index;

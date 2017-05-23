@@ -13,6 +13,7 @@ import model.task.preProcess.snowballStemmer.SnowballStemmer;
 
 public class finnishStemmer extends SnowballStemmer {
 
+@SuppressWarnings("unused")
 private static final long serialVersionUID = 1L;
 
         private final static finnishStemmer methodObject = new finnishStemmer ();
@@ -148,6 +149,7 @@ private static final long serialVersionUID = 1L;
         private int I_p2;
         private int I_p1;
 
+        		@SuppressWarnings("unused")
                 private void copy_from(finnishStemmer other) {
                     B_ending_removed = other.B_ending_removed;
                     S_x = other.S_x;
@@ -415,6 +417,7 @@ private static final long serialVersionUID = 1L;
                     return true;
                 }
 
+        		@SuppressWarnings("unused")
                 private boolean r_VI() {
                     // (, line 93
                     // literal, line 93

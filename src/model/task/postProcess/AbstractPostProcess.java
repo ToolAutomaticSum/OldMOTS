@@ -1,6 +1,5 @@
 package model.task.postProcess;
 
-import model.SModel;
 import model.task.AbstractTaskModel;
 import model.task.process.AbstractProcess;
 import optimize.Individu;

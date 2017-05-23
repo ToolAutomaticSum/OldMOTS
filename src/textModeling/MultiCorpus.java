@@ -6,14 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import model.SModel;
+import model.SummarizeModel;
 
 public class MultiCorpus implements List<Corpus> {
 
 	private List<Corpus> listCorpus = new ArrayList<Corpus>();
 
 	protected int iD;
-	protected SModel model;
+	protected SummarizeModel model;
 
 	public MultiCorpus(int iD) {
 		this.iD = iD;
@@ -25,11 +25,11 @@ public class MultiCorpus implements List<Corpus> {
 			listCorpus.add(new Corpus(c));
 	}
 
-	public SModel getModel() {
+	public SummarizeModel getModel() {
 		return model;
 	}
 
-	public void setModel(SModel model) {
+	public void setModel(SummarizeModel model) {
 		this.model = model;
 	}
 

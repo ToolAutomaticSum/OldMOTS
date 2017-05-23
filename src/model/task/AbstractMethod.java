@@ -1,12 +1,12 @@
 package model.task;
 
-import model.SModel;
+import model.AbstractModel;
 import textModeling.MultiCorpus;
 
 public abstract class AbstractMethod {
 
 	protected int id;
-	protected SModel model;
+	protected AbstractModel model;
 	protected MultiCorpus currentMultiCorpus;
 
 	public AbstractMethod(int id) {
@@ -22,11 +22,11 @@ public abstract class AbstractMethod {
 		this.id = id;
 	}
 	
-	public SModel getModel() {
+	public AbstractModel getModel() {
 		return model;
 	}
 
-	public void setModel(SModel model) {
+	public void setModel(AbstractModel model) {
 		this.model = model;
 	}
 

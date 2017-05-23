@@ -114,7 +114,7 @@ public class SentenceModel implements List<WordModel> {
 		this.score = score;
 	}
 	
-	private void getListNGrams(int n, Index index) {
+	private void getListNGrams(int n, Index<WordIndex> index) {
 		ArrayList <NGram> ngrams_list = new ArrayList<NGram> () ;
 		WordModel u;
 		
@@ -168,7 +168,7 @@ public class SentenceModel implements List<WordModel> {
 		
 	}
 
-	public ArrayList<NGram> getNGrams(int n, Index index) {
+	public ArrayList<NGram> getNGrams(int n, Index<WordIndex> index) {
 		if(listNGram == null)
 			getListNGrams(n, index);
 		return listNGram;

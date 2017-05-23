@@ -56,10 +56,10 @@ public class CosineScorer extends GeneticIndividualScorer{
 		catch (NullPointerException e) {
 			System.err.println(e + " : " + uIndexKey);
 		}
-		if (giIndexKeys.size()==0) {
-			int i = 0;
-			i++;
-		}
+		//if (giIndexKeys.size()==0) {
+			//int i = 0;
+			//i++;
+		//}
 	}
 	
 	public double cosineSimilarity (ArrayList<WordIndex> giIndexKeys, HashMap<Integer, Double> giFrequencies, ArrayList<WordIndex> clustIndexKeys)

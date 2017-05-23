@@ -12,6 +12,7 @@ import model.task.preProcess.snowballStemmer.SnowballStemmer;
 
 public class danishStemmer extends SnowballStemmer {
 
+@SuppressWarnings("unused")
 private static final long serialVersionUID = 1L;
 
         private final static danishStemmer methodObject = new danishStemmer ();
@@ -74,6 +75,7 @@ private static final long serialVersionUID = 1L;
         private int I_p1;
         private java.lang.StringBuilder S_ch = new java.lang.StringBuilder();
 
+        		@SuppressWarnings("unused")
                 private void copy_from(danishStemmer other) {
                     I_x = other.I_x;
                     I_p1 = other.I_p1;

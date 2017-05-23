@@ -12,6 +12,7 @@ import model.task.preProcess.snowballStemmer.SnowballStemmer;
 
 public class turkishStemmer extends SnowballStemmer {
 
+@SuppressWarnings("unused")
 private static final long serialVersionUID = 1L;
 
         private final static turkishStemmer methodObject = new turkishStemmer ();
@@ -227,6 +228,7 @@ private static final long serialVersionUID = 1L;
         private boolean B_continue_stemming_noun_suffixes;
         private int I_strlen;
 
+				@SuppressWarnings("unused")
                 private void copy_from(turkishStemmer other) {
                     B_continue_stemming_noun_suffixes = other.B_continue_stemming_noun_suffixes;
                     I_strlen = other.I_strlen;

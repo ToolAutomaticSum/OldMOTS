@@ -20,7 +20,7 @@ public class JSInterpolation extends GeneticIndividualScorer{
 	private TreeMap <NGram, Integer> sourceOccurences;
 	private int nbBiGramsInSource;
 	private Smoothing smoothing;
-	private Smoothing smoothingSource;
+	//private Smoothing smoothingSource;
 	
 	public JSInterpolation(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, invertedIndex, index, null, delta, null, null, null);
@@ -36,7 +36,7 @@ public class JSInterpolation extends GeneticIndividualScorer{
 		this.sourceDistribution = new TreeMap <NGram, Double>();
 		this.sourceOccurences = new TreeMap <NGram, Integer> ();
 		this.nbBiGramsInSource = 0;
-		int curr_occ;
+		//int curr_occ;
 		for (TextModel doc : this.cd)
 		{
 			for (SentenceModel p : doc)
@@ -67,8 +67,8 @@ public class JSInterpolation extends GeneticIndividualScorer{
 	private double jensenShanonDivergence (GeneticIndividual gi, TreeMap<NGram, Double> summDistrib, int summNbTokens)
 	{
 		double divergence = 0;
-		Double dProbSumm;
-		double divider, divider1 = summNbTokens + this.delta;//divider1 = summNbTokens + this.delta * 1.5 * this.sourceDistribution.size();
+		//Double dProbSumm;
+		double divider = summNbTokens + this.delta;//divider1 = summNbTokens + this.delta * 1.5 * this.sourceDistribution.size();
 		double probSumm;
 		double probSource;
 		double log2 = Math.log(2);
@@ -111,7 +111,7 @@ public class JSInterpolation extends GeneticIndividualScorer{
 		alphas.add(0.001999);
 		
 		this.smoothing = new Interpolation (2, alphas, gi.getGenes(), this.index );
-		this.smoothingSource = new Interpolation (2, alphas, this.ss, this.index );
+		//this.smoothingSource = new Interpolation (2, alphas, this.ss, this.index );
 	
 		double jsd = this.jensenShanonDivergence (gi, summDistrib, this.smoothing.getSummNbTokens());
 		

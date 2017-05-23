@@ -124,6 +124,24 @@ public class CommandView extends AbstractView {
 				        	
 				        	getCtrl().notifyProcessChanged(process.getAttribute("NAME"));
 				        	
+				        	NodeList indexBuilderList = process.getElementsByTagName("INDEX_BUILDER");
+				        	for (int k=0;k<indexBuilderList.getLength();k++) {
+				        		if(indexBuilderList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+						        	Element indexBuilder = (Element) process.getElementsByTagName("INDEX_BUILDER").item(k);
+						        	getCtrl().notifyProcessOptionChanged(getProcessOptionMap(indexBuilder));
+						        	getCtrl().notifyIndexBuilderChanged(process.getAttribute("NAME"), indexBuilder.getAttribute("NAME"));
+				        		}
+				        	}
+				        	
+				        	NodeList caracBuilderList = process.getElementsByTagName("CARACTERISTIC_BUILDER");
+				        	for (int k=0;k<caracBuilderList.getLength();k++) {
+				        		if(caracBuilderList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+						        	Element caracBuilder = (Element) process.getElementsByTagName("CARACTERISTIC_BUILDER").item(k);
+						        	getCtrl().notifyProcessOptionChanged(getProcessOptionMap(caracBuilder));
+						        	getCtrl().notifyCaracteristicBuilderChanged(process.getAttribute("NAME"), caracBuilder.getAttribute("NAME"));
+				        		}
+				        	}
+				        	
 				        	NodeList scoringMethodList = process.getElementsByTagName("SCORING_METHOD");
 				        	for (int k=0;k<scoringMethodList.getLength();k++) {
 				        		if(scoringMethodList.item(k).getNodeType() == Node.ELEMENT_NODE) {
@@ -136,7 +154,7 @@ public class CommandView extends AbstractView {
 				        	Element summarizeMethod = (Element) process.getElementsByTagName("SUMMARIZE_METHOD").item(0);
 				        	if (summarizeMethod != null) {
 				        		getCtrl().notifyProcessOptionChanged(getProcessOptionMap(summarizeMethod));
-				        		getCtrl().notifySummarizeMethodChanged(process.getAttribute("NAME"), summarizeMethod.getAttribute("NAME"));
+				        		getCtrl().notifySelectionMethodChanged(process.getAttribute("NAME"), summarizeMethod.getAttribute("NAME"));
 				        	}
 				        	
 				        	NodeList postProcessList = process.getElementsByTagName("POSTPROCESS");

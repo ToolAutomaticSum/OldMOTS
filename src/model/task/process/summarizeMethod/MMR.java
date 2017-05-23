@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import model.task.process.VectorCaracteristicBasedIn;
+import model.task.process.old.VectorCaracteristicBasedIn;
+import model.task.process.tempScoringMethod.ScoreBasedIn;
 import optimize.SupportADNException;
-import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
@@ -103,11 +103,11 @@ public class MMR extends AbstractSummarizeMethod implements VectorCaracteristicB
 		this.summary = new ArrayList<SentenceModel> ();
 		this.actualSummaryLength = 0;
 		
-		int cnt = 0;
+		//int cnt = 0;
 		while (this.selectNextSentence())
 		{
 			//System.out.println("Iteration " + cnt + " : " + this.sentencesBaseScores.size());
-			cnt ++;
+			//cnt ++;
 		}
 		
 		return this.summary;

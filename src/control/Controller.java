@@ -6,25 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import model.SModel;
+import model.AbstractModel;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.postProcess.EvaluationROUGE;
 import model.task.preProcess.AbstractPreProcess;
-import model.task.process.AbstractProcess;
-import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.summarizeMethod.AbstractSummarizeMethod;
 import optimize.SupportADNException;
 import textModeling.Corpus;
 import textModeling.MultiCorpus;
 import view.AbstractView;
 
-public class Controller {
+public abstract class Controller {
 
-	private final SModel model;
+	private final AbstractModel model;
     private final AbstractView view;
 
 	//private int taskID;
-	private int processID = 0;
+	protected static int processID = 0;
 	protected String language;
 	protected String inputDir;
 	protected List<Corpus> corpusList = new ArrayList<Corpus>();
@@ -35,11 +32,12 @@ public class Controller {
 	protected List<String> postProcess = new ArrayList<String>();
 	protected EvaluationROUGE evalRouge;
 	protected MultiCorpus currentMultiCorpus;
+	//protected boolean summarize;
 	/*protected boolean bRougeEvaluation = false;
     protected String modelRoot;
     protected String peerRoot;*/
     
-    public Controller(SModel model, AbstractView view) {
+    public Controller(AbstractModel model, AbstractView view) {
         this.model = model;
         this.view = view;
         model.setCtrl(this);
@@ -60,7 +58,7 @@ public class Controller {
 		model.run();
 	}
 
-	private  Object dynamicConstructor(String className) {
+	protected Object dynamicConstructor(String className) {
 		Class<?> cl;
 		try {
 			cl = Class.forName("model.task." + className);
@@ -142,30 +140,24 @@ public class Controller {
     	getModel().getPreProcess().add((AbstractPreProcess) o);
     }
     
-    public void notifyProcessChanged(String processName) {
-    	getModel().getProcessIDs().put(processName, processID);
-    	Object o = dynamicConstructor("process." + processName);
-		getModel().getProcess().add((AbstractProcess) o);
-    }
+    public abstract void notifyProcessChanged(String processName);
     
     public void notifyProcessOptionChanged(Map<String, String> processOption) {
     	this.processOption.add(processOption);
 		getModel().setProcessOption(this.processOption);
     }
+
+    public abstract void notifyIndexBuilderChanged(String processName, String indexBuilder);
+
+    public abstract void notifyCaracteristicBuilderChanged(String processName, String summarizeMethod);
     
-    public void notifyScoringMethodChanged(String processName, String scoringMethod) {
-    	Object o = dynamicConstructor("process.scoringMethod." + scoringMethod);
-    	getModel().getProcessByID(getModel().getProcessIDs().get(processName)).setScoringMethod((AbstractScoringMethod)o);
-    }
+    public abstract void notifyScoringMethodChanged(String processName, String scoringMethod);
     
-    public void notifySummarizeMethodChanged(String processName, String summarizeMethod) {
-    	Object o = dynamicConstructor("process.summarizeMethod." + summarizeMethod);
-    	getModel().getProcessByID(getModel().getProcessIDs().get(processName)).setSentenceSelection((AbstractSummarizeMethod)o);
-    }
+    public abstract void notifySelectionMethodChanged(String processName, String summarizeMethod);
     
     public void notifyPostProcessChanged(String processName, String postProcessName) {
     	Object o = dynamicConstructor("postProcess." + postProcessName);
-    	getModel().getProcessByID(getModel().getProcessIDs().get(processName)).getPostProcess().add((AbstractPostProcess) o);
+    	getModel().getPostProcess().add((AbstractPostProcess) o);
     }
     
     public void notifyRougeEvaluationChanged(boolean bRougeEvaluation) throws SupportADNException {
@@ -245,7 +237,7 @@ public class Controller {
 		this.postProcess = postProcess;
 	}
 
-	public SModel getModel() {
+	public AbstractModel getModel() {
 		return model;
 	}
 

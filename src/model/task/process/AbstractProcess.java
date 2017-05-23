@@ -9,22 +9,24 @@ import java.util.Map;
 import java.util.Set;
 
 import exception.LacksOfFeatures;
-import model.SModel;
+import model.AbstractModel;
 import model.task.AbstractTaskModel;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.preProcess.GenerateTextModel;
-import model.task.process.ILP.BiGramListBasedOut;
-import model.task.process.LDA.LdaBasedOut;
+import model.task.process.old.VectorCaracteristicBasedIn;
+import model.task.process.old.VectorCaracteristicBasedOut;
+import model.task.process.old.ILP.BiGramListBasedOut;
+import model.task.process.old.LDA.LdaBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.scoringMethod.ScoreBasedOut;
 import model.task.process.scoringMethod.ILP.BiGramListBasedIn;
 import model.task.process.scoringMethod.ILP.FileModelBasedOut;
 import model.task.process.scoringMethod.LDA.LdaBasedIn;
 import model.task.process.scoringMethod.LDA.TopicLdaBasedOut;
 import model.task.process.summarizeMethod.AbstractSummarizeMethod;
 import model.task.process.summarizeMethod.FileModelBasedIn;
-import model.task.process.summarizeMethod.ScoreBasedIn;
 import model.task.process.summarizeMethod.TopicLdaBasedIn;
+import model.task.process.tempScoringMethod.ScoreBasedIn;
+import model.task.process.tempScoringMethod.ScoreBasedOut;
 import optimize.Optimize;
 import optimize.SupportADNException;
 import optimize.parameter.ADN;
@@ -111,7 +113,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	}
 	
 	public void start() {
-		System.out.println("Starting " +  this.getClass() + " " + getSummarizeCorpusId());
+		System.out.println("Starting " +  this.getClass().getSimpleName() + " " + getSummarizeCorpusId());
 		t = new Thread (this, this.getClass() + " " + getSummarizeCorpusId());
 		t.start();
    }
@@ -200,7 +202,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		if (classProcess.contains(BiGramListBasedOut.class) && classScoring.contains(BiGramListBasedIn.class)) {
 			((BiGramListBasedIn)scoringMethod).setBiGramsIds(((BiGramListBasedOut)this).getBiGramsIds());
 			((BiGramListBasedIn)scoringMethod).setBiGramsInSentence(((BiGramListBasedOut)this).getBiGramsInSentence());
-			((BiGramListBasedIn)scoringMethod).setBiGrams(((BiGramListBasedOut)this).getBiGrams());
+			//((BiGramListBasedIn)scoringMethod).setBiGrams(((BiGramListBasedOut)this).getBiGrams());
 			((BiGramListBasedIn)scoringMethod).setBiGramWeights(((BiGramListBasedOut)this).getBiGramWeights());
 		}
 	}
@@ -400,7 +402,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	}
 	
 	@Override
-	public void setModel(SModel model) {
+	public void setModel(AbstractModel model) {
 		super.setModel(model);
 		if (scoringMethod != null)
 			scoringMethod.setModel(model);

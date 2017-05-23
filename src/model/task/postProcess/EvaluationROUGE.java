@@ -23,6 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import exception.LacksOfFeatures;
+import model.task.process.tempProcess.SummarizeProcess;
 import optimize.SupportADNException;
 import reader_writer.Reader;
 import reader_writer.Writer;
@@ -30,7 +31,7 @@ import tools.OSDetector;
 import tools.Tools;
 
 public class EvaluationROUGE extends AbstractPostProcess {
-
+	
 	private String rougePath = "";
 	private List<String> rougeMeasure = new ArrayList<String>();
 	protected String modelRoot;
@@ -58,7 +59,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	boolean modelWrite = false;
     	// boucle sur les process (1 résumé par process par execution)
 		for (int i = 0; i<getModel().getProcess().size(); i++) {
-			if (getModel().getProcess().get(i).getSummary() != null) {
+			if (((SummarizeProcess)getModel().getProcess().get(i)).getSummary() != null) {
 				// boucle sur les multiCorpus, 1 execution de process par multicorpus
 				for (int j = 0; j<getModel().getMultiCorpusModels().size();j++) {
 					// boucle sur les corpus à résumer
@@ -114,14 +115,14 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	}
 	
 	private void writeHtmlGeneratedSummary(int processID, int multiCorpusId, int corpusId) {
-		if (getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId) != null) {
+		if (((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId) != null) {
 			Writer w = new Writer(getModel().getOutputPath() + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + processID + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
-			for (int j = 0; j<getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId).size(); j++) {
+			for (int j = 0; j<((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId).size(); j++) {
 				w.write("<a name=\""+ String.valueOf(j) + "\">[" + String.valueOf(j) + "]</a> <a href=\"#" + String.valueOf(j) + 
-						"\" id=" + String.valueOf(j) + ">" + getModel().getProcess().get(processID).getSummary().get(multiCorpusId).get(corpusId).get(j).toString() + "</a>\n");
+						"\" id=" + String.valueOf(j) + ">" +  ((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId).get(j).toString() + "</a>\n");
 			}
 			w.write("</body>\n</html>");
 			w.close();

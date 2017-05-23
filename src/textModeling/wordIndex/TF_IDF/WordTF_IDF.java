@@ -7,18 +7,13 @@ import textModeling.wordIndex.WordIndex;
 
 public class WordTF_IDF extends WordIndex {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2186642315849071658L;
-
 	protected int nbDocumentWithWordSeen;
 	
-	public WordTF_IDF(String word, Index dictionnary) {
+	public WordTF_IDF(String word, Index<WordTF_IDF> dictionnary) {
 		super(word, dictionnary);
 	}
 
-	public WordTF_IDF(String word, Index dictionnary, int nbDocumentWithWordSeen) {
+	public WordTF_IDF(String word, Index<WordTF_IDF> dictionnary, int nbDocumentWithWordSeen) {
 		super(word, dictionnary);
 		this.nbDocumentWithWordSeen = nbDocumentWithWordSeen;
 	}
@@ -35,7 +30,7 @@ public class WordTF_IDF extends WordIndex {
 	}
 	
 	public double getTf() {
-		return (double)size();
+		return (double)getNbOccurence();
 	}
 	
 	public HashMap<Integer, Integer> getCorpusOccurence() {

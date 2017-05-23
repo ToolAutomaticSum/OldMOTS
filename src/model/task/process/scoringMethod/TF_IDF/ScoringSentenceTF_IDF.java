@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import model.task.process.AbstractProcess;
 import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.scoringMethod.ScoreBasedOut;
+import model.task.process.tempScoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;

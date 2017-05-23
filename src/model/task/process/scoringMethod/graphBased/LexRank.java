@@ -7,12 +7,11 @@ import java.util.Map;
 
 import exception.LacksOfFeatures;
 import model.task.process.AbstractProcess;
-import model.task.process.VectorCaracteristicBasedIn;
-import model.task.process.VectorCaracteristicBasedOut;
+import model.task.process.old.VectorCaracteristicBasedIn;
+import model.task.process.old.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.scoringMethod.ScoreBasedOut;
+import model.task.process.tempScoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
-import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
 import textModeling.graphBased.GraphSentenceBased;
 import textModeling.graphBased.NodeGraphSentenceBased;

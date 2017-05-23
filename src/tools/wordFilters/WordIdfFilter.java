@@ -7,9 +7,9 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 public class WordIdfFilter extends WordFilter {
 
 	private double threshold;
-	private Index dico;
+	private Index<WordTF_IDF> dico;
 	
-	public WordIdfFilter (Index dico, double absoluteThreshold) throws Exception
+	public WordIdfFilter (Index<WordTF_IDF> dico, double absoluteThreshold) throws Exception
 	{
 		if (dico.values().toArray()[0].getClass() == WordTF_IDF.class) {
 			this.threshold = absoluteThreshold;

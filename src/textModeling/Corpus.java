@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import model.SModel;
+import model.AbstractModel;
 
 public class Corpus implements List<TextModel>{
 
@@ -17,7 +17,7 @@ public class Corpus implements List<TextModel>{
 	protected String corpusName;
 	protected String inputPath;
 	protected String summaryPath;
-	protected SModel model;
+	protected AbstractModel model;
 	protected List<String> docNames;
 	protected List<String> summaryNames;
 	
@@ -81,11 +81,11 @@ public class Corpus implements List<TextModel>{
 		return nbSentence;
 	}
 
-	public SModel getModel() {
+	public AbstractModel getModel() {
 		return model;
 	}
 
-	public void setModel(SModel model) {
+	public void setModel(AbstractModel model) {
 		this.model = model;
 	}
 

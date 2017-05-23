@@ -226,6 +226,15 @@ public class Tools {
 	        getInterfaceInheritance(c, result);
 	    }
 	}
+	
+	public static Set<Class<?>> getInterfaceInheritance(Class<?> in)
+	{
+	    LinkedHashSet<Class<?>> result = new LinkedHashSet<Class<?>>();
+
+	    getInterfaceInheritance(in, result);
+
+	    return result;
+	}
 
 	/**
 	 * Get superclass of class.

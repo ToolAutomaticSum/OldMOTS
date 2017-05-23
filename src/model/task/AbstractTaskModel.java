@@ -1,10 +1,10 @@
 package model.task;
 
-import model.SModel;
+import model.AbstractModel;
 
 public interface AbstractTaskModel extends AbstractTask {
 
-	public SModel getModel();
+	public AbstractModel getModel();
 
-	public void setModel(SModel model);
+	public void setModel(AbstractModel model);
 }

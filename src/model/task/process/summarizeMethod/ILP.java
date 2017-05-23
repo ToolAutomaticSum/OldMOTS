@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import model.task.process.ILP.GLPLauncher;
+import model.task.process.indexBuilder.ILP.GLPLauncher;
 import optimize.SupportADNException;
 import textModeling.SentenceModel;
 

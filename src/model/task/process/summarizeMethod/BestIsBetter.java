@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import model.task.process.tempScoringMethod.ScoreBasedIn;
 import optimize.SupportADNException;
 import textModeling.SentenceModel;
 import tools.PairSentenceScore;
