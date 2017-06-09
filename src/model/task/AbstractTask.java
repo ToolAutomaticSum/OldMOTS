@@ -1,10 +1,10 @@
 package model.task;
 
-public interface AbstractTask {
+import model.AbstractModel;
 
-	public abstract void init() throws Exception;
-	
-	public abstract void process() throws Exception;
+public interface AbstractTaskModel extends AbstractTask {
 
-	public abstract void finish() throws Exception;
+	public AbstractModel getModel();
+
+	public void setModel(AbstractModel model);
 }

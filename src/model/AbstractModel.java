@@ -12,16 +12,16 @@ import exception.LacksOfFeatures;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.postProcess.EvaluationROUGE;
 import model.task.preProcess.AbstractPreProcess;
-import model.task.process.tempProcess.AbstractProcess;
+import model.task.process.AbstractProcess;
 import textModeling.Corpus;
 import textModeling.MultiCorpus;
 
 public abstract class AbstractModel extends Observable {
 
 	private Controller ctrl;
-	
+
 	private int taskID;
-	
+
 	private String language;
 
 	private String outputPath;
@@ -73,7 +73,6 @@ public abstract class AbstractModel extends Observable {
 	private EvaluationROUGE evalRouge;
 	
 	public abstract void run();
-
 	
 	/**
 	 * Instanciation des TextModels dans les corpus

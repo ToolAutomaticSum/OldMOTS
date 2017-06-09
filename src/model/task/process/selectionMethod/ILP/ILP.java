@@ -1,4 +1,4 @@
-package model.task.process.summarizeMethod;
+package model.task.process.selectionMethod.ILP;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,23 +6,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import model.task.process.indexBuilder.ILP.GLPLauncher;
+import model.task.process.processCompatibility.ParametrizedMethod;
+import model.task.process.selectionMethod.AbstractSelectionMethod;
 import optimize.SupportADNException;
+import textModeling.Corpus;
 import textModeling.SentenceModel;
 
-public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
+public class ILP extends AbstractSelectionMethod {
 
-	private String tmpFile;
-	
 	public ILP(int id) throws SupportADNException {
 		super(id);
 	}
 	
 	@Override
-	public AbstractSummarizeMethod makeCopy() throws Exception {
+	public AbstractSelectionMethod makeCopy() throws Exception {
 		ILP p = new ILP(id);
 		initCopy(p);
 		return p;
@@ -33,7 +34,11 @@ public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
 	}
 	
 	@Override
-	public ArrayList<SentenceModel> calculateSummary() {
+	public ArrayList<SentenceModel> calculateSummary(List<Corpus> listCorpus) {
+		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
+		for (Corpus c : listCorpus)
+			listSentence.addAll(c.getAllSentence());
+		
 		runGLPK();
 		
 		ArrayList <Integer> ind_selected_sentences;
@@ -41,9 +46,11 @@ public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
 		ind_selected_sentences = this.getSentencesFromGLPKSol();
 		ArrayList<SentenceModel> summary = new ArrayList <SentenceModel>();
 		
+		
 		for (Integer i : ind_selected_sentences)
 		{
-			summary.add(getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i));
+			if (i < listSentence.size())
+				summary.add(listSentence.get(i));
 		}
 		
 		this.eraseTmpFiles();
@@ -96,18 +103,22 @@ public class ILP extends AbstractSummarizeMethod implements FileModelBasedIn {
 	private void eraseTmpFiles()
 	{
 		File file = new File("sortie_ilp.sol");
-		if(! file.delete())
+		if(!file.delete())
 			System.err.println(file.getName() + " not deleted!");
 	}
 	
 	private void runGLPK()
 	{
-		GLPLauncher glp = new GLPLauncher(tmpFile);
+		GLPLauncher glp = new GLPLauncher("tempILP.ilp");
 		glp.runGLP();
 	}
 
 	@Override
-	public void setFileModel(String fileModel) {
-		this.tmpFile = fileModel;
+	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+		return false;
+	}
+
+	@Override
+	public void setCompatibility(ParametrizedMethod compMethod) {
 	}
 }

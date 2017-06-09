@@ -1,24 +1,26 @@
 package model.task.process.scoringMethod.graphBased;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
-import model.task.process.processCompatibility.ParametrizedType;
+import exception.LacksOfFeatures;
+import model.task.process.AbstractProcess;
+import model.task.process.old.VectorCaracteristicBasedIn;
+import model.task.process.old.VectorCaracteristicBasedOut;
 import model.task.process.scoringMethod.AbstractScoringMethod;
+import model.task.process.tempScoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
-import optimize.parameter.Parameter;
-import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.graphBased.GraphSentenceBased;
 import textModeling.graphBased.NodeGraphSentenceBased;
+import textModeling.wordIndex.Index;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 import tools.vector.ToolsVector;
 
-public class LexRank extends AbstractScoringMethod implements SentenceCaracteristicBasedIn<double[]> {
+public class LexRank extends AbstractScoringMethod implements VectorCaracteristicBasedIn, VectorCaracteristicBasedOut, ScoreBasedOut {
 
 	public static enum LexRank_Parameter {
 		DumpingParameter("DumpingParameter"),
@@ -35,11 +37,14 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 			return name;
 		}
 	}
-	private SentenceSimilarityMetric sim;
 	/**
-	 * SentenceCaracteristicBased
+	 * VectorCaracteristicBased
 	 */
 	private Map<SentenceModel, double[]> sentenceCaracteristic;
+	/**
+	 * ScoreBasedOut
+	 */
+	private ArrayList<PairSentenceScore> sentencesScores;
 	/**
 	 * Dans ADN
 	 */
@@ -57,15 +62,12 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	 */
 	private GraphSentenceBased graph;
 	
-	
-	public LexRank(int id) throws SupportADNException {
+	public LexRank(int id) throws SupportADNException, NumberFormatException, LacksOfFeatures {
 		super(id);
 		supportADN = new HashMap<String, Class<?>>();
-		supportADN.put("DumpingParameter", Double.class);
+		//supportADN.put("DumpingParameter", Double.class);
 		//supportADN.put("Epsilon", Double.class);
-		supportADN.put("GraphThreshold", Double.class);
-		
-		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		//supportADN.put("GraphThreshold", Double.class);
 	}
 	
 	@Override
@@ -77,59 +79,77 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	
 	@Override
 	public void initADN() throws Exception {
-		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DumpingParameter.getName()))));
+		/*getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DumpingParameter.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DumpingParameter.getName()))));
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMaxValue(0.6);
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DumpingParameter.getName()).setMinValue(0.0);
 		//getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.Epsilon.getName(), 0.0001));
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.GraphThreshold.getName(), Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.GraphThreshold.getName()))));
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.GraphThreshold.getName()).setMaxValue(0.6);
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.GraphThreshold.getName()).setMinValue(0.0);
-	
-		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
-		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
-	}
-	
-	private void init() throws Exception {
+	*/}
+
+	@Override
+	public void init(AbstractProcess currentProcess, Index dictionnary) throws Exception {
+		super.init(currentProcess, dictionnary);
 		
 		dumpingParameter = 0.15;//getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.DumpingParameter.getName());
 		epsilon = 0.00001;	///getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.Epsilon.getName());
 		graphThreshold = 0.1;//getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.GraphThreshold.getName());
 		
+		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
+		
+		SentenceSimilarityMetric sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+
 		graph = new GraphSentenceBased(graphThreshold, sentenceCaracteristic, sim);
 	
 		graph.generateGraph();
 		//System.out.println(graph);
 	}
+	
+	@Override
+	public void computeScores() throws Exception {
+		sentencesScores = new ArrayList<PairSentenceScore>(); 
+		 if (graph != null) {
+			 double[][] tempMat = new double[graph.size()][graph.size()];
+			 double[][] matAdj = graph.getMatAdj();
+			 int[] degree = graph.getDegree();
+
+			 for (int j=0;j<graph.size();j++) { //phrases courantes
+				 for (int k=0;k<graph.size();k++) { //phrases adjencete
+					 tempMat[j][k] = matAdj[j][k]/degree[k];
+				 }
+			 }
+			 double[] result = LexRank.computeLexRankScore(dumpingParameter, tempMat, graph.size(), epsilon);
+
+			 double max = 0.0;
+			 for (NodeGraphSentenceBased n : graph) {
+				 if (result[n.getIdNode()] > max)
+					 max = result[n.getIdNode()];
+				 sentencesScores.add(new PairSentenceScore(n.getCurrentSentence(), result[n.getIdNode()]));
+			 }
+			 for (PairSentenceScore p : sentencesScores)
+				 p.setScore(p.getScore()/max);
+		 }
+		 
+		 Collections.sort(sentencesScores);
+		 //System.out.println(sentencesScores);
+	}
 
 	@Override
-	public void computeScores(List<Corpus> listCorpus) throws Exception {
-		init();
-		if (graph != null) {
-			double[][] tempMat = new double[graph.size()][graph.size()];
-			double[][] matAdj = graph.getMatAdj();
-			int[] degree = graph.getDegree();
-
-			for (int j=0;j<graph.size();j++) { //phrases courantes
-				for (int k=0;k<graph.size();k++) { //phrases adjencete
-					tempMat[j][k] = matAdj[j][k]/degree[k];
-				}
-			}
-			double[] result = LexRank.computeLexRankScore(dumpingParameter, tempMat, graph.size(), epsilon);
-
-			double max = 0.0;
-			for (NodeGraphSentenceBased n : graph) {
-				if (result[n.getIdNode()] > max)
-					max = result[n.getIdNode()];
-				sentencesScores.add(new PairSentenceScore(n.getCurrentSentence(), result[n.getIdNode()]));
-			}
-			for (PairSentenceScore p : sentencesScores)
-				p.setScore(p.getScore()/max);
-		}
- 
-		Collections.sort(sentencesScores);
+	public void setVectorCaracterisic(Map<SentenceModel, double[]> sentenceCaracteristic) {
+		this.sentenceCaracteristic = sentenceCaracteristic;		
 	}
-	
+
+	@Override
+	public ArrayList<PairSentenceScore> getScore() {
+		return sentencesScores;
+	}
+
+	@Override
+	public Map<SentenceModel, double[]> getVectorCaracterisic() {
+		return sentenceCaracteristic;
+	}
+
 	public static double[] computeLexRankScore(double dampingFactor, double[][] matAdj, int matSize, double epsilon) throws Exception {
 		double[] ptprec = new double[matSize];
 		double[] pt = new double[matSize];
@@ -158,10 +178,5 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 		} while (normeDiff > epsilon);
 		//System.out.println("Itération " + n);
 		return pt;
-	}
-
-	@Override
-	public void setCaracterisics(Map<SentenceModel, double[]> sentenceCaracteristic) {
-		this.sentenceCaracteristic = sentenceCaracteristic;		
 	}
 }

@@ -1,25 +1,30 @@
 package model.task.process.caracteristicBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+import model.task.process.AbstractProcess;
 import model.task.process.processCompatibility.ParametrizedMethod;
-import model.task.process.tempProcess.AbstractProcess;
+import model.task.process.processCompatibility.ParametrizedType;
 import optimize.SupportADNException;
-import textModeling.SentenceModel;
+import textModeling.Corpus;
 
-public abstract class AbstractCaracteristicBuilder<T> extends ParametrizedMethod implements SentenceCaracteristicBasedOut<T> {
+public abstract class AbstractCaracteristicBuilder extends ParametrizedMethod /*implements SentenceCaracteristicBasedOut<T> */{
 
 	protected AbstractProcess currentProcess;
-	protected Map<SentenceModel, T> sentenceCaracteristic;
+	//protected Map<SentenceModel, T> sentenceCaracteristic;
 	
 	public AbstractCaracteristicBuilder(int id) throws SupportADNException {
 		super(id);
+		
+		listParameterIn = new ArrayList<ParametrizedType>();
+		listParameterOut = new ArrayList<ParametrizedType>();
 	}
 
-	public abstract AbstractCaracteristicBuilder<T> makeCopy() throws Exception;
+	public abstract AbstractCaracteristicBuilder makeCopy() throws Exception;
 	
-	protected void initCopy(AbstractCaracteristicBuilder<T> p) {
+	protected void initCopy(AbstractCaracteristicBuilder p) {
 		p.setCurrentProcess(currentProcess);
 		//p.setIndex(index);
 		p.setSupportADN(new HashMap<String, Class<?>>(supportADN));
@@ -28,7 +33,11 @@ public abstract class AbstractCaracteristicBuilder<T> extends ParametrizedMethod
 	
 	public abstract void initADN() throws Exception;
 	
-	public abstract void processCaracteristics();
+	public abstract void processCaracteristics(List<Corpus> listCorpus);
+	
+	public abstract void finish();/* {
+		sentenceCaracteristic.clear();
+	}*/
 	
 	public void setCurrentProcess(AbstractProcess p) {
 		currentProcess = p;
@@ -38,8 +47,8 @@ public abstract class AbstractCaracteristicBuilder<T> extends ParametrizedMethod
 		return currentProcess;
 	}
 
-	@Override
+	/*@Override
 	public Map<SentenceModel, T> getVectorCaracterisic() {
 		return sentenceCaracteristic;
-	}
+	}*/
 }

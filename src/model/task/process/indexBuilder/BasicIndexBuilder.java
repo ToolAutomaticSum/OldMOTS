@@ -1,6 +1,6 @@
 package model.task.process.indexBuilder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import model.task.process.processCompatibility.ParametrizedMethod;
 import model.task.process.processCompatibility.ParametrizedType;
@@ -16,8 +16,7 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 
 	public BasicIndexBuilder(int id) throws SupportADNException {
 		super(id);
-		listParameterIn = new ArrayList<ParametrizedType>();
-		listParameterOut = new ArrayList<ParametrizedType>();
+		
 		listParameterOut.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedOut.class));
 	}
 
@@ -33,10 +32,8 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 	}
 
 	@Override
-	public void processIndex() {
-		index.clear();
-
-		for (Corpus corpus : getCurrentMultiCorpus()) {
+	public void processIndex(List<Corpus> listCorpus) {
+		for (Corpus corpus : listCorpus) {
 			index.setNbDocument(index.getNbDocument() + corpus.size());
 			//Construction du dictionnaire
 			for (TextModel textModel : corpus) {
@@ -58,6 +55,7 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 			}
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
 		}
+		WordIndex.reset();
 	}
 
 	@Override

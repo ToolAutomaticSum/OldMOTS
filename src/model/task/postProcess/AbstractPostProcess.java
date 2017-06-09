@@ -1,11 +1,11 @@
 package model.task.postProcess;
 
-import model.task.AbstractTaskModel;
-import model.task.process.AbstractProcess;
+import model.task.AbstractTask;
+import model.task.process.old.AbstractProcess;
 import optimize.Individu;
 import optimize.SupportADNException;
 
-public abstract class AbstractPostProcess extends Individu implements AbstractTaskModel {
+public abstract class AbstractPostProcess extends Individu implements AbstractTask {
 
 	protected AbstractProcess currentProcess;
 	

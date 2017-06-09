@@ -1,10 +1,10 @@
 package model.task.preProcess;
 
 import model.task.AbstractMethod;
-import model.task.AbstractTaskModel;
-import model.task.process.AbstractProcess;
+import model.task.AbstractTask;
+import model.task.process.old.AbstractProcess;
 
-public abstract class AbstractPreProcess extends AbstractMethod implements AbstractTaskModel {
+public abstract class AbstractPreProcess extends AbstractMethod implements AbstractTask {
 	
 	protected AbstractProcess currentProcess;
 	

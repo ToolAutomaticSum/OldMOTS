@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import exception.LacksOfFeatures;
-import model.task.process.AbstractProcess;
+import model.task.process.old.AbstractProcess;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
@@ -110,7 +110,7 @@ public class BiGram_ILP extends AbstractProcess implements BiGramListBasedOut {
 					}
 
 					// On construit le set des bigrams dans la phrases
-					curr_bg_set = new TreeSet<NGram>(sen.getNGrams(2, index));
+					curr_bg_set = new TreeSet<NGram>(sen.getNGrams(2, index, null));
 					if (sen.getPosition() == 1) {
 						first_sentence_concepts = new TreeSet<NGram>(curr_bg_set);
 						for (NGram ng : first_sentence_concepts) {
