@@ -1,10 +1,11 @@
-package model.task.process.summarizeMethod;
+package model.task.process.old;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import model.task.process.tempScoringMethod.ScoreBasedIn;
+import model.task.process.old.summarizeMethod.AbstractSummarizeMethod;
+import model.task.process.scoringMethod.ScoreBasedIn;
 import optimize.SupportADNException;
 import textModeling.SentenceModel;
 import tools.PairSentenceScore;

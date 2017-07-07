@@ -1,9 +1,10 @@
 package model.task.postProcess;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import exception.LacksOfFeatures;
-import model.task.process.tempProcess.SummarizeProcess;
+import model.task.process.SummarizeProcess;
 import optimize.SupportADNException;
 import reader_writer.Reader;
 import reader_writer.Writer;
@@ -83,11 +84,24 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
 						" -e " + rougePath + File.separator + "data -n 2 -x -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
 				        getModel().getOutputPath() + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
-				//System.out.println(cmd);
+				System.out.println(cmd);
 
 				Process proc = Runtime.getRuntime().exec(cmd);
-			    inheritIO(proc.getInputStream(), new PrintStream(new FileOutputStream(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", false)));
-			    inheritIO(proc.getErrorStream(), System.err);
+				//inheritIO(proc.getInputStream(), new PrintStream(new FileOutputStream(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", false)));
+				
+				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			    
+			    Writer w = new Writer(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt");
+			    w.open();
+				String line = "";
+			    while ((line = input.readLine()) != null)
+			    	w.write(line + "\n");
+			    
+			    w.close();
+			    //inheritIO(proc.getInputStream(), System.out);
+				//inheritIO(proc.getErrorStream(), System.err);
+
+				//Thread.sleep(100);
 			    proc.waitFor();
 			}
 		}
@@ -96,7 +110,6 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	@Override
 	public void finish() throws Exception {
 		if (OSDetector.isUnix()) {
-			Thread.sleep(100);
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
 				Reader r = new Reader(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", true);
 				r.open();
@@ -217,7 +230,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	transformer.transform(source, sortie);	
 	}
 	
-	public static void inheritIO(final InputStream src, final PrintStream dest) {
+	public static void inheritIO(final InputStream src, final PrintStream dest) throws InterruptedException {
 	    new Thread(new Runnable() {
 	        public void run() {
 	            Scanner sc = new Scanner(src);
@@ -226,7 +239,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	            }
 	            sc.close();
 	        }
-	    }).start();
+	    }).join();
 	}
 
 	public String getRougePath() {

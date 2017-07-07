@@ -9,5 +9,9 @@ public class VectorDimensionException extends Exception {
 
 	public VectorDimensionException(){
 		super("Vector need the same dimension for scalar product.");
+	}
+
+	public VectorDimensionException(String string) {
+		super(string);
 	} 
 }

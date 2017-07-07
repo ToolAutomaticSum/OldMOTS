@@ -1,6 +1,4 @@
-package model.task.process.scoringMethod.LDA;
-
-import model.task.process.old.VectorCaracteristicBasedIn;
+package model.task.process.old;
 
 public interface LdaBasedIn extends VectorCaracteristicBasedIn {
 

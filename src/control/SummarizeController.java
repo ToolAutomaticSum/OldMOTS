@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.AbstractModel;
+import model.task.process.SummarizeProcess;
 import model.task.process.caracteristicBuilder.AbstractCaracteristicBuilder;
 import model.task.process.indexBuilder.AbstractIndexBuilder;
-import model.task.process.tempProcess.SummarizeProcess;
-import model.task.process.tempScoringMethod.AbstractScoringMethod;
-import model.task.process.tempSelectionMethod.AbstractSelectionMethod;
+import model.task.process.scoringMethod.AbstractScoringMethod;
+import model.task.process.selectionMethod.AbstractSelectionMethod;
 import view.AbstractView;
 
 @SuppressWarnings("rawtypes")
-public class SummarizeController extends Controller {
+public class SummarizeController extends AbstractController {
 
 	private SummarizeProcess currentProcess;
 
@@ -22,16 +22,22 @@ public class SummarizeController extends Controller {
 
 	@Override
 	public void notifyProcessChanged(String processName) {
-    	getModel().getProcessIDs().put(processName, processID);
-    	Object o = dynamicConstructor("process.tempProcess.SummarizeProcess"/* + processName*/);
+    	getModel().getProcessIDs().put("SummarizeProcess", processID);
+    	Object o = dynamicConstructor("process.SummarizeProcess"/* + processName*/);
     	currentProcess = (SummarizeProcess) o;
 		getModel().getProcess().add(currentProcess);
     }
 
 	@Override
 	public void notifyIndexBuilderChanged(String processName, String indexBuilder) {
-    	Object o = dynamicConstructor("process.indexBuilder." + indexBuilder);
-    	currentProcess.setIndexBuilder((AbstractIndexBuilder) o);
+		List<AbstractIndexBuilder> listIndexBuilders;
+		if (currentProcess.getIndexBuilders() == null)
+			listIndexBuilders = new ArrayList<AbstractIndexBuilder>();
+		else
+			listIndexBuilders = currentProcess.getIndexBuilders();
+		Object o = dynamicConstructor("process.indexBuilder." + indexBuilder);
+		listIndexBuilders.add((AbstractIndexBuilder) o);
+    	currentProcess.setIndexBuilders(listIndexBuilders);
     }
 
 	@Override
@@ -53,14 +59,14 @@ public class SummarizeController extends Controller {
 			listScoringMethod = new ArrayList<AbstractScoringMethod>();
 		else
 			listScoringMethod = currentProcess.getScoringMethods();
-		Object o = dynamicConstructor("process.tempScoringMethod." + scoringMethod);
+		Object o = dynamicConstructor("process.scoringMethod." + scoringMethod);
     	listScoringMethod.add((AbstractScoringMethod) o);
     	currentProcess.setScoringMethods(listScoringMethod);
     }
 
 	@Override
 	public void notifySelectionMethodChanged(String processName, String selectionMethod) {
-    	Object o = dynamicConstructor("process.tempSelectionMethod." + selectionMethod);
+    	Object o = dynamicConstructor("process.selectionMethod." + selectionMethod);
     	currentProcess.setSelectionMethod((AbstractSelectionMethod) o);
     }
 

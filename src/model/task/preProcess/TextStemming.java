@@ -8,7 +8,7 @@ import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 
-public class TextStemming extends AbstractPreProcess implements Lemmatizer {
+public class TextStemming extends AbstractPreProcess {
 	
 	SnowballStemmer stemmer;
 	

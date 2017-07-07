@@ -1,23 +1,22 @@
-package model.task.process.caracteristicBuilder.TF_IDF;
+package model.task.process.caracteristicBuilder.vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import jgibblda.Pair;
-import model.task.process.caracteristicBuilder.queryBuilder.QueryBasedIn;
-import model.task.process.caracteristicBuilder.queryBuilder.QueryBasedOut;
+import model.task.process.caracteristicBuilder.QueryBasedIn;
+import model.task.process.caracteristicBuilder.QueryBasedOut;
 import model.task.process.processCompatibility.ParametrizedMethod;
 import model.task.process.processCompatibility.ParametrizedType;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.Corpus;
-import textModeling.SentenceQuery;
+import textModeling.Query;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
-public class Centroid extends TfIdfVectorSentence implements QueryBasedOut<double[]> {
+public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 	
 	public static enum Centroid_Parameter {
 		NbMaxWordInCentroid("NbMaxWordInCentroid");
@@ -33,18 +32,14 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut<doubl
 		}
 	}
 	
-	private SentenceQuery<double[]> query;
-	protected double[] centroid;
+	private Query query;
 	protected int nbMaxWordInCentroid;
 
 	protected InvertedIndex<WordTF_IDF> invertIndex;
 	
 	public Centroid(int id) throws SupportADNException {
 		super(id);
-		
-		query = new SentenceQuery<double[]>();
-		
-		supportADN = new HashMap<String, Class<?>>();
+		query = new Query();
 		supportADN.put("NbMaxWordInCentroid", Integer.class);
 		
 		listParameterOut.add(new ParametrizedType(null, double[].class, QueryBasedOut.class));
@@ -76,7 +71,7 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut<doubl
 		super.processCaracteristics(listCorpus);
 		
 		init();
-		centroid = new double[index.size()];
+		double[] centroid = new double[index.size()];
 		List<Pair> listBestWord = new ArrayList<Pair>();
 		double minTfIdf = 0;
 		
@@ -116,7 +111,7 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut<doubl
 	}
 
 	@Override
-	public SentenceQuery<double[]> getQuery() {
+	public Query getQuery() {
 		return query;
 	}
 	
@@ -128,11 +123,10 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut<doubl
 	/**
 	 * donne le/les paramètre(s) d'output en input à la class comp méthode
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void setCompatibility(ParametrizedMethod compatibleMethod) {
 		super.setCompatibility(compatibleMethod);
 		if (compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class)))
-			((QueryBasedIn<double[]>)compatibleMethod).setQuery(query);
+			((QueryBasedIn)compatibleMethod).setQuery(query);
 	}
 }

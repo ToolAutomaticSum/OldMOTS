@@ -176,4 +176,88 @@ public class WordModel {
 					+ "\t" + mPosTag + "\t" + mFeats + "\t" + mHead + "\t"
 					+ mDepRel + "\t" + mPHead + "\t" + mPDepRel;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((mCPosTag == null) ? 0 : mCPosTag.hashCode());
+		result = prime * result + ((mDepRel == null) ? 0 : mDepRel.hashCode());
+		result = prime * result + ((mFeats == null) ? 0 : mFeats.hashCode());
+		result = prime * result + ((mForm == null) ? 0 : mForm.hashCode());
+		result = prime * result + ((mHead == null) ? 0 : mHead.hashCode());
+		result = prime * result + ((mID == null) ? 0 : mID.hashCode());
+		result = prime * result + ((mLemma == null) ? 0 : mLemma.hashCode());
+		result = prime * result + ((mPDepRel == null) ? 0 : mPDepRel.hashCode());
+		result = prime * result + ((mPHead == null) ? 0 : mPHead.hashCode());
+		result = prime * result + ((mPosTag == null) ? 0 : mPosTag.hashCode());
+		result = prime * result + ((sentence == null) ? 0 : sentence.hashCode());
+		result = prime * result + (stopWord ? 1231 : 1237);
+		result = prime * result + ((word == null) ? 0 : word.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WordModel other = (WordModel) obj;
+		if (mCPosTag == null) {
+			if (other.mCPosTag != null)
+				return false;
+		} else if (!mCPosTag.equals(other.mCPosTag))
+			return false;
+		if (mDepRel == null) {
+			if (other.mDepRel != null)
+				return false;
+		} else if (!mDepRel.equals(other.mDepRel))
+			return false;
+		if (mFeats == null) {
+			if (other.mFeats != null)
+				return false;
+		} else if (!mFeats.equals(other.mFeats))
+			return false;
+		if (mForm == null) {
+			if (other.mForm != null)
+				return false;
+		} else if (!mForm.equals(other.mForm))
+			return false;
+		if (mHead == null) {
+			if (other.mHead != null)
+				return false;
+		} else if (!mHead.equals(other.mHead))
+			return false;
+		if (mLemma == null) {
+			if (other.mLemma != null)
+				return false;
+		} else if (!mLemma.equals(other.mLemma))
+			return false;
+		if (mPDepRel == null) {
+			if (other.mPDepRel != null)
+				return false;
+		} else if (!mPDepRel.equals(other.mPDepRel))
+			return false;
+		if (mPHead == null) {
+			if (other.mPHead != null)
+				return false;
+		} else if (!mPHead.equals(other.mPHead))
+			return false;
+		if (mPosTag == null) {
+			if (other.mPosTag != null)
+				return false;
+		} else if (!mPosTag.equals(other.mPosTag))
+			return false;
+		if (stopWord != other.stopWord)
+			return false;
+		if (word == null) {
+			if (other.word != null)
+				return false;
+		} else if (!word.equals(other.word))
+			return false;
+		return true;
+	}
 }

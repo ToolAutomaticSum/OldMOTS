@@ -55,7 +55,6 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 			}
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
 		}
-		WordIndex.reset();
 	}
 
 	@Override

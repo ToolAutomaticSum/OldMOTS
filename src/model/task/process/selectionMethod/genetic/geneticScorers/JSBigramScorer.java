@@ -1,13 +1,11 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
-import model.task.process.summarizeMethod.genetic.ScoringThread;
-import reader_writer.Writer;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.ScoringThread;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.smoothings.DirichletSmoothing;
@@ -15,6 +13,7 @@ import textModeling.smoothings.Smoothing;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class JSBigramScorer extends GeneticIndividualScorer{
 
@@ -27,7 +26,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, null, index, null, delta, firstSentenceConceptsFactor,
 				null, null);	
 	}
@@ -39,21 +38,21 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		
 		this.computeSourceDistribution ();
 		//System.out.println("JS Bigram scorer initialized.");
-		Writer w = new Writer("sourceDistribution.txt");
+		/*Writer w = new Writer("sourceDistribution.txt");
 		w.open();
 		for(Entry<NGram, Double>  ng : sourceOccurences.entrySet())
 			w.write(ng.getKey() + "\t" + ng.getValue() + "\t" + sourceDistribution.get(ng.getKey()) + "\n");
 		w.close();
-		System.out.println("Source Distribution OK !!");
+		System.out.println("Source Distribution OK !!");*/
 	}
 	
 	public void computeNGrams_in_sentences()
 	{
-		this.ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
+		this.ngrams_in_sentences = new HashMap<SentenceModel, ArrayList<NGram>> ();
 		
 		for (SentenceModel p : ss)
 		{
-			this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
+			this.ngrams_in_sentences.put(p, new ArrayList<NGram>(p.getNGrams(2, this.index, null)));
 		}
 	}
 	
@@ -61,7 +60,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	/**
 	 * Compute the occurences and distribution for the source documents
 	 */
-	private void computeSourceDistribution ()
+	private void computeSourceDistribution()
 	{
 		this.sourceDistribution = new TreeMap <NGram, Double>();
 		this.sourceOccurences = new TreeMap <NGram, Double> ();
@@ -72,7 +71,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		for (SentenceModel p : this.ngrams_in_sentences.keySet())
 		{
 			//System.out.println("phrase pos : "+p.getPosition());
-			ArrayList<NGram> curr_ngrams_list = this.ngrams_in_sentences.get(p);
+			ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>(this.ngrams_in_sentences.get(p));
 					//p.getNGrams(2, this.index, this.filter);
 			//ArrayList<NGram> curr_ngrams_list = p.getBiGrams( this.index, this.filter);
 			for (NGram ng : curr_ngrams_list)

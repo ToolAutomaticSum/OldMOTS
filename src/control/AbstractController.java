@@ -15,7 +15,7 @@ import textModeling.Corpus;
 import textModeling.MultiCorpus;
 import view.AbstractView;
 
-public abstract class Controller {
+public abstract class AbstractController {
 
 	private final AbstractModel model;
     private final AbstractView view;
@@ -37,7 +37,7 @@ public abstract class Controller {
     protected String modelRoot;
     protected String peerRoot;*/
     
-    public Controller(AbstractModel model, AbstractView view) {
+    public AbstractController(AbstractModel model, AbstractView view) {
         this.model = model;
         this.view = view;
         model.setCtrl(this);
@@ -149,7 +149,7 @@ public abstract class Controller {
 
     public abstract void notifyIndexBuilderChanged(String processName, String indexBuilder);
 
-    public abstract void notifyCaracteristicBuilderChanged(String processName, String summarizeMethod);
+    public abstract void notifyCaracteristicBuilderChanged(String processName, String caracteristicBuilder);
     
     public abstract void notifyScoringMethodChanged(String processName, String scoringMethod);
     

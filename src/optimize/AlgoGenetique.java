@@ -79,9 +79,10 @@ public class AlgoGenetique extends Optimize {
 			e.printStackTrace();
 		}
 		writer.open();
+		writer.write(adn.toString());
 		for (String s : optimize.getADN().keySet())
 			writer.write(s + "\t");
-		writer.write("\n");
+		writer.write("Score\n");
 		Random rand = new Random(System.currentTimeMillis());
 		for (int i = 0; i<adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName()); i++) {
 			ADN temp = optimize.generateAleaADN(rand);
@@ -127,7 +128,7 @@ public class AlgoGenetique extends Optimize {
 			optimize.setADN(individu);
 			optimize.optimize();
 			individu.setScore(optimize.getScore());
-			writer.write(individu.toValueString() + "\t" + individu.getScore() + "\n");
+			writer.write(individu.toValueString() + individu.getScore() + "\n");
 			System.out.println(individu);
 		}
 	}
@@ -164,13 +165,14 @@ public class AlgoGenetique extends Optimize {
 	
 	@Override
 	public void optimize() throws Exception {
-
 		int i = 0;
 		boolean solutionFind = false;
 		while ((!solutionFind) && i < adn.getParameterValue(Integer.class, AGParameter.NB_GENERATION_MAX.getName())) {
+			long time = System.currentTimeMillis();
 			writer.write("Iteration " + i + "\n");
 			System.out.println("Iteration " + i);
 			solutionFind = evoluer();
+			writer.write(Long.toString(time - System.currentTimeMillis()));
 			i++;
 		}
 		

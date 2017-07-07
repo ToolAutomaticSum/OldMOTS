@@ -6,6 +6,15 @@
 		<OUTPUT_PATH>doc/Output</OUTPUT_PATH>
 		<MULTICORPUS ID="0">
 			<CORPUS ID="0">
+				<INPUT_PATH>/home/valnyz/git/RCCML/S1/en</INPUT_PATH>
+				<DOCUMENT ID="0">ALL</DOCUMENT>
+				<SUMMARY_PATH>/home/valnyz/git/TAC_2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY ID="0">D0801-A.M.100.A.A</SUMMARY>
+				<SUMMARY ID="0">D0801-A.M.100.A.C</SUMMARY>
+				<SUMMARY ID="0">D0801-A.M.100.A.E</SUMMARY>
+				<SUMMARY ID="0">D0801-A.M.100.A.G</SUMMARY>
+			</CORPUS>
+			<CORPUS ID="0">
 				<INPUT_PATH>/home/valnyz/git/TAC_2008/UpdateSumm08_test_docs_files/D0801A/D0801A-A</INPUT_PATH>
 				<DOCUMENT ID="0">ALL</DOCUMENT>
 				<SUMMARY_PATH>/home/valnyz/git/TAC_2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
@@ -439,29 +448,27 @@
 			</CORPUS>
 		</MULTICORPUS>
 		<MULTITHREADING>true</MULTITHREADING>
-		<PROCESS NAME="LDA.LDA">
-			<OPTION NAME="CorpusIdToSummarize">0	1	2</OPTION>
+		<PROCESS>
+			<OPTION NAME="CorpusIdToSummarize">0</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
-			<OPTION NAME="K">25</OPTION>
-			<OPTION NAME="Alpha">0.5</OPTION>
-			<OPTION NAME="Beta">0.5</OPTION>
+			<INDEX_BUILDER NAME="LDA.LDA">
+				<OPTION NAME="K">5</OPTION>
+				<OPTION NAME="Alpha">0.1</OPTION>
+				<OPTION NAME="Beta">0.01</OPTION>
+			</INDEX_BUILDER>
+			<CARACTERISTIC_BUILDER NAME="SumVectorSentence">
+			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="graphBased.LexRank">
 				<OPTION NAME="DumpingParameter">0.15</OPTION>
 				<OPTION NAME="GraphThreshold">0.1</OPTION>
-				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="MMR">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
 				<OPTION NAME="Size">100</OPTION>
 				<OPTION NAME="Lambda">0.7</OPTION>
-				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
-		<ROUGE_EVALUATION>
-			<ROUGE-MEASURE>ROUGE-1	ROUGE-2	ROUGE-SU4</ROUGE-MEASURE>
-			<ROUGE-PATH>lib/ROUGE-1.5.5/RELEASE-1.5.5</ROUGE-PATH>
-			<MODEL-ROOT>models</MODEL-ROOT>
-			<PEER-ROOT>systems</PEER-ROOT>
-		</ROUGE_EVALUATION>
 	</TASK>
 </CONFIG>

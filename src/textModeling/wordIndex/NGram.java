@@ -1,79 +1,89 @@
 package textModeling.wordIndex;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
-public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
+/**
+ * TODO revoir certaine méthode issue de List afin de mieux lier word et listWord
+ * @author valnyz
+ *
+ */
+public class NGram extends WordIndex implements List<WordIndex> {
+
+	private List<WordIndex> listWord = new ArrayList<WordIndex>();
+	private double weight;
+	
+	public NGram() {
+		super();
+		word = "";
+	}
+	
+	public NGram(Index<NGram> index) {
+		super(index);
+		word = "";
+	}
+	
+	public NGram(String ngram, Index<NGram> index) {
+		super(ngram, index);
+		word = "";
+	}
 	
 	/**
-	 * 
+	 * Constructeur de copie
+	 * @param ng
 	 */
-	private static final long serialVersionUID = -4188336154082203140L;
-
-	public NGram()
-	{
-		super();
+	public NGram (NGram ng)	{
+		super(ng.getWord(), ng.getIndex());
+		word = ng.getWord();
+		listWord.addAll(ng);
 	}
 	
-	public NGram (NGram ng)
-	{
-		super(ng);
-	}
-	
-	public void addGram(WordIndex indexKey)
-	{
-		add(indexKey);
-	}
-	
-	public ArrayList<WordIndex> getGrams()
-	{
-		return this;
-	}
-
 	@Override
-	public int compareTo(NGram ngram) {
-		if ( ngram.size() < this.size() )
+	public int compareTo(WordIndex o) {
+		if (o.getClass() != this.getClass())
+			return super.compareTo(o);
+		NGram ngram = (NGram) o;
+		if (ngram.size() < this.size())
 			return 1;
 		if ( this.size() < ngram.size() )
 			return -1;
 		for (int i=0; i < this.size(); i++) {
-			if(this.get(i).getId() != ngram.get(i).getId())
+			if(!this.get(i).getiD().equals(ngram.get(i).getiD()))
 				return this.get(i).compareTo(ngram.get(i));
 		}
 		return 0;
 	}
 	
 	@Override
-	public boolean equals (Object o)
-	{
+	public boolean equals (Object o) {
 		if (o.getClass() != this.getClass())
 			return false;
 		NGram ngram = (NGram) o;
 		if (ngram.size() != this.size() )
 			return false;
 		for (int i=0; i < this.size(); i++) {
-			if(this.get(i).getId() != ngram.get(i).getId())
+			if(!this.get(i).equals(ngram.get(i)))
 				return false;
 		}
 		return true;
 	}
 	
-	public void printNGram ()
-	{
-		for (WordIndex i : this)
-		{
+	public void printNGram() {
+		for (WordIndex i : listWord) {
 			System.out.print(" | "+i);
 		}
 	}
 	
-	public void removeLastGram()
-	{
+	public void removeLastGram() {
 		if (this.size() == 0)
 			return;
 		this.remove(this.size()-1);
 	}
 	
-	public void removeFirstGram()
-	{
+	public void removeFirstGram() {
 		if (this.size() == 0)
 			return;
 		this.remove(0);
@@ -84,18 +94,6 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 		return super.toString();
 	}
 	
-/*	public String toString()
-	{
-		String s = "";
-		
-		for (WordIndex i : this)
-		{
-			s+= i.toString() +" | ";
-		}
-		s+= "\n";
-		return s;
-	}*/
-	
 	@Override
     public int hashCode() {
 		String word = "";
@@ -104,6 +102,135 @@ public class NGram extends ArrayList<WordIndex> implements Comparable<NGram>{
 			word += w.getWord() + "_";
 		}
 		return word.hashCode();
+	}
+
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
+
+	@Override
+	public boolean add(WordIndex e) {
+		setWord(getWord() + " | "+ e.getWord());
+		return listWord.add(e);
+	}
+
+	@Override
+	public void add(int index, WordIndex element) {
+		setWord(getWord() + " | "+ element.getWord());
+		listWord.add(element);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends WordIndex> c) {
+		String s = "";
+		for (WordIndex w : c)
+			s+= " | " + w.getWord();
+		setWord(getWord() + s);
+		return listWord.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends WordIndex> c) {
+		return listWord.addAll(index, c);
+	}
+
+	@Override
+	public void clear() {
+		listWord.clear();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return listWord.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return containsAll(c);
+	}
+
+	@Override
+	public WordIndex get(int index) {
+		return listWord.get(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return indexOf(o);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return listWord.isEmpty();
+	}
+
+	@Override
+	public Iterator<WordIndex> iterator() {
+		return listWord.iterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return listWord.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<WordIndex> listIterator() {
+		return listWord.listIterator();
+	}
+
+	@Override
+	public ListIterator<WordIndex> listIterator(int index) {
+		return listWord.listIterator(index);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		return listWord.remove(o);
+	}
+
+	@Override
+	public WordIndex remove(int index) {
+		return listWord.remove(index);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return retainAll(c);
+	};
+
+	@Override
+	public WordIndex set(int index, WordIndex element) {
+		return set(index, element);
+	}
+
+	@Override
+	public int size() {
+		return listWord.size();
+	}
+
+	@Override
+	public List<WordIndex> subList(int fromIndex, int toIndex) {
+		return listWord.subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return listWord.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return listWord.toArray(a);
 	}
 	
 	

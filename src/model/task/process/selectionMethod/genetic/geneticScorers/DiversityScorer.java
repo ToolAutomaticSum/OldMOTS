@@ -1,10 +1,10 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
@@ -16,7 +16,7 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 public class DiversityScorer extends GeneticIndividualScorer {
 	private double maxIdf;
 	
-	public DiversityScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public DiversityScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, invertedIndex, dictionnary, null, null, null, null, null);		
 	}
 
@@ -66,7 +66,7 @@ public class DiversityScorer extends GeneticIndividualScorer {
 			for (WordModel u : p)
 			{
 				if (!u.isStopWord()) {
-					int uIndexKey = index.get(u.getmLemma()).getId();
+					int uIndexKey = index.get(u.getmLemma()).getiD();
 					if (! giIndexKeys.contains(uIndexKey))
 					{
 						giIndexKeys.add(uIndexKey);

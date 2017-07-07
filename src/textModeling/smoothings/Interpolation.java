@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class Interpolation extends Smoothing{
 
@@ -15,7 +16,7 @@ public class Interpolation extends Smoothing{
 	private ArrayList <SentenceModel> sentences;
 	private int maxN;
 	
-	public Interpolation ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index index)
+	public Interpolation ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index<WordIndex> index)
 	{
 		super (sentences, 0, index);
 		this.alphas = alphas;
@@ -38,7 +39,7 @@ public class Interpolation extends Smoothing{
 			for (SentenceModel sent : this.sentences)
 			{
 				//System.out.println(i+1);
-				ArrayList <NGram> curr_ngrams_list = sent.getNGrams(i+1, this.index);
+				ArrayList <NGram> curr_ngrams_list = sent.getNGrams(i+1, this.index, null);
 			
 				for (NGram ng : curr_ngrams_list)
 				{

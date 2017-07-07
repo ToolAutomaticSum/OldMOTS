@@ -1,9 +1,9 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
@@ -14,7 +14,7 @@ import textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class CosineScorer extends GeneticIndividualScorer{
 
-	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public CosineScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> dictionnary, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, invertedIndex, dictionnary, null, null, null, null, null);
 	}
 
@@ -43,11 +43,11 @@ public class CosineScorer extends GeneticIndividualScorer{
 					if (!u.isStopWord()) {
 						uIndexKey = index.get(u.getmLemma());
 						if (giIndexKeys.contains(uIndexKey)) {
-							giFrequencies.put(uIndexKey.getId(), giFrequencies.get(uIndexKey.getId()) + 1.);
+							giFrequencies.put(uIndexKey.getiD(), giFrequencies.get(uIndexKey.getiD()) + 1.);
 						}
 						else {
 							giIndexKeys.add(uIndexKey);
-							giFrequencies.put(uIndexKey.getId(), 1.);
+							giFrequencies.put(uIndexKey.getiD(), 1.);
 						}
 					}
 				}
@@ -76,8 +76,8 @@ public class CosineScorer extends GeneticIndividualScorer{
 			for (WordIndex indexKey : giIndexKeys)
 			{
 				cti = (WordTF_IDF) indexKey;
-				sumCommon += cti.getTf() * giFrequencies.get(cti.getId()) * Math.pow(cti.getIdf(), 2.);
-				sumGi += Math.pow (giFrequencies.get(cti.getId()) * cti.getIdf(), 2.);
+				sumCommon += cti.getTf() * giFrequencies.get(cti.getiD()) * Math.pow(cti.getIdf(), 2.);
+				sumGi += Math.pow (giFrequencies.get(cti.getiD()) * cti.getIdf(), 2.);
 			}
 			
 			for (WordIndex indexKey : clustIndexKeys)

@@ -31,14 +31,14 @@ public class ComparativeModel extends AbstractModel {
 	@Override
 	public void run() {
 		try {
+			loadMultiCorpusModels();
+			
 			Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
 			while (preProIt.hasNext()) {
 				AbstractPreProcess p = preProIt.next();
 				p.setModel(this);
 				p.init();
 			}
-			
-			loadMultiCorpusModels();
 			
 			Iterator<MultiCorpus> multiCorpusIt = getMultiCorpusModels().iterator();
 			while (multiCorpusIt.hasNext()) {
@@ -53,8 +53,8 @@ public class ComparativeModel extends AbstractModel {
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
 					p.finish();
-				}				
-
+				}
+				
 				System.out.println(currentMultiCorpus);
 			}
 			
@@ -95,7 +95,8 @@ public class ComparativeModel extends AbstractModel {
 			String t = "MultiCorpus " + multiCorpus.getiD() + "\n" + buildDifferenceFile(p.getSummary());
 			setChanged();
 			notifyObservers(t);
-			p.finish();}
+			p.finish();
+	}
 	
 	private String buildDifferenceFile(List<Pair<SentenceModel, String>> summary) throws ParserConfigurationException {
 		Set<String> setLabels = new TreeSet<String>();
@@ -127,6 +128,8 @@ public class ComparativeModel extends AbstractModel {
 	    	for (String l : p.getKey().getLabels())
 	    		t += l + ", ";
 	    	sentence.setAttribute("type", t.substring(0, t.length() - 2));
+	    	sentence.setAttribute("doc_id", String.valueOf((p.getKey().getText().getiD())));
+	    	sentence.setAttribute("sen_id", String.valueOf(p.getKey().getiD()));
 	    	rootNode.appendChild(sentence);
 	    }
 	    

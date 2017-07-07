@@ -1,4 +1,4 @@
-package model.task.process.summarizeMethod.genetic;
+package model.task.process.selectionMethod.genetic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class ScoringThread extends Thread implements Runnable {
 	private GeneticIndividual gi;
@@ -17,7 +18,7 @@ public class ScoringThread extends Thread implements Runnable {
 	//private Index index;
 	private double fsc;
 	
-	public ScoringThread (GeneticIndividual gi, HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences, TreeMap <NGram, Double> sourceDistribution, TreeMap <NGram, Integer> firstSentencesConcepts, Index index, double fsc, double delta) {
+	public ScoringThread (GeneticIndividual gi, HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences, TreeMap <NGram, Double> sourceDistribution, TreeMap <NGram, Integer> firstSentencesConcepts, Index<WordIndex> index, double fsc, double delta) {
 		this.gi = gi;
 		this.ngrams_in_sentences = ngrams_in_sentences;
 		this.sourceDistribution = sourceDistribution;

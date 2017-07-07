@@ -1,4 +1,4 @@
-package model.task.process.scoringMethod.TF_IDF;
+package model.task.process.old.TF_IDF;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +10,8 @@ import exception.LacksOfFeatures;
 import jgibblda.Pair;
 import model.task.process.old.VectorCaracteristicBasedIn;
 import model.task.process.old.VectorCaracteristicBasedOut;
-import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.tempScoringMethod.ScoreBasedOut;
+import model.task.process.old.scoringMethod.AbstractScoringMethod;
+import model.task.process.scoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;
@@ -101,7 +101,7 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 		double minTfIdf = 0;
 		int corpusId = getCurrentProcess().getSummarizeCorpusId();
 		
-		for (WordIndex wi : invertIndex.getCorpusWordIndex().get(corpusId)) {
+		/*for (Object wi : invertIndex.getCorpusWordIndex().get(corpusId)) {
 			WordTF_IDF w = (WordTF_IDF) wi;
 			double tfidf = w.getTfCorpus(corpusId)*w.getIdf();
 			if (listBestWord.size() < nbMaxWordInCentroid) {
@@ -114,7 +114,7 @@ public class Centroid extends AbstractScoringMethod implements VectorCaracterist
 				Collections.sort(listBestWord);
 				minTfIdf = (double) listBestWord.get(listBestWord.size()-1).second;
 			}
-		}
+		}*/
 		
 		for (Pair p : listBestWord) {
 			centroid[(int)p.first] = (double) p.second;

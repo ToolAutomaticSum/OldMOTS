@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-import control.Controller;
+import control.AbstractController;
 import exception.LacksOfFeatures;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.postProcess.EvaluationROUGE;
@@ -18,7 +18,7 @@ import textModeling.MultiCorpus;
 
 public abstract class AbstractModel extends Observable {
 
-	private Controller ctrl;
+	private AbstractController ctrl;
 
 	private int taskID;
 
@@ -90,11 +90,11 @@ public abstract class AbstractModel extends Observable {
 		setChanged();
 	}
 	
-	public Controller getCtrl() {
+	public AbstractController getCtrl() {
 		return ctrl;
 	}
 	
-	public void setCtrl(Controller ctrl) {
+	public void setCtrl(AbstractController ctrl) {
 		this.ctrl = ctrl;
 	}
 	

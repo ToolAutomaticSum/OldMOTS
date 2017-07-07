@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class DirichletUniqueProbSmoothing extends Smoothing{
 
@@ -18,7 +19,7 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 	private double firstSentenceConceptsFactor;
 	
 	public DirichletUniqueProbSmoothing (int window, double delta, int vocab_card, ArrayList<SentenceModel> sentences, 
-			Index index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts,
+			Index<WordIndex> index, TreeMap <NGram, Double> corpusDistrib, TreeMap <NGram, Integer> firstSentencesConcepts,
 			double firstSentenceConceptsFactor)
 	{
 		super (sentences, vocab_card, index);
@@ -40,7 +41,7 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 		for (SentenceModel sent : this.sentences)
 		{
 			//ArrayList <NGram> curr_ngrams_list = sent.getBiGrams(this.index, this.filter);
-			ArrayList <NGram> curr_ngrams_list = sent.getNGrams(this.window, this.index);
+			ArrayList<NGram> curr_ngrams_list = sent.getNGrams(this.window, this.index, null);
 			for (NGram ng : curr_ngrams_list)
 			{
 				/*We filter the sourceDistribution upon every NGram occurrence, so we have to check if this 

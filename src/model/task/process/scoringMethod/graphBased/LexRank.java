@@ -18,7 +18,7 @@ import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 import tools.vector.ToolsVector;
 
-public class LexRank extends AbstractScoringMethod implements SentenceCaracteristicBasedIn<double[]> {
+public class LexRank extends AbstractScoringMethod implements SentenceCaracteristicBasedIn {
 
 	public static enum LexRank_Parameter {
 		DumpingParameter("DumpingParameter"),
@@ -39,7 +39,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	/**
 	 * SentenceCaracteristicBased
 	 */
-	private Map<SentenceModel, double[]> sentenceCaracteristic;
+	private Map<SentenceModel, Object> sentenceCaracteristic;
 	/**
 	 * Dans ADN
 	 */
@@ -66,6 +66,8 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 		supportADN.put("GraphThreshold", Double.class);
 		
 		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParametrizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
 	}
 	
 	@Override
@@ -87,7 +89,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
 	}
 	
 	private void init() throws Exception {
@@ -161,7 +163,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	}
 
 	@Override
-	public void setCaracterisics(Map<SentenceModel, double[]> sentenceCaracteristic) {
+	public void setCaracterisics(Map<SentenceModel, Object> sentenceCaracteristic) {
 		this.sentenceCaracteristic = sentenceCaracteristic;		
 	}
 }

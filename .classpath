@@ -18,9 +18,12 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/CommonsCLI"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JEP"/>
 	<classpathentry kind="lib" path="lib/ModifiedJGibbLabeledLDA.jar"/>
 	<classpathentry kind="lib" path="lib/ReaderWriter.jar"/>
 	<classpathentry kind="lib" path="lib/GrammaticalWords.jar"/>
 	<classpathentry kind="lib" path="lib/trove-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/Word2VecGensimJavaWrapper.jar"/>
+	<classpathentry kind="lib" path="/home/valnyz/git/AutomaticSummarization/lib/json-20170516.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

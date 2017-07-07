@@ -9,7 +9,7 @@ import java.util.Map;
 import exception.VectorDimensionException;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
-import model.task.process.AbstractProcess;
+import model.task.process.old.AbstractProcess;
 import model.task.process.old.VectorCaracteristicBasedOut;
 import optimize.parameter.Parameter;
 import textModeling.Corpus;
@@ -157,7 +157,7 @@ public class LDA extends AbstractProcess implements VectorCaracteristicBasedOut 
 					if (!word.isStopWord()) {
 						if(!index.containsKey(word.getmLemma())) {
 							WordVector w = new WordVector(word.getmLemma(), index, K);
-							index.put(word.getmLemma(), w, newModel.data.localDict.getID(word.getmLemma()));
+							index.put(word.getmLemma(), w/*, newModel.data.localDict.getID(word.getmLemma())*/);
 						}
 						//index.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}

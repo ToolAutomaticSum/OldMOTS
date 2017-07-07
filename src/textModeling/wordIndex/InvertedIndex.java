@@ -3,24 +3,24 @@ package textModeling.wordIndex;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InvertedIndex {
+public class InvertedIndex<T extends WordIndex> {
 	
 	//List of indexKey of every Cluster
 	/**
 	 * iDCorpus, List of WordIndex in Corpus
 	 */
-	private HashMap <Integer, ArrayList<WordIndex>> corpusWordIndex;
+	private HashMap <Integer, ArrayList<T>> corpusWordIndex;
 	
-	public HashMap <Integer, ArrayList<WordIndex>> getCorpusWordIndex()
+	public HashMap <Integer, ArrayList<T>> getCorpusWordIndex()
 	{
 		return this.corpusWordIndex;
 	}
 	
-	public InvertedIndex (Index<WordIndex> dico)
+	public InvertedIndex (Index<T> dico)
 	{
-		ArrayList<WordIndex> currWordList;
-		this.corpusWordIndex = new HashMap <Integer, ArrayList<WordIndex>>();
-		for (WordIndex indexKey : dico.values())
+		ArrayList<T> currWordList;
+		this.corpusWordIndex = new HashMap <Integer, ArrayList<T>>();
+		for (T indexKey : dico.values())
 		{
 			for (Integer corpusId : indexKey.getCorpusOccurences().keySet()) {
 				if (this.corpusWordIndex.containsKey(corpusId))
@@ -31,7 +31,7 @@ public class InvertedIndex {
 				}
 				else
 				{
-					currWordList = new ArrayList<WordIndex>();
+					currWordList = new ArrayList<T>();
 					currWordList.add(indexKey);
 					this.corpusWordIndex.put(corpusId, currWordList);
 				}

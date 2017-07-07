@@ -5,18 +5,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 import textModeling.wordIndex.WordIndex;
 
-public class SentenceModel implements List<WordModel> {
+public class SentenceModel implements List<WordModel>, Comparable<SentenceModel> {
 
 	private List<WordModel> listWordModel = new ArrayList<WordModel>();
 	
 	protected String sentence;
 	protected int nbMot;
-	protected ArrayList<NGram> listNGram;
+	protected Set<NGram> listNGram;
 	protected int iD;
 	protected double score;
 	protected TextModel text;
@@ -44,7 +46,7 @@ public class SentenceModel implements List<WordModel> {
 
 	/**
 	 * 
-	 * @return Sentence as a list of lemme without stopword
+	 * @return Sentence as a list of lemme with  stopword notified with "%%" before them
 	 */
 	public String getSentence() {
 		String txt = "";
@@ -54,6 +56,13 @@ public class SentenceModel implements List<WordModel> {
 			else
 				txt += "%%" + w.toString() + " ";
 		}
+		return txt;
+	}
+	
+	public String getRawSentence() {
+		String txt = "";
+		for (WordModel w : this)
+			txt += w.toString() + " ";
 		return txt;
 	}
 
@@ -114,18 +123,22 @@ public class SentenceModel implements List<WordModel> {
 		this.score = score;
 	}
 	
-	private void getListNGrams(int n, Index<WordIndex> index) {
-		ArrayList <NGram> ngrams_list = new ArrayList<NGram> () ;
+	private void getListNGrams(int n, Index<WordIndex> indexWord, Index<NGram> index) {
+		Set<NGram> ngrams_list = new TreeSet<NGram>() ;
 		WordModel u;
 		
 		if (n == 1) {
 			for (WordModel u1 : this) {
-				NGram ng = new NGram();
+				NGram ng = new NGram(index);
 				if (!u1.isStopWord()) {
-					WordIndex w = index.get(u1.getmLemma());
+					WordIndex w = indexWord.get(u1.getmLemma());
 					if (w != null) {
-						WordIndex uIndex = index.get(u1.getmLemma()); 
-						ng.addGram(uIndex);
+						ng.add(w);
+						if (index != null && index.values().contains(ng))
+							ng = index.get(ng.getWord());
+						else if (index != null) {
+							index.put(0, ng);
+						}
 						ngrams_list.add(ng);
 					}
 				}
@@ -136,8 +149,8 @@ public class SentenceModel implements List<WordModel> {
 			{
 				boolean cond = false;
 				boolean stopWord = false; //Un stopWord par Ngram
-				NGram ng = new NGram ();
-				//System.out.println("Sentence size : "+this.unitesLexWVides.size());
+				NGram ng = new NGram(index);
+
 				for (int j = i; j < i + n; j++)
 				{
 					//System.out.println("j : "+j);
@@ -145,9 +158,9 @@ public class SentenceModel implements List<WordModel> {
 	
 					if ((!stopWord && !u.isStopWord()) || (!stopWord && u.isStopWord()) || (stopWord && !u.isStopWord())) {
 						cond = true;
-						WordIndex w = index.get(u.getmLemma());
+						WordIndex w = indexWord.get(u.getmLemma());
 						if (w != null)
-							ng.addGram(w);
+							ng.add(w);
 						else {
 							System.out.println("BREAK!!!" + u.getmLemma());
 							cond = false;
@@ -158,20 +171,34 @@ public class SentenceModel implements List<WordModel> {
 					} else
 						cond = false;
 				}
-				if (cond)
+				if (cond) {
+					if (index != null && index.values().contains(ng))
+						ng = index.get(ng.getWord());
+					else if (index != null) {
+						index.put(0, ng);
+						System.out.println("BREAK!!! " + ng);
+					}
 					ngrams_list.add(ng);
+				}
 				//else
 					//System.out.println("Filtrée !");
 			}
 		}
 		listNGram = ngrams_list;
-		
 	}
 
-	public ArrayList<NGram> getNGrams(int n, Index<WordIndex> index) {
+	public ArrayList<NGram> getNGrams(int n, Index<WordIndex> indexWord, Index<NGram> index) {
 		if(listNGram == null)
-			getListNGrams(n, index);
+			getListNGrams(n, indexWord, index);
+		return new ArrayList<NGram>(listNGram);
+	}
+	
+	public Set<NGram> getNGrams() {
 		return listNGram;
+	}
+	
+	public void setNGrams(Set<NGram> listNGram) {
+		this.listNGram = listNGram;
 	}
 	
 	public double getPosScore() {
@@ -208,6 +235,10 @@ public class SentenceModel implements List<WordModel> {
 
 	public void setNbMot(int nbMot) {
 		this.nbMot = nbMot;
+	}
+	
+	public List<String> getLabels() {
+		return text.getLabels();
 	}
 
 	@Override
@@ -323,5 +354,15 @@ public class SentenceModel implements List<WordModel> {
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return listWordModel.toArray(a);
+	}
+
+	@Override
+	public int compareTo(SentenceModel o) {
+		if (o.getiD() > this.getiD())
+			return -1;
+		else if (o.getiD() < this.getiD())
+			return 1;
+		else
+			return 0;
 	}
 }

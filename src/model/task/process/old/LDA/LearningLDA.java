@@ -14,7 +14,7 @@ import jgibblda.Estimator;
 import jgibblda.LDACmdOption;
 import jgibblda.Model;
 import model.task.preProcess.GenerateTextModel;
-import model.task.process.AbstractProcess;
+import model.task.process.old.AbstractProcess;
 import optimize.SupportADNException;
 import textModeling.Corpus;
 import textModeling.SentenceModel;

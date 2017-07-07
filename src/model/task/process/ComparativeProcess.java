@@ -157,8 +157,6 @@ public class ComparativeProcess extends AbstractProcess {
 		}
 		if (comparativeMethod != null)
 			summary = comparativeMethod.calculateDifference(listCorpus);
-
-		//TODO SelectionMethod
 	}
 
 	/**

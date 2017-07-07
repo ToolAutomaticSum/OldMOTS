@@ -1,10 +1,10 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -13,6 +13,7 @@ import textModeling.smoothings.Smoothing;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class JSInterpolation extends GeneticIndividualScorer{
 
@@ -22,7 +23,7 @@ public class JSInterpolation extends GeneticIndividualScorer{
 	private Smoothing smoothing;
 	//private Smoothing smoothingSource;
 	
-	public JSInterpolation(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public JSInterpolation(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, invertedIndex, index, null, delta, null, null, null);
 	}
 	
@@ -41,7 +42,7 @@ public class JSInterpolation extends GeneticIndividualScorer{
 		{
 			for (SentenceModel p : doc)
 			{
-				ArrayList<NGram> curr_ngrams_list = p.getNGrams(2, this.index);
+				ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>(p.getNGrams(2, this.index, null));
 				for (NGram ng : curr_ngrams_list)
 				{
 					if (this.sourceOccurences.containsKey(ng))

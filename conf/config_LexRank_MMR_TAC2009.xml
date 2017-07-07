@@ -402,20 +402,26 @@
 				<SUMMARY ID="0">D0944-A.M.100.H.H</SUMMARY>
 			</CORPUS>
 		</MULTICORPUS>
-		<PROCESS NAME="TF_IDF.TF_IDF">
-			<OPTION NAME="CorpusIdToSummarize">0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	33	34	35	36	37	38	39	40	41	42	43</OPTION>
-			<OPTION NAME="LoadModel">false</OPTION>
+				<PROCESS>
+			<OPTION NAME="CorpusIdToSummarize">0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	33	34	35	36	37	38	39	40	41	42	43	44	45	46	47</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
+			<INDEX_BUILDER NAME="LDA.LDA">
+				<OPTION NAME="K">25</OPTION>
+				<OPTION NAME="Alpha">0.5</OPTION>
+				<OPTION NAME="Beta">0.5</OPTION>
+			</INDEX_BUILDER>
+			<CARACTERISTIC_BUILDER NAME="SumVectorSentence">
+			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="graphBased.LexRank">
-				<OPTION NAME="DumpingParameter">0.3091</OPTION>
-				<OPTION NAME="GraphThreshold">0.1116</OPTION>
-				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
+				<OPTION NAME="DumpingParameter">0.15</OPTION>
+				<OPTION NAME="GraphThreshold">0.1</OPTION>
+				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="MMR">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
 				<OPTION NAME="Size">100</OPTION>
-				<OPTION NAME="Lambda">0.7258</OPTION>
-				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
+				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>

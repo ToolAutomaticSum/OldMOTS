@@ -1,5 +1,7 @@
 package tools.vector;
 
+import java.util.List;
+
 import exception.VectorDimensionException;
 
 public class ToolsVector {
@@ -32,6 +34,8 @@ public class ToolsVector {
 	static public double cosineSimilarity(double[] a, double[] b) throws VectorDimensionException {
 		if (a.length == b.length) {
 			double a1 = scalar(a,b);
+			if (a1 == 0)
+				return 0;
 			double a2 = norme(a);
 			double a3 = norme(b);
 			double a4 = a2*a3;
@@ -74,14 +78,6 @@ public class ToolsVector {
 		} else
 			throw new VectorDimensionException();
 	}
-
-	public static double[][] transposeMatrix(double [][] m){
-        double[][] temp = new double[m[0].length][m.length];
-        for (int i = 0; i < m.length; i++)
-            for (int j = 0; j < m[0].length; j++)
-                temp[j][i] = m[i][j];
-        return temp;
-    }
 	
 	public static void printVector(double [] v){
 		System.out.print("[");
@@ -89,5 +85,11 @@ public class ToolsVector {
 			System.out.print(" " + v[i]);
 		}
 		System.out.println(" ]");
+	}
+	
+	public static double[] ListToArray(List<Double> floatList) {
+		return floatList.stream()
+			    .mapToDouble(f -> f != null ? f : 0d) // Or whatever default you want.
+			    .toArray();
 	}
 }

@@ -1,24 +1,25 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class SimpleNGramScorer extends GeneticIndividualScorer{
 
 	private TreeMap <NGram, Double> nGram_weights;
 	
 	
-	public SimpleNGramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public SimpleNGramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, null, index, null, null, null, window, fsc_factor);
 		this.constructNGramWeights ();
 	}
@@ -34,7 +35,7 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 			//TreeSet<NGram> fsc_set = new TreeSet<NGram> ();
 			for (SentenceModel p : doc)
 			{
-				TreeSet <NGram> curr_phrase_ngram_list = new TreeSet <NGram> (p.getNGrams(this.window, this.index));
+				TreeSet <NGram> curr_phrase_ngram_list = new TreeSet <NGram> (p.getNGrams(this.window, this.index, null));
 				
 				if (doc.indexOf(p) == 1)
 				{
@@ -81,7 +82,7 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 		
 		for (SentenceModel p : gi.getGenes())
 		{
-			ArrayList<NGram> curr_sentence_ngram_list = p.getNGrams(this.window, this.index);
+			ArrayList<NGram> curr_sentence_ngram_list = new ArrayList<NGram>(p.getNGrams(this.window, this.index, null));
 			gi_ngrams.addAll(curr_sentence_ngram_list);
 		}
 		

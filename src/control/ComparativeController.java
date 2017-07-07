@@ -12,7 +12,7 @@ import model.task.process.scoringMethod.AbstractScoringMethod;
 import view.AbstractView;
 
 @SuppressWarnings("rawtypes")
-public class ComparativeController extends Controller {
+public class ComparativeController extends AbstractController {
 
 	private ComparativeProcess currentProcess;
 	

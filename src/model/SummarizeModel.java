@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import exception.LacksOfFeatures;
 import model.task.preProcess.AbstractPreProcess;
-import model.task.process.tempProcess.AbstractProcess;
-import model.task.process.tempProcess.SummarizeProcess;
+import model.task.process.AbstractProcess;
+import model.task.process.SummarizeProcess;
 import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 
@@ -15,16 +15,17 @@ public class SummarizeModel extends AbstractModel {
 	 * Applique les PreProcess {@link #preProcess} sur les MultiCorpus {@link #multiCorpusModels}
 	 * Lance l'exécution des AbstractProcess dans {@link #process} sur les MultiCorpus {@link #multiCorpusModels}
 	 */
+	@Override
 	public void run() {
 		try {
+			loadMultiCorpusModels();
+			
 			Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
 			while (preProIt.hasNext()) {
 				AbstractPreProcess p = preProIt.next();
 				p.setModel(this);
 				p.init();
 			}
-			
-			loadMultiCorpusModels();
 			
 			Iterator<MultiCorpus> multiCorpusIt = getMultiCorpusModels().iterator();
 			while (multiCorpusIt.hasNext()) {
@@ -53,6 +54,7 @@ public class SummarizeModel extends AbstractModel {
 				while (proIt.hasNext()) {
 					long time = System.currentTimeMillis();
 					SummarizeProcess p = (SummarizeProcess) proIt.next();
+					p.setCurrentMultiCorpus(currentMultiCorpus);
 					p.setModel(this);
 					p.initCorpusToCompress();
 					p.initADN();

@@ -3,18 +3,18 @@ package view;
 import java.util.Observable;
 import java.util.Observer;
 
-import control.Controller;
+import control.AbstractController;
 
 public abstract class AbstractView implements Observer {
-	protected Controller ctrl;
+	protected AbstractController ctrl;
 	
 	public abstract void display();
 	public abstract void close();
 	
-	public Controller getCtrl() {
+	public AbstractController getCtrl() {
 		return ctrl;
 	}
-	public void setCtrl(Controller ctrl) {
+	public void setCtrl(AbstractController ctrl) {
 		this.ctrl = ctrl;
 	}
 	

@@ -4,6 +4,6 @@ import java.util.Map;
 
 import textModeling.SentenceModel;
 
-public interface SentenceCaracteristicBasedIn<T> {
-	public void setCaracterisics(Map<SentenceModel, T> sentenceCaracteristic);
+public interface SentenceCaracteristicBasedIn {
+	public void setCaracterisics(Map<SentenceModel, Object>  senSim);
 }

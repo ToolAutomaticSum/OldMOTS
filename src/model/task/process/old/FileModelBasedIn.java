@@ -1,4 +1,4 @@
-package model.task.process.summarizeMethod;
+package model.task.process.old;
 
 public interface FileModelBasedIn {
 

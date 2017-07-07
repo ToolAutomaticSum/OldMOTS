@@ -1,8 +1,7 @@
-package model.task.process.summarizeMethod;
+package model.task.process.old;
 
 import java.util.List;
 
-import model.task.process.old.VectorCaracteristicBasedIn;
 import textModeling.cluster.TopicLDA;
 
 public interface TopicLdaBasedIn extends VectorCaracteristicBasedIn {

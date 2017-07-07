@@ -1,5 +1,7 @@
-package model.task.process.caracteristicBuilder.queryBuilder;
+package model.task.process.caracteristicBuilder;
 
-public interface QueryBasedIn<T> {
-	public void setQuery(T query);
+import textModeling.Query;
+
+public interface QueryBasedIn {
+	public void setQuery(Query query);
 }

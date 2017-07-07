@@ -16,6 +16,7 @@ public class TextModel implements List<SentenceModel> {
 	private Corpus parentCorpus;
 	protected String documentFilePath;
 	protected String textName;
+	protected List<String> labels = new ArrayList<String>();
 	
 	protected int textSize = 0;
 	protected String text = "";
@@ -132,8 +133,13 @@ public class TextModel implements List<SentenceModel> {
 	public int getNbWord() {
 		int nbWord = 0;
 		for (SentenceModel p : this)
-			nbWord += p.size();
+			for (WordModel w : p)
+				nbWord += (w.isStopWord()) ? 0 : 1;
 		return nbWord;
+	}
+	
+	public List<String> getLabels() {
+		return labels;
 	}
 
 	public String getTextName() {

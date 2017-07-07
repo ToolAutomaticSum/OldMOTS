@@ -1,4 +1,4 @@
-package model.task.process.tempSelectionMethod;
+package model.task.process.selectionMethod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,14 +9,15 @@ import java.util.Map.Entry;
 import model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
 import model.task.process.processCompatibility.ParametrizedMethod;
 import model.task.process.processCompatibility.ParametrizedType;
-import model.task.process.tempScoringMethod.ScoreBasedIn;
+import model.task.process.scoringMethod.ScoreBasedIn;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
+import textModeling.Corpus;
 import textModeling.SentenceModel;
 import tools.PairSentenceScore;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
-public class MMR extends AbstractSelectionMethod implements SentenceCaracteristicBasedIn<double[]>, ScoreBasedIn {
+public class MMR extends AbstractSelectionMethod implements SentenceCaracteristicBasedIn, ScoreBasedIn {
 
 	public static enum MMR_Parameter {
 		Lambda("Lambda");
@@ -42,7 +43,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	private int actualSummaryLength;
 	
 	private ArrayList<PairSentenceScore> sentencesScores;
-	private Map<SentenceModel,double[]> sentenceCaracteristic;
+	private Map<SentenceModel, Object> sentenceCaracteristic;
 	
 	private HashMap<SentenceModel, Double> sentencesBaseScores;
 	private HashMap<SentenceModel, Double> sentencesMMRScores;
@@ -54,6 +55,8 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 
 		listParameterIn = new ArrayList<ParametrizedType>();
 		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParametrizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
 		listParameterIn.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
 		listParameterOut = new ArrayList<ParametrizedType>();
 	}
@@ -76,7 +79,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
 		
 		if (nbCharSizeOrNbSentenceSize)
 			this.maxSummLength = size;
@@ -105,7 +108,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	}
 
 	@Override
-	public List<SentenceModel> calculateSummary() throws Exception {
+	public List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception {
 		init();
 		
 		this.summary = new ArrayList<SentenceModel> ();
@@ -191,7 +194,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 
 			if(sentenceCaracteristic.get(p) == null)
 				System.out.println("Prout");
-			if ( (valSim = sim.computeSimilarity(sentenceCaracteristic.get(p1), sentenceCaracteristic.get(p))) >= maxSim)
+			if ( (valSim = sim.computeSimilarity(sentenceCaracteristic, p1, p)) >= maxSim)
 			{
 				maxSim = valSim;
 			}
@@ -216,7 +219,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	}
 
 	@Override
-	public void setCaracterisics(Map<SentenceModel, double[]> sentenceCaracteristic) {
+	public void setCaracterisics(Map<SentenceModel, Object> sentenceCaracteristic) {
 		this.sentenceCaracteristic = sentenceCaracteristic;
 	}
 }

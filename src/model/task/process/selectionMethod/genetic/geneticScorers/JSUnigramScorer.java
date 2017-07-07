@@ -1,10 +1,10 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.WordModel;
@@ -21,7 +21,7 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 	//private int nbWordsInIndividual;
 	//private int nbMaxWords;
 	
-	public JSUnigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public JSUnigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, invertedIndex, index, null, delta, null, null, null);
 	}
 	
@@ -55,13 +55,13 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 			if (current_idf != 0)
 			{
 				this.nbWordsInSource += current_occ;
-				if (this.sourceOccurences.containsKey(indexKey.getId()))
+				if (this.sourceOccurences.containsKey(indexKey.getiD()))
 				{
-					this.sourceOccurences.put(indexKey.getId(), this.sourceOccurences.get(indexKey) + current_occ);
+					this.sourceOccurences.put(indexKey.getiD(), this.sourceOccurences.get(indexKey) + current_occ);
 				}
 				else
 				{
-					this.sourceOccurences.put(indexKey.getId(), current_occ);
+					this.sourceOccurences.put(indexKey.getiD(), current_occ);
 				}
 			}
 		}
@@ -87,14 +87,14 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 				WordTF_IDF uIndexKey = (WordTF_IDF) index.get(u.getmLemma());
 				if (uIndexKey.getIdf() != 0)
 				{
-					if (summDist.containsKey(uIndexKey.getId()))
+					if (summDist.containsKey(uIndexKey.getiD()))
 					{
-						summDist.put(uIndexKey.getId(), summDist.get(uIndexKey) + 1.);
+						summDist.put(uIndexKey.getiD(), summDist.get(uIndexKey) + 1.);
 						summOcc ++;
 					}
 					else
 					{
-						summDist.put(uIndexKey.getId(), 1.);
+						summDist.put(uIndexKey.getiD(), 1.);
 						summOcc ++;
 					}
 

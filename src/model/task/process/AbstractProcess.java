@@ -1,18 +1,16 @@
-package model.task.process.tempProcess;
+package model.task.process;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import exception.LacksOfFeatures;
-import model.task.AbstractTaskModel;
-import model.task.preProcess.GenerateTextModel;
+import model.task.AbstractTask;
 import optimize.Optimize;
 import optimize.SupportADNException;
 import textModeling.Corpus;
 
-public abstract class AbstractProcess extends Optimize implements AbstractTaskModel/*, Runnable*/ {
+public abstract class AbstractProcess extends Optimize implements AbstractTask/*, Runnable*/ {
 	//private Thread t;
 	//private AbstractProcess[] threads = null;
 	//int nbThreads = 0;
@@ -37,6 +35,14 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	}
 
 	public final void initCorpusToCompress() throws NumberFormatException, LacksOfFeatures {
+		try {
+			readStopWords = Boolean.parseBoolean(getModel().getProcessOption(id, "ReadStopWords"));
+		}
+		catch (LacksOfFeatures e) {
+			System.out.println("ReadStopWords = false");
+			readStopWords = false;
+		}
+		
 		listCorpusId = new ArrayList<Integer>();
 		for (String corpusId : getModel().getProcessOption(id, "CorpusIdToSummarize").split("\t"))
 			listCorpusId.add(Integer.parseInt(corpusId));
@@ -46,17 +52,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	public abstract void initADN() throws Exception;
 
 	@Override
-	public void init() throws Exception {
-		try {
-			readStopWords = Boolean.parseBoolean(getModel().getProcessOption(id, "ReadStopWords"));
-		}
-		catch (LacksOfFeatures e) {
-			System.out.println("ReadStopWords = false");
-			readStopWords = false;
-		}
-		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", getCurrentMultiCorpus().get(getSummarizeCorpusId()), readStopWords);
-		System.out.println("Corpus " + corpusToSummarize.getiD() + " read");
-	}
+	public abstract void init() throws Exception;
 	
 	/**
 	 * Appel à super.process() une fois les process effectués.
@@ -73,10 +69,6 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	@Override
 	public abstract void optimize() throws Exception;
 	
-	public int getSummarizeIndex() {
-		return summarizeIndex;
-	}
-
 	public void setSummarizeIndex(int summarizeIndex) {
 		this.summarizeIndex = summarizeIndex;
 	}
@@ -94,7 +86,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 	 * @return
 	 */
 	public Integer getSummarizeCorpusId() {
-		return listCorpusId.get(summarizeIndex);
+		return summarizeIndex;
 	}
 	
 	
@@ -116,6 +108,4 @@ public abstract class AbstractProcess extends Optimize implements AbstractTaskMo
 		else
 			return score;
 	}
-
-
 }

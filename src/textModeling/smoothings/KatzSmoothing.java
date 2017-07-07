@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class KatzSmoothing extends Smoothing{
 
@@ -15,7 +16,7 @@ public class KatzSmoothing extends Smoothing{
 	private ArrayList <SentenceModel> sentences;
 	private int maxN;
 	
-	public KatzSmoothing ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index index, int vocab_card )
+	public KatzSmoothing ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index<WordIndex> index, int vocab_card )
 	{
 		super (sentences, vocab_card, index);
 		this.alphas = alphas;
@@ -35,7 +36,7 @@ public class KatzSmoothing extends Smoothing{
 			double summOcc = 0.;
 			for (SentenceModel sent : this.sentences)
 			{
-				ArrayList <NGram> curr_ngrams_list = sent.getNGrams(i+1, this.index);
+				ArrayList <NGram> curr_ngrams_list = sent.getNGrams(i+1, this.index, null);
 			
 				for (NGram ng : curr_ngrams_list)
 				{

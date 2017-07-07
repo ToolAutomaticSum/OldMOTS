@@ -1,4 +1,4 @@
-package model.task.process.summarizeMethod.genetic;
+package model.task.process.old;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 import exception.LacksOfFeatures;
-import model.task.process.summarizeMethod.AbstractSummarizeMethod;
-import model.task.process.summarizeMethod.genetic.geneticScorers.GeneticIndividualScorer;
+import model.task.process.old.summarizeMethod.AbstractSummarizeMethod;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.geneticScorers.GeneticIndividualScorer;
 import optimize.SupportADNException;
 import textModeling.Corpus;
 import textModeling.SentenceModel;

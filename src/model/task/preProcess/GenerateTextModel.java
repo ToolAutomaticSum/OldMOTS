@@ -1,6 +1,8 @@
 package model.task.preProcess;
 
 import java.io.File;
+import org.json.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +36,6 @@ public class GenerateTextModel extends AbstractPreProcess {
 
 	private String stopWordListFile;
 	private boolean stanford = false;
-	private Lemmatizer lemm = null;
 	
 	protected List<AbstractPreProcess> preProcess = new ArrayList<AbstractPreProcess>();
 	
@@ -43,7 +44,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 	}
 
 	@Override
-	public void init() throws LacksOfFeatures {
+	public void init() throws Exception {
 
 		try {
 			stopWordListFile = getModel().getProcessOption(id, "StopWordListFile");
@@ -56,7 +57,6 @@ public class GenerateTextModel extends AbstractPreProcess {
 		// TODO remplacer preProcess par filtre � appliquer aux lignes lues --> Moins de co�t computationnel
 		if (stanford) {
 			preProcess.add(new StanfordNLPSimplePreProcess(id));
-			lemm=(StanfordNLPSimplePreProcess)preProcess.get(0);
 		}
 		else {
 			preProcess.add(new SentenceSplitter(id));
@@ -81,6 +81,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 		while (it.hasNext()) {
 			AbstractPreProcess p = it.next();
 			p.setModel(getModel());
+			p.setCurrentMultiCorpus(currentMultiCorpus);
 			p.init();
 		}
 
@@ -123,10 +124,30 @@ public class GenerateTextModel extends AbstractPreProcess {
 	public static boolean loadText(TextModel textModel) throws Exception {
 		if (textModel.getText().equals("")) {
 			File fXmlFile = new File(textModel.getDocumentFilePath());
-			if (!Tools.getFileExtension(fXmlFile).equals("txt")) {
+			if (Tools.getFileExtension(fXmlFile).equals("json")) {
+				JSONObject obj = new JSONObject(fXmlFile.getAbsolutePath());
+				JSONArray arr = obj.getJSONArray("\"reviews\":");
+
+				for (int i = 0; i < arr.length(); i++)
+				{
+				    String text = arr.getJSONObject(i).getString("text");
+				    String lang = arr.getJSONObject(i).getString("lang");
+				    
+				    
+				}
+				return false;
+			}
+			else if (!Tools.getFileExtension(fXmlFile).equals("txt")) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				Document doc = dBuilder.parse(fXmlFile);
+				NodeList listLabels =  doc.getElementsByTagName("LABEL");
+				
+				if (listLabels.getLength() > 0) {
+					for (int i = 0; i<listLabels.getLength(); i++)
+						textModel.getLabels().add(listLabels.item(i).getTextContent().replace("\n", ""));
+				}
+				
 				NodeList listText =  doc.getElementsByTagName("TEXT");
 				if (listText.getLength() > 0) {
 					for (int i = 0; i<listText.getLength(); i++) {
@@ -137,15 +158,16 @@ public class GenerateTextModel extends AbstractPreProcess {
 						        for (int j = 0; j<pList.getLength(); j++) {
 						        	if(pList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 						        		Element p = (Element) pList.item(j);
-						        		textModel.setText(textModel.getText() + p.getTextContent().replace(":",".").replace("\n", " ").replace("  ", " ") + "\n");
+						        		textModel.setText(textModel.getText() + p.getTextContent().replace(":",".").replace("\n", " ").replace("  ", " ").replace("-", " ") + "\n");
 						        	}
 						        }
 					        }
 					        else {
-					        	textModel.setText(textModel.getText() + task.getTextContent().replace(":",".").replace("\n", " ").replace("  ", " ") + "\n");
+					        	textModel.setText(textModel.getText() + task.getTextContent().replace(":",".").replace("\n", " ").replace("  ", " ").replace("-", " ") + "\n");
 							}
 						}
 					}
+					System.out.println("Lecture " + textModel.getTextName() + " terminée.");
 					return true;
 				}
 				else
@@ -162,7 +184,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 					text = reader.read();
 				}
 				textModel.setText(temp + "\n");
-				System.out.println("Lecture terminée.");
+				System.out.println("Lecture " + textModel.getTextName() + " terminée.");
 				return true;
 			}
 		} else 
@@ -187,7 +209,10 @@ public class GenerateTextModel extends AbstractPreProcess {
 				new File(outputPath + File.separator + corpus.getCorpusName()).mkdir();
 				Writer w = new Writer(outputPath + File.separator + corpus.getCorpusName() + File.separator + text.getTextName());
 				w.open();
-				
+				String t = "Label=";
+				for (String l : text.getLabels())
+					t += l + File.separator + "%%" + File.separator;
+				w.write(t + "\n");
 				Iterator<SentenceModel> senIt = text.iterator();
 				while (senIt.hasNext()) {
 					SentenceModel sen = senIt.next();
@@ -202,15 +227,22 @@ public class GenerateTextModel extends AbstractPreProcess {
 	public static Corpus readTempDocument(String inputPath, Corpus c, boolean readStopWords) {
 		c.clear();
 		File corpusDoc = new File(inputPath + File.separator + c.getCorpusName());
+		int id=0;
 		for (File textFile : corpusDoc.listFiles()) {
 			TextModel text = new TextModel(c, textFile.getAbsolutePath());
 			int nbSentence = 0;
 			Reader r = new Reader(textFile.getAbsolutePath(), true);
 			r.open();
-			int id=0;
 			String s = r.read();
+			String[] tabs = s.split("=");
+			if (tabs.length == 2) {
+				String[] labels = tabs[1].split(File.separator + "%%" + File.separator);
+				for (String l : labels)
+					text.getLabels().add(l);
+			}
+			s = r.read();
 			while (s != null) {
-				String[] tabs =  s.split("]");
+				tabs =  s.split("]");
 				if (tabs.length == 2) {
 					String[] label =  tabs[0].split(File.separator + "%%" + File.separator);
 					//System.out.println(label[0].split("=")[1]);
@@ -248,9 +280,4 @@ public class GenerateTextModel extends AbstractPreProcess {
 		}
 		return c;
 	}
-	
-	public Lemmatizer getLemm() {
-		return lemm;
-	}
-
 }

@@ -6,7 +6,7 @@
 		<OUTPUT_PATH>doc/Output</OUTPUT_PATH>
 		<MULTICORPUS ID="0">
 			<CORPUS ID="0">
-				<INPUT_PATH>/home/valnyz/git/RCCML/S2/S2-en</INPUT_PATH>
+				<INPUT_PATH>/home/valnyz/git/RCCML/S3/S3-en</INPUT_PATH>
 				<DOCUMENT ID="0">ALL</DOCUMENT>
 				<SUMMARY_PATH>/home/valnyz/git/TAC_2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0801-A.M.100.A.A</SUMMARY>
@@ -15,7 +15,7 @@
 				<SUMMARY ID="0">D0801-A.M.100.A.G</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="1">
-				<INPUT_PATH>/home/valnyz/git/RCCML/S2/S2-us</INPUT_PATH>
+				<INPUT_PATH>/home/valnyz/git/RCCML/S3/S3-fr</INPUT_PATH>
 				<DOCUMENT ID="0">ALL</DOCUMENT>
 				<SUMMARY_PATH>/home/valnyz/git/TAC_2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0801-A.M.100.A.A</SUMMARY>
@@ -421,10 +421,10 @@
 			</CORPUS>
 		</MULTICORPUS>
 		<MULTITHREADING>false</MULTITHREADING>
-		<!--PREPROCESS NAME="GenerateTextModel">
+		<PREPROCESS NAME="GenerateTextModel">
 			<OPTION NAME="StanfordNLP">true</OPTION>
 			<OPTION NAME="StopWordListFile">doc/StopWords/stopwords.english</OPTION>
-		</PREPROCESS>-->
+		</PREPROCESS>
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">0	1</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
@@ -433,7 +433,7 @@
 			<CARACTERISTIC_BUILDER NAME="TF_IDF.TfIdfVectorSentence">
 			</CARACTERISTIC_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="clustering.PoBOC_Clustering">
-				<OPTION NAME="SimilarityMethod">EuclidianDistance</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="TF_IDF.TfIdfThreshold">
 				<OPTION NAME="TfIdfThreshold">0</OPTION>

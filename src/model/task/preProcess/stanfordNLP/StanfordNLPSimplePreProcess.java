@@ -1,5 +1,6 @@
 package model.task.preProcess.stanfordNLP;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -15,7 +16,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import exception.LacksOfFeatures;
 import model.task.preProcess.AbstractPreProcess;
-import model.task.preProcess.Lemmatizer;
+import reader_writer.Writer;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
@@ -28,7 +29,7 @@ import tools.Tools;
  * @author Val
  *
  */
-public class StanfordNLPSimplePreProcess extends AbstractPreProcess implements Lemmatizer {
+public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 
 	private Properties props;
 	private StanfordCoreNLP pipeline;
@@ -51,7 +52,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess implements L
 		props.put("annotators", propStanfordNLP);
 		pipeline = new StanfordCoreNLP(props);
 	}
-	
+
 	@Override
 	public void process() throws Exception {
 		int iD = 0;
@@ -106,7 +107,62 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess implements L
 		props = new Properties();
 		props.put("annotators", "tokenize,ssplit,pos,lemma");
 		pipeline = new StanfordCoreNLP(props);
+	}
+	
+	/**
+	 * 
+	 * @param textToProcess
+	 * @param writer
+	 */
+	public static void liveProcessToFile(StanfordCoreNLP pipeline, String textToProcess, Writer writer) {
+		Annotation document = new Annotation(textToProcess);
+		// run all Annotators on this text
+		pipeline.annotate(document);
+		// these are all the sentences in this document
+		// a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		for(CoreMap sentence: sentences) {
+			if (!sentence.toString().replace("_", "").isEmpty()) {
+				// traversing the words in the current sentence
+				// a CoreLabel is a CoreMap with additional token-specific methods
+				for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
+					if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
+						writer.write(token.get(LemmaAnnotation.class).toLowerCase() + " ");
+					}
+				}
+				writer.write("\n");
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param textToProcess
+	 * @param writer
+	 */
+	public static List<String> liveProcessToListString(StanfordCoreNLP pipeline, String textToProcess) {
+		List<String> listSentence = new ArrayList<String>();
 		
+		Annotation document = new Annotation(textToProcess);
+		// run all Annotators on this text
+		pipeline.annotate(document);
+		// these are all the sentences in this document
+		// a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		for(CoreMap sentence: sentences) {
+			if (!sentence.toString().replace("_", "").isEmpty()) {
+				// traversing the words in the current sentence
+				// a CoreLabel is a CoreMap with additional token-specific methods
+				String s= "";
+				for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
+					if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
+						s += token.get(LemmaAnnotation.class).toLowerCase() + " ";
+					}
+				}
+				listSentence.add(s);
+			}
+		}
+		return listSentence;
 	}
 
 	public String getLemma(String word) {

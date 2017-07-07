@@ -1,9 +1,9 @@
-package model.task.process.summarizeMethod.genetic;
+package model.task.process.selectionMethod.genetic;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import model.task.process.summarizeMethod.genetic.geneticScorers.GeneticIndividualScorer;
+import model.task.process.selectionMethod.genetic.geneticScorers.GeneticIndividualScorer;
 import textModeling.SentenceModel;
 
 public class GeneticIndividual {
@@ -179,11 +179,25 @@ public class GeneticIndividual {
 				break;
 			
 			randIndex = (int) (rand.nextDouble() * sa.size());
-			this.genes.add(sa.get(randIndex));
-			this.genesTotalLength += sa.get(randIndex).getNbMot();
+			SentenceModel randomSentence = sa.get(randIndex);
+			//if (getArgMaxSimilarity(randomSentence) < 0.5) {
+				this.genes.add(randomSentence);
+				this.genesTotalLength += sa.get(randIndex).getNbMot();
+			//}
 			sa.remove(randIndex);
 		}
 	}
+	
+	/*private double getArgMaxSimilarity(SentenceModel sentence) {
+		double maxSim = 0.0;
+		
+		for (SentenceModel sen : genes) {
+			double sim = new JaccardSimilarity().computeSimilarity(sentence, sen);
+			if (maxSim < sim)
+				maxSim = sim;
+		}
+		return maxSim;
+	}*/
 	
 	public double getScore (GeneticIndividualScorer scorer)
 	{

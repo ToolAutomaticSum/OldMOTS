@@ -4,6 +4,6 @@ import java.util.Map;
 
 import textModeling.SentenceModel;
 
-public interface SentenceCaracteristicBasedOut<T> {
-	public Map<SentenceModel, T> getVectorCaracterisic();
+public interface SentenceCaracteristicBasedOut {
+	public Map<SentenceModel, Object> getVectorCaracterisic();
 }

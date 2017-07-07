@@ -1,12 +1,12 @@
-package model.task.process.scoringMethod.TF_IDF;
+package model.task.process.old.TF_IDF;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import model.task.process.AbstractProcess;
-import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.tempScoringMethod.ScoreBasedOut;
+import model.task.process.old.AbstractProcess;
+import model.task.process.old.scoringMethod.AbstractScoringMethod;
+import model.task.process.scoringMethod.ScoreBasedOut;
 import optimize.SupportADNException;
 import optimize.parameter.Parameter;
 import textModeling.SentenceModel;

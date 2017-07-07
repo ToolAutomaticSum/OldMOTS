@@ -10,6 +10,14 @@ public class WordVector extends WordIndex {
 		this.dimension = dimension;
 		wordVector = new double[dimension];
 	}
+	
+	public WordVector(String word, Index<WordVector> index, Double[] wordVector) {
+		super(word, index);
+		dimension = wordVector.length;
+		this.wordVector = new double[dimension];
+		for (int i = 0; i<dimension; i++)
+			this.wordVector[i] = wordVector[i].doubleValue();
+	}
 
 	public WordVector(String word, Index<WordVector> index, double[] wordVector) {
 		super(word, index);

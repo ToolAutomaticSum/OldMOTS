@@ -23,17 +23,17 @@ public class PairSentenceScore implements Comparable <PairSentenceScore>{
 		return this.score;
 	}
 	
-	public void setScore (Double score)
+	public void setScore(Double score)
 	{
 		this.score = score;
 	}
 	
-	public int compareTo (PairSentenceScore p1)
+	public int compareTo(PairSentenceScore p1)
 	{
 		return p1.score.compareTo(this.score); //Score in decrescent order so first sentence is the best
 	}
 	
-	public boolean equals (Object o)
+	public boolean equals(Object o)
 	{
 		if (!o.getClass().equals("PairSentenceScore"))
 			return false;

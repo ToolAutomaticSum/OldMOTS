@@ -1,2 +1,0 @@
-Alpha	K	Beta	
-Iteration 0

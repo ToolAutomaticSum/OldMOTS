@@ -1,8 +1,7 @@
-package model.task.process.scoringMethod.LDA;
+package model.task.process.old;
 
 import java.util.List;
 
-import model.task.process.old.VectorCaracteristicBasedOut;
 import textModeling.cluster.TopicLDA;
 
 public interface TopicLdaBasedOut extends VectorCaracteristicBasedOut {

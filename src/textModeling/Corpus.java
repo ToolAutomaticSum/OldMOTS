@@ -12,6 +12,7 @@ import model.AbstractModel;
 public class Corpus implements List<TextModel>{
 
 	private List<TextModel> listTextModel = new ArrayList<TextModel>();
+	private List<SentenceModel> listSentence;
 	
 	protected int iD;
 	protected String corpusName;
@@ -144,11 +145,13 @@ public class Corpus implements List<TextModel>{
 	}
 	
 	public List<SentenceModel> getAllSentence() {
-		List<SentenceModel> allSentenceList = new ArrayList<SentenceModel>();
-		for (TextModel text : this) {
-			allSentenceList.addAll(text.getSentence());
+		if (listSentence == null) {
+			listSentence = new ArrayList<SentenceModel>();
+			for (TextModel text : this) {
+				listSentence.addAll(text.getSentence());
+			}
 		}
-		return allSentenceList;
+		return listSentence;
 	}
 
 	public String getCorpusName() {
@@ -182,6 +185,7 @@ public class Corpus implements List<TextModel>{
 	@Override
 	public void clear() {
 		listTextModel.clear();
+		listSentence = null;
 	}
 
 	@Override

@@ -10,8 +10,12 @@ import java.util.HashMap;
  */
 public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<WordIndex> {
 	
-	private String word;
-	private Integer iD;
+	//private static int count = 0;
+	private int iD;
+	
+	//public static void reset() {count = 0;}
+	
+	protected String word;
 	private int nbOccurence = 0;
 	protected Index<?> index;
 	
@@ -21,8 +25,31 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	protected HashMap<Integer, Integer> docOccurences = new HashMap<Integer, Integer>();
 	protected HashMap<Integer, Integer> corpusOccurences = new HashMap<Integer, Integer>();
 
+	public WordIndex() {
+		super();
+		index = null;
+		//iD = count++;
+	}
+	
+	public WordIndex(Index<?> index) {
+		super();
+		this.index = index;
+		//iD = count++;
+	}
+	
+	public WordIndex(String word, Index<?> index) {
+		super();
+		this.word = word;
+		this.index = index;
+		//iD = count++;
+	}
+
 	public Integer getiD() {
 		return iD;
+	}
+
+	public void setiD(int iD) {
+		this.iD = iD;
 	}
 
 	public HashMap<Integer, Integer> getDocOccurences() {
@@ -32,13 +59,7 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	public HashMap<Integer, Integer> getCorpusOccurences() {
 		return corpusOccurences;
 	}
-
-	public WordIndex(String word, Index<?> index) {
-		super();
-		this.word = word;
-		this.index = index;
-	}
-
+	
 	public String getWord() {
 		return word;
 	}
@@ -47,20 +68,16 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 		this.word = word;
 	}
 
-	public Integer getId() {
-		return iD;
-	}
-
-	public void setId(int iD) {
+	/*public void setId(int iD) {
 		this.iD = iD;
-	}
+	}*/
 
-	public Index<?> getDictionnary() {
+	public Index<?> getIndex() {
 		return index;
 	}
 
-	public void setDictionnary(Index<?> dictionnary) {
-		this.index = dictionnary;
+	public void setIndex(Index<?> index) {
+		this.index = index;
 	}
 	
 	public void addDocumentOccurence(int idCorpus, int idDoc) {
@@ -87,12 +104,27 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 		return nbOccurence;
 	}
 	
+	public double getIdf() {
+		/**
+		 * Smooth IDF (1+log à la place de log simple) si rencontre de mot inconnu du dictionnaire
+		 */
+		return Math.log(index.getNbDocument()/getNbDocumentWithWordSeen());
+	}
+	
+	public double getTf() {
+		return (double)getNbOccurence();
+	}
+	
+	public int getNbDocumentWithWordSeen() {
+		return docOccurences.size();
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o.getClass() != this.getClass())
 			return false;
 		WordIndex wi = (WordIndex) o;
-		return iD == wi.getId() ;
+		return iD == wi.getiD() ;
 	}
 	
 	@Override
@@ -102,6 +134,6 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 
 	@Override
 	public int compareTo(WordIndex o) {
-		return this.getiD().compareTo(o.getId());
+		return this.getiD().compareTo(o.getiD());
 	}
 }

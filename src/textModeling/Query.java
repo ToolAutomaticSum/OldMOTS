@@ -1,14 +1,14 @@
 package textModeling;
 
-public class SentenceQuery<T> {
+public class Query {
 
-	T query;
+	Object query;
 
-	public T getQuery() {
+	public Object getQuery() {
 		return query;
 	}
 
-	public void setQuery(T query) {
+	public void setQuery(Object query) {
 		this.query = query;
 	}
 	

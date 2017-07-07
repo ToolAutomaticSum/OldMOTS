@@ -1,10 +1,10 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.smoothings.DirichletUniqueProbSmoothing;
@@ -12,6 +12,7 @@ import textModeling.smoothings.Smoothing;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
 import textModeling.wordIndex.NGram;
+import textModeling.wordIndex.WordIndex;
 
 public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	
@@ -22,7 +23,7 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	private Smoothing smoothing;
 	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
 	
-	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public JSBigramUniqueProbScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, null, index, null, delta, firstSentenceConceptsFactor, null, null);
 	}
 	
@@ -43,7 +44,7 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	
 		for (SentenceModel p : ss)
 		{
-			this.ngrams_in_sentences.put(p, p.getNGrams(2, this.index));
+			this.ngrams_in_sentences.put(p, new ArrayList<NGram>(p.getNGrams(2, this.index, null)));
 		}
 	}
 	

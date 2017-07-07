@@ -1,17 +1,27 @@
-package model.task.process.tempScoringMethod;
+package model.task.process.scoringMethod;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import model.task.process.AbstractProcess;
 import model.task.process.processCompatibility.ParametrizedMethod;
-import model.task.process.tempProcess.AbstractProcess;
+import model.task.process.processCompatibility.ParametrizedType;
 import optimize.SupportADNException;
+import textModeling.Corpus;
+import tools.PairSentenceScore;
 
-public abstract class AbstractScoringMethod extends ParametrizedMethod {
+public abstract class AbstractScoringMethod extends ParametrizedMethod implements ScoreBasedIn, ScoreBasedOut {
 
 	protected AbstractProcess currentProcess;
+	protected ArrayList<PairSentenceScore> sentencesScores;
 	
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
+		sentencesScores = new ArrayList<PairSentenceScore>();
+		
+		listParameterIn.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
+		listParameterOut.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedOut.class));
 	}
 
 	public abstract AbstractScoringMethod makeCopy() throws Exception;
@@ -36,7 +46,11 @@ public abstract class AbstractScoringMethod extends ParametrizedMethod {
 	 * @return 
 	 * @throws Exception 
 	 */
-	public abstract void computeScores() throws Exception;
+	public abstract void computeScores(List<Corpus> listCorpus) throws Exception;
+
+	public void finish() {
+		sentencesScores.clear();
+	}
 	
 	public AbstractProcess getCurrentProcess() {
 		return currentProcess;
@@ -47,9 +61,22 @@ public abstract class AbstractScoringMethod extends ParametrizedMethod {
 	}
 	
 	@Override
-	public abstract boolean isOutCompatible(ParametrizedMethod compatibleMethod);
+	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
+	}
 
 	@Override
-	public abstract void setCompatibility(ParametrizedMethod compMethod);
+	public void setCompatibility(ParametrizedMethod compMethod) {
+		((ScoreBasedIn)compMethod).setScore(sentencesScores);
+	}
 
+	@Override
+	public ArrayList<PairSentenceScore> getScore() {
+		return sentencesScores;
+	}
+	
+	@Override
+	public void setScore(ArrayList<PairSentenceScore> score) {
+		this.sentencesScores = score;
+	}
 }

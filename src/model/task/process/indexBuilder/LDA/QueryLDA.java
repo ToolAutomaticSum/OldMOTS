@@ -2,24 +2,24 @@ package model.task.process.indexBuilder.LDA;
 
 import java.util.List;
 
-import model.task.process.caracteristicBuilder.queryBuilder.QueryBasedIn;
-import model.task.process.caracteristicBuilder.queryBuilder.QueryBasedOut;
+import model.task.process.caracteristicBuilder.QueryBasedIn;
+import model.task.process.caracteristicBuilder.QueryBasedOut;
 import model.task.process.processCompatibility.ParametrizedMethod;
 import model.task.process.processCompatibility.ParametrizedType;
 import optimize.SupportADNException;
 import textModeling.Corpus;
-import textModeling.SentenceQuery;
+import textModeling.Query;
 
-public class QueryLDA extends LDA implements QueryBasedOut<double[]> {
+public class QueryLDA extends LDA implements QueryBasedOut {
 
-	private SentenceQuery<double[]> query;
+	private Query query;
 	
 	public QueryLDA(int id) throws SupportADNException {
 		super(id);
 		
 		listParameterOut.add(new ParametrizedType(null, double[].class, QueryBasedOut.class));
 		
-		query = new SentenceQuery<double[]>();
+		query = new Query();
 	}
 	
 	@Override
@@ -37,17 +37,16 @@ public class QueryLDA extends LDA implements QueryBasedOut<double[]> {
 	/**
 	 * donne le/les paramètre(s) d'output en input à la class comp méthode
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void setCompatibility(ParametrizedMethod compatibleMethod) {
 		if (super.isOutCompatible(compatibleMethod))
 			super.setCompatibility(compatibleMethod);
 		if (compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class)))
-			((QueryBasedIn<double[]>)compatibleMethod).setQuery(query);
+			((QueryBasedIn)compatibleMethod).setQuery(query);
 	}
 
 	@Override
-	public SentenceQuery<double[]> getQuery() {
+	public Query getQuery() {
 		return query;
 	}
 

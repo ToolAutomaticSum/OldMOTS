@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import model.task.process.caracteristicBuilder.ListClusterBasedIn;
-import model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
 import model.task.process.processCompatibility.ParametrizedMethod;
 import model.task.process.processCompatibility.ParametrizedType;
 import model.task.process.scoringMethod.ScoreBasedIn;

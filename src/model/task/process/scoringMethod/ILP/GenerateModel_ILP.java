@@ -5,33 +5,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import model.task.process.old.ILP.BiGram_ILP.BiGramILP_Parameter;
+import model.task.process.indexBuilder.IndexBasedIn;
+import model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
+import model.task.process.processCompatibility.ParametrizedMethod;
+import model.task.process.processCompatibility.ParametrizedType;
 import model.task.process.scoringMethod.AbstractScoringMethod;
 import optimize.SupportADNException;
+import textModeling.Corpus;
 import textModeling.SentenceModel;
+import textModeling.wordIndex.Index;
 import textModeling.wordIndex.NGram;
 
-public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramListBasedIn, FileModelBasedOut {
-
-	/**
-	 * BiGramListBasedIn
-	 */
-	private HashMap<NGram, Double> bigram_weights;
-	/**
-	 * BiGramListBasedIn
-	 */
-	private ArrayList<TreeSet<NGram>> bigrams_in_sentence;
-	/**
-	 * BiGramListBasedIn
-	 */
-	//private ArrayList<NGram> bigrams; 
-	//Give an id to each NGram
-	private TreeMap <NGram, Integer> bigrams_ids;
+public class GenerateModel_ILP extends AbstractScoringMethod implements IndexBasedIn<NGram>, SentenceNGramBasedIn {
+	
+	private Index<NGram> index;
+	//private List<TreeSet<NGram>> bigrams_in_sentence;
+	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
 	
 	/**
 	 * Modèle des BiGram construit dans computeScores
@@ -39,10 +33,12 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 	private String model;
 	
 	private Integer maxSummLength;
-	private String tmpFile;
 	
 	public GenerateModel_ILP(int id) throws SupportADNException {
 		super(id);
+
+		listParameterIn.add(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
 	}
 	
 	@Override
@@ -57,141 +53,137 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements BiGramLi
 	}
 
 	@Override
-	public void computeScores() throws Exception {
+	public void computeScores(List<Corpus> listCorpus) throws Exception {
 		maxSummLength = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "SummarySize"));
-		tmpFile = getCurrentProcess().getModel().getProcessOption(id, "TempName");
 		
-		buildModel();
+		buildModel(listCorpus);
 		writeModelToTmpFile();
-		bigram_weights = null;
-		bigrams_in_sentence = null;
-		//bigrams = null; 
 	}
 	
-	public void buildModel()
+	public void buildModel(List<Corpus> listCorpus)
 	{
+		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
+		//for (Corpus c : listCorpus)
+		listSentence.addAll(ngrams_in_sentences.keySet());
+		Collections.sort(listSentence);
+		//HashMap<NGram, Double> bigram_weights = new HashMap <NGram, Double>();
+		//ArrayList<TreeSet<NGram>> bigrams_in_sentence = new ArrayList <TreeSet <NGram>> ();
+		//TreeMap<NGram, Integer> bigrams_ids = new TreeMap <NGram, Integer>();
+		
+		/*for(NGram ng : index.values()) {
+			bigram_weights.put(ng, ng.getWeight());
+			bigrams_ids.put(ng, ng.getiD());
+		}*/
+		//for(SentenceModel sen : listSentence)
+		//	bigrams_in_sentence.add(new TreeSet<NGram>(ngrams_in_sentences.get(sen)));
+		
 		String texte = "Maximize\n";
 		String objective = "score: ";
-		for (NGram ng : this.bigram_weights.keySet())
-		{
-			double bg_weight = this.bigram_weights.get(ng);
-			int id_bg = this.bigrams_ids.get(ng);
+		for (NGram ng : index.values()) {
+			double bg_weight = ng.getWeight();
+			int id_bg = ng.getiD();
 			/*if ( bg_weight < 3 )
 				objective += "+ "+0.0+" c"+id_bg+" ";
 			else*/
 				objective += "+ "+bg_weight+" c"+id_bg+" ";
 		}
-		for (int i = 0; i < getCurrentProcess().getCorpusToSummarize().getAllSentence().size(); i++)
-		{
-			/*Phrase p = this.ss.getSentences().get(i);
+		int i = 0;
+		for(SentenceModel sen : listSentence) {
+			/*Phrase p = ss.getSentences().get(i);
 			if (p.getNbWords() < 10)
 				continue;*/
-			int nbMot =  getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i).getNbMot();
-			if (nbMot >= getCurrentProcess().getADN().getParameterValue(Integer.class, BiGramILP_Parameter.minSenLength.getName())) {
-				double length = getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i).getNbMot() / 1000.;
-				objective += "- "+length+" s"+i+" ";
-			} 
+			double length = sen.getNbMot() / 1000.;
+			objective += "- "+length+" s"+i+" ";
+			i++;
 		}
 		texte+=objective+"\n\nSubject To\n";
 		boolean first;
-		for (NGram ng : this.bigram_weights.keySet())
-		{
+		for (NGram ng : index.values()) {
 			first = true;
-			String contrainte = "index_"+this.bigrams_ids.get(ng)+": ";
-			for (int j = 0; j < this.bigrams_in_sentence.size(); j++)
-			{
-				/*Phrase p = this.ss.getSentences().get(j);
-				if (p.getNbWords() < 10)
-					continue;*/
-				TreeSet <NGram> curr_set = this.bigrams_in_sentence.get(j);
-				for (NGram ng1 : curr_set)
-				{
-					if (ng1.equals(ng))
-					{
-						if (first)
-						{
+			String contrainte = "index_"+ng.getiD()+": ";
+			int j = 0;
+			for (SentenceModel sen : listSentence) {
+				//Phrase p = ss.getSentences().get(j);
+				//if (sen.getNbMot() < 10)
+					//continue;
+				//TreeSet<NGram> curr_set = bigrams_in_sentence.get(j);
+				for (NGram ng1 : ngrams_in_sentences.get(sen)) {
+					if (ng1.equals(ng)) {
+						if (first) {
 							contrainte += "s"+j+" ";
 							first = false;
 						}
-						else contrainte += "+ "+"s"+j+" ";
+						else
+							contrainte += "+ "+"s"+j+" ";
 					}
 				}
+				j++;
 			}
-			contrainte += "- c"+this.bigrams_ids.get(ng)+" >= 0\n";
+			contrainte += "- c"+ng.getiD()+" >= 0\n";
 			texte += contrainte;
 		}
 		String length_constraint = "length: ";
-		for (int i = 0; i < getCurrentProcess().getCorpusToSummarize().getAllSentence().size(); i++)
-		{
-			SentenceModel p = getCurrentProcess().getCorpusToSummarize().getAllSentence().get(i);
+		i = 0;
+		for (SentenceModel sen : listSentence) {
 			/*if (p.getNbWords() < 10)
 				continue;*/
 			//System.out.println("Phrase "+i);
-			int length = p.getNbMot();
+			int length = sen.getNbMot();
 			if ( i == 0 )
 				length_constraint += length+" s"+i;
 			else
 				length_constraint += " + "+length+" s"+i;
+			i++;
 		}
-		length_constraint += " <= "+this.maxSummLength+"\n";
+		length_constraint += " <= "+maxSummLength+"\n";
 		
 		texte += length_constraint+"\n\nBinary\n";
 		
-		for (Entry <NGram, Double> e: this.bigram_weights.entrySet())
+		for (NGram ng: index.values())
 			//if (e.getValue() > 2.9)
-				texte+= "c"+this.bigrams_ids.get(e.getKey())+"\n";
-
-		for (int j = 0; j < getCurrentProcess().getCorpusToSummarize().getAllSentence().size(); j++)
+				texte+= "c"+ng.getiD()+"\n";
+		
+		for (int j = 0; j < listSentence.size(); j++)
 		{
 			texte += "s"+j+"\n";
 		}
 		texte += "End";
 		
 		//System.out.println(texte);
-		this.model = texte;
+		model = texte;
 	}
 	
 	private void writeModelToTmpFile()
 	{
 		try{
-			File file = new File(tmpFile);
+			File file = new File("tempILP.ilp");
 			if(!file.delete())
 				System.err.println(file.getName() + " not deleted!");
 			
-			FileOutputStream fw = new FileOutputStream(tmpFile);
+			FileOutputStream fw = new FileOutputStream("tempILP.ilp");
 			OutputStreamWriter osr = new OutputStreamWriter (fw, "UTF-8");
 			//BufferedWriter output = new BufferedWriter(fw);
-			osr.write(this.model);
+			osr.write(model);
 			osr.flush();
 			osr.close();
-		} catch(IOException ioe)
-		{
+		}
+		catch(IOException ioe) {
 			ioe.printStackTrace();
 		}
 	}
-
+	
 	@Override
-	public void setBiGramWeights(HashMap<NGram, Double> bigram_weights) {
-		this.bigram_weights = bigram_weights;
+	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+		return false;
 	}
 
 	@Override
-	public void setBiGramsIds(TreeMap<NGram, Integer> bigrams_ids) {
-		this.bigrams_ids = bigrams_ids;
+	public void setSentenceNGram(Map<SentenceModel, Set<NGram>> ngrams_in_sentences) {
+		this.ngrams_in_sentences = ngrams_in_sentences;
 	}
 
 	@Override
-	public void setBiGramsInSentence(ArrayList<TreeSet<NGram>> bigrams_in_sentence) {
-		this.bigrams_in_sentence = bigrams_in_sentence;
-	}
-
-	/*@Override
-	public void setBiGrams(ArrayList<NGram> bigrams) {
-		this.bigrams = bigrams;		
-	}*/
-
-	@Override
-	public String getFileModel() {
-		return tmpFile;
+	public void setIndex(Index<NGram> index) {
+		this.index = index;
 	}
 }

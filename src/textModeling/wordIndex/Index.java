@@ -12,7 +12,7 @@ public class Index<T extends WordIndex> implements Map<Integer, T> {
 	private HashMap<String, Integer> mapIndex = new HashMap<String, Integer>();
 	private int nbDoc;
 	
-	/** TODO Non utilis�, utile ?
+	/** TODO Non utilisé, utile ?
 	 * Tf et Idf par documents : Key = idCorpus
 	 */
 	private HashMap<Integer, Integer> corpusNbDoc = new HashMap<Integer, Integer>();
@@ -48,35 +48,43 @@ public class Index<T extends WordIndex> implements Map<Integer, T> {
 		corpusNbDoc.put(corpusId, nbDoc);
 	}
 	
-	@Override
-	public T put(Integer key, T value) {
+	public T put(T value) {
 		int iD = mapIndex.size();
-		value.setId(iD);
+		value.setiD(iD);
 		mapIndex.put(value.getWord(), iD);
 		return mapWord.put(iD, value);
 	}
 	
 	public T put(String key, T value) {
 		int iD = mapIndex.size();
-		value.setId(iD);
+		value.setiD(iD);
 		mapIndex.put(key, iD);
 		return mapWord.put(iD, value);
+	}
+	
+	@Override
+	public T put(Integer key, T value) {
+		return put(value);
 	}
 
-	public T put(String key, T value, int iD) {
+	/*public T put(String key, T value, int iD) {
 		value.setId(iD);
 		mapIndex.put(key, iD);
 		return mapWord.put(iD, value);
-	}
+	}*/
 	
 	public Integer getKeyId(String key) {
 		return mapIndex.get(key);
 	}
 	
+	public T get(Integer key) {
+		return mapWord.get(key);
+	}
+	
 	@Override
 	public T get(Object key) {
 		if (key.getClass() != String.class)
-			throw new IncompatibleClassChangeError("key need to be a string when accessing word in the index.");
+			throw new IncompatibleClassChangeError("Key need to be a string when accessing word in the index.");
 		return mapWord.get(mapIndex.get((String)key));
 	}
 	

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exception.LacksOfFeatures;
-import model.task.process.AbstractProcess;
+import model.task.process.old.AbstractProcess;
 import optimize.SupportADNException;
 import reader_writer.Writer;
 import textModeling.Corpus;
@@ -113,7 +113,7 @@ public class LearningTF_IDF extends AbstractProcess {
 		w.write(String.valueOf(index.getNbDocument()) + "\n");
 		for (WordIndex wordIndex : index.values()) {
 			WordTF_IDF word = (WordTF_IDF) wordIndex;
-			w.write(word.getWord() + "\t" + word.getId() + "\t" + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf() + "\n");
+			w.write(word.getWord() + "\t" + word.getiD() + "\t" + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf() + "\n");
 		}
 	}
 	
@@ -123,7 +123,7 @@ public class LearningTF_IDF extends AbstractProcess {
 		w.write(String.valueOf(index.getNbDocument()) + "\n");
 		for (WordIndex wordIndex : index.values()) {
 			WordTF_IDF word = (WordTF_IDF) wordIndex;
-			w.write(word.getWord() + "\t" + word.getId() + "\t" + word.getTfCorpus(corpusId) + "\t" + word.getIdf() + "\n");
+			w.write(word.getWord() + "\t" + word.getiD() + "\t" + word.getTfCorpus(corpusId) + "\t" + word.getIdf() + "\n");
 		}
 	}
 }

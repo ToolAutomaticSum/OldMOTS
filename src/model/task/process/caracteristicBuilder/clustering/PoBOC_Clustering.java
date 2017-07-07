@@ -20,9 +20,9 @@ import textModeling.cluster.Cluster;
 import tools.Pair;
 import tools.sentenceSimilarity.SentenceSimilarityMetric;
 
-public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements SentenceCaracteristicBasedIn<double[]>, ListClusterBasedOut {
+public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements SentenceCaracteristicBasedIn, ListClusterBasedOut {
 
-	protected Map<SentenceModel, double[]> sentenceCaracteristic;
+	protected Map<SentenceModel, Object> sentenceCaracteristic;
 	
 	private List<Cluster> listCluster = new ArrayList<Cluster>();
 	private List<List<Integer>> listPole = new ArrayList<List<Integer>>();
@@ -35,13 +35,15 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	private double[][] u;
 	private double[][] matSim;
 	private double[][] graphSim;
-	private double averageSim = 0;
+	//private double averageSim = 0;
 	private int[] degree;
 	
 	public PoBOC_Clustering(int id) throws SupportADNException {
 		super(id);
 		
 		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParametrizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
 		listParameterOut.add(new ParametrizedType(Cluster.class, List.class, ListClusterBasedOut.class));
 	}
 
@@ -56,7 +58,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	public void initADN() throws Exception {
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
 	}
 
 	@Override
@@ -128,7 +130,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 				if (i==j)
 					matSim[i][j] = 1.0;
 				else
-					matSim[i][j] = sim.computeSimilarity(sentenceCaracteristic.get(listSentence.get(i)), sentenceCaracteristic.get(listSentence.get(j)));
+					matSim[i][j] = sim.computeSimilarity(sentenceCaracteristic, listSentence.get(i), listSentence.get(j));
 				if (matSim[i][j] > max)
 					max = matSim[i][j];
 				else if (matSim[i][j] < min)
@@ -175,7 +177,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 			degree[i] = sum;
 		}
 		
-		double sum = 0;
+		/*double sum = 0;
 		//String temp = "";
 		for (int i = 0; i<n; i++) {
 			for (int j = 0; j<n; j++) {
@@ -185,7 +187,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 			//temp += "\n";
 		}
 		//System.out.println(temp);
-		averageSim = sum / (n*n);
+		averageSim = sum / (n*n);*/
 	}
 	
 	private void buildPoles() {
@@ -344,7 +346,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	}
 
 	@Override
-	public void setCaracterisics(Map<SentenceModel, double[]> sentenceCaracteristic) {
+	public void setCaracterisics(Map<SentenceModel, Object> sentenceCaracteristic) {
 		this.sentenceCaracteristic = sentenceCaracteristic;
 	}
 

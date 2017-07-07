@@ -438,17 +438,19 @@
 				<SUMMARY ID="0">D0848-A.M.100.H.G</SUMMARY>
 			</CORPUS>
 		</MULTICORPUS>
-		<PROCESS NAME="TF_IDF.TF_IDF">
-			<OPTION NAME="CorpusIdToSummarize">0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20	21	22	23	24	25	26	27	28	29	30	31	32	33	34	35	36	37	38	39	40	41	42	43	44	45	46	47</OPTION>
-			<OPTION NAME="LoadModel">false</OPTION>
+		<PROCESS NAME="wordEmbeddings.WordToVec">
+			<OPTION NAME="CorpusIdToSummarize">0</OPTION>
+			<OPTION NAME="ModelPath">doc/Output/word2vec.bin</OPTION>
+			<OPTION NAME="ReadStopWords">false</OPTION>
 			<SCORING_METHOD NAME="graphBased.LexRank">
-				<OPTION NAME="GraphThreshold">0.0625</OPTION>
+				<OPTION NAME="DumpingParameter">0.07</OPTION>
+				<OPTION NAME="GraphThreshold">0.02212</OPTION>
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="MMR">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
 				<OPTION NAME="Size">100</OPTION>
-				<OPTION NAME="Lambda">0.89</OPTION>
+				<OPTION NAME="Lambda">0.91</OPTION>
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>

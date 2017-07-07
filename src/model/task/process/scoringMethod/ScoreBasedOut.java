@@ -1,4 +1,4 @@
-package model.task.process.tempScoringMethod;
+package model.task.process.scoringMethod;
 
 import java.util.ArrayList;
 

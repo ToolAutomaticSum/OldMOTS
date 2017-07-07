@@ -12,7 +12,7 @@ import tools.sentenceSimilarity.SentenceSimilarityMetric;
 public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 
 	private SentenceSimilarityMetric sim;
-	private Map<SentenceModel, double[]> sentenceCaracteristic;
+	private Map<SentenceModel, Object> sentenceCaracteristic;
 	private double[][] matAdj;
 	private int[] degree;
 	private double threshold = 0;
@@ -22,7 +22,7 @@ public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 	 */
 	private static final long serialVersionUID = 6528014500614693135L;
 
-	public GraphSentenceBased(double threshold, Map<SentenceModel, double[]> sentenceCaracteristic, SentenceSimilarityMetric sim) {
+	public GraphSentenceBased(double threshold, Map<SentenceModel, Object> sentenceCaracteristic, SentenceSimilarityMetric sim) {
 		super();
 		this.threshold = threshold;
 		this.sentenceCaracteristic = sentenceCaracteristic;
@@ -46,7 +46,7 @@ public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 				if (i==j)
 					matAdj[i][j] = 1.0;
 				else
-					matAdj[i][j] = sim.computeSimilarity(sentenceCaracteristic.get(this.get(i).getCurrentSentence()), sentenceCaracteristic.get(this.get(j).getCurrentSentence()));
+					matAdj[i][j] = sim.computeSimilarity(sentenceCaracteristic, this.get(i).getCurrentSentence(), this.get(j).getCurrentSentence());
 				if (matAdj[i][j] > threshold) {
 					this.get(i).addAdjacentSentence(this.get(j).getCurrentSentence(), matAdj[i][j]);
 					matAdj[i][j] = 1;

@@ -1,17 +1,18 @@
-package model.task.process.summarizeMethod.genetic.geneticScorers;
+package model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import model.task.process.summarizeMethod.genetic.GeneticIndividual;
+import model.task.process.selectionMethod.genetic.GeneticIndividual;
 import textModeling.Corpus;
 import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.InvertedIndex;
+import textModeling.wordIndex.WordIndex;
 
 public abstract class GeneticIndividualScorer {
-	protected InvertedIndex invertedIndex;
-	protected Index index;
+	protected InvertedIndex<WordIndex> invertedIndex;
+	protected Index<WordIndex>  index;
 	protected Double divWeight;
 	protected Corpus cd;
 	protected Double delta;
@@ -21,7 +22,7 @@ public abstract class GeneticIndividualScorer {
 	protected Double fsc_factor;
 	protected ArrayList<SentenceModel> ss;
 	
-	public GeneticIndividualScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex invertedIndex, Index index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+	public GeneticIndividualScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		this.ss = ss;
 		this.index = index;
 		this.invertedIndex = invertedIndex;

@@ -2,33 +2,31 @@ package model.task.process.indexBuilder.wordEmbeddings;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
-import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
-import org.deeplearning4j.models.word2vec.Word2Vec;
-
-import model.task.preProcess.GenerateTextModel;
 import model.task.process.indexBuilder.AbstractIndexBuilder;
 import model.task.process.indexBuilder.IndexBasedIn;
-import model.task.process.indexBuilder.IndexBasedOut;
-import model.task.process.indexBuilder.wordEmbeddings.ld4j.MultiCorpusSentenceIterator;
-import model.task.process.indexBuilder.wordEmbeddings.ld4j.SentenceIterator;
-import model.task.process.indexBuilder.wordEmbeddings.ld4j.TokenizerFactory;
+import model.task.process.indexBuilder.LearningModelBuilder;
 import model.task.process.processCompatibility.ParametrizedMethod;
 import model.task.process.processCompatibility.ParametrizedType;
 import optimize.SupportADNException;
+import pythonWrapper.Word2VecPython;
+import pythonWrapper.Word2VecPythonBuilder;
+import reader_writer.Writer;
 import textModeling.Corpus;
-import textModeling.MultiCorpus;
 import textModeling.SentenceModel;
 import textModeling.TextModel;
 import textModeling.WordModel;
 import textModeling.wordIndex.Index;
 import textModeling.wordIndex.WordVector;
+import tools.vector.ToolsVector;
 
-public class WordToVec extends AbstractIndexBuilder<WordVector> implements IndexBasedOut<WordVector> {
+public class WordToVec extends AbstractIndexBuilder<WordVector> implements LearningModelBuilder {
 
 	private int dimension;
 	private boolean modelLoad = false;
-	private Word2Vec vec;
+	private Word2VecPythonBuilder pythonBuilder;
+	private Word2VecPython w2vModel;
 	
 	public WordToVec(int id) throws SupportADNException {
 		super(id);
@@ -45,96 +43,149 @@ public class WordToVec extends AbstractIndexBuilder<WordVector> implements Index
 	
 	@Override
 	public void initADN() throws Exception {
+		pythonBuilder = new Word2VecPythonBuilder();
 	}
 
 	@Override
-	public void processIndex() throws Exception {/**
+	public void processIndex(List<Corpus> listCorpus) throws Exception {
+		/**
 		 * Demande trop de ram, à tester sur serveur ou avec plus de ram.
 		 */
 		if (!modelLoad) {
-			//File gModel = new File(getModel().getProcessOption(id, "ModelPath"));
-			//System.out.println(getModel().getProcessOption(id, "ModelPath"));
-			vec = WordVectorSerializer.readWord2VecModel(getModel().getProcessOption(id, "ModelPath"), true);
-			
-		    System.out.println("Model size : " + vec.vocab().numWords());
-		   
-		    System.out.println("Load Pre-trained Model");
-		    modelLoad = true;
+			System.out.println("Prepare loading ... ");
+			w2vModel = pythonBuilder.load(getModel().getProcessOption(id, "ModelPath"));
+		    System.out.println("Model size : " + String.valueOf(w2vModel.getVocabSize()));
 		    
-			for (Corpus c : getCurrentMultiCorpus()) {
-				c = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, readStopWords);
-				//LearningWordToVecModel.learnWordToVec(vec, temp);
-				//System.out.println(c.getCorpusName() + "\t" + vec.vocab().numWords());
-				//temp.clear();
-			}
-			WordToVec.learnWordToVecMultiCorpus(vec, getCurrentMultiCorpus());
-		    for (Corpus c : getCurrentMultiCorpus()) {
-		    	if (c != getCurrentProcess().getCorpusToSummarize())
-		    		c.clear();
-		    }
-		    	
-		    System.out.println(vec.vocab().numWords());
 		    modelLoad = true;
 		}
 
+	    writeTempInputFile(listCorpus);
+
+	    System.out.println("Up-Training");
+	    WordToVec.learnWordToVec(w2vModel, getModel().getOutputPath() + File.separator + "tempWord2Vec.temp", 1, true);
+	    System.out.println("Model size : " + String.valueOf(w2vModel.getVocabSize()));
+	    new File(getModel().getOutputPath() + File.separator + "tempWord2Vec.temp").delete();
+	    
 	    boolean bDimension = true;
 
 	    int nbMotText = 0;
 	    int nbMotWE = 0;
 		//Construire index à partir de Word2Vec object
-	    for (TextModel text : getCurrentProcess().getCorpusToSummarize()) {
-			Iterator<SentenceModel> sentenceIt = text.iterator();
-			while (sentenceIt.hasNext()) {
-				SentenceModel sentenceModel = sentenceIt.next();
-				Iterator<WordModel> wordIt = sentenceModel.iterator();
-				while (wordIt.hasNext()) {
-					WordModel wm = wordIt.next();
-					nbMotText++;
-					if (!wm.isStopWord() && !index.containsKey(wm.getmLemma())) {
-						if (vec.hasWord(wm.getmLemma())) {
-							nbMotWE++;
-							if (bDimension) {
-								dimension = vec.getWordVector(wm.getmLemma()).length;
-								bDimension = false;
+	    for (Corpus c : listCorpus)
+		    for (TextModel text : c) {
+				Iterator<SentenceModel> sentenceIt = text.iterator();
+				while (sentenceIt.hasNext()) {
+					SentenceModel sentenceModel = sentenceIt.next();
+					Iterator<WordModel> wordIt = sentenceModel.iterator();
+					while (wordIt.hasNext()) {
+						WordModel wm = wordIt.next();
+						nbMotText++;
+						if ((readStopWords || !wm.isStopWord()) && !index.containsKey(wm.getmLemma())) {
+							if (w2vModel.isWordInVocab(wm.getmLemma())) {
+								nbMotWE++;
+								if (bDimension) {
+									dimension = w2vModel.getVector(wm.getmLemma()).size();
+									bDimension = false;
+								}
+								index.put(new WordVector(wm.getmLemma(), index, ToolsVector.ListToArray(w2vModel.getVector(wm.getmLemma()))));
 							}
-							index.put(0, new WordVector(wm.getmLemma(), index, vec.getWordVector(wm.getmLemma())));
+							else {
+								System.out.println("Model don't have the word " + wm.getmLemma());
+								index.put(new WordVector(wm.getmLemma(), index, new double[dimension]));
+							}
 						}
-						else 
-							System.out.println(wm.getmLemma());
 					}
 				}
-			}
-	    }
+		    }
 	    System.out.println("Modèle chargé !");
 	    System.out.println(nbMotText);
 	    System.out.println(nbMotWE);
 	}
 	
-	public static void learnWordToVecMultiCorpus(Word2Vec vec, MultiCorpus multiCorpus) {
-		MultiCorpusSentenceIterator sentenceIterator = new MultiCorpusSentenceIterator(multiCorpus);
-        TokenizerFactory tokenizerFactory = new TokenizerFactory();
-
-        /**TokenizerFactory first then SentenceIterator, use to build sequenceIterator inside the class.*/
-        vec.setTokenizerFactory(tokenizerFactory); 
-        vec.setSentenceIter(sentenceIterator);
-        vec.buildVocab();
-        vec.fit();
+	@Override
+	public void learn(List<Corpus> listCorpus, String modelName) throws Exception {
+		//vec = learnFromRawWordToVecMultiCorpus(listCorpus);
+		 //WordVectorSerializer.writeWord2VecModel(vec, modelName + ".bin.gz");
 	}
 	
-	public static void learnWordToVec(Word2Vec vec, Corpus corpusToSummarize) {
-		SentenceIterator sentenceIterator = new SentenceIterator(corpusToSummarize);
-        TokenizerFactory tokenizerFactory = new TokenizerFactory();
+	@Override
+	public void liveLearn(List<String> listStringSentence, String modelName) {
+		/*File modelFile = new File(modelName + ".bin.gz");
+		if (vec == null && modelFile.exists() && !modelFile.isDirectory())
+			vec = WordVectorSerializer.readWord2VecModel(modelFile, true);
+		long time = System.currentTimeMillis();
+		vec = learnWordToVecListString(vec, listStringSentence);
+		System.out.println("Learning : " + (System.currentTimeMillis() - time));
+		System.out.println("Vocab size: " + vec.getVocab().numWords());
+		WordVectorSerializer.writeWord2VecModel(vec, modelName + ".bin.gz");
+		System.out.println("Learning + writing : " + (System.currentTimeMillis() - time));*/
+	}
+	
+	public static Word2VecPython learnFromRawWordToVecMultiCorpus(List<Corpus> multiCorpus) {
+		/*ListCorpusSentenceIterator sentenceIterator = new ListCorpusSentenceIterator(multiCorpus);
+		sentenceIterator.setPreProcessor(new SentencePreProcess());
+		
+        MyTokenizerFactory tokenizerFactory = new MyTokenizerFactory();
 
-        /**TokenizerFactory first then SentenceIterator, use to build sequenceIterator inside the class.*/
-        vec.setTokenizerFactory(tokenizerFactory); 
-        vec.setSentenceIter(sentenceIterator);
-        vec.buildVocab();
-        try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        Word2Vec vec = new Word2Vec.Builder()
+                .minWordFrequency(1)
+                .iterations(1)
+                .layerSize(100)
+                .seed(42)
+                .windowSize(5)
+                .iterate(sentenceIterator)
+                .tokenizerFactory(tokenizerFactory)
+                .build();
         vec.fit();
+        
+        return vec;*/
+		return null;
+	}
+	
+	/*public static Word2Vec learnWordToVecListString(Word2Vec vec, List<String> listStringSentence) {
+		ListStringSentenceIterator sentenceIterator = new ListStringSentenceIterator(listStringSentence);
+		sentenceIterator.setPreProcessor(new SentencePreProcess());
+		
+		TokenizerFactory tokenizerFactory = new MyTokenizerFactory();
+		tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor());
+
+        if (vec == null) {
+        	vec = new Word2Vec.Builder()
+	                .minWordFrequency(1)
+	                .iterations(1)
+	                .layerSize(100)
+	                .seed(42)
+	                .windowSize(5)
+	                .iterate(sentenceIterator)
+	                .tokenizerFactory(tokenizerFactory)
+	                .build();
+        }
+        else {
+        	vec.setTokenizerFactory(tokenizerFactory); 
+            vec.setSentenceIter(sentenceIterator);
+        }
+        
+        vec.fit();
+        
+        return vec;
+	}*/
+	
+	public static void learnWordToVec(Word2VecPython vec, String fname, int min_count, boolean update) {
+		vec.build_vocab_file(fname, 5, 10000, update);
+		vec.train_file(fname, 5);
+	}
+	
+	private void writeTempInputFile(List<Corpus> listCorpus) {
+		Writer w = new Writer(getModel().getOutputPath() + File.separator + "tempWord2Vec.temp");
+		w.open();
+		for (Corpus corpus : listCorpus)
+			for (TextModel text : corpus)
+				for (SentenceModel sen : text) {
+					for (WordModel word : sen)
+						if (readStopWords || !word.isStopWord())
+							w.write(word.getmLemma() + " ");
+					w.write("\n");
+				}
 	}
 	
 	public void setDimension(int dimension) {

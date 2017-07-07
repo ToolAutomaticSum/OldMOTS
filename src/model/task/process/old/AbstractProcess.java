@@ -1,4 +1,4 @@
-package model.task.process;
+package model.task.process.old;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,23 +10,15 @@ import java.util.Set;
 
 import exception.LacksOfFeatures;
 import model.AbstractModel;
-import model.task.AbstractTaskModel;
+import model.task.AbstractTask;
 import model.task.postProcess.AbstractPostProcess;
 import model.task.preProcess.GenerateTextModel;
-import model.task.process.old.VectorCaracteristicBasedIn;
-import model.task.process.old.VectorCaracteristicBasedOut;
 import model.task.process.old.ILP.BiGramListBasedOut;
 import model.task.process.old.LDA.LdaBasedOut;
-import model.task.process.scoringMethod.AbstractScoringMethod;
-import model.task.process.scoringMethod.ILP.BiGramListBasedIn;
-import model.task.process.scoringMethod.ILP.FileModelBasedOut;
-import model.task.process.scoringMethod.LDA.LdaBasedIn;
-import model.task.process.scoringMethod.LDA.TopicLdaBasedOut;
-import model.task.process.summarizeMethod.AbstractSummarizeMethod;
-import model.task.process.summarizeMethod.FileModelBasedIn;
-import model.task.process.summarizeMethod.TopicLdaBasedIn;
-import model.task.process.tempScoringMethod.ScoreBasedIn;
-import model.task.process.tempScoringMethod.ScoreBasedOut;
+import model.task.process.old.scoringMethod.AbstractScoringMethod;
+import model.task.process.old.summarizeMethod.AbstractSummarizeMethod;
+import model.task.process.scoringMethod.ScoreBasedIn;
+import model.task.process.scoringMethod.ScoreBasedOut;
 import optimize.Optimize;
 import optimize.SupportADNException;
 import optimize.parameter.ADN;
@@ -36,7 +28,7 @@ import textModeling.SentenceModel;
 import textModeling.wordIndex.Index;
 import tools.Tools;
 
-public abstract class AbstractProcess extends Optimize implements AbstractTaskModel, Runnable {
+public abstract class AbstractProcess extends Optimize implements AbstractTask, Runnable {
 
 	private Thread t;
 	private AbstractProcess[] threads = null;

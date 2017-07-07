@@ -1,5 +1,7 @@
-package model.task.process.caracteristicBuilder.queryBuilder;
+package model.task.process.caracteristicBuilder;
 
-public interface QueryBasedOut<T> {
-	public T getQuery();
+import textModeling.Query;
+
+public interface QueryBasedOut {
+	public Query getQuery();
 }

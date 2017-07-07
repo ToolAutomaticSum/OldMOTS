@@ -1,9 +1,9 @@
-package model.task.process.summarizeMethod;
+package model.task.process.old.summarizeMethod;
 
 import java.util.HashMap;
 import java.util.List;
 
-import model.task.process.AbstractProcess;
+import model.task.process.old.AbstractProcess;
 import optimize.Individu;
 import optimize.SupportADNException;
 import textModeling.SentenceModel;

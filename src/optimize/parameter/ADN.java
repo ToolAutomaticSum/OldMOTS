@@ -121,7 +121,7 @@ public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
 		String str = "";
 		Iterator<Parameter<Class<?>>> paramIt = mapNameParam.values().iterator();
 		while (paramIt.hasNext())
-			str += paramIt.next().toString() + "\n";
+			str += paramIt.next().toString() + "\t";
 		return str;
 	}
 	

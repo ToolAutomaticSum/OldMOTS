@@ -7,7 +7,7 @@ import java.util.Map;
 
 import exception.LacksOfFeatures;
 import model.task.preProcess.GenerateTextModel;
-import model.task.process.AbstractProcess;
+import model.task.process.old.AbstractProcess;
 import model.task.process.old.VectorCaracteristicBasedOut;
 import optimize.SupportADNException;
 import reader_writer.Reader;
@@ -76,7 +76,7 @@ public class TF_IDF extends AbstractProcess implements VectorCaracteristicBasedO
 					WordModel wm = wordIt.next();
 					if (!wm.isStopWord()) {
 						WordTF_IDF word = (WordTF_IDF) index.get(wm.getmLemma());
-						tfIdfVector[word.getId()]+=word.getTfCorpus(getSummarizeCorpusId())*word.getIdf();
+						tfIdfVector[word.getiD()]+=word.getTfCorpus(getSummarizeCorpusId())*word.getIdf();
 					}
 				}
 				sentenceCaracteristic.put(sentenceModel, tfIdfVector);

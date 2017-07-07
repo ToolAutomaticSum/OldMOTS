@@ -1,4 +1,4 @@
-package model.task.process.scoringMethod.ILP;
+package model.task.process.old;
 
 public interface FileModelBasedOut {
 
