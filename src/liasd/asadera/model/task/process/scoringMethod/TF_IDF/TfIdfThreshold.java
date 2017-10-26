@@ -1,0 +1,91 @@
+package liasd.asadera.model.task.process.scoringMethod.TF_IDF;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
+import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.scoringMethod.AbstractScoringMethod;
+import liasd.asadera.model.task.process.scoringMethod.ScoreBasedIn;
+import liasd.asadera.optimize.SupportADNException;
+import liasd.asadera.optimize.parameter.Parameter;
+import liasd.asadera.textModeling.Corpus;
+import liasd.asadera.textModeling.SentenceModel;
+import liasd.asadera.textModeling.TextModel;
+import liasd.asadera.textModeling.WordModel;
+import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
+import liasd.asadera.tools.PairSentenceScore;
+
+public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedIn, IndexBasedIn<WordTF_IDF> {
+
+	public static enum ScoringTfIdf_Parameter {
+		TfIdfThreshold("TfIdfThreshold");
+
+		private String name;
+
+		private ScoringTfIdf_Parameter(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
+	
+	private Index<WordTF_IDF> index;
+	private double tfidfThreshold;
+	
+	public TfIdfThreshold(int id) throws SupportADNException {
+		super(id);
+		supportADN = new HashMap<String, Class<?>>();
+		supportADN.put("TfIdfThreshold", Double.class);
+
+		listParameterIn.add(new ParametrizedType(WordTF_IDF.class, Index.class, IndexBasedIn.class));
+	}
+
+	@Override
+	public AbstractScoringMethod makeCopy() throws Exception {
+		TfIdfThreshold p = new TfIdfThreshold(id);
+		initCopy(p);
+		return p;
+	}
+
+	@Override
+	public void initADN() throws Exception {
+		getCurrentProcess().getADN().putParameter(new Parameter<Double>(ScoringTfIdf_Parameter.TfIdfThreshold.getName(), Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "TfIdfThreshold"))));
+	}
+
+	@Override
+	public void computeScores(List<Corpus> listCorpus) throws Exception {
+		tfidfThreshold = getCurrentProcess().getADN().getParameterValue(Double.class, ScoringTfIdf_Parameter.TfIdfThreshold.getName());
+
+		for (Corpus corpus : listCorpus) {
+			for (TextModel textModel : corpus) {
+				for (SentenceModel sentenceModel : textModel) {
+					double score = 0;
+					for (WordModel word : sentenceModel) {
+						if (getCurrentProcess().getFilter().passFilter(word)) {
+							WordTF_IDF w = index.get(word.getmLemma());
+							double temp = w.getTfCorpus(corpus.getiD())*w.getIdf();
+							if (temp  > tfidfThreshold)
+								score += temp;
+						}
+					}
+					sentenceModel.setScore(score); //Ajout du score à la phrase
+					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
+				}
+			}
+		}
+		Collections.sort(sentencesScores);
+		double max = sentencesScores.get(0).getScore();
+		for (PairSentenceScore pss : sentencesScores)
+			pss.setScore(pss.getScore() / max);
+	}
+
+	@Override
+	public void setIndex(Index<WordTF_IDF> index) {
+		this.index = index;
+	}
+}

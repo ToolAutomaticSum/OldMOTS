@@ -159,7 +159,7 @@ Usage: ROUGE-1.5.4.pl
 
 (2) Please read RELEASE-NOTE.txt for information about updates from previous versions.
 
-(3) The following files coming with this package in the "sample-output"
+(3) The following files coming with this package liasd.asadera.in the "sample-output"
     directory are the expected output of the evaluation files in the
     "sample-test" directory.
     (a) use "data" as ROUGE_EVAL_HOME, compute 95% confidence interval,

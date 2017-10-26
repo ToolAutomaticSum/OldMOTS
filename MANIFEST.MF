@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.9.6
-Created-By: 1.8.0_121-b13 (Oracle Corporation)
-Main-Class: launcher/Start
-Class-Path: automaticSummarization_lib/commons-cli-1.4/commons-cli-1.4.jar automaticSummarization_lib/GrammaticalWords.jar automaticSummarization_lib/ModifiedJGibbLabeledLDA.jar automaticSummarization_lib/ReaderWriter.jar automaticSummarization_lib/stanford-corenlp-3.7.0-models.jar automaticSummarization_lib/stanford-corenlp-3.7.0.jar automaticSummarization_lib/trove-3.0.3.jar automaticSummarization_lib/jep-3.6.4.jar

@@ -20,4 +20,10 @@
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>STANFORD_NLP_HOME</name>
+			<value>file:/home/valnyz/PhD/java_lib/Stanford/Stanford</value>
+		</variable>
+	</variableList>
 </projectDescription>

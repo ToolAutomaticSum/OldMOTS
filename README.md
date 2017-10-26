@@ -1,3 +1,0 @@
-Outil pour le résumé automatique
-
-Le résumé automatique est une une tâche relativement ancienne, qui a évolué au cours des années. Plusieurs campagne d'évaluation ont eu lieu, telles que DUC et TAC et ces campagnes ont permis à de nombreuses méthodes d'être développées. Or il n'existe pas à notre connaissance d'outil permettant de faciliter la comparaison d'une méthode nouvellement développée avec les méthodes de l'état de l'art. C'est pourquoi, ce nouvel outil pour le résumé automatique, a pour objectif de proposer une implémentation modulable permettant la comparaison rapide de différentes méthodes de résumé sur une base identique.
