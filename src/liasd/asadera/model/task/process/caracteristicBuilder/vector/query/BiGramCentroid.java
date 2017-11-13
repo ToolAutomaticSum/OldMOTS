@@ -1,4 +1,4 @@
-package liasd.asadera.model.task.process.caracteristicBuilder.vector;
+package liasd.asadera.model.task.process.caracteristicBuilder.vector.query;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +7,7 @@ import java.util.List;
 import jgibblda.Pair;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
+import liasd.asadera.model.task.process.caracteristicBuilder.vector.BiGramVectorSentence;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
@@ -14,10 +15,10 @@ import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
+import liasd.asadera.textModeling.wordIndex.NGram;
 
-public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
-	
+public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOut {
+
 	public static enum Centroid_Parameter {
 		NbMaxWordInCentroid("NbMaxWordInCentroid");
 
@@ -35,9 +36,9 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 	private Query query;
 	protected int nbMaxWordInCentroid;
 
-	protected InvertedIndex<WordTF_IDF> invertIndex;
+	protected InvertedIndex<NGram> invertIndex;
 	
-	public Centroid(int id) throws SupportADNException {
+	public BiGramCentroid(int id) throws SupportADNException {
 		super(id);
 		query = new Query();
 		supportADN.put("NbMaxWordInCentroid", Integer.class);
@@ -46,8 +47,8 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 	}
 	
 	@Override
-	public Centroid makeCopy() throws Exception {
-		Centroid p = new Centroid(id);
+	public BiGramCentroid makeCopy() throws Exception {
+		BiGramCentroid p = new BiGramCentroid(id);
 		p.setNbMaxWordInCentroid(nbMaxWordInCentroid);
 		initCopy(p);
 		return p;
@@ -63,7 +64,7 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 	
 	private void init() {
 		nbMaxWordInCentroid = getCurrentProcess().getADN().getParameterValue(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName());
-		invertIndex = new InvertedIndex<WordTF_IDF>(index);
+		invertIndex = new InvertedIndex<NGram>(index);
 	}
 	
 	@Override
@@ -78,24 +79,24 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 		for (Corpus corpus : listCorpus) {
 			int corpusId = corpus.getiD();
 			
-			for (WordTF_IDF w : invertIndex.getCorpusWordIndex().get(corpusId)) {
+			for (NGram w : invertIndex.getCorpusWordIndex().get(corpusId)) {
 				double tfidf = w.getTfCorpus(corpusId)*w.getIdf();
 				if (listBestWord.size() < nbMaxWordInCentroid) {
 					listBestWord.add(new Pair(w.getiD(), tfidf));
 					Collections.sort(listBestWord);
 					minTfIdf = (double) listBestWord.get(listBestWord.size()-1).second;
-				} else if (tfidf > minTfIdf) {
+				}
+				else if (tfidf > minTfIdf) {
 					listBestWord.remove(nbMaxWordInCentroid-1);
 					listBestWord.add(new Pair(w.getiD(), tfidf));
 					Collections.sort(listBestWord);
 					minTfIdf = (double) listBestWord.get(listBestWord.size()-1).second;
 				}
 			}
-			
-			for (Pair p : listBestWord) {
-				centroid[(int)p.first] = (double) p.second;
-			}
 		}
+		
+		for (Pair p : listBestWord)
+			centroid[(int)p.first] = (double) p.second;
 			
 		query.setQuery(centroid);
 	}
@@ -117,7 +118,7 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 	
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return super.isOutCompatible(compatibleMethod) && compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class));
+		return super.isOutCompatible(compatibleMethod) || super.isOutCompatible(compatibleMethod) && compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class));
 	}
 
 	/**

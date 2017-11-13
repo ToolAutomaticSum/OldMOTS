@@ -58,7 +58,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	public void initADN() throws Exception {
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 
 	@Override

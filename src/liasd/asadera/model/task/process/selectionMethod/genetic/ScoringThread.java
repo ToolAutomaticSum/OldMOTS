@@ -1,7 +1,7 @@
 package liasd.asadera.model.task.process.selectionMethod.genetic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import liasd.asadera.textModeling.SentenceModel;
@@ -11,18 +11,18 @@ import liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class ScoringThread extends Thread implements Runnable {
 	private GeneticIndividual gi;
-	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
-	private TreeMap <NGram, Double> sourceDistribution;
-	private TreeMap <NGram, Integer> firstSentencesConcepts;
+	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
+	private Map <NGram, Double> sourceDistribution;
+	private Map <NGram, Integer> firstSentencesConcepts;
 	private double delta;
 	//private Index index;
 	private double fsc;
 	
-	public ScoringThread (GeneticIndividual gi, HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences, TreeMap <NGram, Double> sourceDistribution, TreeMap <NGram, Integer> firstSentencesConcepts, Index<WordIndex> index, double fsc, double delta) {
+	public ScoringThread (GeneticIndividual gi, Map<SentenceModel, Set<NGram>> ngrams_in_sentences2, Map<NGram, Double> sourceDistribution2, Map<NGram, Integer> firstSentencesConcepts2, Index<WordIndex> index, double fsc, double delta) {
 		this.gi = gi;
-		this.ngrams_in_sentences = ngrams_in_sentences;
-		this.sourceDistribution = sourceDistribution;
-		this.firstSentencesConcepts = firstSentencesConcepts;
+		this.ngrams_in_sentences = ngrams_in_sentences2;
+		this.sourceDistribution = sourceDistribution2;
+		this.firstSentencesConcepts = firstSentencesConcepts2;
 		//this.index = index;
 		this.fsc = fsc;
 		this.delta = delta;
@@ -30,8 +30,8 @@ public class ScoringThread extends Thread implements Runnable {
 
 	public void run() {
 		//double t = System.currentTimeMillis();
-		double js = this.jensenShannon();
-		this.gi.setScore(js);
+		double js = jensenShannon();
+		gi.setScore(js);
 		//System.out.println(t-System.currentTimeMillis() + "\t" + "JensenShannon");
 	}
 	
@@ -39,7 +39,7 @@ public class ScoringThread extends Thread implements Runnable {
 		double divergence = 0.;
 		
 		TreeMap <NGram, Double> distribGI;
-		distribGI = this.computeNGram_GI_distrib();
+		distribGI = computeNGram_GI_distrib();
 		
 		double divider;
 		double probSumm;
@@ -98,7 +98,7 @@ public class ScoringThread extends Thread implements Runnable {
 		//System.out.println("distrib : "+distrib);
 		double nb_bi_grams_gi = 0.;
 		for (SentenceModel p : this.gi.getGenes()) {
-			ArrayList <NGram> curr_ngrams_list = ngrams_in_sentences.get(p);
+			Set<NGram> curr_ngrams_list = ngrams_in_sentences.get(p);
 			for (NGram ng : curr_ngrams_list) {
 				//TODO : GROSSE APPROXIMATION : il faut parcourir les bigrams récupérés de la phrase, et non
 				//ngrams in sentence, car là on a toujours 1 comme valeur pour un ngram même si présent plusieurs fois.
@@ -135,9 +135,8 @@ public class ScoringThread extends Thread implements Runnable {
 			if (dProb == null)
 				dProb = 0.;
 			distrib.put(ng,(dProb + this.delta * probSource) / divider);
-			
-		
 		}
+		
 		/*for (NGram ng : corpusDistribMinusGIDistrib) {
 			double probSource = this.sourceDistribution.get(ng);
 			distrib.put(ng,this.delta * probSource / divider); 

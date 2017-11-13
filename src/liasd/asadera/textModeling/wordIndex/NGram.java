@@ -126,7 +126,7 @@ public class NGram extends WordIndex implements List<WordIndex> {
 
 	@Override
 	public boolean addAll(int index, Collection<? extends WordIndex> c) {
-		return listWord.addAll(index, c);
+		return listWord.addAll(c);
 	}
 
 	@Override

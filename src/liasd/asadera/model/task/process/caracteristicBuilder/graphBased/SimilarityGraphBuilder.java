@@ -49,7 +49,7 @@ public class SimilarityGraphBuilder extends AbstractCaracteristicBuilder impleme
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class DiversityScorer extends GeneticIndividualScorer {
 	private double maxIdf;
@@ -28,7 +27,7 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		ArrayList<WordIndex> indexKeys = this.invertedIndex.getCorpusWordIndex().get(cd.getiD());
 		for (WordIndex key : indexKeys)
 		{
-			WordTF_IDF w = (WordTF_IDF)(key);
+			WordIndex w = (WordIndex)(key);
 			double currIdf = w.getIdf();
 			if (this.maxIdf < currIdf )
 				this.maxIdf = currIdf;
@@ -78,7 +77,7 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		}
 		for (Integer indexKey : giIndexKeys)
 		{
-			WordTF_IDF w = (WordTF_IDF) index.get(indexKey);
+			WordIndex w = (WordIndex) index.get(indexKey);
 			sum += (w.getIdf() / this.maxIdf);
 		}
 		

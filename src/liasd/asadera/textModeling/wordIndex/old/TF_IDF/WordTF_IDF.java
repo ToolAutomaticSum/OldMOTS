@@ -1,4 +1,4 @@
-package liasd.asadera.textModeling.wordIndex.TF_IDF;
+package liasd.asadera.textModeling.wordIndex.old.TF_IDF;
 
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;

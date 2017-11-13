@@ -58,7 +58,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 		pipeline = new StanfordCoreNLP(props);
 		
 		if (getCurrentProcess() != null && getCurrentProcess().getClass() == GenerateTextModel.class)
-			filter = ((GenerateTextModel)getCurrentProcess()).getFilter();
+			filter = ((GenerateTextModel) getCurrentProcess()).getFilter();
 		else
 			filter = new TrueFilter();
 	}
@@ -83,12 +83,17 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 				List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 				for(CoreMap sentence: sentences) {
 					if (!sentence.toString().replace("_", "").isEmpty()) {
-						SentenceModel sen = new SentenceModel(sentence.toString().replace("\n",  "\t"), iD, textModel);
+						String senText;
+						if (sentence.toString().contains(" -- "))
+							senText = sentence.toString().split(" -- ")[1].replace("\n",  "\t");
+						else
+							senText = sentence.toString().replace("\n",  "\t");
+						SentenceModel sen = new SentenceModel(senText, iD, textModel);
 						// traversing the words in the current sentence
 						// a CoreLabel is a CoreMap with additional token-specific methods
 						for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
 							String w = token.get(TextAnnotation.class);
-							if (!Tools.enleverPonctuation(token.get(TextAnnotation.class)).isEmpty()) {
+							if (!Tools.enleverPonctuation(w).isEmpty() && senText.contains(w)) {
 								WordModel word = new WordModel();
 								word.setmForm(w);
 								word.setSentence(sen);

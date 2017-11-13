@@ -310,27 +310,22 @@ public class GeneticSumm extends AbstractSelectionMethod implements IndexBasedIn
 	    try {
 			divWeight = Double.parseDouble(getModel().getProcessOption(id, "DivWeight"));
 	    } catch (LacksOfFeatures e) {
-	    	
 	    }
 	    try {
 	    	delta = Double.parseDouble(getModel().getProcessOption(id, "Delta"));
 	    } catch (LacksOfFeatures e) {
-	    	
 	    }
 	    try {
 	    	firstSentenceConceptsFactor = Double.parseDouble(getModel().getProcessOption(id, "FirstSentenceConceptsFactor"));
-		} catch (LacksOfFeatures e) {
-			
+		} catch (LacksOfFeatures e) {	
 		}
 	    try {
 	    	window = Double.parseDouble(getModel().getProcessOption(id, "Window"));
 		} catch (LacksOfFeatures e) {
-			
 		}
 	    try {
 	    	fsc_factor = Double.parseDouble(getModel().getProcessOption(id, "Fsc_factor"));
 	    } catch (LacksOfFeatures e) {
-	    	
 	    }
 	    
 	    Object o = ct.newInstance(null, ss, getCurrentProcess().getCorpusToSummarize(), new InvertedIndex<WordIndex>(index), index, divWeight, delta, firstSentenceConceptsFactor, window, fsc_factor);

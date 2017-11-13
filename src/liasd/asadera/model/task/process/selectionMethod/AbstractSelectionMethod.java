@@ -1,18 +1,13 @@
 package liasd.asadera.model.task.process.selectionMethod;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import liasd.asadera.model.task.process.AbstractProcess;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
-import liasd.asadera.model.task.process.scoringMethod.ScoreBasedIn;
-import liasd.asadera.model.task.process.scoringMethod.ScoreBasedOut;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.tools.PairSentenceScore;
 
 public abstract class AbstractSelectionMethod extends ParametrizedMethod {
 
@@ -20,13 +15,11 @@ public abstract class AbstractSelectionMethod extends ParametrizedMethod {
 
 	public AbstractSelectionMethod(int id) throws SupportADNException {
 		super(id);
-		
-		listParameterIn.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
-		listParameterOut.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedOut.class));
 	}
 
 	public abstract AbstractSelectionMethod makeCopy() throws Exception;
 	
+	//TODO virer initCopy et mettre dans makeCopy without abstract;
 	protected void initCopy(AbstractSelectionMethod p) {
 		p.setCurrentProcess(currentProcess);
 		if (supportADN != null)

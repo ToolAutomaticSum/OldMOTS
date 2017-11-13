@@ -2,11 +2,8 @@ package liasd.asadera.tools.sentenceSimilarity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import liasd.asadera.exception.VectorDimensionException;
-import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.WordModel;
 
@@ -14,7 +11,7 @@ public class JaccardSimilarity extends SentenceSimilarityMetric {
 
 	public JaccardSimilarity() {
 		super();
-		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+//		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
 	}
 	
 	@Override

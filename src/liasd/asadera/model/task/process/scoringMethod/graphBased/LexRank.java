@@ -1,9 +1,9 @@
 package liasd.asadera.model.task.process.scoringMethod.graphBased;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
@@ -14,7 +14,6 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.graphBased.GraphSentenceBased;
 import liasd.asadera.textModeling.graphBased.NodeGraphSentenceBased;
-import liasd.asadera.tools.PairSentenceScore;
 import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
 import liasd.asadera.tools.vector.ToolsVector;
 
@@ -89,7 +88,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 	
 	private void init() throws Exception {
@@ -123,13 +122,13 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 			for (NodeGraphSentenceBased n : graph) {
 				if (result[n.getIdNode()] > max)
 					max = result[n.getIdNode()];
-				sentencesScores.add(new PairSentenceScore(n.getCurrentSentence(), result[n.getIdNode()]));
+				sentencesScore.put(n.getCurrentSentence(), result[n.getIdNode()]);
 			}
-			for (PairSentenceScore p : sentencesScores)
-				p.setScore(p.getScore()/max);
+			for (Entry<SentenceModel, Double> e : sentencesScore.entrySet()) {
+				e.setValue(e.getValue()/max);
+				e.getKey().setScore(e.getValue());
+			}
 		}
- 
-		Collections.sort(sentencesScores);
 	}
 	
 	public static double[] computeLexRankScore(double dampingFactor, double[][] matAdj, int matSize, double epsilon) throws Exception {

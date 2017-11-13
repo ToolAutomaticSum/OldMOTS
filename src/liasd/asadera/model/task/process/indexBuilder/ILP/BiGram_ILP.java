@@ -1,16 +1,11 @@
 package liasd.asadera.model.task.process.indexBuilder.ILP;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import liasd.asadera.model.task.preProcess.GenerateTextModel;
 import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedOut;
@@ -34,7 +29,7 @@ import liasd.asadera.tools.wordFilters.WordFilter;
  */
 public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBasedIn<WordIndex>, SentenceNGramBasedOut {
 
-	private static final Logger logger = Logger.getLogger("BiGram_ILP"); 
+	//private static final Logger logger = Logger.getLogger("BiGram_ILP"); 
 	
 	//private HashMap<NGram, Double> bigram_weights;
 	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
@@ -119,6 +114,7 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 		ngrams_in_sentences.clear();
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	private void buildWeightsAndSentences(List<Corpus> listCorpus)
 	{		
 		Set<NGram> curr_bg_set;
@@ -185,7 +181,8 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 		//System.out.println(index.get(" | boeing | 747").getTf());
 	}
 	
-	private static Set<NGram> getBiGrams(Index<WordIndex> index, SentenceModel sen, WordFilter filter)
+	@SuppressWarnings("unlikely-arg-type")
+	public static Set<NGram> getBiGrams(Index<WordIndex> index, SentenceModel sen, WordFilter filter)
 	{
 		WordModel u1, u2;
 		Set<NGram> ngrams_list = new TreeSet<NGram>();
@@ -194,7 +191,7 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 			u1 = sen.get(i);
 			u2 = sen.get(i+1);
 			
-			if (filter.passFilter(u1) && filter.passFilter(u2))
+			if (filter.passFilter(u1) && filter.passFilter(u2) && index.containsKey(u1.getmLemma()) && index.containsKey(u2.getmLemma()))
 			{
 				NGram ng = new NGram();
 

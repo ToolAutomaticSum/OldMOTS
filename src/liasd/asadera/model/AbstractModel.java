@@ -21,7 +21,8 @@ public abstract class AbstractModel extends Observable {
 	private AbstractController ctrl;
 
 	private int taskID;
-
+	private String name;
+	
 	private String language;
 
 	private String outputPath;
@@ -114,6 +115,14 @@ public abstract class AbstractModel extends Observable {
 		this.taskID = taskID;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getOutputPath() {
 		return outputPath;
 	}

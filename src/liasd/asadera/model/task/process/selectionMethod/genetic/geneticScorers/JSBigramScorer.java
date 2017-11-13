@@ -2,7 +2,11 @@ package liasd.asadera.model.task.process.selectionMethod.genetic.geneticScorers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import liasd.asadera.model.task.process.selectionMethod.genetic.GeneticIndividual;
 import liasd.asadera.model.task.process.selectionMethod.genetic.ScoringThread;
@@ -15,16 +19,16 @@ import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class JSBigramScorer extends GeneticIndividualScorer{
+public class JSBigramScorer extends GeneticIndividualScorer {
 
-	private TreeMap <NGram, Double> sourceDistribution;
-	private TreeMap <NGram, Double> sourceOccurences;
-	private TreeMap <NGram, Integer> firstSentencesConcepts;
+	private Map <NGram, Double> sourceDistribution;
+	private Map <NGram, Double> sourceOccurences;
+	private Map <NGram, Integer> firstSentencesConcepts;
 	private ScoringThread threads_tab[];
 	
 	private int nbBiGramsInSource;
 	private Smoothing smoothing;
-	private HashMap<SentenceModel, ArrayList<NGram>> ngrams_in_sentences;
+	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
 	
 	public JSBigramScorer(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(null, ss, corpus, null, index, null, delta, firstSentenceConceptsFactor,
@@ -46,44 +50,38 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		System.out.println("Source Distribution OK !!");*/
 	}
 	
-	public void computeNGrams_in_sentences()
-	{
-		this.ngrams_in_sentences = new HashMap<SentenceModel, ArrayList<NGram>> ();
+	public void computeNGrams_in_sentences() {
+		ngrams_in_sentences = new HashMap<SentenceModel, Set<NGram>> ();
 		
-		for (SentenceModel p : ss) {
-			this.ngrams_in_sentences.put(p, new ArrayList<NGram>(p.getNGrams(2, this.index, null)));
-		}
+		for (SentenceModel p : ss)
+			ngrams_in_sentences.put(p, new TreeSet<NGram>(p.getNGrams(2, this.index, null)));
 	}
 	
 	
 	/**
 	 * Compute the occurences and distribution for the source documents
 	 */
-	private void computeSourceDistribution()
-	{
+	private void computeSourceDistribution() {
 		this.sourceDistribution = new TreeMap <NGram, Double>();
 		this.sourceOccurences = new TreeMap <NGram, Double> ();
 		this.firstSentencesConcepts = new TreeMap <NGram, Integer> ();
 		this.nbBiGramsInSource = 0;
 		double modified_nbBiGramsInSource = 0.;
 		
-		for (SentenceModel p : this.ngrams_in_sentences.keySet())
-		{
+		for (SentenceModel p : this.ngrams_in_sentences.keySet()) {
 			//System.out.println("phrase pos : "+p.getPosition());
-			ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>(this.ngrams_in_sentences.get(p));
+			List<NGram> curr_ngrams_list = new ArrayList<NGram>(this.ngrams_in_sentences.get(p));
 					//p.getNGrams(2, this.index, this.filter);
 			//ArrayList<NGram> curr_ngrams_list = p.getBiGrams( this.index, this.filter);
-			for (NGram ng : curr_ngrams_list)
-			{
-				if (!this.sourceOccurences.containsKey(ng)) { //If ng not already counted, put 1
+			for (NGram ng : curr_ngrams_list) {
+				if (!this.sourceOccurences.containsKey(ng))//If ng not already counted, put 1
 					this.sourceOccurences.put(ng, 1.);
-				}
 				else //If ng already counted, add 1
 					this.sourceOccurences.put(ng, this.sourceOccurences.get(ng) + 1.);
+				
 				this.nbBiGramsInSource++;
 				
-				if (p.getPosScore() == 1)
-				{
+				if (p.getPosScore() == 1) {
 					if (this.firstSentencesConcepts.containsKey(ng))
 						this.firstSentencesConcepts.put(ng, this.firstSentencesConcepts.get(ng) + 1);
 					else
@@ -92,10 +90,9 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 			}
 		}
 		
-		System.out.println(" Nombre de bigrams : "+this.nbBiGramsInSource);
+		System.out.println("Number of bigrams : "+this.nbBiGramsInSource);
 		
-		for (NGram ng : this.firstSentencesConcepts.keySet())
-		{
+		for (NGram ng : this.firstSentencesConcepts.keySet()) {
 			double d = this.sourceOccurences.get(ng);
 			modified_nbBiGramsInSource += this.firstSentenceConceptsFactor * d;
 			this.sourceOccurences.put(ng, d + this.firstSentenceConceptsFactor * d);
@@ -117,9 +114,8 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 			}
 		}*/
 		
-		System.out.println(" Nombre de bigrams après filtrage : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
-		for (NGram ng : this.sourceOccurences.keySet())
-		{
+		System.out.println("Number of bigrams after filtering : "+this.nbBiGramsInSource+" | "+modified_nbBiGramsInSource);
+		for (NGram ng : this.sourceOccurences.keySet())	{
 			this.sourceDistribution.put(ng, (double)this.sourceOccurences.get(ng) / modified_nbBiGramsInSource );
 		}
 	}
@@ -128,8 +124,7 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	public void computeScore(ArrayList<GeneticIndividual> population) {
 		int cpt = 0;
 		threads_tab = new ScoringThread[population.size()];
-		for (GeneticIndividual gi : population)
-		{
+		for (GeneticIndividual gi : population) {
 			threads_tab[cpt] = new ScoringThread(gi, ngrams_in_sentences, this.sourceDistribution, this.firstSentencesConcepts, this.index, this.firstSentenceConceptsFactor, this.delta);
 			threads_tab[cpt].start();
 			cpt++;
@@ -140,41 +135,27 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 		for (ScoringThread st : threads_tab) {
 			try {
 				st.join();
-			}catch (InterruptedException ie) {
+			} 
+			catch (InterruptedException ie) {
 				ie.printStackTrace();
 				System.exit(-1);
 			}
 		}
 	}
 	
-	private double jensenShanonDivergence(GeneticIndividual gi, TreeMap<NGram, Double> summDistrib)//, int summNbTokens)
-	{
+	private double jensenShanonDivergence(GeneticIndividual gi, Map<NGram, Double> summDistrib) {
 		double divergence = 0;
-		//Double dProbSumm;
 		double divider; //divider1 = summNbTokens + this.delta;//divider1 = summNbTokens + this.delta * 1.5 * this.sourceDistribution.size();
 		double probSumm;
 		double probSource;
 		double log2 = Math.log(2);
 		double sourceOp;
 		double summOp;
-		
-		
-		//System.out.println("summDistrib size : "+summDistrib.size());
-		//System.out.println("sourceDist size : "+this.sourceDistribution.size());
-		
-		for (NGram ng : this.sourceDistribution.keySet())
-		{
+
+		for (NGram ng : this.sourceDistribution.keySet()) {
 			probSource = this.sourceDistribution.get(ng);
-			/*dProbSumm = summDistrib.get(ng);
-			
-			//probSumm = dProbSumm == null ? this.delta / divider1 : (dProbSumm + this.delta) / divider1;
-			probSumm = dProbSumm == null ? this.delta * probSource / divider1 : (dProbSumm + this.delta * probSource) / divider1;
-			System.out.print("probSumm : "+probSumm);*/
-			//probSumm = kz.getSmoothedProb(ng);
-			//System.out.println(" | "+probSumm);
-			
+
 			probSumm = this.smoothing.getSmoothedProb(ng);
-			
 			
 			divider = probSource + probSumm;
 			sourceOp = 2 * probSource / divider;
@@ -188,25 +169,25 @@ public class JSBigramScorer extends GeneticIndividualScorer{
 	}
 
 	
-	public TreeMap<NGram, Double> getSourceDistribution() {
+	public Map<NGram, Double> getSourceDistribution() {
 		return sourceDistribution;
 	}
 
-	public TreeMap<NGram, Double> getSourceOccurences() {
+	public Map<NGram, Double> getSourceOccurences() {
 		return sourceOccurences;
 	}
 
-	public TreeMap<NGram, Integer> getFirstSentencesConcepts() {
+	public Map<NGram, Integer> getFirstSentencesConcepts() {
 		return firstSentencesConcepts;
 	}
 
 	@Override
 	public double computeScore(GeneticIndividual gi) {
-		TreeMap<NGram, Double> summDistrib = new TreeMap <NGram, Double > ();
+		Map<NGram, Double> summDistrib = new TreeMap <NGram, Double > ();
 		//this.computeIndividualDistribution(gi, summDistrib);
 		
 		//this.smoothing = new WeightedLaplace (2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.filter);
-		this.smoothing = new DirichletSmoothing(2, this.delta, summDistrib.size(), ngrams_in_sentences, gi.getGenes(), this.index, this.sourceDistribution, this.firstSentencesConcepts, this.firstSentenceConceptsFactor);
+		this.smoothing = new DirichletSmoothing(2, this.delta, summDistrib.size(), ngrams_in_sentences, gi.getGenes(), this.sourceDistribution, this.firstSentencesConcepts, this.firstSentenceConceptsFactor);
 		//this.smoothing = new GoodTuring(2, this.delta, summDistrib.size(), gi.getGenes(), this.index, this.filter);
 			
 		double jsd = this.jensenShanonDivergence (gi, summDistrib);

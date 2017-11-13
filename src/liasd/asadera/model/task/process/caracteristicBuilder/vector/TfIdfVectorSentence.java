@@ -17,11 +17,11 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]>*/ implements IndexBasedIn<WordTF_IDF>, SentenceCaracteristicBasedOut {
+public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]>*/ implements IndexBasedIn<WordIndex>, SentenceCaracteristicBasedOut {
 
-	protected Index<WordTF_IDF> index;
+	protected Index<WordIndex> index;
 	protected Map<SentenceModel, Object> sentenceCaracteristic;
 	
 	public TfIdfVectorSentence(int id) throws SupportADNException {
@@ -29,7 +29,7 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]
 		
 		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
 		
-		listParameterIn.add(new ParametrizedType(WordTF_IDF.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedOut.class));
 	}
 
@@ -44,8 +44,9 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]
 	public void initADN() throws Exception {
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
-	public void processCaracteristics(List<Corpus> listCorpus) {
+	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		for (Corpus corpus : listCorpus) {
 			for (TextModel text : corpus) {
 				Iterator<SentenceModel> sentenceIt = text.iterator();
@@ -57,9 +58,9 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]
 					while (wordIt.hasNext()) {
 						WordModel wm = wordIt.next();
 						if (getCurrentProcess().getFilter().passFilter(wm)) {
-							WordTF_IDF word = index.get(wm.getmLemma());
+							WordIndex word = index.get(wm.getmLemma());
 							//System.out.println(word);
-							tfIdfVector[word.getiD()]+=word.getTfDocument(text.getiD())*word.getIdf();
+							tfIdfVector[word.getiD()]+=word.getTfCorpus(corpus.getiD())*word.getIdf();
 							nbWord++;
 						}
 					}
@@ -77,7 +78,7 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]
 	}
 
 	@Override
-	public void setIndex(Index<WordTF_IDF> index) {
+	public void setIndex(Index<WordIndex> index) {
 		this.index = index;
 	}
 	

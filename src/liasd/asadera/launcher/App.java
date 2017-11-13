@@ -1,5 +1,7 @@
 package liasd.asadera.launcher;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -67,24 +69,29 @@ public class App {
         {
             commandLine = parser.parse(options, args);
             
+            String configFileName  = new File(commandLine.getOptionValue("c")).getName();
+            String name = configFileName.substring(7, configFileName.length()-4);
+            
             if (commandLine.hasOption("m"))
         		view = new CommandView(commandLine.getOptionValue("c"), commandLine.getOptionValue("m"));
         	else
         		view = new CommandView(commandLine.getOptionValue("c"));
             
-            if (commandLine.hasOption("C"))
-            {
+            if (commandLine.hasOption("C")) {
     			model = new ComparativeModel();
+    			model.setName(name);
     			controller = new ComparativeController(model, view);
     			controller.displayView();
             }
             else if (commandLine.hasOption("L")) {
     			model = new LearningModel();
+    			model.setName(name);
     			controller = new LearningController(model, view);
     			controller.displayView();
             }
             else {
     			model = new SummarizeModel();
+    			model.setName(name);
     			controller = new SummarizeController(model, view);
 	            if (commandLine.hasOption("o"))
 	            {

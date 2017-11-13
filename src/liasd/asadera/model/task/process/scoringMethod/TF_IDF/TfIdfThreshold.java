@@ -1,8 +1,8 @@
 package liasd.asadera.model.task.process.scoringMethod.TF_IDF;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
@@ -15,10 +15,9 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
-import liasd.asadera.tools.PairSentenceScore;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedIn, IndexBasedIn<WordTF_IDF> {
+public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedIn, IndexBasedIn<WordIndex> {
 
 	public static enum ScoringTfIdf_Parameter {
 		TfIdfThreshold("TfIdfThreshold");
@@ -34,7 +33,7 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 		}
 	}
 	
-	private Index<WordTF_IDF> index;
+	private Index<WordIndex> index;
 	private double tfidfThreshold;
 	
 	public TfIdfThreshold(int id) throws SupportADNException {
@@ -42,7 +41,7 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 		supportADN = new HashMap<String, Class<?>>();
 		supportADN.put("TfIdfThreshold", Double.class);
 
-		listParameterIn.add(new ParametrizedType(WordTF_IDF.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 	}
 
 	@Override
@@ -67,25 +66,29 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 					double score = 0;
 					for (WordModel word : sentenceModel) {
 						if (getCurrentProcess().getFilter().passFilter(word)) {
-							WordTF_IDF w = index.get(word.getmLemma());
+							@SuppressWarnings("unlikely-arg-type")
+							WordIndex w = index.get(word.getmLemma());
 							double temp = w.getTfCorpus(corpus.getiD())*w.getIdf();
 							if (temp  > tfidfThreshold)
 								score += temp;
 						}
 					}
 					sentenceModel.setScore(score); //Ajout du score à la phrase
-					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
+					sentencesScore.put(sentenceModel, sentenceModel.getScore());
 				}
 			}
 		}
-		Collections.sort(sentencesScores);
-		double max = sentencesScores.get(0).getScore();
-		for (PairSentenceScore pss : sentencesScores)
-			pss.setScore(pss.getScore() / max);
+		
+		double max = 0;
+		for (Entry<SentenceModel, Double> e : sentencesScore.entrySet())
+			if (e.getValue() > max)
+				max = e.getValue();
+		for (Entry<SentenceModel, Double> e : sentencesScore.entrySet())
+			e.setValue(e.getValue() / max);
 	}
 
 	@Override
-	public void setIndex(Index<WordTF_IDF> index) {
+	public void setIndex(Index<WordIndex> index) {
 		this.index = index;
 	}
 }

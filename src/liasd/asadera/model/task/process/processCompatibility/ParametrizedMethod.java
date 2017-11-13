@@ -10,17 +10,20 @@ public abstract class ParametrizedMethod extends Individu {
 	
 	protected List<ParametrizedType> listParameterIn;
 	protected List<ParametrizedType> listParameterOut;
+	protected List<ParametrizedMethod> listSubMethod;
 	
 	public ParametrizedMethod(int id) throws SupportADNException {
 		super(id);
 		listParameterIn = new ArrayList<ParametrizedType>();
 		listParameterOut = new ArrayList<ParametrizedType>();
+		listSubMethod = new ArrayList<ParametrizedMethod>();
 	}
 	
 	public ParametrizedMethod(int id, List<ParametrizedType> in, List<ParametrizedType> out) throws SupportADNException {
 		super(id);
 		listParameterIn = in;
 		listParameterOut = out;
+		listSubMethod = new ArrayList<ParametrizedMethod>();
 	}
 
 	public List<ParametrizedType> getParameterTypeIn() {
@@ -29,6 +32,10 @@ public abstract class ParametrizedMethod extends Individu {
 	
 	public List<ParametrizedType> getParameterTypeOut() {
 		return listParameterOut;
+	}
+	
+	public List<ParametrizedMethod> getSubMethod() {
+		return listSubMethod;
 	}
 
 	/**

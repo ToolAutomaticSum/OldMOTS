@@ -3,8 +3,6 @@ package liasd.asadera.model.task.process;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.AbstractTask;
@@ -21,7 +19,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTask/*
 	//private AbstractProcess[] threads = null;
 	//int nbThreads = 0;
 	
-	private static final Logger logger = Logger.getLogger("AbstractProcess"); 
+	//private static final Logger logger = Logger.getLogger("AbstractProcess"); 
 	
 	protected int summarizeIndex = 0;
 	protected List<Integer> listCorpusId;

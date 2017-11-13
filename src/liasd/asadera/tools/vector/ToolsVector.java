@@ -5,6 +5,13 @@ import java.util.List;
 import liasd.asadera.exception.VectorDimensionException;
 
 public class ToolsVector {
+	static public double[] scalarVector(double lambda, double[] a) {
+		double[] temp = new double[a.length];
+		for (int i = 0; i < a.length; i++)
+	 		temp[i] = a[i] * lambda;
+        return temp;
+	}
+	
 	static public double scalar(double[] a, double[] b) throws VectorDimensionException {
 		if (a.length == b.length) {
 			double somme = 0.0;

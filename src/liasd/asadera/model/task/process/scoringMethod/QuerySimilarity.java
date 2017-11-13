@@ -1,6 +1,5 @@
 package liasd.asadera.model.task.process.scoringMethod;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.tools.PairSentenceScore;
 import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class QuerySimilarity extends AbstractScoringMethod implements QueryBasedIn, SentenceCaracteristicBasedIn {
@@ -43,7 +41,7 @@ public class QuerySimilarity extends AbstractScoringMethod implements QueryBased
 	public void initADN() throws Exception {
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 
 	@Override
@@ -55,12 +53,11 @@ public class QuerySimilarity extends AbstractScoringMethod implements QueryBased
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
 					double score = sim.computeSimilarity(sentenceCaracteristic, queryVec, sentenceModel);
-					sentenceModel.setScore(score); //Ajout du score � la phrase
-					sentencesScores.add(new PairSentenceScore(sentenceModel, sentenceModel.getScore()));
+					sentenceModel.setScore(score); //Ajout du score à la phrase
+					sentencesScore.put(sentenceModel, sentenceModel.getScore());
 				}
 			}
 		}
-		Collections.sort(sentencesScores);
 	}
 
 	@Override

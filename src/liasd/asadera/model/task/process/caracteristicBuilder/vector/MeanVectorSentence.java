@@ -59,6 +59,7 @@ public class MeanVectorSentence extends AbstractCaracteristicBuilder implements 
 					while (wordIt.hasNext()) {
 						WordModel wm = wordIt.next();
 						if (getCurrentProcess().getFilter().passFilter(wm)) {
+							@SuppressWarnings("unlikely-arg-type")
 							WordVector word = index.get(wm.getmLemma());
 							for (int i=0; i<dimension; i++)
 								sentenceVector[i]+=word.getWordVector()[i];

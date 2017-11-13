@@ -1,47 +1,130 @@
 package liasd.asadera.model.task.process.selectionMethod.reinforcementLearning;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
 import liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
+import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.action.Action;
+import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.featurer.Featurer;
+import liasd.asadera.model.task.process.selectionMethod.scorer.Scorer;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
+import liasd.asadera.textModeling.TextModel;
+import liasd.asadera.tools.vector.ToolsVector;
 
 public class ReinforcementLearning extends AbstractSelectionMethod {
 
+	public static enum ASRL_Parameter {
+		Temp("Temp"),
+		Gamma("Gamma"),
+		Alpha("Alpha");
+
+		private String name;
+
+		private ASRL_Parameter(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
+	
+	private State currentState;
+	private double[] theta;
+	double temp;
+	double gamma;
+	double alpha;
+	private Scorer s;
+	private Featurer f;
+	
 	public ReinforcementLearning(int id) throws SupportADNException {
 		super(id);
 	}
 
 	@Override
-	public AbstractSelectionMethod makeCopy() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ReinforcementLearning makeCopy() throws Exception {
+		ReinforcementLearning p = new ReinforcementLearning(id);
+		initCopy(p);
+		return p;
 	}
 
 	@Override
 	public void initADN() throws Exception {
-		// TODO Auto-generated method stub
-		
+		temp = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Temperature"));
+		gamma = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Gamma"));
+		alpha = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Alpha"));
+
+		String scorer = getCurrentProcess().getModel().getProcessOption(id, "ScoreMethod");
+		s = Scorer.instanciateScorer(this, scorer);
+		getSubMethod().add(s);
+		String featurer = getCurrentProcess().getModel().getProcessOption(id, "FeatureMethod");
+		f = Featurer.instanciateFeaturer(this, featurer);
+		getSubMethod().add(f);
 	}
 
 	@Override
 	public List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
+		double penalty = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Penalty"));
+		
+		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
+		for (Corpus corpus : listCorpus)
+			for (TextModel text : corpus)
+				for (SentenceModel sen : text)
+					listSentence.add(sen);
+		
+		s.init();
+		f.init(size);
+		
+		theta = f.instanciateVector();
+		
+		currentState = new State(size, penalty, s, f);
+		currentState.setGamma(gamma);
+		
+		theta = learn(listSentence);
+		
+		currentState.init(listSentence);
+		while (!currentState.isFinish()) {
+			Action a = currentState.selectBestAction(theta);
+			a.doAction(currentState);
+		}
+		return currentState.getSummary();
+	}
+	
+	private double[] learn (List<SentenceModel> listSentence) throws Exception {
+		int nbIter = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbIteration"));
+		
+		for (int i=1; i<=nbIter; i++) {
+			System.out.print(".");
+			if (i % 50 == 0)
+				System.out.println(" " + i);
+			
+			currentState.init(listSentence);
+			double[] elig = f.instanciateVector();
+			alpha = alpha*101/(100+Math.pow(i, 1.1));
+			temp = temp*Math.pow(0.987, i-1);
+			while (!currentState.isFinish()) {
+				Action a = currentState.selectActionWithCurrentPolicy(theta, temp);
+				double[] lastPhi = currentState.getFeatures();
+				a.doAction(currentState);
+				double delta = currentState.reward() + gamma*ToolsVector.scalar(theta, currentState.getFeatures()) - ToolsVector.scalar(theta, lastPhi);
+				elig = ToolsVector.scalarVector(gamma, ToolsVector.somme(elig, lastPhi)); //remove lambda;
+				theta = ToolsVector.somme(theta, ToolsVector.scalarVector(alpha*delta, elig));
+			}
+		}
+		
+		return theta;
 	}
 
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void setCompatibility(ParametrizedMethod compMethod) {
-		// TODO Auto-generated method stub
-		
 	}
-
 }

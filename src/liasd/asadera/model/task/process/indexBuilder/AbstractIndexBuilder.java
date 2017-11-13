@@ -20,8 +20,6 @@ public abstract class AbstractIndexBuilder<T extends WordIndex> extends Parametr
 	public AbstractIndexBuilder(int id) throws SupportADNException {
 		super(id);
 		index = new Index<T>();
-		listParameterIn = new ArrayList<ParametrizedType>();
-		listParameterOut = new ArrayList<ParametrizedType>();
 	}
 	
 	public AbstractIndexBuilder(int id, List<ParametrizedType> in, List<ParametrizedType> out) throws SupportADNException {

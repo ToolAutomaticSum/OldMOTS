@@ -15,19 +15,19 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
-public class TF_IDF extends AbstractIndexBuilder<WordTF_IDF> {
+public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 
 	public TF_IDF(int id) throws SupportADNException {
 		super(id);
 		
-		listParameterOut.add(new ParametrizedType(WordTF_IDF.class, Index.class, IndexBasedOut.class));
+		listParameterOut.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedOut.class));
 	}
 
 	@Override
-	public AbstractIndexBuilder<WordTF_IDF> makeCopy() throws Exception {
+	public AbstractIndexBuilder<WordIndex> makeCopy() throws Exception {
 		TF_IDF p = new TF_IDF(id);
 		initCopy(p);
 		return p;
@@ -62,7 +62,7 @@ public class TF_IDF extends AbstractIndexBuilder<WordTF_IDF> {
 	/**
 	 * Construction du dictionnaire des mots des documents ({@see WordTF_IDF})
 	 */
-	public static void generateDictionary(List<Corpus> listCorpus, Index<WordTF_IDF> dictionnary, WordFilter filter) {
+	public static void generateDictionary(List<Corpus> listCorpus, Index<WordIndex> dictionnary, WordFilter filter) {
 		for (Corpus corpus : listCorpus) {
 			dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.size());
 			//Construction du dictionnaire
@@ -72,12 +72,13 @@ public class TF_IDF extends AbstractIndexBuilder<WordTF_IDF> {
 						//TODO ajouter filtre à la place de getmLemma
 						if (filter.passFilter(word)) {
 							if(!dictionnary.containsKey(word.getmLemma())) {
-								WordTF_IDF w = new WordTF_IDF(word.getmLemma(), dictionnary);
+								WordIndex w = new WordIndex(word.getmLemma(), dictionnary);
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 								dictionnary.put(word.getmLemma(), w);
 							}
 							else {
-								WordTF_IDF w = dictionnary.get(word.getmLemma());
+								@SuppressWarnings("unlikely-arg-type")
+								WordIndex w = dictionnary.get(word.getmLemma());
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 							}
 							//dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
@@ -96,7 +97,7 @@ public class TF_IDF extends AbstractIndexBuilder<WordTF_IDF> {
 	 * @param corpus
 	 * @param dictionnary
 	 */
-	public static void majIDFDictionnary(Corpus corpus, Index<WordTF_IDF> dictionnary, WordFilter filter) {
+	public static void majIDFDictionnary(Corpus corpus, Index<WordIndex> dictionnary, WordFilter filter) {
 		dictionnary.setNbDocument(dictionnary.getNbDocument()+corpus.getNbDocument());			
 		//Construction du dictionnaire
 		for (TextModel text : corpus) {
@@ -104,7 +105,8 @@ public class TF_IDF extends AbstractIndexBuilder<WordTF_IDF> {
 				for (WordModel word : sentenceModel) {
 					//TODO ajouter filtre à la place de getmLemma
 					if (filter.passFilter(word) && dictionnary.containsKey(word.getmLemma())) {
-						WordTF_IDF w = (WordTF_IDF) dictionnary.get(word.getmLemma());
+						@SuppressWarnings("unlikely-arg-type")
+						WordIndex w = (WordIndex) dictionnary.get(word.getmLemma());
 						w.addDocumentOccurence(corpus.getiD(), text.getiD());
 						//dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}
@@ -118,12 +120,12 @@ public class TF_IDF extends AbstractIndexBuilder<WordTF_IDF> {
 
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(WordTF_IDF.class, Index.class, IndexBasedIn.class));
+		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setCompatibility(ParametrizedMethod compMethod) {
-		((IndexBasedIn<WordTF_IDF>)compMethod).setIndex(index);
+		((IndexBasedIn<WordIndex>)compMethod).setIndex(index);
 	}
 }

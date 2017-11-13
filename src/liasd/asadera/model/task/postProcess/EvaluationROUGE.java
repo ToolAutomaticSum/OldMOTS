@@ -29,7 +29,6 @@ import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.process.SummarizeProcess;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.tools.OSDetector;
-import liasd.asadera.tools.Tools;
 
 public class EvaluationROUGE extends AbstractPostProcess {
 	
@@ -37,6 +36,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	private List<String> rougeMeasure = new ArrayList<String>();
 	protected String modelRoot;
 	protected String peerRoot;
+	protected String rougeTempFilePath;
 	
 	public EvaluationROUGE(int id) throws SupportADNException {
 		super(id);
@@ -50,12 +50,16 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	 */
 	@Override
 	public void init() throws LacksOfFeatures, ParserConfigurationException, TransformerException, Exception {
-		File f = new File(getModel().getOutputPath() + File.separator + modelRoot);
-    	File[] lf = f.listFiles();
-    	for (int i = 0; i<lf.length; i++) {
-    		if (Tools.getFileExtension(lf[i]).equals("html"))
-    			lf[i].delete();
-    	}
+		rougeTempFilePath = getModel().getOutputPath() + File.separator + getModel().getName();
+		new File(rougeTempFilePath + File.separator + peerRoot).mkdirs();
+		new File(rougeTempFilePath + File.separator + modelRoot).mkdirs();
+		
+//		File f = new File(getModel().getOutputPath() + File.separator + modelRoot);
+//    	File[] lf = f.listFiles();
+//    	for (int i = 0; i<lf.length; i++) {
+//    		if (Tools.getFileExtension(lf[i]).equals("html"))
+//    			lf[i].delete();
+//    	}
     	
     	boolean modelWrite = false;
     	// boucle sur les process (1 résumé par process par execution)
@@ -83,7 +87,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
 						" -e " + rougePath + File.separator + "data -n 2 -x -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
-				        getModel().getOutputPath() + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
+						rougeTempFilePath + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
 				System.out.println(cmd);
 
 				Process proc = Runtime.getRuntime().exec(cmd);
@@ -91,7 +95,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				
 				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			    
-			    Writer w = new Writer(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt");
+			    Writer w = new Writer(rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt");
 			    w.open();
 				String line = "";
 			    while ((line = input.readLine()) != null)
@@ -111,7 +115,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	public void finish() throws Exception {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
-				Reader r = new Reader(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", true);
+				Reader r = new Reader(rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt", true);
 				r.open();
 				String t = r.read();
 				while (t != null) {
@@ -129,7 +133,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	
 	private void writeHtmlGeneratedSummary(int processID, int multiCorpusId, int corpusId) throws Exception {
 		if (((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId) != null) {
-			Writer w = new Writer(getModel().getOutputPath() + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
+			Writer w = new Writer(rougeTempFilePath + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + processID + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
@@ -146,7 +150,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	
 	private void writeHtmlModelSummary(int multiCorpusId, int corpusId) throws Exception {
 		for (String modelSummary : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryNames()) {
-    		Writer w = new Writer(getModel().getOutputPath() + File.separator + modelRoot + File.separator + modelSummary.replace(".txt", "") + ".html");
+    		Writer w = new Writer(rougeTempFilePath + File.separator + modelRoot + File.separator + modelSummary.replace(".txt", "") + ".html");
 			w.open();
 			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
@@ -182,11 +186,11 @@ public class EvaluationROUGE extends AbstractPostProcess {
 		    	//process.appendChild(document.createTextNode(getModel().getProcess().get(i).getClass().toString()));
 		    	
 		    	Element modelRoot = document.createElement("MODEL-ROOT");
-		    	modelRoot.appendChild(document.createTextNode(getModel().getOutputPath() + File.separator + this.modelRoot));
+		    	modelRoot.appendChild(document.createTextNode(rougeTempFilePath + File.separator + this.modelRoot));
 		    	process.appendChild(modelRoot);
 		    	
 		    	Element peerRoot = document.createElement("PEER-ROOT");
-		    	peerRoot.appendChild(document.createTextNode(getModel().getOutputPath() + File.separator + this.peerRoot));
+		    	peerRoot.appendChild(document.createTextNode(rougeTempFilePath + File.separator + this.peerRoot));
 		    	process.appendChild(peerRoot);
 		    	
 		    	Element inputFormat = document.createElement("INPUT-FORMAT");
@@ -219,7 +223,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
     	TransformerFactory transformerFactory = TransformerFactory.newInstance();
     	Transformer transformer = transformerFactory.newTransformer();
     	DOMSource source = new DOMSource(document);
-    	StreamResult sortie = new StreamResult(new File(getModel().getOutputPath() + File.separator + "settings" + getModel().getTaskID() + processID + ".xml"));
+    	StreamResult sortie = new StreamResult(new File(rougeTempFilePath + File.separator + "settings" + getModel().getTaskID() + processID + ".xml"));
     	transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
     	transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
     	transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");

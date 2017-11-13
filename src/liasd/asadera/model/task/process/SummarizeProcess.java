@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import liasd.asadera.model.AbstractModel;
@@ -92,8 +93,6 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		if (selectionMethod != null)
 			selectionMethod.setCurrentProcess(this);
 
-		initCompatibility();
-		
 		adn = new ADN(supportADN);
 
 		if (indexBuilders != null) {
@@ -110,6 +109,8 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		}
 		if (selectionMethod != null)
 			selectionMethod.initADN();
+		
+		initCompatibility();		
 	}
 	
 	@Override
@@ -133,6 +134,11 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		}
 		if (selectionMethod != null)
 			listMethod.add(selectionMethod);
+		
+		ListIterator<ParametrizedMethod> it = listMethod.listIterator();
+		while (it.hasNext())
+			for (ParametrizedMethod pm : it.next().getSubMethod())
+				it.add(pm);
 		
 		for (ParametrizedMethod pm : listMethod) {
 			for (ParametrizedMethod pm2 : listMethod) {
@@ -190,19 +196,15 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 
 	@Override
 	public void finish() throws Exception {
-		if (indexBuilders != null) {
+		if (indexBuilders != null)
 			for (AbstractIndexBuilder indexBuilder : indexBuilders)
 				indexBuilder.finish();
-		}
-		if (caracteristicBuilders != null) {
+		if (caracteristicBuilders != null)
 			for (AbstractCaracteristicBuilder caracteristicBuilder : caracteristicBuilders)
 				caracteristicBuilder.finish();
-		}
-		if (scoringMethods != null) {
-			for (AbstractScoringMethod scoringMethod : scoringMethods) {
+		if (scoringMethods != null)
+			for (AbstractScoringMethod scoringMethod : scoringMethods)
 				scoringMethod.finish();
-			}
-		}
 	}
 	
 	public void start() {
@@ -221,8 +223,8 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 			init();
 			process();
 			finish();
-			//getModel().setModelChanged();
-			//getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId())));
+			getModel().setModelChanged();
+			getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId())));
 			
 		} catch (Exception e) {
 			e.printStackTrace();

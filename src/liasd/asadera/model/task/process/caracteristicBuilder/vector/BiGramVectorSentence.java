@@ -50,7 +50,7 @@ public class BiGramVectorSentence extends AbstractCaracteristicBuilder implement
 		for (SentenceModel sen : ngrams_in_sentences.keySet()) {
 			double[] tfIdfVector = new double[index.size()];
 			for (NGram bg : ngrams_in_sentences.get(sen))
-				tfIdfVector[bg.getiD()]+=bg.getTfDocument(sen.getText().getiD())*bg.getIdf();
+				tfIdfVector[bg.getiD()]+=bg.getTfCorpus(sen.getText().getParentCorpus().getiD())*bg.getIdf();
 			sentenceCaracteristic.put(sen, tfIdfVector);
 		}
 //		for (Corpus corpus : listCorpus) {

@@ -57,7 +57,6 @@ public class CommandView extends AbstractView {
 
 	@Override
 	public void close() {
-
 	}
 	
 	public void init() {

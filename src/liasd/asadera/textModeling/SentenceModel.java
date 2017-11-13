@@ -110,8 +110,10 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 			nbMot += sen.getNbMot();
 		str += nbMot + "\n";
 		Iterator<SentenceModel> it = list.iterator();
-		while (it.hasNext())
-			str += it.next().toString() + "\n";
+		while (it.hasNext()) {
+			SentenceModel sen = it.next();
+			str += sen.getNbMot() + "\t" + sen.getScore() + "\t" + sen.toString() + "\n";
+		}
 		return str;
 	}
 	
@@ -378,5 +380,24 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 			return 1;
 		else
 			return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SentenceModel other = (SentenceModel) obj;
+		if (sentence == null) {
+			if (other.sentence != null)
+				return false;
+		} else if (iD == other.iD)
+			return true;
+		else if (!sentence.equals(other.sentence))
+			return false;
+		return true;
 	}
 }

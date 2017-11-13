@@ -69,7 +69,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);	
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);	
 	}
 	
 	private void init() {
@@ -212,7 +212,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 			q[i] = (qNbAlloc==0 ? 0 : (q[i]*qNbAlloc - 1)/qNbAlloc);
 		}
 		Collections.sort(listPath);
-		Collections.reverse(listPath);
+		//Collections.reverse(listPath);
 		return listPath;
 	}
 	

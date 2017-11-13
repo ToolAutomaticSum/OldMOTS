@@ -1,12 +1,10 @@
 package liasd.asadera.model.task.process.caracteristicBuilder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import liasd.asadera.model.task.process.AbstractProcess;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 
@@ -17,9 +15,6 @@ public abstract class AbstractCaracteristicBuilder extends ParametrizedMethod /*
 	
 	public AbstractCaracteristicBuilder(int id) throws SupportADNException {
 		super(id);
-		
-		listParameterIn = new ArrayList<ParametrizedType>();
-		listParameterOut = new ArrayList<ParametrizedType>();
 	}
 
 	public abstract AbstractCaracteristicBuilder makeCopy() throws Exception;

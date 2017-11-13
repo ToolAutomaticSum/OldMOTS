@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,12 +17,11 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.cluster.Cluster;
 import liasd.asadera.tools.Pair;
-import liasd.asadera.tools.PairSentenceScore;
 
 public class OneSourceCluster extends AbstractComparativeMethod implements ListClusterBasedIn, ScoreBasedIn {
 
 	protected List<Cluster> listCluster;
-	protected ArrayList<PairSentenceScore> score;
+	protected Map<SentenceModel, Double> score;
 	
 	public OneSourceCluster(int id) throws SupportADNException {
 		super(id);
@@ -45,11 +45,11 @@ public class OneSourceCluster extends AbstractComparativeMethod implements ListC
 		for (Cluster clust : listCluster) {
 			Iterator<SentenceModel> itSen = clust.iterator();
 			boolean oneSource = true;
-			Set<String> listClustLabel = new TreeSet<String>();
+			Set<String> setClustLabel = new TreeSet<String>();
 			
 			while (oneSource && itSen.hasNext())
 				for (String label : itSen.next().getLabels())
-					oneSource = listClustLabel.add(label);
+					oneSource = setClustLabel.add(label); //return false if label already in the set
 			
 			if (oneSource) {
 				for (SentenceModel sen : clust)
@@ -66,15 +66,15 @@ public class OneSourceCluster extends AbstractComparativeMethod implements ListC
 	public void finish() {
 	}
 	
-	public static double getScore(List<PairSentenceScore> score, SentenceModel sen) {
+	public static double getScore(Map<SentenceModel, Double> score, SentenceModel sen) {
 		double s = 0;
 		boolean find = false;
-		Iterator<PairSentenceScore> pairIt = score.iterator();
+		Iterator<SentenceModel> pairIt = score.keySet().iterator();
 		while (!find && pairIt.hasNext()) {
-			PairSentenceScore pair = pairIt.next();
-			if (pair.getPhrase().equals(sen)) {
+			SentenceModel pair = pairIt.next();
+			if (pair.equals(sen)) {
 				find = true;
-				s = pair.getScore();
+				s = score.get(pair);
 			}
 		}
 		return s;
@@ -86,7 +86,8 @@ public class OneSourceCluster extends AbstractComparativeMethod implements ListC
 	}
 
 	@Override
-	public void setScore(ArrayList<PairSentenceScore> score) {this.score = score;
+	public void setScore(Map<SentenceModel, Double> score) {
+		this.score = score;
 	}
 
 	@Override

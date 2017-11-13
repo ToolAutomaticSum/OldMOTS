@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
@@ -24,7 +23,7 @@ import liasd.asadera.tools.wordFilters.WordFilter;
 
 public class HierarchicalLDA {
 
-	private static final Logger logger = Logger.getLogger("HierarchicalLDA"); 
+	//private static final Logger logger = Logger.getLogger("HierarchicalLDA"); 
 	
 	private WordFilter filter;
     private List<SentenceModel> listDoc;
@@ -105,7 +104,7 @@ public class HierarchicalLDA {
 		this.numLevels = numLevels;
 		etaPerLevel = new double[numLevels];
 		for (int level=0; level<numLevels; level++)
-			etaPerLevel[level] = eta/(double)level;
+			etaPerLevel[level] = eta/((double)level+1);
 
 		numDocuments = listDoc.size();
 		numTypes = dict.size();
@@ -515,9 +514,9 @@ public class HierarchicalLDA {
 
 		for (SentenceModel sen : listDoc) {
 			
-			int[] docLevels = levels[doc];
+			//int[] docLevels = levels[doc];
 			NCRPNode node;
-			int type, token, level;
+			int /*type, token,*/ level;
 
 			StringBuffer path = new StringBuffer();
 			

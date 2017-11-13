@@ -33,6 +33,7 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 		return p;
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) {
 		super.processCaracteristics(listCorpus);

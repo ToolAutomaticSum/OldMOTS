@@ -11,7 +11,6 @@ import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class JSUnigramScorer extends GeneticIndividualScorer{
 
@@ -41,14 +40,14 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 	
 	public void computeCorpusDistribution ()
 	{
-		WordTF_IDF current_cti;
+		WordIndex current_cti;
 		double current_idf;
 		int current_occ;
 		this.sourceDistribution = new TreeMap <Integer, Double> ();
 		this.sourceOccurences = new TreeMap <Integer, Integer> ();
 		for ( WordIndex indexKey : invertedIndex.getCorpusWordIndex().get(cd.getiD()))
 		{
-			current_cti = (WordTF_IDF) indexKey;
+			current_cti = (WordIndex) indexKey;
 			current_idf = current_cti.getIdf();
 			
 			current_occ = current_cti.getNbOccurence();
@@ -84,7 +83,7 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 		{
 			for (WordModel u : sent)
 			{
-				WordTF_IDF uIndexKey = (WordTF_IDF) index.get(u.getmLemma());
+				WordIndex uIndexKey = (WordIndex) index.get(u.getmLemma());
 				if (uIndexKey.getIdf() != 0)
 				{
 					if (summDist.containsKey(uIndexKey.getiD()))

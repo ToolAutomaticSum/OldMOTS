@@ -55,6 +55,7 @@ public class ConcatMatrixSentence extends AbstractCaracteristicBuilder implement
 					int nbWord = 0;
 					double[][] sentenceMatrix = new double[sentenceModel.getNbMot()][];
 					for (WordModel wm : sentenceModel) {
+						@SuppressWarnings("unlikely-arg-type")
 						WordVector word = index.get(wm.getmLemma());
 						sentenceMatrix[nbWord] = word.getWordVector();
 						nbWord++;

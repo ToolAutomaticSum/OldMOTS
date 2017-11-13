@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public abstract class AbstractController {
 	private final AbstractModel model;
     private final AbstractView view;
     
-    private static final Logger logger = Logger.getLogger("AbstractController"); 
+    //private static final Logger logger = Logger.getLogger("AbstractController"); 
 
 	//private int taskID;
 	protected static int processID = 0;
@@ -66,7 +65,7 @@ public abstract class AbstractController {
 		model.run();
 	}
 
-	protected Object dynamicConstructor(String className) {
+	protected final Object dynamicConstructor(String className) {
 		Class<?> cl;
 		try {
 			cl = Class.forName("liasd.asadera.model.task." + className);
@@ -109,7 +108,7 @@ public abstract class AbstractController {
     	getModel().getMultiCorpusModels().add(currentMultiCorpus);
     }
     
-    public void notifyCorpusChanged(String summaryInputPath, List<String> summaryNames, String inputCorpusPath, List<String> docNames) {
+    public final void notifyCorpusChanged(String summaryInputPath, List<String> summaryNames, String inputCorpusPath, List<String> docNames) {
     	Set<String> set_docNames = new TreeSet<String>();
     	Set<String> set_summaryNames = new TreeSet<String>();
     	
@@ -123,7 +122,6 @@ public abstract class AbstractController {
     	docNames.addAll(set_docNames);
     	
     	Corpus corpus = new Corpus(currentMultiCorpus.size());
-    	
     	
     	f = new File(summaryInputPath);
     	lf = Arrays.asList(f.list());

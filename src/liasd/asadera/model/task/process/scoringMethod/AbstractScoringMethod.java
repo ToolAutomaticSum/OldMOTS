@@ -1,27 +1,27 @@
 package liasd.asadera.model.task.process.scoringMethod;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import liasd.asadera.model.task.process.AbstractProcess;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
-import liasd.asadera.tools.PairSentenceScore;
+import liasd.asadera.textModeling.SentenceModel;
 
 public abstract class AbstractScoringMethod extends ParametrizedMethod implements ScoreBasedIn, ScoreBasedOut {
 
 	protected AbstractProcess currentProcess;
-	protected ArrayList<PairSentenceScore> sentencesScores;
+	protected Map<SentenceModel, Double> sentencesScore;
 	
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
-		sentencesScores = new ArrayList<PairSentenceScore>();
+		sentencesScore = new HashMap<SentenceModel, Double>();
 		
-		listParameterIn.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
-		listParameterOut.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedOut.class));
+		listParameterIn.add(new ParametrizedType(Double.class, Map.class, ScoreBasedIn.class));
+		listParameterOut.add(new ParametrizedType(Double.class, Map.class, ScoreBasedOut.class));
 	}
 
 	public abstract AbstractScoringMethod makeCopy() throws Exception;
@@ -49,7 +49,7 @@ public abstract class AbstractScoringMethod extends ParametrizedMethod implement
 	public abstract void computeScores(List<Corpus> listCorpus) throws Exception;
 
 	public void finish() {
-		sentencesScores.clear();
+		sentencesScore.clear();
 	}
 	
 	public AbstractProcess getCurrentProcess() {
@@ -62,21 +62,21 @@ public abstract class AbstractScoringMethod extends ParametrizedMethod implement
 	
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
+		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(Double.class, Map.class, ScoreBasedIn.class));
 	}
 
 	@Override
 	public void setCompatibility(ParametrizedMethod compMethod) {
-		((ScoreBasedIn)compMethod).setScore(sentencesScores);
+		((ScoreBasedIn)compMethod).setScore(sentencesScore);
 	}
 
 	@Override
-	public ArrayList<PairSentenceScore> getScore() {
-		return sentencesScores;
+	public Map<SentenceModel, Double> getScore() {
+		return sentencesScore;
 	}
 	
 	@Override
-	public void setScore(ArrayList<PairSentenceScore> score) {
-		this.sentencesScores = score;
+	public void setScore(Map<SentenceModel, Double> score) {
+		this.sentencesScore = score;
 	}
 }

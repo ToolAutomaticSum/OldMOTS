@@ -31,7 +31,7 @@ public class JensenShannonSimilarity extends SentenceSimilarityMetric {
         for (int i = 0; i < p1.length; ++i) {
         	average[i] += (p1[i] + p2[i])/2;
         }
-        return (klDivergence(p1, average) + klDivergence(p2, average))/2;
+        return 1 - (klDivergence(p1, average) + klDivergence(p2, average))/2;
     }
 
 	/**

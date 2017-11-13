@@ -1,10 +1,10 @@
 package liasd.asadera.model.task.process.scoringMethod;
 
-import java.util.ArrayList;
+import java.util.Map;
 
-import liasd.asadera.tools.PairSentenceScore;
+import liasd.asadera.textModeling.SentenceModel;
 
 public interface ScoreBasedIn {
 
-	public void setScore(ArrayList<PairSentenceScore> score);
+	public void setScore(Map<SentenceModel, Double> score);
 }

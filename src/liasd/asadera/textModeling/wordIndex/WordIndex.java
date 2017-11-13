@@ -13,6 +13,7 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	//private static int count = 0;
 	private int iD;
 	private double weight;
+	private int nbDocumentWithWordSeen;
 	
 	//public static void reset() {count = 0;}
 	
@@ -36,6 +37,10 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 		super();
 		this.index = index;
 		//iD = count++;
+	}
+	
+	public WordIndex(String word, Index<?> index, int nbDocumentWithWordSeen) {
+		this.nbDocumentWithWordSeen = nbDocumentWithWordSeen;
 	}
 	
 	public WordIndex(String word, Index<?> index) {
@@ -117,7 +122,7 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	}
 	
 	public int getNbDocumentWithWordSeen() {
-		return docOccurences.size();
+		return nbDocumentWithWordSeen+docOccurences.size();
 	}
 	
 	public double getWeight() {

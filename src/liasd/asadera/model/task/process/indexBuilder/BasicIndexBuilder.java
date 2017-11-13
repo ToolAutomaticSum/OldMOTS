@@ -46,6 +46,7 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 								index.put(word.getmLemma(), w);
 							}
 							else {
+								@SuppressWarnings("unlikely-arg-type")
 								WordIndex w = index.get(word.getmLemma());
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 							}

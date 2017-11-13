@@ -2,16 +2,16 @@ package liasd.asadera.tools.wordFilters;
 
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class WordIdfFilter extends WordFilter {
 
 	private double threshold;
-	private Index<WordTF_IDF> dico;
+	private Index<WordIndex> dico;
 	
-	public WordIdfFilter (Index<WordTF_IDF> dico, double absoluteThreshold) throws Exception
+	public WordIdfFilter (Index<WordIndex> dico, double absoluteThreshold) throws Exception
 	{
-		if (dico.values().toArray()[0].getClass() == WordTF_IDF.class) {
+		if (dico.values().toArray()[0].getClass() == WordIndex.class) {
 			this.threshold = absoluteThreshold;
 			this.dico = dico;
 		}
@@ -23,7 +23,7 @@ public class WordIdfFilter extends WordFilter {
 	@Override
 	public boolean passFilter(WordModel w) {
 		
-		if (((WordTF_IDF)this.dico.get(w.getmLemma())).getIdf() > this.threshold)
+		if (((WordIndex)this.dico.get(w.getmLemma())).getIdf() > this.threshold)
 			return true;
 		return false;
 	}

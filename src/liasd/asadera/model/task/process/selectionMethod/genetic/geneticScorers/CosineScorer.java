@@ -10,7 +10,6 @@ import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
-import liasd.asadera.textModeling.wordIndex.TF_IDF.WordTF_IDF;
 
 public class CosineScorer extends GeneticIndividualScorer{
 
@@ -71,29 +70,29 @@ public class CosineScorer extends GeneticIndividualScorer{
 		/*
 		 * giIndexKeys is supposed to be a subset of clustIndexKeys, so no need to get commonIndexKeys !!!
 		 */
-		WordTF_IDF cti = null;
+		WordIndex cti = null;
 		try {
 			for (WordIndex indexKey : giIndexKeys)
 			{
-				cti = (WordTF_IDF) indexKey;
+				cti = (WordIndex) indexKey;
 				sumCommon += cti.getTf() * giFrequencies.get(cti.getiD()) * Math.pow(cti.getIdf(), 2.);
 				sumGi += Math.pow (giFrequencies.get(cti.getiD()) * cti.getIdf(), 2.);
 			}
 			
 			for (WordIndex indexKey : clustIndexKeys)
 			{
-				cti = (WordTF_IDF) indexKey;
+				cti = (WordIndex) indexKey;
 				sumClust += Math.pow (cti.getTf() * cti.getIdf(), 2.);
 			}
 			if (sumClust == 0 || sumGi == 0)
 			{
-				System.out.println("Probl�me : giIndexKeys size="+giIndexKeys.size()+" | giFrequencies size="+giFrequencies.size()+
-						" |�sumGi="+sumGi+" | clustIndexKeys = "+clustIndexKeys.size());
+				System.out.println("Error : giIndexKeys size="+giIndexKeys.size()+" | giFrequencies size="+giFrequencies.size()+
+						" | sumGi="+sumGi+" | clustIndexKeys = "+clustIndexKeys.size());
 				//System.out.println("***************** D�but Phrases ****************");
 				for (WordIndex i : giIndexKeys)
 				{
-					cti = (WordTF_IDF) i;
-					System.out.print (i+ "�|�"+cti.getIdf()+" | "+giFrequencies.get(i)+" ** ");
+					cti = (WordIndex) i;
+					System.out.print (i+ " | "+cti.getIdf()+" | "+giFrequencies.get(i)+" ** ");
 					
 				}
 				//System.out.println("\n****************** Fin Phrases *****************");

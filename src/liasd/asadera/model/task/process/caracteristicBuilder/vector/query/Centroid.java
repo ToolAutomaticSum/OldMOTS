@@ -1,4 +1,4 @@
-package liasd.asadera.model.task.process.caracteristicBuilder.vector;
+package liasd.asadera.model.task.process.caracteristicBuilder.vector.query;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +7,7 @@ import java.util.List;
 import jgibblda.Pair;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
+import liasd.asadera.model.task.process.caracteristicBuilder.vector.TfIdfVectorSentence;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
@@ -14,10 +15,10 @@ import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
-import liasd.asadera.textModeling.wordIndex.NGram;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOut {
-
+public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
+	
 	public static enum Centroid_Parameter {
 		NbMaxWordInCentroid("NbMaxWordInCentroid");
 
@@ -35,9 +36,9 @@ public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOu
 	private Query query;
 	protected int nbMaxWordInCentroid;
 
-	protected InvertedIndex<NGram> invertIndex;
+	protected InvertedIndex<WordIndex> invertIndex;
 	
-	public BiGramCentroid(int id) throws SupportADNException {
+	public Centroid(int id) throws SupportADNException {
 		super(id);
 		query = new Query();
 		supportADN.put("NbMaxWordInCentroid", Integer.class);
@@ -46,8 +47,8 @@ public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOu
 	}
 	
 	@Override
-	public BiGramCentroid makeCopy() throws Exception {
-		BiGramCentroid p = new BiGramCentroid(id);
+	public Centroid makeCopy() throws Exception {
+		Centroid p = new Centroid(id);
 		p.setNbMaxWordInCentroid(nbMaxWordInCentroid);
 		initCopy(p);
 		return p;
@@ -63,11 +64,11 @@ public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOu
 	
 	private void init() {
 		nbMaxWordInCentroid = getCurrentProcess().getADN().getParameterValue(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName());
-		invertIndex = new InvertedIndex<NGram>(index);
+		invertIndex = new InvertedIndex<WordIndex>(index);
 	}
 	
 	@Override
-	public void processCaracteristics(List<Corpus> listCorpus) {
+	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		super.processCaracteristics(listCorpus);
 		
 		init();
@@ -78,14 +79,13 @@ public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOu
 		for (Corpus corpus : listCorpus) {
 			int corpusId = corpus.getiD();
 			
-			for (NGram w : invertIndex.getCorpusWordIndex().get(corpusId)) {
+			for (WordIndex w : invertIndex.getCorpusWordIndex().get(corpusId)) {
 				double tfidf = w.getTfCorpus(corpusId)*w.getIdf();
 				if (listBestWord.size() < nbMaxWordInCentroid) {
 					listBestWord.add(new Pair(w.getiD(), tfidf));
 					Collections.sort(listBestWord);
 					minTfIdf = (double) listBestWord.get(listBestWord.size()-1).second;
-				}
-				else if (tfidf > minTfIdf) {
+				} else if (tfidf > minTfIdf) {
 					listBestWord.remove(nbMaxWordInCentroid-1);
 					listBestWord.add(new Pair(w.getiD(), tfidf));
 					Collections.sort(listBestWord);
@@ -118,7 +118,7 @@ public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOu
 	
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return super.isOutCompatible(compatibleMethod) || super.isOutCompatible(compatibleMethod) && compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class));
+		return super.isOutCompatible(compatibleMethod) || compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class));
 	}
 
 	/**

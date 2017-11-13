@@ -14,7 +14,6 @@ import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.tools.PairSentenceScore;
 import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
 
 public class MMR extends AbstractSelectionMethod implements SentenceCaracteristicBasedIn, ScoreBasedIn {
@@ -42,23 +41,21 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	private ArrayList<SentenceModel> summary;
 	private int actualSummaryLength;
 	
-	private ArrayList<PairSentenceScore> sentencesScores;
+	private Map<SentenceModel, Double> sentencesScores;
 	private Map<SentenceModel, Object> sentenceCaracteristic;
 	
-	private HashMap<SentenceModel, Double> sentencesBaseScores;
-	private HashMap<SentenceModel, Double> sentencesMMRScores;
+	private Map<SentenceModel, Double> sentencesBaseScores;
+	private Map<SentenceModel, Double> sentencesMMRScores;
 	
 	public MMR(int id) throws SupportADNException {
 		super(id);
 		supportADN = new HashMap<String, Class<?>>();
 		supportADN.put("Lambda", Double.class);
 
-		listParameterIn = new ArrayList<ParametrizedType>();
 		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
 		listParameterIn.add(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
 		listParameterIn.add(new ParametrizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(PairSentenceScore.class, ArrayList.class, ScoreBasedIn.class));
-		listParameterOut = new ArrayList<ParametrizedType>();
+		listParameterIn.add(new ParametrizedType(Double.class, Map.class, ScoreBasedIn.class));
 	}
 
 	@Override
@@ -79,32 +76,28 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(this, similarityMethod);
+		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 		
 		if (nbCharSizeOrNbSentenceSize)
-			this.maxSummLength = size;
+			maxSummLength = size;
 		else
-			this.nbSentenceInSummary = size;
+			nbSentenceInSummary = size;
 	}
 	
 	private void init() throws Exception {
 		lambda = getCurrentProcess().getADN().getParameterValue(Double.class, MMR_Parameter.Lambda.getName());
 		
-		this.sentencesBaseScores = new HashMap<SentenceModel, Double>();
-		this.sentencesMMRScores = new HashMap<SentenceModel, Double>();
+		sentencesBaseScores = new HashMap<SentenceModel, Double>(sentencesScores);
+		sentencesMMRScores = new HashMap<SentenceModel, Double>();
 		
-		Double scoreMax = Double.NEGATIVE_INFINITY;
-		for (PairSentenceScore p : this.sentencesScores)
-		{
-			if (p.getScore().compareTo(scoreMax) > 0)
-				scoreMax = p.getScore();
-		}
-		
-		for (PairSentenceScore p : this.sentencesScores)
-		{
-			if (p.getScore() != 0)
-				this.sentencesBaseScores.put(p.getPhrase(), p.getScore() * (1./scoreMax));
-		}
+//		Double scoreMax = Double.NEGATIVE_INFINITY;
+//		for (Double p : sentencesScores.values())
+//			if (p.compareTo(scoreMax) > 0)
+//				scoreMax = p;
+//		
+//		for (SentenceModel p : sentencesScores.keySet())
+//			if (sentencesScores.get(p) != 0)
+//				this.sentencesBaseScores.put(p, sentencesScores.get(p) * (1./scoreMax));
 	}
 
 	@Override
@@ -126,15 +119,14 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	
 	private void removeTooLongSentences()
 	{
-		HashMap <SentenceModel, Double> sentencesBaseScores_new = new HashMap <SentenceModel, Double> (this.sentencesBaseScores);
-		for (SentenceModel p : this.sentencesBaseScores.keySet())
-		{
-			if (p.getNbMot() + this.actualSummaryLength > this.maxSummLength)
+		Map <SentenceModel, Double> sentencesBaseScores_new = new HashMap <SentenceModel, Double> (sentencesBaseScores);
+		for (SentenceModel p : sentencesBaseScores.keySet()) {
+			if (p.getNbMot() + actualSummaryLength > maxSummLength)
 			{
 				sentencesBaseScores_new.remove(p);
 			}
 		}
-		this.sentencesBaseScores = new HashMap<SentenceModel, Double> (sentencesBaseScores_new);
+		sentencesBaseScores = new HashMap<SentenceModel, Double> (sentencesBaseScores_new);
 	}
 	
 	/**
@@ -193,13 +185,12 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 			double valSim;
 
 			if(sentenceCaracteristic.get(p) == null)
-				System.out.println("Prout");
-			if ( (valSim = sim.computeSimilarity(sentenceCaracteristic, p1, p)) >= maxSim)
-			{
+				System.out.println("Error");
+			if ( (valSim = sim.computeSimilarity(sentenceCaracteristic, p1, p)) >= maxSim) {
 				maxSim = valSim;
 			}
 		}
-		double score = this.lambda * this.sentencesBaseScores.get(p) - (1. - this.lambda) * maxSim;
+		double score = this.lambda * this.sentencesScores.get(p) - (1. - this.lambda) * maxSim;
 	
 		return score;
 	}
@@ -214,7 +205,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	}
 
 	@Override
-	public void setScore(ArrayList<PairSentenceScore> score) {
+	public void setScore(Map<SentenceModel, Double> score) {
 		this.sentencesScores = score;
 	}
 
