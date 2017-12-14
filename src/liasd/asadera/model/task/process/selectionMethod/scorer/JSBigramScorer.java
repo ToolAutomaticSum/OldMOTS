@@ -1,27 +1,26 @@
 package liasd.asadera.model.task.process.selectionMethod.scorer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
-import liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
+import liasd.asadera.model.task.process.indexBuilder.ListSentenceBasedIn;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.Summary;
 import liasd.asadera.textModeling.smoothings.DirichletSmoothing;
-import liasd.asadera.textModeling.wordIndex.NGram;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
-public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
+public class JSBigramScorer extends Scorer implements ListSentenceBasedIn {
 
-	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
-	private Map<NGram, Double> sourceDistribution;
-	private Map<NGram, Integer> firstSentencesConcepts;
-	private SentenceSimilarityMetric sim;
+	private List<SentenceModel> listSen;
+	//private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
+	private Map<WordIndex, Double> sourceDistribution;
+	private Map<WordIndex, Integer> firstSentencesConcepts;
+	private SimilarityMetric sim;
 	private int nbBiGramsInSource;
 	private double firstSentenceConceptsFactor;
 	private double delta;
@@ -30,7 +29,7 @@ public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
 	public JSBigramScorer(AbstractSelectionMethod method) throws SupportADNException {
 		super(method);
 
-		listParameterIn.add(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
+		listParameterIn.add(new ParametrizedType(SentenceModel.class, List.class, ListSentenceBasedIn.class));
 	}
 
 	@Override
@@ -40,7 +39,7 @@ public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
 		
 		String similarityMethod = method.getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 		
 		computeSourceDistribution();
 	}
@@ -51,7 +50,7 @@ public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
 			if (summary.getScore() != 0)
 				return summary.getScore();
 			else {
-				DirichletSmoothing smoothing = new DirichletSmoothing(2, delta, sourceDistribution.size(), ngrams_in_sentences, summary, sourceDistribution, firstSentencesConcepts, firstSentenceConceptsFactor);
+				DirichletSmoothing smoothing = new DirichletSmoothing(2, delta, sourceDistribution.size(), summary, sourceDistribution, firstSentencesConcepts, firstSentenceConceptsFactor);
 				double[] distri = smoothing.getSmoothedDistrib();
 				double jsd = sim.computeSimilarity(distri, corpusDistri); //this.jensenShanonDivergence (gi, summDistrib);
 				//double jsd2 = jensenShannon(corpusDistri, distri);
@@ -64,19 +63,19 @@ public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
 	}
 	
 	private void computeSourceDistribution() {
-		sourceDistribution = new TreeMap <NGram, Double>();
-		Map<NGram, Double> sourceOccurences = new TreeMap <NGram, Double> ();
-		firstSentencesConcepts = new TreeMap <NGram, Integer> ();
+		sourceDistribution = new TreeMap <WordIndex, Double>();
+		Map<WordIndex, Double> sourceOccurences = new TreeMap <WordIndex, Double> ();
+		firstSentencesConcepts = new TreeMap <WordIndex, Integer> ();
 		nbBiGramsInSource = 0;
 		double modified_nbBiGramsInSource = 0.;
 		
-		for (SentenceModel p : ngrams_in_sentences.keySet()) {
+		for (SentenceModel p : listSen) {
 			//System.out.println("phrase pos : "+p.getPosition());
-			List<NGram> curr_ngrams_list = new ArrayList<NGram>(ngrams_in_sentences.get(p));
+			List<WordIndex> curr_ngrams_list = p;
 			nbBiGramsInSource += curr_ngrams_list.size();
 					//p.getNGrams(2, this.index, this.filter);
 			//ArrayList<NGram> curr_ngrams_list = p.getBiGrams( this.index, this.filter);
-			for (NGram ng : curr_ngrams_list) {
+			for (WordIndex ng : curr_ngrams_list) {
 				if (!sourceOccurences.containsKey(ng))//If ng not already counted, put 1
 					sourceOccurences.put(ng, 1.);
 				else //If ng already counted, add 1
@@ -91,9 +90,9 @@ public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
 			}
 		}
 		
-		System.out.println("Number of bigrams : " + nbBiGramsInSource);
+		//System.out.println("Number of ngrams : " + nbBiGramsInSource);
 		
-		for (NGram ng : firstSentencesConcepts.keySet()) {
+		for (WordIndex ng : firstSentencesConcepts.keySet()) {
 			double d = sourceOccurences.get(ng);
 			modified_nbBiGramsInSource += firstSentenceConceptsFactor * d;
 			sourceOccurences.put(ng, d + firstSentenceConceptsFactor * d);
@@ -103,16 +102,16 @@ public class JSBigramScorer extends Scorer implements SentenceNGramBasedIn {
 		
 		corpusDistri = new double[sourceOccurences.size()];
 		int i = 0;
-		System.out.println("Number of bigrams after filtering : " + nbBiGramsInSource + " | " + modified_nbBiGramsInSource);
-		for (NGram ng : sourceOccurences.keySet())	{
+		System.out.println("Number of ngrams after filtering : " + nbBiGramsInSource + " | " + modified_nbBiGramsInSource);
+		for (WordIndex ng : sourceOccurences.keySet())	{
 			sourceDistribution.put(ng, (double) sourceOccurences.get(ng) / modified_nbBiGramsInSource );
 			corpusDistri[i] = sourceDistribution.get(ng);
 			i++;
 		}
 	}
-	
+
 	@Override
-	public void setSentenceNGram(Map<SentenceModel, Set<NGram>> ngrams_in_sentences) {
-		this.ngrams_in_sentences = ngrams_in_sentences;
+	public void setListSentence(List<SentenceModel> listSen) {
+		this.listSen = listSen;
 	}
 }

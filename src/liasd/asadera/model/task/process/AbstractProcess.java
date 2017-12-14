@@ -95,6 +95,10 @@ public abstract class AbstractProcess extends Optimize implements AbstractTask/*
 		return corpusToSummarize;
 	}
 	
+	public void setCorpusToSummarize(Corpus corpusToSummarize) {
+		this.corpusToSummarize = corpusToSummarize;
+	}
+	
 	/**
 	 * Retourne l'Id du corpus résumé
 	 * @return

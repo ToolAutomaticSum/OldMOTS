@@ -3,8 +3,6 @@ package liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.f
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
@@ -16,29 +14,28 @@ import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class JSBigramFeatures extends Featurer implements IndexBasedIn<NGram>, SentenceNGramBasedIn{
+public class BigramFeatures extends Featurer implements IndexBasedIn<NGram> {
 
-	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
 	private Index<NGram> indexNG;
 	private List<WordIndex> topTfIdf;
 	private int maxLength;
 	private int nbWord;
 	
-	public JSBigramFeatures(ReinforcementLearning rl) throws SupportADNException {
+	public BigramFeatures(ReinforcementLearning rl) throws SupportADNException {
 		super(rl);
 
 		listParameterIn.add(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class));
-		listParameterIn.add(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
 	}
 
 	@Override
 	public void init(int maxLength) throws Exception {
-		nbWord = indexNG.size()/2; //Integer.parseInt(rl.getCurrentProcess().getModel().getProcessOption(rl.getId(), "NbWord"));
+		nbWord = Integer.parseInt(rl.getCurrentProcess().getModel().getProcessOption(rl.getId(), "NbWord"));
 		int corpusId = rl.getCurrentProcess().getCorpusToSummarize().getiD();
 		this.maxLength = maxLength;
 		
 		topTfIdf = new ArrayList<WordIndex>(indexNG.values());
-		Collections.sort(topTfIdf, (a, b) -> -Double.compare(a.getTfCorpus(corpusId)*a.getIdf(), b.getTfCorpus(corpusId)*b.getIdf()));
+		Collections.sort(topTfIdf, (a, b) -> -Double.compare(a.getTfCorpus(corpusId)*a.getIdf(indexNG.getNbDocument()),
+															 b.getTfCorpus(corpusId)*b.getIdf(indexNG.getNbDocument())));
 		topTfIdf = topTfIdf.subList(0, nbWord-1);
 	}
 	
@@ -49,7 +46,7 @@ public class JSBigramFeatures extends Featurer implements IndexBasedIn<NGram>, S
 		double[] redundancy = new double[nbWord];
 		int length = 0;
 		for (SentenceModel sen : summary) {
-			for (NGram ng : ngrams_in_sentences.get(sen)) {
+			for (WordIndex ng : sen) {
 				int indexOf = topTfIdf.indexOf(indexNG.get(ng.getWord()));
 				if(indexOf != -1) {
 					features[indexOf]++;
@@ -75,10 +72,4 @@ public class JSBigramFeatures extends Featurer implements IndexBasedIn<NGram>, S
 	public void setIndex(Index<NGram> index) {
 		this.indexNG = index;
 	}
-
-	@Override
-	public void setSentenceNGram(Map<SentenceModel, Set<NGram>> ngrams_in_sentences) {
-		this.ngrams_in_sentences = ngrams_in_sentences;
-	}
-
 }

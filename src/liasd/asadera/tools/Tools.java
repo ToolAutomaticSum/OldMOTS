@@ -98,7 +98,7 @@ public class Tools {
 			}
 		}
 		Writer w = new Writer("doc.txt");
-		w.open();
+		w.open(false);
 		w.write(str);
 		w.close();
 	}

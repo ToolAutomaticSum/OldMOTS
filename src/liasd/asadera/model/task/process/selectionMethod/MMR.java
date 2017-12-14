@@ -14,7 +14,7 @@ import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class MMR extends AbstractSelectionMethod implements SentenceCaracteristicBasedIn, ScoreBasedIn {
 
@@ -33,7 +33,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 	}
 	
 	private double lambda;
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 
 	private boolean nbCharSizeOrNbSentenceSize;
 	private int maxSummLength;
@@ -76,7 +76,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 		
 		if (nbCharSizeOrNbSentenceSize)
 			maxSummLength = size;

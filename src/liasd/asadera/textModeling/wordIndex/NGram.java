@@ -20,14 +20,14 @@ public class NGram extends WordIndex implements List<WordIndex> {
 		word = "";
 	}
 	
-	public NGram(Index<NGram> index) {
-		super(index);
-		word = "";
-	}
+//	public NGram(Index<NGram> index) {
+//		super(index);
+//		word = "";
+//	}
 	
-	public NGram(String ngram, Index<NGram> index) {
-		super(ngram, index);
-		word = "";
+	public NGram(String ngram/*, Index<NGram> index*/) {
+		super(ngram/*, index*/);
+//		word = "";
 	}
 	
 	/**
@@ -35,8 +35,8 @@ public class NGram extends WordIndex implements List<WordIndex> {
 	 * @param ng
 	 */
 	public NGram (NGram ng)	{
-		super(ng.getWord(), ng.getIndex());
-		word = ng.getWord();
+		super(ng.getWord()/*, ng.getIndex()*/);
+//		word = ng.getWord();
 		listWord.addAll(ng);
 	}
 	

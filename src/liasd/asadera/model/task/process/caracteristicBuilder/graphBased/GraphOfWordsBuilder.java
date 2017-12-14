@@ -18,6 +18,7 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class GraphOfWordsBuilder extends AbstractCaracteristicBuilder implements IndexBasedIn<WordIndex>, GraphBasedOut<WordIndex, DefaultWeightedEdge> {
@@ -28,7 +29,9 @@ public class GraphOfWordsBuilder extends AbstractCaracteristicBuilder implements
 	
 	public GraphOfWordsBuilder(int id) throws SupportADNException {
 		super(id);
-		
+
+		listParameterIn.add(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParametrizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedOut.class));
 		
 		graph = new SimpleWeightedGraph<WordIndex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
@@ -46,20 +49,21 @@ public class GraphOfWordsBuilder extends AbstractCaracteristicBuilder implements
 		slidingWindow = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Window"));
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
+		for (WordIndex word : index.values())
+			graph.addVertex(word);
+
 		for (Corpus corpus : listCorpus) {
-			graph.removeAllEdges(new ArrayList<DefaultWeightedEdge>(graph.edgeSet()));
-			graph.removeAllVertices(new ArrayList<WordIndex>(graph.vertexSet()));
 			for (TextModel text : corpus)
-				for (SentenceModel sen : text)
+				for (SentenceModel sen : text) {
+					int n = sen.getN();
 					for (int i=0; i<sen.size(); i++)
-						if (getCurrentProcess().getFilter().passFilter(sen.get(i)))
-							for (int j=i+1; j<Math.min(i + slidingWindow + 1, sen.size()); j++) {
-								if (getCurrentProcess().getFilter().passFilter(sen.get(j))) {
-									WordIndex w1 = index.get(sen.get(i).getmLemma());
-									WordIndex w2 = index.get(sen.get(j).getmLemma());
+//						if (getCurrentProcess().getFilter().passFilter(sen.getListWordModel().get(i)))
+							for (int j=i+n; j<Math.min(i + slidingWindow + 1, sen.size()); j++) {
+//								if (getCurrentProcess().getFilter().passFilter(sen.getListWordModel().get(j))) {
+									WordIndex w1 = sen.get(i); //index.get(sen.getListWordModel().get(i).getmLemma());
+									WordIndex w2 = sen.get(j); //index.get(sen.getListWordModel().get(j).getmLemma());
 						            if (i != j && w1 != w2) {
 						            	if (!graph.containsVertex(w1))
 						            		graph.addVertex(w1);
@@ -73,8 +77,9 @@ public class GraphOfWordsBuilder extends AbstractCaracteristicBuilder implements
 //							            	System.out.println(edge + " " + graph.getEdgeWeight(edge));
 						            	}
 						            }
-								}
+//								}
 							}
+				}
 		}
 	}
 	

@@ -25,6 +25,13 @@ public class TfIdfDocument extends TfIdfVectorSentence implements QueryBasedOut 
 	}
 
 	@Override
+	public TfIdfDocument makeCopy() throws Exception {
+		TfIdfDocument p = new TfIdfDocument(id);
+		initCopy(p);
+		return p;
+	}
+
+	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		super.processCaracteristics(listCorpus);
 		

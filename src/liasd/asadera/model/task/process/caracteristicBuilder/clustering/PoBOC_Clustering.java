@@ -18,7 +18,7 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.cluster.Cluster;
 import liasd.asadera.tools.Pair;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements SentenceCaracteristicBasedIn, ListClusterBasedOut {
 
@@ -28,7 +28,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	private List<List<Integer>> listPole = new ArrayList<List<Integer>>();
 	private List<Integer> availableSentences;
 	private Set<Integer> sentenceInPoles;
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	
 	private List<SentenceModel> listSentence;
 	private int n;
@@ -58,7 +58,7 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	public void initADN() throws Exception {
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 
 	@Override

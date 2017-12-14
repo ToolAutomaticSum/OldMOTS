@@ -1,26 +1,26 @@
 package liasd.asadera.model.task.process.selectionMethod.genetic;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.wordIndex.Index;
-import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class ScoringThread extends Thread implements Runnable {
 	private GeneticIndividual gi;
-	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
-	private Map <NGram, Double> sourceDistribution;
-	private Map <NGram, Integer> firstSentencesConcepts;
+	//private Map<SentenceModel, Set<WordIndex>> ngrams_in_sentences;
+	private Map <WordIndex, Double> sourceDistribution;
+	private Map <WordIndex, Integer> firstSentencesConcepts;
 	private double delta;
 	//private Index index;
 	private double fsc;
 	
-	public ScoringThread (GeneticIndividual gi, Map<SentenceModel, Set<NGram>> ngrams_in_sentences2, Map<NGram, Double> sourceDistribution2, Map<NGram, Integer> firstSentencesConcepts2, Index<WordIndex> index, double fsc, double delta) {
+	public ScoringThread (GeneticIndividual gi, Map<WordIndex, Double> sourceDistribution2, Map<WordIndex, Integer> firstSentencesConcepts2, Index<WordIndex> index, double fsc, double delta) {
 		this.gi = gi;
-		this.ngrams_in_sentences = ngrams_in_sentences2;
+		//this.ngrams_in_sentences = ngrams_in_sentences2;
 		this.sourceDistribution = sourceDistribution2;
 		this.firstSentencesConcepts = firstSentencesConcepts2;
 		//this.index = index;
@@ -38,7 +38,7 @@ public class ScoringThread extends Thread implements Runnable {
 	private double jensenShannon() {
 		double divergence = 0.;
 		
-		TreeMap <NGram, Double> distribGI;
+		TreeMap <WordIndex, Double> distribGI;
 		distribGI = computeNGram_GI_distrib();
 		
 		double divider;
@@ -46,7 +46,7 @@ public class ScoringThread extends Thread implements Runnable {
 		double probSource;
 		double log2 = Math.log(2);
 		
-		for (NGram ng : this.sourceDistribution.keySet())
+		for (WordIndex ng : this.sourceDistribution.keySet())
 		{
 			probSource = this.sourceDistribution.get(ng);
 			
@@ -93,13 +93,13 @@ public class ScoringThread extends Thread implements Runnable {
 		return distrib;		
 	}*/
 	
-	private TreeMap <NGram, Double> computeNGram_GI_distrib () {
-		TreeMap <NGram, Double> distrib = new TreeMap <NGram, Double> ();
+	private TreeMap <WordIndex, Double> computeNGram_GI_distrib () {
+		TreeMap <WordIndex, Double> distrib = new TreeMap <WordIndex, Double> ();
 		//System.out.println("distrib : "+distrib);
 		double nb_bi_grams_gi = 0.;
 		for (SentenceModel p : this.gi.getGenes()) {
-			Set<NGram> curr_ngrams_list = ngrams_in_sentences.get(p);
-			for (NGram ng : curr_ngrams_list) {
+			Set<WordIndex> curr_ngrams_list = new LinkedHashSet<WordIndex>(p);
+			for (WordIndex ng : curr_ngrams_list) {
 				//TODO : GROSSE APPROXIMATION : il faut parcourir les bigrams récupérés de la phrase, et non
 				//ngrams in sentence, car là on a toujours 1 comme valeur pour un ngram même si présent plusieurs fois.
 				if (distrib.containsKey(ng)) {
@@ -111,7 +111,7 @@ public class ScoringThread extends Thread implements Runnable {
 				nb_bi_grams_gi += 1.;
 			}
 		}
-		for (NGram ng : distrib.keySet()) {
+		for (WordIndex ng : distrib.keySet()) {
 			if (this.firstSentencesConcepts.containsKey(ng)) {
 				double d = distrib.get(ng) ;
 				double dMult = d * fsc;
@@ -129,7 +129,7 @@ public class ScoringThread extends Thread implements Runnable {
 		
 		double divider = nb_bi_grams_gi + this.delta;
 		
-		for (NGram ng : this.sourceDistribution.keySet()) {
+		for (WordIndex ng : this.sourceDistribution.keySet()) {
 			double probSource = this.sourceDistribution.get(ng);
 			Double dProb = distrib.get(ng);
 			if (dProb == null)

@@ -15,7 +15,7 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.tools.Pair;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class BigramDistributionEvaluation extends AbstractComparativeMethod implements SentenceNGramBasedIn {
 
@@ -23,7 +23,7 @@ public class BigramDistributionEvaluation extends AbstractComparativeMethod impl
 	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
 	private Map<NGram, Double> sourceDistribution;
 	private Map<NGram, Integer> firstSentencesConcepts;
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	private int nbBiGramsInSource;
 	private double firstSentenceConceptsFactor;
 	private double delta;
@@ -47,7 +47,7 @@ public class BigramDistributionEvaluation extends AbstractComparativeMethod impl
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 	}
 	
 	@Override

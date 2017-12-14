@@ -1,7 +1,6 @@
 package liasd.asadera.model.task.process.caracteristicBuilder.vector;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +14,8 @@ import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.textModeling.wordIndex.WordVector;
 
 public class MeanVectorSentence extends AbstractCaracteristicBuilder implements IndexBasedIn<WordVector>, SentenceCaracteristicBasedOut {
@@ -55,16 +54,14 @@ public class MeanVectorSentence extends AbstractCaracteristicBuilder implements 
 				for (SentenceModel sentenceModel : text) {
 					int nbWord = 0;
 					double[] sentenceVector = new double[dimension];
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel wm = wordIt.next();
-						if (getCurrentProcess().getFilter().passFilter(wm)) {
-							@SuppressWarnings("unlikely-arg-type")
-							WordVector word = index.get(wm.getmLemma());
+					for (WordIndex wi : sentenceModel) {
+//						if (getCurrentProcess().getFilter().passFilter(wm)) {
+//							@SuppressWarnings("unlikely-arg-type")
+							WordVector word = (WordVector) wi; //index.get(wm.getmLemma());
 							for (int i=0; i<dimension; i++)
 								sentenceVector[i]+=word.getWordVector()[i];
 							nbWord++;
-						}
+//						}
 					}
 					for (int i=0; i<dimension; i++)
 						sentenceVector[i]/=nbWord;

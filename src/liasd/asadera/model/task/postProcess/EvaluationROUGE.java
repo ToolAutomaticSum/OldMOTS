@@ -86,7 +86,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i<getModel().getProcess().size(); i++) {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
-						" -e " + rougePath + File.separator + "data -n 2 -x -w 1.2 -m -2 4 -u -c 95 -r 1000 -f A -p 0.5 -t 0 -a -d " +
+						" -e " + rougePath + File.separator + "data -n 2 -x -m -c 95 -r 1000 -f A -p 0.5 -t 0 -a " +
 						rougeTempFilePath + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
 				System.out.println(cmd);
 
@@ -96,7 +96,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			    
 			    Writer w = new Writer(rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt");
-			    w.open();
+			    w.open(false);
 				String line = "";
 			    while ((line = input.readLine()) != null)
 			    	w.write(line + "\n");
@@ -120,7 +120,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				String t = r.read();
 				while (t != null) {
 					String[] result = t.split(" ");
-					if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_F:")) {
+					if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_R:")) {
 						if (result[1].equals("ROUGE-2"))
 							getModel().getProcess().get(i).setScore(Double.parseDouble(result[3]));
 						System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
@@ -134,7 +134,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	private void writeHtmlGeneratedSummary(int processID, int multiCorpusId, int corpusId) throws Exception {
 		if (((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId) != null) {
 			Writer w = new Writer(rougeTempFilePath + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
-			w.open();
+			w.open(false);
 			w.write("<html>\n<head><title>" + processID + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
 			for (int j = 0; j<((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId).size(); j++) {
@@ -151,7 +151,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	private void writeHtmlModelSummary(int multiCorpusId, int corpusId) throws Exception {
 		for (String modelSummary : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryNames()) {
     		Writer w = new Writer(rougeTempFilePath + File.separator + modelRoot + File.separator + modelSummary.replace(".txt", "") + ".html");
-			w.open();
+			w.open(false);
 			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
 			"<body bgcolor=\"white\">\n");
 			Reader r = new Reader(getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryPath() + File.separator + modelSummary, true);

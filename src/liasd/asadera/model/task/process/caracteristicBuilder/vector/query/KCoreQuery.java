@@ -30,6 +30,7 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 	public KCoreQuery(int id) throws SupportADNException {
 		super(id);
 
+		listParameterIn.add(new ParametrizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedIn.class));
 		listParameterOut.add(new ParametrizedType(null, double[].class, QueryBasedOut.class));
 		
 		query = new Query();
@@ -44,8 +45,6 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 
 	@Override
 	public void initADN() throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 		super.processCaracteristics(listCorpus);
 		
 		double[] vector = new double[graph.vertexSet().size()];
-		
+
 		//TODO Strange that graph isn't reset but do we need to pass it via an interface ?
 		for (Corpus corpus : listCorpus) {
 			Coreness<WordIndex, DefaultWeightedEdge> core = new Coreness<WordIndex, DefaultWeightedEdge>(graph);
@@ -62,10 +61,10 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 			for (Entry<WordIndex, Integer> e : core.getScores().entrySet())
 				if (e.getValue() == maxCore)
 					listMaxKCore.add(e.getKey());
-			System.out.println("Degeneracy = " + maxCore + "\nList key word from max core : ");
-			System.out.println(listMaxKCore);
+//			System.out.println("Degeneracy = " + maxCore + "\nList key word from max core : ");
+//			System.out.println(listMaxKCore);
 			for (WordIndex word : listMaxKCore)
-				vector[word.getiD()] += word.getTfCorpus(corpus.getiD())*word.getIdf();
+				vector[word.getiD()] += word.getTfCorpus(corpus.getiD())*word.getIdf(index.getNbDocument());
 		}
 		query.setQuery(vector);
 	}

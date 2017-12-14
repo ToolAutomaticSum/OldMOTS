@@ -2,7 +2,7 @@ package liasd.asadera.tools.sentenceSimilarity;
 
 import liasd.asadera.tools.matrix.ToolsMatrix;
 
-public class FrobeniusDistance extends SentenceSimilarityMetric {
+public class FrobeniusDistance extends SimilarityMetric {
 
 	public FrobeniusDistance() {
 		super();

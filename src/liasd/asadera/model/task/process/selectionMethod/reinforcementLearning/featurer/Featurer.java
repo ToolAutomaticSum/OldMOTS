@@ -19,7 +19,7 @@ public abstract class Featurer extends ParametrizedMethod {
 	
 	public abstract void init(int maxLength) throws Exception;
 	
-	public abstract double[] getFeatures(List<SentenceModel> summary);
+	public abstract double[] getFeatures(List<SentenceModel> summary) throws Exception;
 	
 	public abstract double[] instanciateVector();
 

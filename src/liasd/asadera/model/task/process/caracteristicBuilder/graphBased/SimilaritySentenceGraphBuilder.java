@@ -15,11 +15,11 @@ import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.graphBased.GraphSentenceBased;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
-public class SimilarityGraphBuilder extends AbstractCaracteristicBuilder implements SentenceCaracteristicBasedIn, SentenceGraphBasedOut {
+public class SimilaritySentenceGraphBuilder extends AbstractCaracteristicBuilder implements SentenceCaracteristicBasedIn, SentenceGraphBasedOut {
 
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	private double graphThreshold = 0;
 	private GraphSentenceBased graph;
 	/**
@@ -27,7 +27,7 @@ public class SimilarityGraphBuilder extends AbstractCaracteristicBuilder impleme
 	 */
 	private Map<SentenceModel, Object> sentenceCaracteristic;
 	
-	public SimilarityGraphBuilder(int id) throws SupportADNException {
+	public SimilaritySentenceGraphBuilder(int id) throws SupportADNException {
 		super(id);
 		
 		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
@@ -36,7 +36,7 @@ public class SimilarityGraphBuilder extends AbstractCaracteristicBuilder impleme
 
 	@Override
 	public AbstractCaracteristicBuilder makeCopy() throws Exception {
-		SimilarityGraphBuilder p = new SimilarityGraphBuilder(id);
+		SimilaritySentenceGraphBuilder p = new SimilaritySentenceGraphBuilder(id);
 		initCopy(p);
 		return p;
 	}
@@ -49,7 +49,7 @@ public class SimilarityGraphBuilder extends AbstractCaracteristicBuilder impleme
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.Summary;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 import liasd.asadera.tools.vector.ToolsVector;
 
 public class GenericScorer extends Scorer implements SentenceCaracteristicBasedIn {
@@ -17,7 +17,7 @@ public class GenericScorer extends Scorer implements SentenceCaracteristicBasedI
 	private double[] docVector;
 	private int dimension;
 //	private double lambda;
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	
 
 	public GenericScorer(AbstractSelectionMethod method) throws SupportADNException {
@@ -37,7 +37,7 @@ public class GenericScorer extends Scorer implements SentenceCaracteristicBasedI
 //			docVector[i] /= sentenceCaracteristic.size();
 
 		String similarityMethod = method.getCurrentProcess().getModel().getProcessOption(method.getId(), "SimilarityMethod");
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 //		lambda = Double.parseDouble(method.getCurrentProcess().getModel().getProcessOption(method.getId(), "Lambda"));
 	}
 	

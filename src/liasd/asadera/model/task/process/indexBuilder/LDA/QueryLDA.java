@@ -4,11 +4,13 @@ import java.util.List;
 
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
+import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
+import liasd.asadera.textModeling.wordIndex.WordVector;
 
 public class QueryLDA extends LDA implements QueryBasedOut {
 
@@ -20,6 +22,13 @@ public class QueryLDA extends LDA implements QueryBasedOut {
 		listParameterOut.add(new ParametrizedType(null, double[].class, QueryBasedOut.class));
 		
 		query = new Query();
+	}
+	
+	@Override
+	public AbstractIndexBuilder<WordVector> makeCopy() throws Exception {
+		QueryLDA p = new QueryLDA(id);
+		initCopy(p);
+		return p;
 	}
 	
 	@Override

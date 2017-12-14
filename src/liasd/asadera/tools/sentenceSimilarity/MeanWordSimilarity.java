@@ -2,9 +2,9 @@ package liasd.asadera.tools.sentenceSimilarity;
 
 import liasd.asadera.exception.VectorDimensionException;
 
-public class MeanWordSimilarity extends SentenceSimilarityMetric {
+public class MeanWordSimilarity extends SimilarityMetric {
 
-	protected SentenceSimilarityMetric sim;
+	protected SimilarityMetric sim;
 	
 	public MeanWordSimilarity() {
 		super();

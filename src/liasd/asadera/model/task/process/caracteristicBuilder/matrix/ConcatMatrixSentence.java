@@ -14,8 +14,8 @@ import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.textModeling.wordIndex.WordVector;
 
 public class ConcatMatrixSentence extends AbstractCaracteristicBuilder implements IndexBasedIn<WordVector>, SentenceCaracteristicBasedOut {
@@ -53,10 +53,10 @@ public class ConcatMatrixSentence extends AbstractCaracteristicBuilder implement
 			for (TextModel text : corpus) {
 				for (SentenceModel sentenceModel : text) {
 					int nbWord = 0;
-					double[][] sentenceMatrix = new double[sentenceModel.getNbMot()][];
-					for (WordModel wm : sentenceModel) {
-						@SuppressWarnings("unlikely-arg-type")
-						WordVector word = index.get(wm.getmLemma());
+					double[][] sentenceMatrix = new double[sentenceModel.size()][];
+					for (WordIndex wm : sentenceModel) {
+						//@SuppressWarnings("unlikely-arg-type")
+						WordVector word = (WordVector) wm; //index.get(wm.getmLemma());
 						sentenceMatrix[nbWord] = word.getWordVector();
 						nbWord++;
 					}
@@ -92,7 +92,7 @@ public class ConcatMatrixSentence extends AbstractCaracteristicBuilder implement
 
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, Map.class, SentenceCaracteristicBasedIn.class));
+		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
 	}
 
 	@Override

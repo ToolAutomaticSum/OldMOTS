@@ -39,7 +39,9 @@ public class Interpolation extends Smoothing{
 			for (SentenceModel sent : this.sentences)
 			{
 				//System.out.println(i+1);
-				ArrayList <NGram> curr_ngrams_list = sent.getNGrams(i+1, this.index, null);
+				ArrayList <NGram> curr_ngrams_list = new ArrayList<NGram>();
+				for (WordIndex wi : sent.getListWordIndex(i+1))
+					curr_ngrams_list.add((NGram) wi);
 			
 				for (NGram ng : curr_ngrams_list)
 				{

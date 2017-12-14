@@ -9,7 +9,6 @@ import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.ReinforcementLearning;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
@@ -28,7 +27,7 @@ public class BasicFeatures extends Featurer implements IndexBasedIn<WordIndex>{
 	
 	@Override
 	public void init(int maxLength) throws Exception {
-		nbWord = index.size(); //Integer.parseInt(rl.getCurrentProcess().getModel().getProcessOption(rl.getId(), "NbWord"));
+		nbWord = Integer.parseInt(rl.getCurrentProcess().getModel().getProcessOption(rl.getId(), "NbWord"));
 		int corpusId = rl.getCurrentProcess().getCorpusToSummarize().getiD();
 		this.maxLength = maxLength;
 //		List<Pair<WordIndex, Double>> list = new ArrayList<Pair<WordIndex, Double>>();
@@ -36,21 +35,21 @@ public class BasicFeatures extends Featurer implements IndexBasedIn<WordIndex>{
 //			list.add(new Pair(word, word.getTf()*word.getIdf()));
 		topTfIdf = new ArrayList<WordIndex>(index.values());
 //		Collections.sort(list);
-		Collections.sort(topTfIdf, (a, b) -> -Double.compare(a.getTfCorpus(corpusId)*a.getIdf(), b.getTfCorpus(corpusId)*b.getIdf()));
+		Collections.sort(topTfIdf, (a, b) -> -Double.compare(a.getTfCorpus(corpusId)*a.getIdf(index.getNbDocument()), b.getTfCorpus(corpusId)*b.getIdf(index.getNbDocument())));
 //		for (int i=0; i<100; i++)
 //			topTfIdf.add(list.get(i).getKey());
 		topTfIdf = topTfIdf.subList(0, nbWord-1);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
+//	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public double[] getFeatures(List<SentenceModel> summary) {
 		double[] features = instanciateVector();
 		double[] redundancy = new double[nbWord];
 		int length = 0;
 		for (SentenceModel sen : summary) {
-			for (WordModel word : sen) {
-				int indexOf = topTfIdf.indexOf(index.get(word.getmLemma()));
+			for (WordIndex word : sen) {
+				int indexOf = topTfIdf.indexOf(word);
 				if(indexOf != -1) {
 					features[indexOf]++;
 					redundancy[indexOf]++;

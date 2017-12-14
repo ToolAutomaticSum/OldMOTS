@@ -2,7 +2,7 @@ package liasd.asadera.tools.sentenceSimilarity;
 
 import liasd.asadera.exception.VectorDimensionException;
 
-public class DistDiv extends SentenceSimilarityMetric {
+public class DistDiv extends SimilarityMetric {
 
 	@Override
 	public double computeSimilarity(Object s1, Object s2) throws Exception {

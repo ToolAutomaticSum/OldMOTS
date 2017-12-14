@@ -7,7 +7,7 @@ import liasd.asadera.exception.VectorDimensionException;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.WordModel;
 
-public class JaccardSimilarity extends SentenceSimilarityMetric {
+public class JaccardSimilarity extends SimilarityMetric {
 
 	public JaccardSimilarity() {
 		super();
@@ -41,14 +41,14 @@ public class JaccardSimilarity extends SentenceSimilarityMetric {
 	public double computeSimilarity(SentenceModel s1, SentenceModel s2) {
 		List<String> intersection = new ArrayList<String>();
 		List<String> union = new ArrayList<String>();
-		for (WordModel w : s1) {
-			if (!intersection.contains(w.getmLemma()) && s2.contains(w))
+		for (WordModel w : s1.getListWordModel()) {
+			if (!intersection.contains(w.getmLemma()) && s2.getListWordModel().contains(w))
 				intersection.add(w.getmLemma());
 			if (!union.contains(w.getmLemma()))
 				union.add(w.getmLemma());
 		}
-		for (WordModel w : s2) {
-			if (!intersection.contains(w.getmLemma()) && s1.contains(w))
+		for (WordModel w : s2.getListWordModel()) {
+			if (!intersection.contains(w.getmLemma()) && s1.getListWordModel().contains(w))
 				intersection.add(w.getmLemma());
 			if (!union.contains(w.getmLemma()))
 				union.add(w.getmLemma());

@@ -4,21 +4,22 @@ import java.util.Map;
 
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public abstract class ClusterCentroid extends Cluster {
+public abstract class ClusterCentroid<T extends WordIndex> extends Cluster {
 
-	protected Index clusterDictionnary;
-	protected Index dictionnary;
+	protected Index<T> clusterDictionnary;
+	protected Index<T> dictionnary;
 	protected Map<Integer, String> hashMapWord;
 	protected double thresholdCluster;
 	protected int nbMaxWord;
 	
 	//private double[] centroid;
 	
-	public ClusterCentroid(int id, Index dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
+	public ClusterCentroid(int id, Index<T> dictionnary, Map<Integer, String> hashMapWord, int nbMaxWord, double thresholdCluster) {
 		super(id);
 		this.dictionnary = dictionnary;
-		clusterDictionnary = new Index(this.dictionnary.getNbDocument());
+		clusterDictionnary = new Index<T>(this.dictionnary.getNbDocument());
 		this.hashMapWord = hashMapWord;
 		
 		//centroid = new double[dictionnary.size()];
@@ -51,11 +52,11 @@ public abstract class ClusterCentroid extends Cluster {
 		return str;
 	}
 
-	public Index getClusterDictionnary() {
+	public Index<T> getClusterDictionnary() {
 		return clusterDictionnary;
 	}
 
-	public void setClusterDictionnary(Index clusterDictionnary) {
+	public void setClusterDictionnary(Index<T> clusterDictionnary) {
 		this.clusterDictionnary = clusterDictionnary;
 	}
 }

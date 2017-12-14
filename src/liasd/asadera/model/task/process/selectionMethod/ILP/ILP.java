@@ -69,7 +69,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 		String line = "";
 		int ind;
 		try{
-			InputStreamReader isr = new InputStreamReader(new FileInputStream(fileName + "_out"), "ASCII");
+			InputStreamReader isr = new InputStreamReader(new FileInputStream(fileName), "ASCII");
 			BufferedReader br = new BufferedReader(isr);
 			while ( (line = br.readLine() ) != null)
 			{
@@ -108,7 +108,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 	
 	private void eraseTmpFiles()
 	{
-		File file = new File(fileName + "_out");
+		File file = new File(fileName);
 		if(!file.delete())
 			System.err.println(file.getName() + " not deleted!");
 		
@@ -120,7 +120,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 	private void runGLPK()
 	{	
 		GLPLauncher glp = new GLPLauncher(fileName);
-		glp.runGLP(fileName + "_out");
+		glp.runGLP(fileName);
 	}
 
 	@Override

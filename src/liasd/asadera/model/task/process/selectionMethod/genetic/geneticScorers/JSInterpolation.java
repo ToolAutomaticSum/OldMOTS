@@ -42,7 +42,9 @@ public class JSInterpolation extends GeneticIndividualScorer{
 		{
 			for (SentenceModel p : doc)
 			{
-				ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>(p.getNGrams(2, this.index, null));
+				ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>();
+					for (WordIndex wi : p.getListWordIndex(2))
+						curr_ngrams_list.add((NGram) wi);
 				for (NGram ng : curr_ngrams_list)
 				{
 					if (this.sourceOccurences.containsKey(ng))

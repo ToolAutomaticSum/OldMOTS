@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
@@ -27,6 +28,7 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.textModeling.wordIndex.WordVector;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
@@ -86,6 +88,7 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 
 	@Override
 	public void processIndex(List<Corpus> listCorpus) throws Exception {
+		super.processIndex(listCorpus);
 		LDACmdOption option = new LDACmdOption();
 		option.est = false;
 		option.estc = false;
@@ -168,29 +171,29 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 	private void generateIndex(List<Corpus> listCorpus) {
 		for (Corpus corpus : listCorpus) {
 			//Construction du dictionnaire
-			for (TextModel t : corpus) {
+			for (TextModel t : corpus)
 				for (SentenceModel s : t) {
-					for (WordModel word : s) {
-						if (getCurrentProcess().getFilter().passFilter(word)) {
+					List<WordIndex> listWordIndex = new ArrayList<WordIndex>();
+					for (WordModel word : s.getListWordModel())
+						if (getCurrentProcess().getFilter().passFilter(word))
 							if(!index.containsKey(word.getmLemma())) {
-								WordVector w = new WordVector(word.getmLemma(), index, K);
+								WordVector w = new WordVector(word.getmLemma(), K);
 								index.put(word.getmLemma(), w/*, newModel.data.localDict.getID(word.getmLemma())*/);
+								listWordIndex.add(w);
 							}
-						}
-					}
+					s.setN(1);
+					s.setListWordIndex(1, listWordIndex);
 				}
-			}
 			
 			//Ajout dans le dictionnaire des IDs et des Topic Distribution
-			for (int w = 0; w < newModel.V; w++){ //Boucle sur le nombre de mot du vocabulaire local
+			for (int w = 0; w < newModel.V; w++) { //Boucle sur le nombre de mot du vocabulaire local
 				String word = newModel.data.localDict.getWord(w);
 				if(index.containsKey(word)) {
 					@SuppressWarnings("unlikely-arg-type")
 					WordVector wLDA = index.get(word);
 					//double temp = 0;
-					for (int k = 0; k < newModel.K; k++){ //Boucle sur le nombre de Topic
+					for (int k = 0; k < newModel.K; k++) //Boucle sur le nombre de Topic
 						wLDA.getWordVector()[k] = newModel.phi[k][w]*theta[k];
-					}
 				}
 			}
 		}
@@ -211,7 +214,7 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 			c = GenerateTextModel.readTempDocument(outputPath + File.separator + "temp", c, true);
 			for (TextModel t : c) {
 				for (SentenceModel s : t) {
-					for (WordModel word : s) {
+					for (WordModel word : s.getListWordModel()) {
 						if (filter.passFilter(word)) {
 							writer.write(word.getmLemma() + " ");
 						}

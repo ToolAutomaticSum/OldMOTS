@@ -69,9 +69,11 @@ public class App {
         {
             commandLine = parser.parse(options, args);
             
-            String configFileName  = new File(commandLine.getOptionValue("c")).getName();
-            String name = configFileName.substring(7, configFileName.length()-4);
-            
+            String configFileName = new File(commandLine.getOptionValue("c")).getName();
+            String corpusFileName = new File(commandLine.getOptionValue("m")).getName();
+            String name = configFileName.substring(7, configFileName.length()-4) + File.separator +
+            		corpusFileName.substring(0, corpusFileName.length()-4);
+           
             if (commandLine.hasOption("m"))
         		view = new CommandView(commandLine.getOptionValue("c"), commandLine.getOptionValue("m"));
         	else
@@ -102,7 +104,7 @@ public class App {
 	    				p.initADN();
 	    				AlgoGenetique ag;
 	    				try {
-	    					ag = new AlgoGenetique(0, 0.66, 0.75, 0, 100, 100, 0.14, p);
+	    					ag = new AlgoGenetique(0, 0.5, 0.50, 0, 50, 100, 0.14, p);
 	    					ag.init();
 	    					ag.optimize();
 	    				} catch (Exception e) {

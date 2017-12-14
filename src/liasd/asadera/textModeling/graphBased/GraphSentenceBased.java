@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	private Map<SentenceModel, Object> sentenceCaracteristic;
 	private double[][] matAdj;
 	private int[] degree;
@@ -21,7 +21,7 @@ public class GraphSentenceBased extends ArrayList<NodeGraphSentenceBased> {
 	 */
 	private static final long serialVersionUID = 6528014500614693135L;
 
-	public GraphSentenceBased(double threshold, Map<SentenceModel, Object> sentenceCaracteristic, SentenceSimilarityMetric sim) {
+	public GraphSentenceBased(double threshold, Map<SentenceModel, Object> sentenceCaracteristic, SimilarityMetric sim) {
 		super();
 		this.threshold = threshold;
 		this.sentenceCaracteristic = sentenceCaracteristic;

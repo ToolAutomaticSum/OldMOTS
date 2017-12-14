@@ -3,7 +3,6 @@ package liasd.asadera.model.task.process;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -207,7 +206,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 				scoringMethod.finish();
 	}
 	
-	public void start() {
+	public void start() throws Exception {
 		System.out.println("Starting " +  this.getClass().getSimpleName() + " " + getSummarizeCorpusId());
 		t = new Thread (this, this.getClass() + " " + getSummarizeCorpusId());
 		t.start();
@@ -215,17 +214,15 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 	
 	public void join() throws InterruptedException {
 		t.join();
+		getModel().setModelChanged();
+		getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId())));
 	}
 	
 	@Override
 	public void run() {
 		try {
-			init();
 			process();
 			finish();
-			getModel().setModelChanged();
-			getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId())));
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -287,38 +284,47 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 	
 	@Override
 	public void initOptimize() throws Exception {
+		if (getModel().getMultiCorpusModels().size() != 1)
+			throw new Exception("Too much MultiCorpus for MultiThreading Optimize");
+		setCurrentMultiCorpus(getModel().getMultiCorpusModels().get(0));
 		if (getModel().isMultiThreading()) {
-			if (getModel().getMultiCorpusModels().size() != 1)
-				throw new Exception("Too much MultiCorpus for MultiThreading Optimize");
-			else
-				currentMultiCorpus = getModel().getMultiCorpusModels().get(0);
-			this.initCorpusToCompress();
+			initCorpusToCompress();
 			nbThreads = getListCorpusId().size();
 			threads = new SummarizeProcess[nbThreads];
 
 			threads[0] = this;
 			for (int i=0; i<nbThreads; i++) {
 				if (i != 0)
-					threads[i] = this.makeCopy();
-				threads[i].setADN(new ADN(this.getADN()));
+					threads[i] = makeCopy();
+				threads[i].setADN(new ADN(getADN()));
 				threads[i].setCurrentMultiCorpus(new MultiCorpus(currentMultiCorpus));
 				threads[i].setModel(getModel());
-				threads[i].setSummarizeIndex(this.getListCorpusId().get(i));
+				threads[i].setSummarizeIndex(getListCorpusId().get(i));
+				threads[i].setCorpusToSummarize(getCurrentMultiCorpus().get(threads[i].getSummarizeCorpusId()));
 				threads[i].initADN();
+				threads[i].init();
+			}
+		}
+		else {
+			initCorpusToCompress();
+			for (int i : getListCorpusId()) {
+				setSummarizeIndex(i);
+				init();
 			}
 		}
 	}
 
 	@Override
 	public void optimize() throws Exception {		
-		Iterator<MultiCorpus> multiCorpusIt = getModel().getMultiCorpusModels().iterator();
-		while (multiCorpusIt.hasNext()) {
-			MultiCorpus multiCorpus = multiCorpusIt.next();
-			getModel().setCurrentMultiCorpus(multiCorpus);
+//		Iterator<MultiCorpus> multiCorpusIt = getModel().getMultiCorpusModels().iterator();
+//		while (multiCorpusIt.hasNext()) {
+//			MultiCorpus multiCorpus = multiCorpusIt.next();
+//			getModel().setCurrentMultiCorpus(multiCorpus);
 			
-			System.out.println("MultiCorpus : " + multiCorpus.getiD());
+			System.out.println("MultiCorpus : " + currentMultiCorpus.getiD());
 			
 			if (getModel().isMultiThreading()) {
+				threads[0].setCorpusToSummarize(getCurrentMultiCorpus().get(0));
 				threads[0].start();
 				for (int i=1; i<nbThreads; i++) {
 					threads[i].setADN(new ADN(this.getADN()));
@@ -329,20 +335,19 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 				}
 			}
 			else {
-				this.initCorpusToCompress();
-				for (int i : this.getListCorpusId()) {
-					//this.setCurrentMultiCorpus(multiCorpus);
-					this.setSummarizeIndex(i);
-					this.init();
-					this.process();
-					this.finish();
+				for (int i : getListCorpusId()) {
+//					setCurrentMultiCorpus(multiCorpus);
+					setSummarizeIndex(i);
+					setCorpusToSummarize(getCurrentMultiCorpus().get(getSummarizeCorpusId()));					
+					process();
+					finish();
 				}
 			}
 			getModel().getEvalRouge().setModel(getModel());
 			getModel().getEvalRouge().init();
 			getModel().getEvalRouge().process();
 			getModel().getEvalRouge().finish();
-		}
+//		}
 	}
 	
 	@Override

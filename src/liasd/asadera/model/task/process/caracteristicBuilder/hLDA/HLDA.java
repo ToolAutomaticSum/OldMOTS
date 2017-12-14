@@ -17,7 +17,6 @@ import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.tools.Randoms;
@@ -107,7 +106,6 @@ public class HLDA extends AbstractCaracteristicBuilder  implements IndexBasedIn<
 		randoms = new Randoms();
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		numLevels = getCurrentProcess().getADN().getParameterValue(Integer.class, Inference_HLDA_Parameter.numLevels.getName());
@@ -129,12 +127,13 @@ public class HLDA extends AbstractCaracteristicBuilder  implements IndexBasedIn<
 		int summWeigth = 0;
 		for (TextModel text : listDoc)
 			for (SentenceModel sen : text) {
-				if (sen.getPosition() == 1)
-					for (WordModel word : sen)
-						if (getCurrentProcess().getFilter().passFilter(word)) {
-							indexWord.get(word.getmLemma()).setWeight(indexWord.get(word.getmLemma()).getWeight()+1);
-							summWeigth++;
-						}
+				if (sen.getPosition() == 1) {
+					for (WordIndex word : sen)
+						//if (getCurrentProcess().getFilter().passFilter(word)) {
+						//	indexWord.get(word.getmLemma()).setWeight(indexWord.get(word.getmLemma()).getWeight()+1);
+						word.setWeight(word.getWeight()+1);
+						summWeigth++;
+					}
 				sentenceLevelDistribution.put(sen, senLvlDistri[currSen]);
 				currSen++;
 			}

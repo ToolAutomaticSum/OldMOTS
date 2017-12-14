@@ -35,7 +35,7 @@ public class PairSentenceScore implements Comparable <PairSentenceScore>{
 	
 	public boolean equals(Object o)
 	{
-		if (!o.getClass().equals("PairSentenceScore"))
+		if (!o.getClass().equals(PairSentenceScore.class))
 			return false;
 		PairSentenceScore p = (PairSentenceScore) o;
 		return p.phrase.equals(this.phrase);

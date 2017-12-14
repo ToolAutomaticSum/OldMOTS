@@ -17,6 +17,7 @@ import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.NGram;
 
+@Deprecated
 public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOut {
 
 	public static enum Centroid_Parameter {
@@ -80,7 +81,7 @@ public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOu
 			int corpusId = corpus.getiD();
 			
 			for (NGram w : invertIndex.getCorpusWordIndex().get(corpusId)) {
-				double tfidf = w.getTfCorpus(corpusId)*w.getIdf();
+				double tfidf = w.getTfCorpus(corpusId)*w.getIdf(index.getNbDocument());
 				if (listBestWord.size() < nbMaxWordInCentroid) {
 					listBestWord.add(new Pair(w.getiD(), tfidf));
 					Collections.sort(listBestWord);

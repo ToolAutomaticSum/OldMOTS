@@ -1,6 +1,9 @@
 package liasd.asadera.model;
 
+import java.io.File;
 import java.util.Iterator;
+
+import com.valnyz.reader_writer.Writer;
 
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.preProcess.AbstractPreProcess;
@@ -59,7 +62,14 @@ public class SummarizeModel extends AbstractModel {
 					p.initCorpusToCompress();
 					p.initADN();
 					runProcess(currentMultiCorpus, p);
-					System.out.println(System.currentTimeMillis() - time);
+					time = System.currentTimeMillis() - time;
+					System.out.println(time);
+					//String name = getName().split(File.separator)[0];
+					Writer w = new Writer(getOutputPath() + File.separator + getName().split(File.separator)[0] + File.separator + "process_time.txt");
+					w.open(true);
+					//System.out.println(name);
+					w.write(getName().split(File.separator)[1] + "\t" + time + "\n");
+					w.close();
 				}
 			}
 			if (isbRougeEvaluation()) {
@@ -97,6 +107,7 @@ public class SummarizeModel extends AbstractModel {
 				threads[i].setModel(this);
 				threads[i].setSummarizeIndex(p.getListCorpusId().get(i));
 				threads[i].initADN();
+				threads[i].init();
 			}
 			for (int i=0; i<nbThreads; i++) {
 				threads[i].start();

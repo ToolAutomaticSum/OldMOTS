@@ -1,7 +1,6 @@
 package liasd.asadera.model.task.process.caracteristicBuilder.vector;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +14,8 @@ import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
+import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]>*/ implements IndexBasedIn<WordIndex>, SentenceCaracteristicBasedOut {
@@ -28,7 +27,8 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]
 		super(id);
 		
 		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
-		
+
+		listParameterIn.add(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class));
 		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedOut.class));
 	}
@@ -44,25 +44,21 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder/*<double[]
 	public void initADN() throws Exception {
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
+	//@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		for (Corpus corpus : listCorpus) {
 			for (TextModel text : corpus) {
-				Iterator<SentenceModel> sentenceIt = text.iterator();
-				while (sentenceIt.hasNext()) {
-					SentenceModel sentenceModel = sentenceIt.next();
+				for (SentenceModel sentenceModel : text) {
 					int nbWord = 0;
 					double[] tfIdfVector = new double[index.size()];
-					Iterator<WordModel> wordIt = sentenceModel.iterator();
-					while (wordIt.hasNext()) {
-						WordModel wm = wordIt.next();
-						if (getCurrentProcess().getFilter().passFilter(wm)) {
-							WordIndex word = index.get(wm.getmLemma());
+					for (WordIndex word : sentenceModel) {
+						//if (getCurrentProcess().getFilter().passFilter(wm)) {
+						//	WordIndex word = index.get(wm.getmLemma());
 							//System.out.println(word);
-							tfIdfVector[word.getiD()]+=word.getTfCorpus(corpus.getiD())*word.getIdf();
+							tfIdfVector[word.getiD()]+=word.getTfCorpus(corpus.getiD())*word.getIdf(index.getNbDocument());
 							nbWord++;
-						}
+						//}
 					}
 					for (int i=0; i<index.size(); i++)
 						tfIdfVector[i]/=nbWord;

@@ -49,14 +49,9 @@ public class TextStemming extends AbstractPreProcess {
 	}
 	
 	private void stemmWord(TextModel textModel) {
-		Iterator<SentenceModel> sentenceIt = textModel.iterator();
-		while (sentenceIt.hasNext()) {
-			SentenceModel sentenceModel = sentenceIt.next();
-			Iterator<WordModel> wordIt = sentenceModel.iterator();
-			while (wordIt.hasNext()) {
-				stemming(wordIt.next());	
-			}
-		}
+		for (SentenceModel sen : textModel)
+			for (WordModel word : sen.getListWordModel())
+				stemming(word);	
 	}
 	
 	public void stemming(WordModel word) {

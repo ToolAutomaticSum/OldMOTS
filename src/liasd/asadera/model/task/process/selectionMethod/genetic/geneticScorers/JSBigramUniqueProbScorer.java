@@ -40,11 +40,13 @@ public class JSBigramUniqueProbScorer extends GeneticIndividualScorer{
 	
 	public void computeNGrams_in_sentences()
 	{
-		this.ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
+		ngrams_in_sentences = new HashMap <SentenceModel, ArrayList<NGram>> ();
 	
-		for (SentenceModel p : ss)
-		{
-			this.ngrams_in_sentences.put(p, new ArrayList<NGram>(p.getNGrams(2, this.index, null)));
+		for (SentenceModel p : ss) {
+			ArrayList<NGram> list = new ArrayList<NGram>();
+			for (WordIndex wi : p.getListWordIndex(2))
+				list.add((NGram) wi);
+			ngrams_in_sentences.put(p, list);
 		}
 	}
 	

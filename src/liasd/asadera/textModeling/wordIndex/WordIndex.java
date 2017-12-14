@@ -19,7 +19,7 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	
 	protected String word;
 	private int nbOccurence = 0;
-	protected Index<?> index;
+//	protected Index<?> index;
 	
 	/**
 	 * Tf et Idf par documents : Key = idCorpus
@@ -29,24 +29,24 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 
 	public WordIndex() {
 		super();
-		index = null;
+//		index = null;
 		//iD = count++;
 	}
 	
-	public WordIndex(Index<?> index) {
-		super();
-		this.index = index;
-		//iD = count++;
-	}
+//	public WordIndex(Index<?> index) {
+//		super();
+//		this.index = index;
+//		//iD = count++;
+//	}
 	
-	public WordIndex(String word, Index<?> index, int nbDocumentWithWordSeen) {
+	public WordIndex(String word, /*Index<?> index,*/ int nbDocumentWithWordSeen) {
 		this.nbDocumentWithWordSeen = nbDocumentWithWordSeen;
 	}
 	
-	public WordIndex(String word, Index<?> index) {
+	public WordIndex(String word/*, Index<?> index*/) {
 		super();
 		this.word = word;
-		this.index = index;
+//		this.index = index;
 		//iD = count++;
 	}
 
@@ -74,17 +74,13 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 		this.word = word;
 	}
 
-	/*public void setId(int iD) {
-		this.iD = iD;
-	}*/
-
-	public Index<?> getIndex() {
-		return index;
-	}
-
-	public void setIndex(Index<?> index) {
-		this.index = index;
-	}
+//	public Index<?> getIndex() {
+//		return index;
+//	}
+//
+//	public void setIndex(Index<?> index) {
+//		this.index = index;
+//	}
 	
 	public void addDocumentOccurence(int idCorpus, int idDoc) {
 		nbOccurence++;
@@ -110,11 +106,11 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 		return nbOccurence;
 	}
 	
-	public double getIdf() {
+	public double getIdf(int nbDocument) {
 		/**
 		 * Smooth IDF (1+log à la place de log simple) si rencontre de mot inconnu du dictionnaire
 		 */
-		return Math.log(index.getNbDocument()/getNbDocumentWithWordSeen());
+		return Math.log(nbDocument/*index.getNbDocument()*//getNbDocumentWithWordSeen());
 	}
 	
 	public double getTf() {

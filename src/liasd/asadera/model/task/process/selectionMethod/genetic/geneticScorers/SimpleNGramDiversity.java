@@ -28,10 +28,12 @@ public class SimpleNGramDiversity extends GeneticIndividualScorer{
 		ArrayList<NGram> curr_ngram_list;
 		TreeSet<NGram> total_ngram_set = new TreeSet<NGram> ();
 		int total_number_of_ngrams = 0;
-		
+
 		for (SentenceModel p : gi.getGenes())
 		{
-			curr_ngram_list = new ArrayList<NGram>(p.getNGrams(this.window, this.index, null));
+			curr_ngram_list = new ArrayList<NGram>();
+			for (WordIndex wi : p.getListWordIndex(2))
+				curr_ngram_list.add((NGram) wi);
 			total_number_of_ngrams += curr_ngram_list.size();
 			total_ngram_set.addAll(curr_ngram_list);
 		}

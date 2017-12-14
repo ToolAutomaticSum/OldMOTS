@@ -28,7 +28,7 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		for (WordIndex key : indexKeys)
 		{
 			WordIndex w = (WordIndex)(key);
-			double currIdf = w.getIdf();
+			double currIdf = w.getIdf(index.getNbDocument());
 			if (this.maxIdf < currIdf )
 				this.maxIdf = currIdf;
 		}
@@ -62,23 +62,23 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		int cpt = 0;
 		for (SentenceModel p : gi.getGenes())
 		{
-			for (WordModel u : p)
+			for (WordIndex u : p)
 			{
-				if (!u.isStopWord()) {
-					int uIndexKey = index.get(u.getmLemma()).getiD();
+				//if (!u.isStopWord()) {
+					int uIndexKey = u.getiD(); //index.get(u.getmLemma()).getiD();
 					if (! giIndexKeys.contains(uIndexKey))
 					{
 						giIndexKeys.add(uIndexKey);
 					}
 					cpt++;
-				}
+				//}
 			}
 		
 		}
 		for (Integer indexKey : giIndexKeys)
 		{
 			WordIndex w = (WordIndex) index.get(indexKey);
-			sum += (w.getIdf() / this.maxIdf);
+			sum += (w.getIdf(index.getNbDocument()) / this.maxIdf);
 		}
 		
 		if (cpt == 0)

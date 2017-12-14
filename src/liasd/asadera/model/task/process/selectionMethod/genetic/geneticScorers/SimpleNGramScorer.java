@@ -35,8 +35,9 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 			//TreeSet<NGram> fsc_set = new TreeSet<NGram> ();
 			for (SentenceModel p : doc)
 			{
-				TreeSet <NGram> curr_phrase_ngram_list = new TreeSet <NGram> (p.getNGrams(this.window, this.index, null));
-				
+				TreeSet <NGram> curr_phrase_ngram_list = new TreeSet<NGram>();
+				for (WordIndex wi : p.getListWordIndex(2))
+					curr_phrase_ngram_list.add((NGram) wi);
 				if (doc.indexOf(p) == 1)
 				{
 					for (NGram ng : curr_phrase_ngram_list)//ArrayList => TreeMap doc, only one instance of a bigram per document
@@ -82,7 +83,9 @@ public class SimpleNGramScorer extends GeneticIndividualScorer{
 		
 		for (SentenceModel p : gi.getGenes())
 		{
-			ArrayList<NGram> curr_sentence_ngram_list = new ArrayList<NGram>(p.getNGrams(this.window, this.index, null));
+			ArrayList<NGram> curr_sentence_ngram_list = new ArrayList<NGram>();
+			for (WordIndex wi : p.getListWordIndex(2))
+				curr_sentence_ngram_list.add((NGram) wi);
 			gi_ngrams.addAll(curr_sentence_ngram_list);
 		}
 		

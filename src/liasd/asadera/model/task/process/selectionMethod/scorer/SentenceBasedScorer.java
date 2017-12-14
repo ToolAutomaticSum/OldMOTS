@@ -9,7 +9,7 @@ import liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.Summary;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class SentenceBasedScorer extends Scorer implements ScoreBasedIn, SentenceCaracteristicBasedIn {
 	
@@ -17,7 +17,7 @@ public class SentenceBasedScorer extends Scorer implements ScoreBasedIn, Sentenc
 	private Map<SentenceModel, Object> sentenceCaracteristic;
 //	private double[] docVector;
 //	private int dimension;
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	private double lambda;
 	
 	public SentenceBasedScorer(AbstractSelectionMethod method) throws SupportADNException {
@@ -38,7 +38,7 @@ public class SentenceBasedScorer extends Scorer implements ScoreBasedIn, Sentenc
 //			docVector = ToolsVector.somme(docVector, (double[]) vector);
 		
 		String similarityMethod = method.getCurrentProcess().getModel().getProcessOption(method.getId(), "SimilarityMethod");
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 		lambda = Double.parseDouble(method.getCurrentProcess().getModel().getProcessOption(method.getId(), "Lambda"));
 	}
 

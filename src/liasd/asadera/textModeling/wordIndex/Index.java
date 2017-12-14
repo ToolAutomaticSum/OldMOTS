@@ -48,7 +48,6 @@ public class Index<T extends WordIndex> implements Map<Integer, T> {
 	public T put(T value) {
 		int iD = mapIndex.size();
 		value.setiD(iD);
-		value.setIndex(this);
 		mapIndex.put(value.getWord(), iD);
 		return mapWord.put(iD, value);
 	}
@@ -56,7 +55,6 @@ public class Index<T extends WordIndex> implements Map<Integer, T> {
 	public T put(String key, T value) {
 		int iD = mapIndex.size();
 		value.setiD(iD);
-		value.setIndex(this);
 		mapIndex.put(key, iD);
 		return mapWord.put(iD, value);
 	}

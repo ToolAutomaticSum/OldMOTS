@@ -80,7 +80,7 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 			int corpusId = corpus.getiD();
 			
 			for (WordIndex w : invertIndex.getCorpusWordIndex().get(corpusId)) {
-				double tfidf = w.getTfCorpus(corpusId)*w.getIdf();
+				double tfidf = w.getTfCorpus(corpusId)*w.getIdf(index.getNbDocument());
 				if (listBestWord.size() < nbMaxWordInCentroid) {
 					listBestWord.add(new Pair(w.getiD(), tfidf));
 					Collections.sort(listBestWord);

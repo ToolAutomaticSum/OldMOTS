@@ -2,47 +2,58 @@ package liasd.asadera.textModeling;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
 
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
-public class SentenceModel implements List<WordModel>, Comparable<SentenceModel> {
+public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel> {
 
 	private List<WordModel> listWordModel = new ArrayList<WordModel>();
 	
+	protected int n;
+	protected Map<Integer, List<WordIndex>> mapNGram;
+	
 	protected String sentence;
 	protected int nbMot;
-	protected Set<NGram> listNGram;
+	//protected Set<NGram> listNGram;
 	protected int iD;
 	protected double score;
 	protected TextModel text;
 	
 	public SentenceModel(String sen) {
+		mapNGram = new HashMap<Integer, List<WordIndex>>();
 		sentence = sen;
 	}
 	
 	public SentenceModel(String sen, int iD, TextModel text) {
+		mapNGram = new HashMap<Integer, List<WordIndex>>();
 		sentence = sen;
 		this.iD = iD;
 		this.text = text;
 	}
 	
+	//TODO add copy of mapNGram
 	public SentenceModel(SentenceModel s) {
+		mapNGram = new HashMap<Integer, List<WordIndex>>();
 		this.sentence = s.toString();
 		this.iD = s.getiD();
 		this.nbMot = s.getNbMot();
-		for (WordModel w : s) {
+		for (WordModel w : s.getListWordModel()) {
 			WordModel word = new WordModel(w);
 			word.setSentence(this);
 			listWordModel.add(word);
 		}
+	}
+	
+	public List<WordModel> getListWordModel() {
+		return listWordModel;
 	}
 
 	/**
@@ -51,7 +62,7 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 	 */
 	public String getSentence() {
 		String txt = "";
-		for (WordModel w : this) {
+		for (WordModel w : listWordModel) {
 			if (!w.isStopWord())
 				txt += w.toString() + " ";
 			else
@@ -62,7 +73,7 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 	
 	public String getRawSentence() {
 		String txt = "";
-		for (WordModel w : this)
+		for (WordModel w : listWordModel)
 			txt += w.toString() + " ";
 		return txt;
 	}
@@ -130,42 +141,44 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 		this.score = score;
 	}
 	
-	private void getListNGrams(int n, Index<WordIndex> indexWord, Index<NGram> index) {
-		Set<NGram> ngrams_list = new TreeSet<NGram>() ;
-		WordModel u;
-		
-		if (n == 1) {
-			for (WordModel u1 : this) {
-				NGram ng = new NGram(index);
-				if (!u1.isStopWord()) {
-					WordIndex w = indexWord.get(u1.getmLemma());
-					if (w != null) {
-						ng.add(w);
-						if (index != null && index.values().contains(ng))
-							ng = index.get(ng.getWord());
-						else if (index != null) {
-							index.put(0, ng);
-						}
-						ngrams_list.add(ng);
-					}
-				}
-			}
-		}
+	public void setN(int n) {
+		this.n = n;
+	}
+
+	public int getN() {
+		return n;
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	public static void getUnigram(SentenceModel sen, Index<WordIndex> index, WordFilter filter) {
+		List<WordIndex> ngrams_list = new ArrayList<WordIndex>() ;
+		for (WordModel u1 : sen.getListWordModel())
+			if (filter.passFilter(u1) && index.containsKey(u1.getmLemma()))
+				ngrams_list.add(index.get(u1.getmLemma()));
+		sen.setListWordIndex(1, ngrams_list);
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	public static void getListNGrams(SentenceModel sen, int n, Index<WordIndex> index, Index<NGram> indexNG, WordFilter filter) {
+		if (n == 1)
+			getUnigram(sen, index, filter);
 		else {
-			for (int i = 0; i < this.size() - n + 1; i++)
+			List<WordIndex> ngrams_list = new ArrayList<WordIndex>();
+			WordModel u;
+			for (int i = 0; i < sen.size() - n + 1; i++)
 			{
 				boolean cond = false;
-				boolean stopWord = false; //Un stopWord par Ngram
-				NGram ng = new NGram(index);
+				boolean filtered = false; //Un stopWord par Ngram
+				NGram ng = new NGram();
 
 				for (int j = i; j < i + n; j++)
 				{
 					//System.out.println("j : "+j);
-					u = this.get(j);
+					u = sen.getListWordModel().get(j);
 	
-					if (!stopWord || (stopWord && !u.isStopWord())) {
+					if (!filtered || (filtered && !filter.passFilter(u))) {
 						cond = true;
-						WordIndex w = indexWord.get(u.getmLemma());
+						WordIndex w = index.get(u.getmLemma());
 						if (w != null)
 							ng.add(w);
 						else {
@@ -174,15 +187,15 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 							break;
 						}
 						if (u.isStopWord())
-							stopWord = true;
+							filtered = true;
 					} else
 						cond = false;
 				}
 				if (cond) {
-					if (index != null && index.values().contains(ng))
-						ng = index.get(ng.getWord());
-					else if (index != null) {
-						index.put(0, ng);
+					if (indexNG != null && indexNG.values().contains(ng))
+						ng = indexNG.get(ng.getWord());
+					else if (indexNG != null) {
+						indexNG.put(0, ng);
 						System.out.println("BREAK!!! " + ng);
 					}
 					ngrams_list.add(ng);
@@ -190,23 +203,26 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 				//else
 					//System.out.println("Filtrée !");
 			}
+			sen.setListWordIndex(n, ngrams_list);
 		}
-		listNGram = ngrams_list;
 	}
 
-	public ArrayList<NGram> getNGrams(int n, Index<WordIndex> indexWord, Index<NGram> index) {
-		if(listNGram == null)
-			getListNGrams(n, indexWord, index);
-		return new ArrayList<NGram>(listNGram);
+	public List<WordIndex> getListWordIndex(int n) {
+		if (n<=0)
+			return mapNGram.get(1);
+		else
+			return mapNGram.get(n);
 	}
 	
-	public Set<NGram> getNGrams() {
-		return listNGram;
+	public void setListWordIndex(int n, Collection<? extends WordIndex> listWordIndex) {
+		this.mapNGram.put(n, new ArrayList<WordIndex>(listWordIndex));
 	}
 	
-	public void setNGrams(Set<NGram> listNGram) {
-		this.listNGram = listNGram;
-	}
+//	public List<WordIndex> getNGrams(int n, Index<WordIndex> indexWord, Index<NGram> index) {
+//		if(listWordIndex == null)
+//			getListNGrams(n, indexWord, index);
+//		return (List<WordIndex>)listWordIndex.get(n);
+//	}
 	
 	public double getPosScore() {
 		if (text.size() > 1)
@@ -234,7 +250,7 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 	 */
 	public int getLength(WordFilter filter) {
 		int n = 0;
-		for (WordModel w : this) {
+		for (WordModel w : listWordModel) {
 			if (filter.passFilter(w))
 				n++;
 		}
@@ -258,43 +274,44 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 	}
 
 	@Override
-	public boolean add(WordModel e) {
-		return listWordModel.add(e);
+	public boolean add(WordIndex e) {
+		return mapNGram.get(n).add(e);
 	}
 
 	@Override
-	public void add(int index, WordModel element) {
-		listWordModel.add(index, element);
+	public void add(int index, WordIndex element) {
+		mapNGram.get(n).add(index, element);
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends WordModel> c) {
-		return listWordModel.addAll(c);
+	public boolean addAll(Collection<? extends WordIndex> c) {
+		return mapNGram.get(n).addAll(c);
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends WordModel> c) {
-		return listWordModel.addAll(index, c);
+	public boolean addAll(int index, Collection<? extends WordIndex> c) {
+		return mapNGram.get(n).addAll(index, c);
 	}
 
 	@Override
 	public void clear() {
 		listWordModel.clear();
+		mapNGram.clear();
 	}
 
 	@Override
 	public boolean contains(Object o) {
-		return listWordModel.contains(o);
+		return mapNGram.get(n).contains(o);
 	}
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		return listWordModel.containsAll(c);
+		return mapNGram.get(n).containsAll(c);
 	}
 
 	@Override
-	public WordModel get(int index) {
-		return listWordModel.get(index);
+	public WordIndex get(int index) {
+		return mapNGram.get(n).get(index);
 	}
 
 	@Override
@@ -304,72 +321,75 @@ public class SentenceModel implements List<WordModel>, Comparable<SentenceModel>
 
 	@Override
 	public boolean isEmpty() {
-		return listWordModel.isEmpty();
+		return mapNGram.get(n).isEmpty();
 	}
 
 	@Override
-	public Iterator<WordModel> iterator() {
-		return listWordModel.iterator();
+	public Iterator<WordIndex> iterator() {
+		return mapNGram.get(n).iterator();
 	}
 
 	@Override
 	public int lastIndexOf(Object o) {
-		return listWordModel.lastIndexOf(o);
+		return mapNGram.get(n).lastIndexOf(o);
 	}
 
 	@Override
-	public ListIterator<WordModel> listIterator() {
-		return listWordModel.listIterator();
+	public ListIterator<WordIndex> listIterator() {
+		return mapNGram.get(n).listIterator();
 	}
 
 	@Override
-	public ListIterator<WordModel> listIterator(int index) {
-		return listWordModel.listIterator(index);
+	public ListIterator<WordIndex> listIterator(int index) {
+		return mapNGram.get(n).listIterator(index);
 	}
 
 	@Override
 	public boolean remove(Object o) {
-		return listWordModel.remove(o);
+		return mapNGram.get(n).remove(o);
 	}
 
 	@Override
-	public WordModel remove(int index) {
-		return listWordModel.remove(index);
+	public WordIndex remove(int index) {
+		return mapNGram.get(n).remove(index);
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		return listWordModel.removeAll(c);
+		return mapNGram.get(n).removeAll(c);
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		return listWordModel.retainAll(c);
+		return mapNGram.get(n).retainAll(c);
 	}
 
 	@Override
-	public WordModel set(int index, WordModel element) {
-		return listWordModel.set(index, element);
+	public WordIndex set(int index, WordIndex element) {
+		return mapNGram.get(n).set(index, element);
 	}
 
 	@Override
 	public int size() {
-		return listWordModel.size();
+		if (mapNGram.isEmpty())
+			return listWordModel.size();
+		else
+			return mapNGram.get(n).size();
 	}
 
 	@Override
-	public List<WordModel> subList(int fromIndex, int toIndex) {
-		return listWordModel.subList(fromIndex, toIndex);
+	public List<WordIndex> subList(int fromIndex, int toIndex) {
+		return mapNGram.get(n).subList(fromIndex, toIndex);
 	}
 
 	@Override
 	public Object[] toArray() {
-		return listWordModel.toArray();
+		return mapNGram.get(n).toArray();
 	}
 
 	@Override
 	public <T> T[] toArray(T[] a) {
-		return listWordModel.toArray(a);
+		return mapNGram.get(n).toArray(a);
 	}
 
 	@Override

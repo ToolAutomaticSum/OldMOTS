@@ -41,7 +41,9 @@ public class DirichletUniqueProbSmoothing extends Smoothing{
 		for (SentenceModel sent : this.sentences)
 		{
 			//ArrayList <NGram> curr_ngrams_list = sent.getBiGrams(this.index, this.filter);
-			ArrayList<NGram> curr_ngrams_list = sent.getNGrams(this.window, this.index, null);
+			ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>();
+			for (WordIndex wi : sent.getListWordIndex(window))
+				curr_ngrams_list.add((NGram) wi);
 			for (NGram ng : curr_ngrams_list)
 			{
 				/*We filter the sourceDistribution upon every NGram occurrence, so we have to check if this 

@@ -36,8 +36,9 @@ public class KatzSmoothing extends Smoothing{
 			double summOcc = 0.;
 			for (SentenceModel sent : this.sentences)
 			{
-				ArrayList <NGram> curr_ngrams_list = sent.getNGrams(i+1, this.index, null);
-			
+				ArrayList <NGram> curr_ngrams_list = new ArrayList<NGram>();
+				for (WordIndex wi : sent.getListWordIndex(i+1))
+					curr_ngrams_list.add((NGram) wi);
 				for (NGram ng : curr_ngrams_list)
 				{
 					/*We filter the sourceDistribution upon every NGram occurrence, so we have to check if this 

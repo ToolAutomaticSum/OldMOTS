@@ -2,7 +2,7 @@ package liasd.asadera.tools.sentenceSimilarity;
 
 import liasd.asadera.exception.VectorDimensionException;
 
-public class EuclidianDistance extends SentenceSimilarityMetric {
+public class EuclidianDistance extends SimilarityMetric {
 
 	public EuclidianDistance() {
 		super();

@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import liasd.asadera.model.task.process.selectionMethod.genetic.GeneticIndividual;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
@@ -48,7 +47,7 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 		for ( WordIndex indexKey : invertedIndex.getCorpusWordIndex().get(cd.getiD()))
 		{
 			current_cti = (WordIndex) indexKey;
-			current_idf = current_cti.getIdf();
+			current_idf = current_cti.getIdf(index.getNbDocument());
 			
 			current_occ = current_cti.getNbOccurence();
 			if (current_idf != 0)
@@ -81,10 +80,10 @@ public class JSUnigramScorer extends GeneticIndividualScorer{
 		double divider;*/
 		for (SentenceModel sent : gi.getGenes())
 		{
-			for (WordModel u : sent)
+			for (WordIndex uIndexKey : sent)
 			{
-				WordIndex uIndexKey = (WordIndex) index.get(u.getmLemma());
-				if (uIndexKey.getIdf() != 0)
+//				WordIndex uIndexKey = (WordIndex) index.get(u.getmLemma());
+				if (uIndexKey.getIdf(index.getNbDocument()) != 0)
 				{
 					if (summDist.containsKey(uIndexKey.getiD()))
 					{

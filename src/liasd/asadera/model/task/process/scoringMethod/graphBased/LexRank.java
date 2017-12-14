@@ -14,7 +14,7 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.graphBased.GraphSentenceBased;
 import liasd.asadera.textModeling.graphBased.NodeGraphSentenceBased;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 import liasd.asadera.tools.vector.ToolsVector;
 
 public class LexRank extends AbstractScoringMethod implements SentenceCaracteristicBasedIn {
@@ -34,7 +34,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 			return name;
 		}
 	}
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	/**
 	 * SentenceCaracteristicBased
 	 */
@@ -42,7 +42,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	/**
 	 * Dans ADN
 	 */
-	private double dumpingParameter = 0.85;
+	private double dampingParameter = 0.85;
 	/**
 	 * Constant
 	 */
@@ -88,12 +88,12 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
+		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
 	}
 	
 	private void init() throws Exception {
 		
-		dumpingParameter = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.DumpingParameter.getName());
+		dampingParameter = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.DumpingParameter.getName());
 		epsilon = 0.00001;	///getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.Epsilon.getName());
 		graphThreshold = getCurrentProcess().getADN().getParameterValue(Double.class, LexRank_Parameter.GraphThreshold.getName());
 		
@@ -116,7 +116,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 					tempMat[j][k] = matAdj[j][k]/degree[k];
 				}
 			}
-			double[] result = LexRank.computeLexRankScore(dumpingParameter, tempMat, graph.size(), epsilon);
+			double[] result = LexRank.computeLexRankScore(dampingParameter, tempMat, graph.size(), epsilon);
 
 			double max = 0.0;
 			for (NodeGraphSentenceBased n : graph) {

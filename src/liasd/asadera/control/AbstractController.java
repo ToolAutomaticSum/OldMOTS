@@ -113,31 +113,33 @@ public abstract class AbstractController {
     	Set<String> set_summaryNames = new TreeSet<String>();
     	
     	File f = new File(inputCorpusPath);
-    	List<String> lf = Arrays.asList(f.list());
-    	for (String doc : docNames) {
-    		Pattern pattern = Pattern.compile(doc);
-    		set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+    	if (f.exists()) {
+	    	List<String> lf = Arrays.asList(f.list());
+	    	for (String doc : docNames) {
+	    		Pattern pattern = Pattern.compile(doc);
+	    		set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+	    	}
+	    	docNames.clear();
+	    	docNames.addAll(set_docNames);
+	    	
+	    	Corpus corpus = new Corpus(currentMultiCorpus.size());
+	    	
+	    	f = new File(summaryInputPath);
+	    	lf = Arrays.asList(f.list());
+	    	for (String doc : summaryNames) {
+	    		Pattern pattern = Pattern.compile(doc);
+	    		set_summaryNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+	    	}
+	    	summaryNames.clear();
+	    	summaryNames.addAll(set_summaryNames);
+	    	
+	    	corpus.setModel(model);
+	    	corpus.setDocNames(docNames);
+	    	corpus.setInputPath(inputCorpusPath);
+	    	corpus.setSummaryNames(summaryNames);
+	    	corpus.setSummaryPath(summaryInputPath);
+		    currentMultiCorpus.add(corpus);
     	}
-    	docNames.clear();
-    	docNames.addAll(set_docNames);
-    	
-    	Corpus corpus = new Corpus(currentMultiCorpus.size());
-    	
-    	f = new File(summaryInputPath);
-    	lf = Arrays.asList(f.list());
-    	for (String doc : summaryNames) {
-    		Pattern pattern = Pattern.compile(doc);
-    		set_summaryNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
-    	}
-    	summaryNames.clear();
-    	summaryNames.addAll(set_summaryNames);
-    	
-    	corpus.setModel(model);
-    	corpus.setDocNames(docNames);
-    	corpus.setInputPath(inputCorpusPath);
-    	corpus.setSummaryNames(summaryNames);
-    	corpus.setSummaryPath(summaryInputPath);
-	    currentMultiCorpus.add(corpus);
     }
 
     public void notifyOutputPathChanged(String outputDir) {

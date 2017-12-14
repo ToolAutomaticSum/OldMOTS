@@ -18,6 +18,7 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.NGram;
 
+@Deprecated
 public class BiGramVectorSentence extends AbstractCaracteristicBuilder implements IndexBasedIn<NGram>, SentenceNGramBasedIn, SentenceCaracteristicBasedOut {
 
 	protected Index<NGram> index;
@@ -50,26 +51,9 @@ public class BiGramVectorSentence extends AbstractCaracteristicBuilder implement
 		for (SentenceModel sen : ngrams_in_sentences.keySet()) {
 			double[] tfIdfVector = new double[index.size()];
 			for (NGram bg : ngrams_in_sentences.get(sen))
-				tfIdfVector[bg.getiD()]+=bg.getTfCorpus(sen.getText().getParentCorpus().getiD())*bg.getIdf();
+				tfIdfVector[bg.getiD()]+=bg.getTfCorpus(sen.getText().getParentCorpus().getiD())*bg.getIdf(index.getNbDocument());
 			sentenceCaracteristic.put(sen, tfIdfVector);
 		}
-//		for (Corpus corpus : listCorpus) {
-//			for (TextModel text : corpus) {
-//				Iterator<SentenceModel> sentenceIt = text.iterator();
-//				while (sentenceIt.hasNext()) {
-//					SentenceModel sentenceModel = sentenceIt.next();
-//					double[] tfIdfVector = new double[index.size()];
-//					Iterator<NGram> biGramIt = sentenceModel.getNGrams().iterator();
-//					while (biGramIt.hasNext()) {
-//						NGram bg = biGramIt.next();
-//						NGram indexBiGram = index.get(bg.getWord());
-//							//System.out.println(word);
-//							tfIdfVector[indexBiGram.getiD()]+=indexBiGram.getTfCorpus(corpus.getiD())*indexBiGram.getIdf();
-//					}
-//					sentenceCaracteristic.put(sentenceModel, tfIdfVector);
-//				}
-//			}
-//		}
 	}
 	
 	@Override

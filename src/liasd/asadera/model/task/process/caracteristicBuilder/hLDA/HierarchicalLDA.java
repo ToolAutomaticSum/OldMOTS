@@ -14,7 +14,6 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.tools.Pair;
@@ -25,7 +24,7 @@ public class HierarchicalLDA {
 
 	//private static final Logger logger = Logger.getLogger("HierarchicalLDA"); 
 	
-	private WordFilter filter;
+	//private WordFilter filter;
     private List<SentenceModel> listDoc;
     private Index<WordIndex> dict;
 
@@ -95,7 +94,7 @@ public class HierarchicalLDA {
 	}
 
     public void initialize(List<TextModel> listText, Index<WordIndex> dict, WordFilter filter, int numLevels, Randoms random) {
-    	this.filter = filter;
+    	//this.filter = filter;
     	listDoc = new ArrayList<SentenceModel>();
     	for (TextModel text : listText)
     		listDoc.addAll(text);
@@ -136,15 +135,15 @@ public class HierarchicalLDA {
 			levels[doc] = new int[sen.getLength(filter)];
 			documentLeaves[doc] = node;
 			int token = 0;
-			for (WordModel word : sen) {
-				if (filter.passFilter(word)) {
-					int type = dict.getKeyId(word.getmLemma());
+			for (WordIndex word : sen) {
+				//if (filter.passFilter(word)) {
+					int type = word.getiD(); //dict.getKeyId(word.getmLemma());
 					levels[doc][token] = random.nextInt(numLevels);
 					node = path[levels[doc][token]];
 					node.totalTokens++;
 					node.typeCounts[type]++;
 					token++;
-				}
+				//}
 			}
 		}
 	}
@@ -194,15 +193,16 @@ public class HierarchicalLDA {
 		double[][] levelDistribution = new double[listDoc.size()][];
 		for (SentenceModel sen : listDoc) {
 			levelDistribution[doc] = new double[numLevels];
-			int token = 0;
-			for (WordModel word : sen)
-				if (filter.passFilter(word)) {
+			//int token = 0;
+			//for (WordModel word : sen)
+			for (int token = 0; token<sen.size(); token++) {
+				//if (filter.passFilter(word)) {
 					levelDistribution[doc][levels[doc][token]]++;
 					token++;
 				}
 
 			for (int level=0; level<numLevels; level++)
-				levelDistribution[doc][level] /= token;
+				levelDistribution[doc][level] /= sen.size(); //token;
 			doc++;
 		}
 		return levelDistribution;
@@ -259,10 +259,10 @@ public class HierarchicalLDA {
 		// Save the counts of every word at each level, and remove
 		//  counts from the current path
 		int token = 0;
-		for (WordModel word : sen) {
-			if (filter.passFilter(word)) {
+		for (WordIndex word : sen) {
+			//if (filter.passFilter(word)) {
 				level = docLevels[token];
-				type = dict.getKeyId(word.getmLemma());
+				type = word.getiD(); //dict.getKeyId(word.getmLemma());
 			
 				if (!typeCounts[level].containsKey(type))
 					typeCounts[level].put(type, 1);
@@ -276,7 +276,7 @@ public class HierarchicalLDA {
 				assert(path[level].totalTokens >= 0);
 
 				token++;
-			}
+			//}
 		}
 
 		// Calculate the weight for a new path at a given level.
@@ -459,19 +459,20 @@ public class HierarchicalLDA {
 
 		double[] levelWeights = new double[numLevels];
 
-		int token = 0;
+		//int token = 0;
 		// Initialize level counts
-		for (WordModel word : sen) {
-			if (filter.passFilter(word)) {
+		//for (WordModel word : sen) {
+		for (int token=0; token<sen.size(); token++) {
+			//if (filter.passFilter(word)) {
 				levelCounts[ docLevels[token] ]++;
 				token++;
-			}
+			//}
 		}
 
-		token = 0;
-		for (WordModel word : sen) {
-			if (filter.passFilter(word)) {
-				type = dict.getKeyId(word.getmLemma());
+		int token = 0;
+		for (WordIndex word : sen) {
+			//if (filter.passFilter(word)) {
+				type = word.getiD(); //dict.getKeyId(word.getmLemma());
 		    
 				levelCounts[ docLevels[token] ]--;
 				node = path[ docLevels[token] ];
@@ -495,7 +496,7 @@ public class HierarchicalLDA {
 				node.typeCounts[type]++;
 				node.totalTokens++;
 				token++;
-			}
+			//}
 		}
     }
 

@@ -2,7 +2,7 @@ package liasd.asadera.tools.sentenceSimilarity;
 
 import liasd.asadera.exception.VectorDimensionException;
 
-public class JensenShannonSimilarity extends SentenceSimilarityMetric {
+public class JensenShannonSimilarity extends SimilarityMetric {
 
     public static final double log2 = Math.log(2);
 	

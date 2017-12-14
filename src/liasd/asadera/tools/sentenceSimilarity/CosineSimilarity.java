@@ -3,7 +3,7 @@ package liasd.asadera.tools.sentenceSimilarity;
 import liasd.asadera.exception.VectorDimensionException;
 import liasd.asadera.tools.vector.ToolsVector;
 
-public class CosineSimilarity extends SentenceSimilarityMetric {
+public class CosineSimilarity extends SimilarityMetric {
 	
 	public CosineSimilarity() {
 		super();

@@ -90,7 +90,7 @@ public class Knapsack extends AbstractSelectionMethod {
 		}
 		
 		double bestScore = 0;
-		int bestK = -1;
+		int bestK = 0;
 		for (int k=1; k<=K; k++) {
 			double score = scorer.getScore(s[n][k]);
 			if (score > bestScore) {

@@ -44,11 +44,12 @@ public class Corpus implements List<TextModel>{
 	}
 	
 	public void loadDocumentModels() {
-		corpusName = inputPath.split(File.separator)[inputPath.split(File.separator).length-1];
+		corpusName = inputPath.split(File.separator)[inputPath.split(File.separator).length-1]; //TODO use file.getName()
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
-			listTextModel.add(new TextModel(this, inputPath + File.separator + docName));
+			if (new File(inputPath + File.separator + docName).isFile())
+				listTextModel.add(new TextModel(this, inputPath + File.separator + docName));
 		}
     }
 	

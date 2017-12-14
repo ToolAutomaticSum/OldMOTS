@@ -1,5 +1,6 @@
 package liasd.asadera.model.task.process.indexBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
@@ -31,27 +32,32 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 	public void initADN() throws Exception {
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
-	public void processIndex(List<Corpus> listCorpus) {
+	public void processIndex(List<Corpus> listCorpus) throws Exception {
+		super.processIndex(listCorpus);
 		for (Corpus corpus : listCorpus) {
 			index.setNbDocument(index.getNbDocument() + corpus.size());
 			//Construction du dictionnaire
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
-					for (WordModel word : sentenceModel) {
+					List<WordIndex> listWordIndex = new ArrayList<WordIndex>();
+					for (WordModel word : sentenceModel.getListWordModel()) {
 						if (getCurrentProcess().getFilter().passFilter(word)) {
+							WordIndex w;
 							if(!index.containsKey(word.getmLemma())) {
-								WordIndex w = new WordIndex(word.getmLemma(), index);
+								w = new WordIndex(word.getmLemma());
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 								index.put(word.getmLemma(), w);
 							}
 							else {
-								@SuppressWarnings("unlikely-arg-type")
-								WordIndex w = index.get(word.getmLemma());
+								w = index.get(word.getmLemma());
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 							}
+							listWordIndex.add(w);
 						}
 					}
+					sentenceModel.setListWordIndex(1, listWordIndex);
 				}
 			}
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());

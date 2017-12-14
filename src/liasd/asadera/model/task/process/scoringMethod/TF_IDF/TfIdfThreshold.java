@@ -13,7 +13,6 @@ import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
@@ -64,14 +63,14 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
 					double score = 0;
-					for (WordModel word : sentenceModel) {
-						if (getCurrentProcess().getFilter().passFilter(word)) {
-							@SuppressWarnings("unlikely-arg-type")
-							WordIndex w = index.get(word.getmLemma());
-							double temp = w.getTfCorpus(corpus.getiD())*w.getIdf();
+					for (WordIndex w : sentenceModel) {
+//						if (getCurrentProcess().getFilter().passFilter(word)) {
+//							@SuppressWarnings("unlikely-arg-type")
+//							WordIndex w = index.get(word.getmLemma());
+							double temp = w.getTfCorpus(corpus.getiD())*w.getIdf(index.getNbDocument());
 							if (temp  > tfidfThreshold)
 								score += temp;
-						}
+//						}
 					}
 					sentenceModel.setScore(score); //Ajout du score à la phrase
 					sentencesScore.put(sentenceModel, sentenceModel.getScore());

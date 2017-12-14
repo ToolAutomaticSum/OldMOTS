@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import liasd.asadera.exception.VectorDimensionException;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.action.Action;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.action.Finish;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.action.Insert;
@@ -92,7 +91,7 @@ public class State {
 			return 0.0;
 	}
 	
-	protected double stateValueFunction(double[] theta) throws VectorDimensionException {
+	protected double stateValueFunction(double[] theta) throws Exception {
 		return ToolsVector.scalar(theta, getFeatures());
 	}
 	
@@ -117,7 +116,7 @@ public class State {
 			available.remove(lastAction());
 	}
 	
-	public double[] getFeatures() {
+	public double[] getFeatures() throws Exception {
 		double[] features;
 		if (isTooLong()) {
 			features = featurer.instanciateVector();

@@ -80,7 +80,7 @@ public class AlgoGenetique extends Optimize {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		writer.open();
+		writer.open(false);
 		//writer.write();
 		//for (String s : optimize.getADN().keySet())
 		writer.write(adn.toString() + "\n" + adn.toValueString() + "\n");
@@ -131,7 +131,8 @@ public class AlgoGenetique extends Optimize {
 			optimize.optimize();
 			individu.setScore(optimize.getScore());
 			writer.write(individu.toValueString() + individu.getScore() + "\n");
-			System.out.println(individu);
+	    	System.out.println(individu.toString());
+			System.out.println(individu.toValueString());
 		}
 	}
 	
@@ -148,8 +149,9 @@ public class AlgoGenetique extends Optimize {
 	    	nextPopulation.add(individu);
 	    	if (individu.getScore() > adn.getParameterValue(Double.class, AGParameter.VAL_MIN.getName()))
 	    		solution.add(individu);
+	    	System.out.println(individu.toString());
 	    	if (i<20)
-	    		System.out.println(i + "\n" + individu + individu.getScore());
+	    		System.out.println(i + "\t" + individu.toValueString() + individu.getScore());
 	    	i++;
 	    }
     	fitness_moyen/= adn.getParameterValue(Integer.class, AGParameter.NB_POPULATION.getName());
@@ -179,7 +181,7 @@ public class AlgoGenetique extends Optimize {
 		}
 		
 		for (int j = 0; j<solution.size(); j++) 
-			System.out.println(solution.get(j));
+			System.out.println(solution.get(j).toValueString());
 		writer.close();
 	}
 	

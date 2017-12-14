@@ -11,7 +11,8 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
+import liasd.asadera.textModeling.wordIndex.WordIndex;
+import liasd.asadera.textModeling.wordIndex.WordVector;
 
 public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOut {
 
@@ -22,8 +23,7 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 		
 		query = new Query();
 		
-		listParameterOut.add(new ParametrizedType(null, double[].class, QueryBasedOut.class));
-	
+		listParameterOut.add(new ParametrizedType(null, double[][].class, QueryBasedOut.class));
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 		return p;
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
+	//@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) {
 		super.processCaracteristics(listCorpus);
@@ -41,15 +41,16 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 		int nbMot = 0;
 		for (Corpus corpus: listCorpus)
 			for (TextModel text : corpus)
-				nbMot += text.getNbWord(getCurrentProcess().getFilter());
+				for (SentenceModel sen : text)
+				nbMot += sen.size(); // text.getNbWord(getCurrentProcess().getFilter());
 		
 		double[][] matrixDoc = new double[nbMot][dimension];
 		int i = 0;
 		for (Corpus corpus : listCorpus)
 			for (TextModel text : corpus)
 				for (SentenceModel s : text)
-					for (WordModel w : s) {
-						matrixDoc[i] = index.get(w.getmLemma()).getWordVector();
+					for (WordIndex w : s) {
+						matrixDoc[i] = ((WordVector)w).getWordVector(); //.index.get(w.getmLemma()).getWordVector();
 						i++;
 					}
 			
@@ -69,7 +70,9 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 
 	@Override
 	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return super.isOutCompatible(compatibleMethod) || super.isOutCompatible(compatibleMethod) && compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[][].class, QueryBasedIn.class));
+		boolean a = super.isOutCompatible(compatibleMethod);
+		boolean b = compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[][].class, QueryBasedIn.class));
+		return a || (a && b);
 	}
 
 	/**

@@ -105,7 +105,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 								else
 									word.setmLemma(w.toLowerCase());
 								word.setWord(w);
-								sen.add(word);
+								sen.getListWordModel().add(word);
 							}
 						}
 						if (sen.getLength(filter) > 7)

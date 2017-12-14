@@ -6,7 +6,6 @@ import java.util.HashMap;
 import liasd.asadera.model.task.process.selectionMethod.genetic.GeneticIndividual;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
@@ -35,12 +34,12 @@ public class CosineScorer extends GeneticIndividualScorer{
 	 */
 	public void computeGiIndexKeysAndFrequencies(ArrayList<WordIndex> giIndexKeys, HashMap<Integer, Double> giFrequencies, GeneticIndividual gi)
 	{
-		WordIndex uIndexKey = null;
-		try {
+//		WordIndex uIndexKey = null;
+//		try {
 			for (SentenceModel p : gi.getGenes()) {
-				for (WordModel u : p) {
-					if (!u.isStopWord()) {
-						uIndexKey = index.get(u.getmLemma());
+				for (WordIndex uIndexKey : p) {
+//					if (!u.isStopWord()) {
+//						uIndexKey = index.get(u.getmLemma());
 						if (giIndexKeys.contains(uIndexKey)) {
 							giFrequencies.put(uIndexKey.getiD(), giFrequencies.get(uIndexKey.getiD()) + 1.);
 						}
@@ -48,13 +47,13 @@ public class CosineScorer extends GeneticIndividualScorer{
 							giIndexKeys.add(uIndexKey);
 							giFrequencies.put(uIndexKey.getiD(), 1.);
 						}
-					}
+//					}
 				}
 			}
-		}
-		catch (NullPointerException e) {
-			System.err.println(e + " : " + uIndexKey);
-		}
+//		}
+//		catch (NullPointerException e) {
+//			System.err.println(e + " : " + uIndexKey);
+//		}
 		//if (giIndexKeys.size()==0) {
 			//int i = 0;
 			//i++;
@@ -75,14 +74,14 @@ public class CosineScorer extends GeneticIndividualScorer{
 			for (WordIndex indexKey : giIndexKeys)
 			{
 				cti = (WordIndex) indexKey;
-				sumCommon += cti.getTf() * giFrequencies.get(cti.getiD()) * Math.pow(cti.getIdf(), 2.);
-				sumGi += Math.pow (giFrequencies.get(cti.getiD()) * cti.getIdf(), 2.);
+				sumCommon += cti.getTf() * giFrequencies.get(cti.getiD()) * Math.pow(cti.getIdf(index.getNbDocument()), 2.);
+				sumGi += Math.pow (giFrequencies.get(cti.getiD()) * cti.getIdf(index.getNbDocument()), 2.);
 			}
 			
 			for (WordIndex indexKey : clustIndexKeys)
 			{
 				cti = (WordIndex) indexKey;
-				sumClust += Math.pow (cti.getTf() * cti.getIdf(), 2.);
+				sumClust += Math.pow (cti.getTf() * cti.getIdf(index.getNbDocument()), 2.);
 			}
 			if (sumClust == 0 || sumGi == 0)
 			{
@@ -92,7 +91,7 @@ public class CosineScorer extends GeneticIndividualScorer{
 				for (WordIndex i : giIndexKeys)
 				{
 					cti = (WordIndex) i;
-					System.out.print (i+ " | "+cti.getIdf()+" | "+giFrequencies.get(i)+" ** ");
+					System.out.print (i+ " | "+cti.getIdf(index.getNbDocument())+" | "+giFrequencies.get(i)+" ** ");
 					
 				}
 				//System.out.println("\n****************** Fin Phrases *****************");

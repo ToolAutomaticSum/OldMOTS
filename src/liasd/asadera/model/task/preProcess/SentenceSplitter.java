@@ -37,13 +37,15 @@ public class SentenceSplitter extends AbstractPreProcess {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
 			while (textIt.hasNext()) {
 				TextModel textModel = textIt.next();
-				BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
-				iterator.setText(textModel.getText());
-				int start = iterator.first();
-				for (int end = iterator.next();
-				    end != BreakIterator.DONE;
-				    start = end, end = iterator.next()) {
-					textModel.add(new SentenceModel(textModel.getText().substring(start,end), iD, textModel));
+				String[] sentences = textModel.getText().split("\n");
+//				BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+//				iterator.setText(textModel.getText());
+//				int start = iterator.first();
+				for (int i=0; i< sentences.length; i++) {
+//				for (int end = iterator.next();
+//				    end != BreakIterator.DONE;
+//				    start = end, end = iterator.next()) {
+					textModel.add(new SentenceModel(sentences[i]/*textModel.getText().substring(start,end)*/, iD, textModel));
 					iD++;
 				}
 			}

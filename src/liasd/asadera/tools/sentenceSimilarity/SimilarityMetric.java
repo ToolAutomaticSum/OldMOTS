@@ -6,12 +6,12 @@ import java.util.Map;
 import liasd.asadera.exception.VectorDimensionException;
 import liasd.asadera.textModeling.SentenceModel;
 
-public abstract class SentenceSimilarityMetric {	
+public abstract class SimilarityMetric {	
 
 //	protected List<ParametrizedType> listParameterIn;
 //	protected List<ParametrizedType> listParameterOut;
 	
-	public SentenceSimilarityMetric() {
+	public SimilarityMetric() {
 //		listParameterIn = new ArrayList<ParametrizedType>();
 //		listParameterOut = new ArrayList<ParametrizedType>();
 	}
@@ -38,16 +38,16 @@ public abstract class SentenceSimilarityMetric {
 	
 	public abstract double computeSimilarity(Object s1, Object s2) throws Exception;
 	
-	public static SentenceSimilarityMetric instanciateSentenceSimilarity(/*ParametrizedMethod compatibleMethod,*/ String similarityMethod) throws Exception {
+	public static SimilarityMetric instanciateSentenceSimilarity(/*ParametrizedMethod compatibleMethod,*/ String similarityMethod) throws Exception {
 		Class<?> cl;
 		cl = Class.forName("liasd.asadera.tools.sentenceSimilarity." + similarityMethod);
 	    @SuppressWarnings("rawtypes")
 		Constructor ct = cl.getConstructor();
-	    SentenceSimilarityMetric o = (SentenceSimilarityMetric) ct.newInstance();
+	    SimilarityMetric o = (SimilarityMetric) ct.newInstance();
 //	    if (!o.isOutCompatible(compatibleMethod))
 //	    	throw new RuntimeException("Error when trying compatibility between SimilaritryMetric and ParametrizedMethod.");
 //	    o.setCompatibility(compatibleMethod);
-	    return (SentenceSimilarityMetric) o;
+	    return (SimilarityMetric) o;
 	}
 	
 //	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {

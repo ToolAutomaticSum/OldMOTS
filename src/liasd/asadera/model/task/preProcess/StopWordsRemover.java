@@ -43,15 +43,9 @@ public class StopWordsRemover extends AbstractPreProcess {
 	}
 	
 	public void removeGramWords(TextModel textModel) {
-		Iterator<SentenceModel> sentenceIt = textModel.iterator();
-		while (sentenceIt.hasNext()) {
-			SentenceModel sentenceModel = sentenceIt.next();
-			Iterator<WordModel> wordIt = sentenceModel.iterator();
-			while (wordIt.hasNext()) {
-				WordModel word = wordIt.next();
+		for (SentenceModel sen : textModel)
+			for (WordModel word : sen.getListWordModel())
 				if (filter.passFilter(word))
 					word.setStopWord(true);
-			}
-		}
 	}
 }

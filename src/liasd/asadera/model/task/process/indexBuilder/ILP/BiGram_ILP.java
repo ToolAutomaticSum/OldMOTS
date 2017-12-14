@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedOut;
+import liasd.asadera.model.task.process.indexBuilder.TF_IDF.NGram_IDF;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
 import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
@@ -16,11 +17,9 @@ import liasd.asadera.optimize.parameter.Parameter;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
-import liasd.asadera.tools.wordFilters.WordFilter;
 
 /**
  * TODO remplacer les maps par Index de Ngrams
@@ -87,25 +86,12 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 	}
 	
 	@Override
-	public void processIndex(List<Corpus> listCorpus) {
+	public void processIndex(List<Corpus> listCorpus) throws Exception {
+		super.processIndex(listCorpus);
 		fscFactor = getCurrentProcess().getADN().getParameterValue(Double.class, BiGramILP_Parameter.fscFactor.getName());
 		minSenLength = getCurrentProcess().getADN().getParameterValue(Integer.class, BiGramILP_Parameter.minSenLength.getName());
 
 		buildWeightsAndSentences(listCorpus);
-//		for (Corpus c : getCurrentMultiCorpus()) {
-//			if (!listCorpus.contains(c)) {
-//				Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, true);
-//				buildWeightsAndSentences(Arrays.asList(temp));
-//				if (!getModel().isMultiThreading())
-//					temp.clear();
-//			}
-//		}
-		/*Writer w = new Writer("indexNGram.txt");
-		w.open();
-		for (NGram ng : index.values()) {
-			w.write(ng.toString() + " " + ng.getiD() + " " + ng.getTfCorpus(0) + "\n");
-		}
-		w.close();*/
 	}
 	
 	@Override
@@ -115,8 +101,7 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
-	private void buildWeightsAndSentences(List<Corpus> listCorpus)
-	{		
+	private void buildWeightsAndSentences(List<Corpus> listCorpus) {		
 		Set<NGram> curr_bg_set;
 		Set<NGram> curr_doc_bg_set;
 
@@ -128,30 +113,15 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 				curr_doc_bg_set = new TreeSet<NGram>();
 				for (SentenceModel sen : text)
 					if (sen.getNbMot() >= minSenLength) {
-						
 						//On construit le set des bigrams dans la phrases
-						curr_bg_set = getBiGrams(indexWord, sen, getCurrentProcess().getFilter());
-						/*for (NGram ng : curr_bg_set)
-							if (!index.containsKey(ng.getWord())) {
-								index.put(ng);
-								ng.setWeight(1.);
-							}
-							else
-								index.get(ng.getWord()).setWeight(index.get(ng.getWord()).getWeight() + 1.);
-						*/
-						if (fscFactor != 0 && sen.getPosition() == 1 ) {
+						listSen.add(sen);
+						curr_bg_set = NGram_IDF.getBiGrams(indexWord, sen, getCurrentProcess().getFilter());
+
+						if (fscFactor != 0 && sen.getPosition() == 1 )
 							firstSentencesConcepts.addAll(curr_bg_set);
-							/*for (NGram ng : curr_bg_set) {
-								if (!index.containsKey(ng.getWord())) {
-									index.put(ng);
-									ng.setWeight(fscFactor);
-								}
-								else
-									index.get(ng.getWord()).setWeight(index.get(ng.getWord()).getWeight() + fscFactor);
-							
-							}*/
-						}
 						curr_doc_bg_set.addAll(curr_bg_set);
+						sen.setN(2);
+						sen.setListWordIndex(2, curr_bg_set);
 						ngrams_in_sentences.put(sen, curr_bg_set);
 					}
 				
@@ -163,7 +133,6 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 					else {
 						index.put(ng);
 						//System.out.println(ng.getWord());
-						ng.setIndex(index);
 						ng.addDocumentOccurence(corpus.getiD(), text.getiD());
 						ng.setWeight(1.);
 					}
@@ -171,39 +140,7 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 				for (NGram ng : firstSentencesConcepts)
 					index.get(ng.getWord()).setWeight(index.get(ng.getWord()).getWeight() + fscFactor);
 			}
-			/*for (NGram ng : firstSentencesConcepts.keySet())
-			{
-				Integer i = this.bigrams.indexOf(ng);
-				this.bigram_weights.set( i, this.bigram_weights.get(i) * (1.+this.fsc_factor) );
-			}*/
 		}
-		//System.out.println(index.get(" | boeing | 747").getWeight());
-		//System.out.println(index.get(" | boeing | 747").getTf());
-	}
-	
-	@SuppressWarnings("unlikely-arg-type")
-	public static Set<NGram> getBiGrams(Index<WordIndex> index, SentenceModel sen, WordFilter filter)
-	{
-		WordModel u1, u2;
-		Set<NGram> ngrams_list = new TreeSet<NGram>();
-		for (int i = 0; i < sen.size() - 1; i++)
-		{
-			u1 = sen.get(i);
-			u2 = sen.get(i+1);
-			
-			if (filter.passFilter(u1) && filter.passFilter(u2) && index.containsKey(u1.getmLemma()) && index.containsKey(u2.getmLemma()))
-			{
-				NGram ng = new NGram();
-
-				ng.add(index.get(u1.getmLemma()));
-				ng.add(index.get(u2.getmLemma()));
-				//if (! ngrams_list.contains(ng));
-				ngrams_list.add(ng);
-				//System.out.println("Pas Filtrée !");
-			}			
-		}
-		sen.setNGrams(ngrams_list);
-		return ngrams_list;
 	}
 	
 	/*private List<NGram> generateBiGram(SentenceModel sentence) {

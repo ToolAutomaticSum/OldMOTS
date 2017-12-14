@@ -19,11 +19,10 @@ import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
-import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.tools.Pair;
-import liasd.asadera.tools.sentenceSimilarity.SentenceSimilarityMetric;
+import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<WordIndex>, SentenceCaracteristicBasedIn, HldaCaracteristicBasedIn {
 
@@ -45,7 +44,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 	protected int nbDimension;
 	
 	private int size = 100;
-	private SentenceSimilarityMetric sim;
+	private SimilarityMetric sim;
 	
 	public PathSum(int id) throws SupportADNException {
 		super(id);
@@ -69,7 +68,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 		
-		sim = SentenceSimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);	
+		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);	
 	}
 	
 	private void init() {
@@ -111,9 +110,9 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 				summary.add(sen);
 				summarySize += sen.getNbMot();
 				availableSentence.remove(sen); //Reduction proba mots dans phrase;
-				for (WordModel word : sen)
-					if (getCurrentProcess().getFilter().passFilter(word))
-						alreadySeenWord.add(index.getKeyId(word.getmLemma()));
+				for (WordIndex word : sen)
+//					if (getCurrentProcess().getFilter().passFilter(word))
+						alreadySeenWord.add(word.getiD()); //index.getKeyId(word.getmLemma())
 			}
 		}
 
@@ -179,12 +178,12 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 		
 		int currSen = 0;
 		for (SentenceModel sen : sentencesInPath) {
-			for (WordModel word : sen)
-				if (getCurrentProcess().getFilter().passFilter(word)) {
-					int tokenId = index.getKeyId(word.getmLemma());
+			for (WordIndex word : sen) {
+//				if (getCurrentProcess().getFilter().passFilter(word)) {
+					int tokenId = word.getiD(); //index.getKeyId(word.getmLemma());
 					for (int level=0; level<numLevels; level++)
 						weightedSentenceDistribution[currSen][level] += (alreadySeenWord.contains(tokenId)) ? weightedWordDistribution[tokenId][level]/2 : weightedWordDistribution[tokenId][level];
-				}
+			}
 			currSen++;
 		}
 		

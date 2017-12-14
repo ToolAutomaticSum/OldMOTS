@@ -165,10 +165,10 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements IndexBas
 	private void writeModelToTmpFile()
 	{
 		try{
-			File file = new File("tempILP" + ilp_id + ".ilp");
+			File file = new File("tempILP" + ilp_id + ".ilp_out");
 			file.delete();
 			
-			FileOutputStream fw = new FileOutputStream("tempILP" + ilp_id + ".ilp");
+			FileOutputStream fw = new FileOutputStream("tempILP" + ilp_id + ".ilp_out");
 			OutputStreamWriter osr = new OutputStreamWriter (fw, "UTF-8");
 			//BufferedWriter output = new BufferedWriter(fw);
 			osr.write(model);
@@ -202,6 +202,6 @@ public class GenerateModel_ILP extends AbstractScoringMethod implements IndexBas
 
 	@Override
 	public String getFileName() {
-		return "tempILP" + ilp_id + ".ilp";
+		return "tempILP" + ilp_id + ".ilp_out";
 	}
 }
