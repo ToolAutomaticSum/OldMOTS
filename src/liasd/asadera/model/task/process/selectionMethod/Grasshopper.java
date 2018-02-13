@@ -2,13 +2,13 @@ package liasd.asadera.model.task.process.selectionMethod;
 
 import java.util.List;
 
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 
 public class Grasshopper extends AbstractSelectionMethod {
-	
+
 	public Grasshopper(int id) throws SupportADNException {
 		super(id);
 	}
@@ -28,11 +28,11 @@ public class Grasshopper extends AbstractSelectionMethod {
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
 		return false;
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 	}
 }

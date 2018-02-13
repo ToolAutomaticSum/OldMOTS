@@ -11,8 +11,8 @@ import liasd.asadera.model.task.process.caracteristicBuilder.AbstractCaracterist
 import liasd.asadera.model.task.process.caracteristicBuilder.ListClusterBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.ListClusterBasedOut;
 import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
@@ -20,31 +20,31 @@ import liasd.asadera.textModeling.cluster.Cluster;
 import liasd.asadera.tools.Pair;
 import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
-public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements SentenceCaracteristicBasedIn, ListClusterBasedOut {
+public class PoBOC_Clustering extends AbstractCaracteristicBuilder
+		implements SentenceCaracteristicBasedIn, ListClusterBasedOut {
 
 	protected Map<SentenceModel, Object> sentenceCaracteristic;
-	
+
 	private List<Cluster> listCluster = new ArrayList<Cluster>();
 	private List<List<Integer>> listPole = new ArrayList<List<Integer>>();
 	private List<Integer> availableSentences;
 	private Set<Integer> sentenceInPoles;
 	private SimilarityMetric sim;
-	
+
 	private List<SentenceModel> listSentence;
 	private int n;
 	private double[][] u;
 	private double[][] matSim;
 	private double[][] graphSim;
-	//private double averageSim = 0;
 	private int[] degree;
-	
+
 	public PoBOC_Clustering(int id) throws SupportADNException {
 		super(id);
-		
-		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterOut.add(new ParametrizedType(Cluster.class, List.class, ListClusterBasedOut.class));
+
+		listParameterIn.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterOut.add(new ParameterizedType(Cluster.class, List.class, ListClusterBasedOut.class));
 	}
 
 	@Override
@@ -57,8 +57,8 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	@Override
 	public void initADN() throws Exception {
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
-		
-		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
+
+		sim = SimilarityMetric.instanciateSentenceSimilarity(/* this, */ similarityMethod);
 	}
 
 	@Override
@@ -66,10 +66,10 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 		listSentence = new ArrayList<SentenceModel>();
 		sentenceInPoles = new TreeSet<Integer>();
 		availableSentences = new ArrayList<Integer>();
-		
+
 		for (Corpus c : listCorpus)
 			listSentence.addAll(c.getAllSentence());
-		for (int i=0; i<listSentence.size(); i++)
+		for (int i = 0; i < listSentence.size(); i++)
 			availableSentences.add(i);
 		try {
 			generateSimilarityMatrix();
@@ -77,24 +77,22 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 			buildPoles();
 
 			buildMemberShipU();
-			for (int j=0; j<n; j++)
+			for (int j = 0; j < n; j++)
 				assign(j);
-			
+
 			for (List<Integer> list : listPole) {
 				String t = "";
 				for (Integer i : list)
-					t+=i+"\t";
+					t += i + "\t";
 				System.out.println(t);
 			}
-			//System.out.println(listPole);
-			for (int i=0; i<listPole.size(); i++) {
+			for (int i = 0; i < listPole.size(); i++) {
 				Cluster clust = new Cluster(i);
-				for (int j=0; j<listPole.get(i).size(); j++)
+				for (int j = 0; j < listPole.get(i).size(); j++)
 					clust.add(listSentence.get(listPole.get(i).get(j)));
 				listCluster.add(clust);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -110,57 +108,41 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 		availableSentences.clear();
 		sentenceInPoles.clear();
 	}
-	
+
 	private void generateSimilarityMatrix() throws Exception {
 		n = listSentence.size();
 		matSim = new double[n][n];
-		
-		/*for (int i = 0; i<n; i++) {
-			System.out.println(i + "\t" + listSentence.get(i).getSentence());
-			double[] v = sentenceCaracteristic.get(listSentence.get(i));
-			String t = "";
-			for (int j=0; j<v.length; j++)
-				t+= String.format("%.2f", v[j]) + "\t";
-			System.out.println(t);
-		}*/
+
 		double max = 0;
-		double min = 10000; 
-		for (int i = 0; i<n; i++) {
-			for (int j = 0; j<n; j++) {
-				if (i==j)
+		double min = 10000;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (i == j)
 					matSim[i][j] = 1.0;
 				else
-					matSim[i][j] = sim.computeSimilarity(sentenceCaracteristic, listSentence.get(i), listSentence.get(j));
+					matSim[i][j] = sim.computeSimilarity(sentenceCaracteristic, listSentence.get(i),
+							listSentence.get(j));
 				if (matSim[i][j] > max)
 					max = matSim[i][j];
 				else if (matSim[i][j] < min)
 					min = matSim[i][j];
 			}
 		}
-		for (int i = 0; i<n; i++)
-			for (int j = 0; j<n; j++) {
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++) {
 				if (matSim[i][j] != 1.0) {
-					matSim[i][j] -= (max+min)/2;
-					matSim[i][j] /= (max-min)/2;
+					matSim[i][j] -= (max + min) / 2;
+					matSim[i][j] /= (max - min) / 2;
 				}
 			}
-		
-		/*String temp = "";
-		for (int i = 0; i<n; i++) {
-			for (int j = 0; j<n; j++) { 
-				temp += String.format("%.2f", matSim[i][j]) + "\t";
-			}
-			temp += "\n";
-		}
-		System.out.println(temp);*/
 	}
-	
+
 	private void generateSimilarityGraph() {
 		degree = new int[n];
 		graphSim = new double[n][n];
-		
-		for (int i = 0; i<n; i++) {
-			for (int j = 0; j<n; j++) {
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
 				double seuil = getMaxMeanSim(i, j);
 				if (matSim[i][j] < seuil)
 					graphSim[i][j] = 0;
@@ -168,35 +150,23 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 					graphSim[i][j] = 1;
 			}
 		}
-		for (int i = 0; i<n; i++) {
+		for (int i = 0; i < n; i++) {
 			int sum = -1;
-			for (int j = 0; j<n; j++) {
+			for (int j = 0; j < n; j++) {
 				if (graphSim[i][j] > 0)
 					sum++;
 			}
 			degree[i] = sum;
 		}
-		
-		/*double sum = 0;
-		//String temp = "";
-		for (int i = 0; i<n; i++) {
-			for (int j = 0; j<n; j++) {
-				//temp += graphSim[i][j] + "\t";
-				sum += matSim[i][j];
-			}
-			//temp += "\n";
-		}
-		//System.out.println(temp);
-		averageSim = sum / (n*n);*/
 	}
-	
+
 	private void buildPoles() {
 		int x = -1;
 		double min = 1;
-		for (int i = 0; i<n; i++) {
+		for (int i = 0; i < n; i++) {
 			double value = 0;
 			if (degree[i] > 0) {
-				for (int j = 0; j<n; j++) {
+				for (int j = 0; j < n; j++) {
 					if (graphSim[i][j] != 0)
 						value += matSim[i][j];
 				}
@@ -213,35 +183,35 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 		listPole.add(pole);
 		sentenceInPoles.addAll(pole);
 		availableSentences.removeAll(pole);
-		while (sentenceInPoles.size() < n)/*addPole() > averageSim)*/ {
+		while (sentenceInPoles.size() < n) {
 			System.out.println(sentenceInPoles.size());
 			addPole();
 		}
 	}
-	
+
 	private void buildPoleClique(List<Integer> pole) {
 		List<Pair<Integer, Double>> neighbours;
 		while (!(neighbours = buildPoleNeighborhood(pole)).isEmpty())
 			pole.add(neighbours.get(0).getKey());
 	}
-	
+
 	private List<Pair<Integer, Double>> buildPoleNeighborhood(List<Integer> pole) {
 		int poleSize = pole.size();
 		List<Pair<Integer, Double>> neighbours = new ArrayList<Pair<Integer, Double>>();
-		for (int i=0; i<availableSentences.size(); i++) {
+		for (int i = 0; i < availableSentences.size(); i++) {
 			if (!pole.contains(availableSentences.get(i))) {
 				boolean neighbour = true;
 				int j = 0;
-				while (neighbour && j<poleSize) {
+				while (neighbour && j < poleSize) {
 					if (graphSim[availableSentences.get(i)][pole.get(j)] == 0)
 						neighbour = false;
 					j++;
 				}
 				if (neighbour)
-					neighbours.add(new Pair<Integer, Double>(availableSentences.get(i), matSim[i][pole.get(j-1)]));
+					neighbours.add(new Pair<Integer, Double>(availableSentences.get(i), matSim[i][pole.get(j - 1)]));
 			}
 		}
-		
+
 		Collections.sort(neighbours);
 		return neighbours;
 	}
@@ -250,24 +220,24 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 		int k = listPole.size() + 1;
 		int x = -1;
 		double min = 1;
-		for (int i = 0; i<availableSentences.size(); i++) {
+		for (int i = 0; i < availableSentences.size(); i++) {
 			double value = 0;
 			if (degree[i] > 0) {
-				for (int m = 0; m<k-1; m++) {
+				for (int m = 0; m < k - 1; m++) {
 					int poleSize = listPole.get(m).size();
-					for (int j = 0; j<poleSize; j++) {
+					for (int j = 0; j < poleSize; j++) {
 						value += matSim[availableSentences.get(i)][listPole.get(m).get(j)];
 					}
 					value /= poleSize;
 				}
-				value /= k-1;
+				value /= k - 1;
 				if (value < min) {
 					min = value;
 					x = availableSentences.get(i);
 				}
 			}
 		}
-		if (!(x<0)) {
+		if (!(x < 0)) {
 			List<Integer> pole = new ArrayList<Integer>();
 			pole.add(x);
 			buildPoleClique(pole);
@@ -277,12 +247,12 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 		}
 		return min;
 	}
-	
+
 	private void buildMemberShipU() {
 		u = new double[listPole.size()][n];
 		int l = listPole.size();
-		for (int i = 0; i<l; i++) {
-			for (int j = 0; j<n; j++) {
+		for (int i = 0; i < l; i++) {
+			for (int j = 0; j < n; j++) {
 				double value = 0;
 				for (int k : listPole.get(i))
 					value += matSim[j][k];
@@ -291,18 +261,18 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 			}
 		}
 	}
-	
+
 	private int[] getSimilarPoles(int j) {
 		List<Pair<Integer, Double>> listScorePole = new ArrayList<Pair<Integer, Double>>();
-		for (int i=0; i<listPole.size(); i++)
+		for (int i = 0; i < listPole.size(); i++)
 			listScorePole.add(new Pair<Integer, Double>(i, u[i][j]));
 		Collections.sort(listScorePole);
 		int[] similarPoles = new int[listPole.size()];
-		for (int i=0; i<listPole.size(); i++)
+		for (int i = 0; i < listPole.size(); i++)
 			similarPoles[i] = listScorePole.get(i).getKey();
 		return similarPoles;
 	}
-	
+
 	private void assign(int j) {
 		int l = listPole.size();
 		List<Integer> pole;
@@ -314,14 +284,13 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 			if (!pole.contains(j)) {
 				if (k == 0)
 					pole.add(j);
-				else if (k == l-1) {
-					if (u[similarPoles[k]][j] >= u[similarPoles[k-1]][j]/2)
+				else if (k == l - 1) {
+					if (u[similarPoles[k]][j] >= u[similarPoles[k - 1]][j] / 2)
 						pole.add(j);
 					else
 						assign = false;
-				}
-				else {
-					double test = (u[similarPoles[k-1]][j]+u[similarPoles[k+1]][j])/2;
+				} else {
+					double test = (u[similarPoles[k - 1]][j] + u[similarPoles[k + 1]][j]) / 2;
 					double value = u[similarPoles[k]][j];
 					if (value >= test)
 						pole.add(j);
@@ -332,11 +301,11 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 			k++;
 		}
 	}
-	
+
 	private double getMaxMeanSim(int i, int j) {
 		double valueI = 0;
 		double valueJ = 0;
-		for (int k = 0; k<n; k++) {
+		for (int k = 0; k < n; k++) {
 			valueI += matSim[i][k];
 			valueJ += matSim[j][k];
 		}
@@ -356,12 +325,13 @@ public class PoBOC_Clustering extends AbstractCaracteristicBuilder implements Se
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(Cluster.class, List.class, ListClusterBasedIn.class));
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
+		return compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(Cluster.class, List.class, ListClusterBasedIn.class));
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
-		((ListClusterBasedIn)compMethod).setListCluster(listCluster);
+	public void setCompatibility(ParameterizedMethod compMethod) {
+		((ListClusterBasedIn) compMethod).setListCluster(listCluster);
 	}
 }

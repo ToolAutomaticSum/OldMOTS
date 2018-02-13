@@ -4,12 +4,9 @@ public class WordModel {
 
 	protected String word;
 	protected boolean stopWord = false;
-	
+
 	private SentenceModel sentence;
 	// CONLL X Format
-	/**
-	 * Position dans la phrase
-	 */
 	private String mID = "_";
 	private String mForm = "_";
 	private String mLemma = "_";
@@ -20,10 +17,10 @@ public class WordModel {
 	private String mDepRel = "_";
 	private String mPHead = "_";
 	private String mPDepRel = "_";
-	
+
 	public WordModel() {
 	}
-	
+
 	public WordModel(String mLemma) {
 		this.mLemma = mLemma;
 	}
@@ -36,7 +33,8 @@ public class WordModel {
 		this.mPosTag = mPosTag;
 	}
 
-	public WordModel(String mID, String mForm, String mLemma, String mCPosTag, String mPosTag, String mHead, String mDepRel) {
+	public WordModel(String mID, String mForm, String mLemma, String mCPosTag, String mPosTag, String mHead,
+			String mDepRel) {
 		this.mID = mID;
 		this.mForm = mForm;
 		this.mLemma = mLemma;
@@ -45,7 +43,7 @@ public class WordModel {
 		this.mPosTag = mPosTag;
 		this.mDepRel = mDepRel;
 	}
-	
+
 	public WordModel(WordModel e) {
 		this.mID = e.getmID();
 		this.mForm = e.getmForm();
@@ -82,7 +80,7 @@ public class WordModel {
 		this.mForm = mForm;
 	}
 
-	public  String getmLemma() {
+	public String getmLemma() {
 		return mLemma;
 	}
 
@@ -155,7 +153,7 @@ public class WordModel {
 		this.setmForm(word);
 	}
 
-	public  boolean isStopWord() {
+	public boolean isStopWord() {
 		return stopWord;
 	}
 
@@ -167,14 +165,13 @@ public class WordModel {
 	public String toString() {
 		return mLemma;
 	}
-	
+
 	public String toFullString() {
 		if (stopWord)
 			return "";
 		else
-			return mID + "\t" + mForm + "\t" + mLemma + "\t" + mCPosTag
-					+ "\t" + mPosTag + "\t" + mFeats + "\t" + mHead + "\t"
-					+ mDepRel + "\t" + mPHead + "\t" + mPDepRel;
+			return mID + "\t" + mForm + "\t" + mLemma + "\t" + mCPosTag + "\t" + mPosTag + "\t" + mFeats + "\t" + mHead
+					+ "\t" + mDepRel + "\t" + mPHead + "\t" + mPDepRel;
 	}
 
 	@Override

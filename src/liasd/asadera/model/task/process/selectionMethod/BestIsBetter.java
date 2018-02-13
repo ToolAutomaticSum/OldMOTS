@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.model.task.process.scoringMethod.ScoreBasedIn;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
@@ -20,11 +20,11 @@ public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedI
 	private boolean nbCharSizeOrNbSentenceSize;
 	private int maxSummLength;
 	private int nbSentenceInSummary;
-	
+
 	public BestIsBetter(int id) throws SupportADNException {
 		super(id);
 
-		listParameterIn.add(new ParametrizedType(Double.class, Map.class, ScoreBasedIn.class));
+		listParameterIn.add(new ParameterizedType(Double.class, Map.class, ScoreBasedIn.class));
 	}
 
 	@Override
@@ -36,9 +36,10 @@ public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedI
 
 	@Override
 	public void initADN() throws Exception {
-		nbCharSizeOrNbSentenceSize = Boolean.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
+		nbCharSizeOrNbSentenceSize = Boolean
+				.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
-	
+
 		if (nbCharSizeOrNbSentenceSize)
 			this.maxSummLength = size;
 		else
@@ -48,22 +49,21 @@ public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedI
 	@Override
 	public List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception {
 		Summary summary = new Summary();
-		
+
 		List<SentenceModel> list = new ArrayList<SentenceModel>(sentencesScore.keySet());
-		Collections.sort(list, (a , b) -> Double.compare(sentencesScore.get(b), sentencesScore.get(a)));
+		Collections.sort(list, (a, b) -> Double.compare(sentencesScore.get(b), sentencesScore.get(a)));
 		if (nbCharSizeOrNbSentenceSize) {
 			int size = 0;
 			Iterator<SentenceModel> senIt = list.iterator();
 			while (senIt.hasNext() && size < maxSummLength) {
 				SentenceModel sen = senIt.next();
-				size+=sen.getNbMot();
+				size += sen.getNbMot();
 				if (size < maxSummLength)
 					summary.add(sen);
 				else
 					size -= sen.getNbMot();
 			}
-		}
-		else {
+		} else {
 			int i = 0;
 			Iterator<SentenceModel> senIt = list.iterator();
 			while (senIt.hasNext() && i < nbSentenceInSummary) {
@@ -79,12 +79,12 @@ public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedI
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
 		return false;
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 	}
 
 	@Override

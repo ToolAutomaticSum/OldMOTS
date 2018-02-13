@@ -15,12 +15,12 @@ public class LearningController extends AbstractController {
 	}
 
 	private LearningProcess currentProcess;
-	
+
 	@Override
 	public void notifyProcessChanged(String processName) {
 		getModel().getProcessIDs().put("LearningProcess", processID);
-    	Object o = dynamicConstructor("process.LearningProcess"/* + processName*/);
-    	currentProcess = (LearningProcess) o;
+		Object o = dynamicConstructor("process.LearningProcess");
+		currentProcess = (LearningProcess) o;
 		getModel().getProcess().add(currentProcess);
 	}
 
@@ -29,13 +29,12 @@ public class LearningController extends AbstractController {
 		List<LearningModelBuilder> listModelBuilders;
 		if (currentProcess.getModelBuilders() == null) {
 			listModelBuilders = new ArrayList<LearningModelBuilder>();
-		}
-		else {
+		} else {
 			listModelBuilders = currentProcess.getModelBuilders();
 		}
 		Object o = dynamicConstructor("process.indexBuilder." + indexBuilder);
 		listModelBuilders.add((LearningModelBuilder) o);
-    	currentProcess.setModelBuilders(listModelBuilders);
+		currentProcess.setModelBuilders(listModelBuilders);
 	}
 
 	@Override

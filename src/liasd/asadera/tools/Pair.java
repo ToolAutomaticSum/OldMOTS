@@ -1,10 +1,10 @@
 package liasd.asadera.tools;
 
-public class Pair<S, T extends Comparable<T>> implements Comparable<Pair<S, T>>{
+public class Pair<S, T extends Comparable<T>> implements Comparable<Pair<S, T>> {
 
 	private S key;
 	private T value;
-	
+
 	public Pair(S key, T value) {
 		super();
 		this.key = key;

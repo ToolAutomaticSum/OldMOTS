@@ -5,7 +5,7 @@ import java.util.Map;
 
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
@@ -18,16 +18,16 @@ public class QuerySimilarity extends AbstractScoringMethod implements QueryBased
 	private Query query;
 	protected Map<SentenceModel, Object> sentenceCaracteristic;
 	private SimilarityMetric sim;
-	
+
 	public QuerySimilarity(int id) throws SupportADNException {
 		super(id);
-		
-		listParameterIn.add(new ParametrizedType(null, double[].class, QueryBasedIn.class));
-		listParameterIn.add(new ParametrizedType(null, double[][].class, QueryBasedIn.class));
-		listParameterIn.add(new ParametrizedType(null, double[][][].class, QueryBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
+
+		listParameterIn.add(new ParameterizedType(null, double[].class, QueryBasedIn.class));
+		listParameterIn.add(new ParameterizedType(null, double[][].class, QueryBasedIn.class));
+		listParameterIn.add(new ParameterizedType(null, double[][][].class, QueryBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
 	}
 
 	@Override
@@ -40,21 +40,22 @@ public class QuerySimilarity extends AbstractScoringMethod implements QueryBased
 	@Override
 	public void initADN() throws Exception {
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
-		
-		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);
+
+		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 	}
 
 	@Override
 	public void computeScores(List<Corpus> listCorpus) throws Exception {
 		Object queryVec = query.getQuery();
 		if (queryVec.getClass() != sentenceCaracteristic.values().iterator().next().getClass())
-			throw new RuntimeException("Query and sentence vector representation need to have the same number of dimension.");
+			throw new RuntimeException(
+					"Query and sentence vector representation need to have the same number of dimension.");
 		for (Corpus corpus : listCorpus) {
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
 					if (sentenceModel.size() > 7) {
 						double score = sim.computeSimilarity(sentenceCaracteristic, queryVec, sentenceModel);
-						sentenceModel.setScore(score); //Ajout du score à la phrase
+						sentenceModel.setScore(score);
 						sentencesScore.put(sentenceModel, sentenceModel.getScore());
 					}
 				}

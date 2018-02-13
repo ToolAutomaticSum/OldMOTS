@@ -6,9 +6,9 @@ import liasd.asadera.model.task.AbstractTask;
 public abstract class AbstractPreProcess extends AbstractMethod implements AbstractTask {
 
 	private AbstractPreProcess currentProcess;
-	
+
 	public AbstractPreProcess(int id) {
-		super(id);	
+		super(id);
 	}
 
 	public AbstractPreProcess getCurrentProcess() {

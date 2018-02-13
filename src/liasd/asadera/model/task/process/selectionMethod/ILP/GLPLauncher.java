@@ -12,16 +12,10 @@ public class GLPLauncher {
 	public void runGLP(String fileName) {
 		System.out.println("Starting solver");
 		try {
-			String[] commande = { "glpsol", "--tmlim", "100", "--lp", entryFile, "-o", fileName};
+			String[] commande = { "glpsol", "--tmlim", "100", "--lp", entryFile, "-o", fileName };
 			Process p = Runtime.getRuntime().exec(commande);
-			// EvaluationROUGE.inheritIO(p.getInputStream(), System.out);
-			//EvaluationROUGE.inheritIO(p.getErrorStream(), System.err);
-			/*BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line = "";
-		    while ((line = input.readLine()) != null)
-		    	System.out.println(line);*/
+
 			p.waitFor();
-			//Thread.sleep(200);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

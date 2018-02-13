@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>liasd.asadera</groupId>
   <artifactId>mots</artifactId>
-  <version>0.4.1</version>
+  <version>0.4.4</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -25,7 +25,7 @@
 					<manifest>
 						<addClasspath>true</addClasspath>
 						<classpathPrefix>lib/</classpathPrefix>
-						<mainClass>liasd.asadera.launcher.App</mainClass>
+						<mainClass>liasd.asadera.launcher.MOTS</mainClass>
 					</manifest>
 				</archive>
 	        </configuration>
@@ -60,19 +60,19 @@
 <!-- 				</execution> -->
 <!-- 			</executions> -->
 <!-- 		</plugin> -->
-<!-- 		<plugin> -->
-<!-- 			<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 			<artifactId>maven-source-plugin</artifactId> -->
-<!-- 			<version>2.1.2</version> -->
-<!-- 			<executions> -->
-<!-- 				<execution> -->
-<!-- 					<id>attach-source</id> -->
-<!-- 					<goals> -->
-<!-- 						<goal>jar</goal> -->
-<!-- 					</goals> -->
-<!-- 				</execution> -->
-<!-- 			</executions> -->
-<!-- 		</plugin> -->
+		<plugin>
+ 			<groupId>org.apache.maven.plugins</groupId>
+ 			<artifactId>maven-source-plugin</artifactId>
+ 			<version>2.1.2</version> 
+ 			<executions>
+ 				<execution>
+ 					<id>attach-source</id>
+ 					<goals>
+ 						<goal>jar</goal>
+ 					</goals>
+ 				</execution>
+ 			</executions>
+ 		</plugin>
     </plugins>
   </build>
   <dependencies>

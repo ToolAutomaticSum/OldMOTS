@@ -3,7 +3,7 @@ package liasd.asadera.model.task.process.selectionMethod.reinforcementLearning;
 import java.util.ArrayList;
 import java.util.List;
 
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.action.Action;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.featurer.Featurer;
@@ -17,9 +17,7 @@ import liasd.asadera.tools.vector.ToolsVector;
 public class ReinforcementLearning extends AbstractSelectionMethod {
 
 	public static enum ASRL_Parameter {
-		Temp("Temp"),
-		Gamma("Gamma"),
-		Alpha("Alpha");
+		Temp("Temp"), Gamma("Gamma"), Alpha("Alpha");
 
 		private String name;
 
@@ -31,7 +29,7 @@ public class ReinforcementLearning extends AbstractSelectionMethod {
 			return name;
 		}
 	}
-	
+
 	private State currentState;
 	private double[] theta;
 	double temp;
@@ -39,7 +37,7 @@ public class ReinforcementLearning extends AbstractSelectionMethod {
 	double alpha;
 	private Scorer s;
 	private Featurer f;
-	
+
 	public ReinforcementLearning(int id) throws SupportADNException {
 		super(id);
 	}
@@ -69,23 +67,23 @@ public class ReinforcementLearning extends AbstractSelectionMethod {
 	public List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception {
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
 		double penalty = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Penalty"));
-		
+
 		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
 		for (Corpus corpus : listCorpus)
 			for (TextModel text : corpus)
 				for (SentenceModel sen : text)
 					listSentence.add(sen);
-		
+
 		s.init();
 		f.init(size);
-		
+
 		theta = f.instanciateVector();
-		
+
 		currentState = new State(size, penalty, s, f);
 		currentState.setGamma(gamma);
-		
+
 		theta = learn(listSentence);
-		
+
 		currentState.init(listSentence);
 		while (!currentState.isFinish()) {
 			Action a = currentState.selectBestAction(theta);
@@ -93,38 +91,39 @@ public class ReinforcementLearning extends AbstractSelectionMethod {
 		}
 		return currentState.getSummary();
 	}
-	
-	private double[] learn (List<SentenceModel> listSentence) throws Exception {
+
+	private double[] learn(List<SentenceModel> listSentence) throws Exception {
 		int nbIter = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbIteration"));
-		
-		for (int i=1; i<=nbIter; i++) {
+
+		for (int i = 1; i <= nbIter; i++) {
 			System.out.print(".");
 			if (i % 50 == 0)
 				System.out.println(" " + i);
-			
+
 			currentState.init(listSentence);
 			double[] elig = f.instanciateVector();
-			alpha = alpha*101/(100+Math.pow(i, 1.1));
-			temp = temp*Math.pow(0.987, i-1);
+			alpha = alpha * 101 / (100 + Math.pow(i, 1.1));
+			temp = temp * Math.pow(0.987, i - 1);
 			while (!currentState.isFinish()) {
 				Action a = currentState.selectActionWithCurrentPolicy(theta, temp);
 				double[] lastPhi = currentState.getFeatures();
 				a.doAction(currentState);
-				double delta = currentState.reward() + gamma*ToolsVector.scalar(theta, currentState.getFeatures()) - ToolsVector.scalar(theta, lastPhi);
-				elig = ToolsVector.scalarVector(gamma, ToolsVector.somme(elig, lastPhi)); //remove lambda;
-				theta = ToolsVector.somme(theta, ToolsVector.scalarVector(alpha*delta, elig));
+				double delta = currentState.reward() + gamma * ToolsVector.scalar(theta, currentState.getFeatures())
+						- ToolsVector.scalar(theta, lastPhi);
+				elig = ToolsVector.scalarVector(gamma, ToolsVector.somme(elig, lastPhi));
+				theta = ToolsVector.somme(theta, ToolsVector.scalarVector(alpha * delta, elig));
 			}
 		}
-		
+
 		return theta;
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
 		return false;
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 	}
 }

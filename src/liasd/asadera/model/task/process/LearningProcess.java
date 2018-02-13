@@ -21,15 +21,14 @@ import liasd.asadera.textModeling.MultiCorpus;
 
 public class LearningProcess extends AbstractProcess {
 
-
 	protected List<Corpus> listCorpus = new ArrayList<Corpus>();
-	
+
 	protected List<LearningModelBuilder> modelBuilders;
-	
+
 	protected boolean liveProcess = false;
-	
+
 	protected String modelName;
-	
+
 	public LearningProcess(int id) throws SupportADNException {
 		super(id);
 	}
@@ -42,15 +41,15 @@ public class LearningProcess extends AbstractProcess {
 	@Override
 	public void initADN() throws Exception {
 		initCorpusToCompress();
-		
+
 		liveProcess = Boolean.parseBoolean(getModel().getProcessOption(id, "LiveProcess"));
 		modelName = getModel().getProcessOption(id, "ModelName");
-		
+
 		for (Corpus c : getCurrentMultiCorpus()) {
 			if (listCorpusId.contains(c.getiD()))
 				listCorpus.add(c);
 		}
-		
+
 		adn = new ADN(supportADN);
 	}
 
@@ -70,36 +69,36 @@ public class LearningProcess extends AbstractProcess {
 		if (!liveProcess) {
 			for (LearningModelBuilder lmb : modelBuilders)
 				lmb.learn(listCorpus, modelName);
-		}
-		else {
+		} else {
 			int limitSize = 50000;
 			String propStanfordNLP = "tokenize, ssplit, pos, lemma";
 			Properties props = new Properties();
 			props.put("annotators", propStanfordNLP);
 			props.put("threads", "8");
 			StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-			
+
 			for (Corpus c : getCurrentMultiCorpus()) {
 				for (String docName : c.getDocNames()) {
 					File textFile = new File(c.getInputPath() + File.separator + docName);
-				
-					try{
-						InputStream ips=new FileInputStream(textFile); 
-						InputStreamReader ipsr=new InputStreamReader(ips);
-						BufferedReader br=new BufferedReader(ipsr);
+
+					try {
+						InputStream ips = new FileInputStream(textFile);
+						InputStreamReader ipsr = new InputStreamReader(ips);
+						BufferedReader br = new BufferedReader(ipsr);
 						String line;
 						String textToProcess = "";
 						int readSize = 0;
 						int totalSize = 0;
 						int i = 0;
-						while ((line=br.readLine())!=null){
+						while ((line = br.readLine()) != null) {
 							long time = System.currentTimeMillis();
 							readSize += line.length();
 							totalSize += line.length();
 							textToProcess += line;
 							if (readSize > limitSize) {
 								System.out.println("Reading : " + (System.currentTimeMillis() - time));
-								List<String> listSentence = StanfordNLPSimplePreProcess.liveProcessToListString(pipeline, textToProcess);
+								List<String> listSentence = StanfordNLPSimplePreProcess
+										.liveProcessToListString(pipeline, textToProcess);
 								textToProcess = "";
 								System.out.println("Reading + processing : " + (System.currentTimeMillis() - time));
 								for (LearningModelBuilder lmb : modelBuilders)
@@ -110,9 +109,8 @@ public class LearningProcess extends AbstractProcess {
 								time = System.currentTimeMillis();
 							}
 						}
-						br.close(); 
-					}		
-					catch (Exception e){
+						br.close();
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -154,7 +152,7 @@ public class LearningProcess extends AbstractProcess {
 				lmb.setModel(model);
 		}
 	}
-	
+
 	@Override
 	public void setCurrentMultiCorpus(MultiCorpus currentMultiCorpus) {
 		super.setCurrentMultiCorpus(currentMultiCorpus);

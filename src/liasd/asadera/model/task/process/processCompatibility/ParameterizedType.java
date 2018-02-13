@@ -1,11 +1,11 @@
 package liasd.asadera.model.task.process.processCompatibility;
 
-public class ParametrizedType {
+public class ParameterizedType {
 	private final Class<?> classT;
 	private final Class<?> principalClass;
 	private final Class<?> associatedInterface;
 
-	public ParametrizedType(Class<?> parameterClass, Class<?> principalClass, Class<?> associatedInterface) {
+	public ParameterizedType(Class<?> parameterClass, Class<?> principalClass, Class<?> associatedInterface) {
 		super();
 		this.classT = parameterClass;
 		this.principalClass = principalClass;
@@ -19,7 +19,7 @@ public class ParametrizedType {
 	public Class<?> getPrincipalClass() {
 		return principalClass;
 	}
-	
+
 	public Class<?> getAssociatedInterface() {
 		return associatedInterface;
 	}
@@ -42,7 +42,7 @@ public class ParametrizedType {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ParametrizedType other = (ParametrizedType) obj;
+		ParameterizedType other = (ParameterizedType) obj;
 		if (associatedInterface == null) {
 			if (other.associatedInterface != null)
 				return false;

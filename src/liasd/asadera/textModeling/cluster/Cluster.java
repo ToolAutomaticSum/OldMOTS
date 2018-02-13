@@ -12,18 +12,18 @@ public class Cluster implements List<SentenceModel> {
 
 	protected int id;
 	protected List<SentenceModel> listSentenceTopic = new ArrayList<SentenceModel>();
-	
+
 	public Cluster(int id) {
 		super();
 		this.id = id;
 	}
-	
+
 	public Cluster(int id, SentenceModel sen) {
 		super();
 		this.id = id;
 		listSentenceTopic.add(sen);
 	}
-	
+
 	public Cluster(int id, List<SentenceModel> listSentenceTopic) {
 		this.id = id;
 		this.listSentenceTopic = listSentenceTopic;
@@ -151,7 +151,7 @@ public class Cluster implements List<SentenceModel> {
 	public <T> T[] toArray(T[] a) {
 		return listSentenceTopic.toArray(a);
 	}
-	
+
 	@Override
 	public String toString() {
 		String t = id + "\n";

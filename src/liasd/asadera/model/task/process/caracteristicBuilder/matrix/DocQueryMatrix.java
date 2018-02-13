@@ -4,8 +4,8 @@ import java.util.List;
 
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
@@ -17,13 +17,13 @@ import liasd.asadera.textModeling.wordIndex.WordVector;
 public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOut {
 
 	private Query query;
-	
+
 	public DocQueryMatrix(int id) throws SupportADNException {
 		super(id);
-		
+
 		query = new Query();
-		
-		listParameterOut.add(new ParametrizedType(null, double[][].class, QueryBasedOut.class));
+
+		listParameterOut.add(new ParameterizedType(null, double[][].class, QueryBasedOut.class));
 	}
 
 	@Override
@@ -32,56 +32,54 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 		initCopy(p);
 		return p;
 	}
-	
-	//@SuppressWarnings("unlikely-arg-type")
+
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) {
 		super.processCaracteristics(listCorpus);
-		
+
 		int nbMot = 0;
-		for (Corpus corpus: listCorpus)
+		for (Corpus corpus : listCorpus)
 			for (TextModel text : corpus)
 				for (SentenceModel sen : text)
-				nbMot += sen.size(); // text.getNbWord(getCurrentProcess().getFilter());
-		
+					nbMot += sen.size();
+
 		double[][] matrixDoc = new double[nbMot][dimension];
 		int i = 0;
 		for (Corpus corpus : listCorpus)
 			for (TextModel text : corpus)
 				for (SentenceModel s : text)
 					for (WordIndex w : s) {
-						matrixDoc[i] = ((WordVector)w).getWordVector(); //.index.get(w.getmLemma()).getWordVector();
+						matrixDoc[i] = ((WordVector) w).getWordVector();
 						i++;
 					}
-			
+
 		query.setQuery(matrixDoc);
 	}
-	
+
 	@Override
 	public void finish() {
 		super.finish();
 		query.clear();
 	}
-	
+
 	@Override
 	public Query getQuery() {
 		return query;
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
 		boolean a = super.isOutCompatible(compatibleMethod);
-		boolean b = compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[][].class, QueryBasedIn.class));
+		boolean b = compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(null, double[][].class, QueryBasedIn.class));
 		return a || (a && b);
 	}
 
-	/**
-	 * donne le/les paramètre(s) d'output en input à la class comp méthode
-	 */
 	@Override
-	public void setCompatibility(ParametrizedMethod compatibleMethod) {
+	public void setCompatibility(ParameterizedMethod compatibleMethod) {
 		super.setCompatibility(compatibleMethod);
-		if (compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[][].class, QueryBasedIn.class)))
-			((QueryBasedIn)compatibleMethod).setQuery(query);
+		if (compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(null, double[][].class, QueryBasedIn.class)))
+			((QueryBasedIn) compatibleMethod).setQuery(query);
 	}
 }

@@ -18,7 +18,7 @@ public class MultiCorpus implements List<Corpus> {
 	public MultiCorpus(int iD) {
 		this.iD = iD;
 	}
-	
+
 	public MultiCorpus(MultiCorpus m) {
 		this.iD = m.getiD();
 		for (Corpus c : m)
@@ -40,6 +40,10 @@ public class MultiCorpus implements List<Corpus> {
 		return nbDoc;
 	}
 
+	public int getNbCorpus() {
+		return listCorpus.size();
+	}
+	
 	public int getiD() {
 		return iD;
 	}

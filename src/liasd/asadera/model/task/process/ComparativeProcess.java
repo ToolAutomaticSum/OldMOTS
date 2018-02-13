@@ -9,7 +9,7 @@ import liasd.asadera.model.task.preProcess.GenerateTextModel;
 import liasd.asadera.model.task.process.caracteristicBuilder.AbstractCaracteristicBuilder;
 import liasd.asadera.model.task.process.comparativeMethod.AbstractComparativeMethod;
 import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import liasd.asadera.model.task.process.scoringMethod.AbstractScoringMethod;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.optimize.parameter.ADN;
@@ -18,32 +18,23 @@ import liasd.asadera.textModeling.MultiCorpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.tools.Pair;
 
-/**
- * ComparativeProcess, défini comme l'extraction des différences entre deux ensembles de corpus.
- * @author valnyz
- *
- */
 @SuppressWarnings("rawtypes")
 public class ComparativeProcess extends AbstractProcess {
-
-	//private Thread t;
-	//private ComparativeProcess[] threads = null;
 	int nbThreads = 0;
-	
+
 	protected List<Corpus> listCorpus = new ArrayList<Corpus>();
-	
+
 	protected List<AbstractIndexBuilder> indexBuilders;
 	protected List<AbstractCaracteristicBuilder> caracteristicBuilders;
 	protected List<AbstractScoringMethod> scoringMethods;
 	protected AbstractComparativeMethod comparativeMethod;
-	
-	//Matrice de résumé : Dimension = MultiCorpus et List Corpus à résumer
+
 	protected List<Pair<SentenceModel, String>> summary = new ArrayList<Pair<SentenceModel, String>>();
-	
+
 	public ComparativeProcess(int id) throws SupportADNException {
 		super(id);
 	}
-	
+
 	@Override
 	public AbstractProcess makeCopy() throws Exception {
 		return null;
@@ -52,12 +43,12 @@ public class ComparativeProcess extends AbstractProcess {
 	@Override
 	public void initADN() throws Exception {
 		initCorpusToCompress();
-		
+
 		for (Corpus c : getCurrentMultiCorpus()) {
 			if (listCorpusId.contains(c.getiD()))
 				listCorpus.add(c);
 		}
-		
+
 		if (indexBuilders != null) {
 			for (AbstractIndexBuilder indexBuilder : indexBuilders)
 				indexBuilder.setCurrentProcess(this);
@@ -89,14 +80,10 @@ public class ComparativeProcess extends AbstractProcess {
 		}
 		if (comparativeMethod != null)
 			comparativeMethod.initADN();
-		
+
 		initCompatibility(indexBuilders, caracteristicBuilders, scoringMethods, comparativeMethod);
 	}
-	
-	/**
-	 * Initialisation du process
-	 * Lecture du corpus à résumer
-	 */
+
 	@Override
 	public void init() throws Exception {
 		super.init();
@@ -105,10 +92,12 @@ public class ComparativeProcess extends AbstractProcess {
 			System.out.println("Corpus " + c.getiD() + " read");
 		}
 	}
-	
-	private void initCompatibility(List<AbstractIndexBuilder> indexBuilders, List<AbstractCaracteristicBuilder> caracteristicBuilders, List<AbstractScoringMethod> scoringMethods, AbstractComparativeMethod comparativeMethod) {
-		List<ParametrizedMethod> listMethod = new ArrayList<ParametrizedMethod>();
-		
+
+	private void initCompatibility(List<AbstractIndexBuilder> indexBuilders,
+			List<AbstractCaracteristicBuilder> caracteristicBuilders, List<AbstractScoringMethod> scoringMethods,
+			AbstractComparativeMethod comparativeMethod) {
+		List<ParameterizedMethod> listMethod = new ArrayList<ParameterizedMethod>();
+
 		if (indexBuilders != null) {
 			listMethod.addAll(indexBuilders);
 		}
@@ -121,9 +110,9 @@ public class ComparativeProcess extends AbstractProcess {
 		if (comparativeMethod != null) {
 			listMethod.add(comparativeMethod);
 		}
-		
-		for (ParametrizedMethod pm : listMethod) {
-			for (ParametrizedMethod pm2 : listMethod) {
+
+		for (ParameterizedMethod pm : listMethod) {
+			for (ParameterizedMethod pm2 : listMethod) {
 				if (pm != pm2 && pm.isOutCompatible(pm2)) {
 					pm.setCompatibility(pm2);
 				}
@@ -131,13 +120,6 @@ public class ComparativeProcess extends AbstractProcess {
 		}
 	}
 
-	/**
-	 * Process en lui-même, application de :
-	 * 	- IndexBuilders
-	 * 	- CaracteristicBuilders
-	 * 	- ScoringMethods
-	 * sur un corpus
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void process() throws Exception {
@@ -160,9 +142,6 @@ public class ComparativeProcess extends AbstractProcess {
 			summary = comparativeMethod.calculateDifference(listCorpus);
 	}
 
-	/**
-	 * Application de SelectionMethod sur l'ensemble des corpus
-	 */
 	@Override
 	public void finish() throws Exception {
 		if (indexBuilders != null) {
@@ -181,11 +160,11 @@ public class ComparativeProcess extends AbstractProcess {
 		if (comparativeMethod != null)
 			comparativeMethod.finish();
 	}
-	
+
 	public boolean isListCorpus(Corpus corpus) {
 		return isListCorpus(corpus.getiD());
 	}
-	
+
 	public boolean isListCorpus(int corpusId) {
 		return listCorpusId.contains(corpusId);
 	}
@@ -260,7 +239,7 @@ public class ComparativeProcess extends AbstractProcess {
 		if (comparativeMethod != null)
 			comparativeMethod.setCurrentMultiCorpus(currentMultiCorpus);
 	}
-	
+
 	@Override
 	public void setModel(AbstractModel model) {
 		super.setModel(model);

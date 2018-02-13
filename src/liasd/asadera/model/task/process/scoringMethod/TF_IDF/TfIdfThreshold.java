@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.model.task.process.scoringMethod.AbstractScoringMethod;
 import liasd.asadera.model.task.process.scoringMethod.ScoreBasedIn;
 import liasd.asadera.optimize.SupportADNException;
@@ -31,16 +31,16 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 			return name;
 		}
 	}
-	
+
 	private Index<WordIndex> index;
 	private double tfidfThreshold;
-	
+
 	public TfIdfThreshold(int id) throws SupportADNException {
 		super(id);
 		supportADN = new HashMap<String, Class<?>>();
 		supportADN.put("TfIdfThreshold", Double.class);
 
-		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 	}
 
 	@Override
@@ -52,32 +52,31 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 
 	@Override
 	public void initADN() throws Exception {
-		getCurrentProcess().getADN().putParameter(new Parameter<Double>(ScoringTfIdf_Parameter.TfIdfThreshold.getName(), Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "TfIdfThreshold"))));
+		getCurrentProcess().getADN().putParameter(new Parameter<Double>(ScoringTfIdf_Parameter.TfIdfThreshold.getName(),
+				Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "TfIdfThreshold"))));
 	}
 
 	@Override
 	public void computeScores(List<Corpus> listCorpus) throws Exception {
-		tfidfThreshold = getCurrentProcess().getADN().getParameterValue(Double.class, ScoringTfIdf_Parameter.TfIdfThreshold.getName());
+		tfidfThreshold = getCurrentProcess().getADN().getParameterValue(Double.class,
+				ScoringTfIdf_Parameter.TfIdfThreshold.getName());
 
 		for (Corpus corpus : listCorpus) {
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
 					double score = 0;
 					for (WordIndex w : sentenceModel) {
-//						if (getCurrentProcess().getFilter().passFilter(word)) {
-//							@SuppressWarnings("unlikely-arg-type")
-//							WordIndex w = index.get(word.getmLemma());
-							double temp = w.getTfCorpus(corpus.getiD())*w.getIdf(index.getNbDocument());
-							if (temp  > tfidfThreshold)
-								score += temp;
-//						}
+						double temp = w.getTfCorpus(corpus.getiD()) * w.getIdf(index.getNbDocument());
+						if (temp > tfidfThreshold)
+							score += temp;
+						// }
 					}
-					sentenceModel.setScore(score); //Ajout du score à la phrase
+					sentenceModel.setScore(score);
 					sentencesScore.put(sentenceModel, sentenceModel.getScore());
 				}
 			}
 		}
-		
+
 		double max = 0;
 		for (Entry<SentenceModel, Double> e : sentencesScore.entrySet())
 			if (e.getValue() > max)

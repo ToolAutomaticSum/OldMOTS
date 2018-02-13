@@ -14,25 +14,26 @@ import liasd.asadera.model.task.process.caracteristicBuilder.GraphBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
 import liasd.asadera.model.task.process.caracteristicBuilder.vector.TfIdfVectorSentence;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<WordIndex, DefaultWeightedEdge>, QueryBasedOut {
+public class KCoreQuery extends TfIdfVectorSentence
+		implements GraphBasedIn<WordIndex, DefaultWeightedEdge>, QueryBasedOut {
 
 	private Query query;
 
 	private SimpleWeightedGraph<WordIndex, DefaultWeightedEdge> graph;
-	
+
 	public KCoreQuery(int id) throws SupportADNException {
 		super(id);
 
-		listParameterIn.add(new ParametrizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedIn.class));
-		listParameterOut.add(new ParametrizedType(null, double[].class, QueryBasedOut.class));
-		
+		listParameterIn.add(new ParameterizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedIn.class));
+		listParameterOut.add(new ParameterizedType(null, double[].class, QueryBasedOut.class));
+
 		query = new Query();
 	}
 
@@ -50,10 +51,11 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		super.processCaracteristics(listCorpus);
-		
+
 		double[] vector = new double[graph.vertexSet().size()];
 
-		//TODO Strange that graph isn't reset but do we need to pass it via an interface ?
+		// TODO Strange that graph isn't reset but do we need to pass it via an
+		// interface ?
 		for (Corpus corpus : listCorpus) {
 			Coreness<WordIndex, DefaultWeightedEdge> core = new Coreness<WordIndex, DefaultWeightedEdge>(graph);
 			List<WordIndex> listMaxKCore = new ArrayList<WordIndex>();
@@ -61,10 +63,9 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 			for (Entry<WordIndex, Integer> e : core.getScores().entrySet())
 				if (e.getValue() == maxCore)
 					listMaxKCore.add(e.getKey());
-//			System.out.println("Degeneracy = " + maxCore + "\nList key word from max core : ");
-//			System.out.println(listMaxKCore);
+
 			for (WordIndex word : listMaxKCore)
-				vector[word.getiD()] += word.getTfCorpus(corpus.getiD())*word.getIdf(index.getNbDocument());
+				vector[word.getiD()] += word.getTfCorpus(corpus.getiD()) * word.getIdf(index.getNbDocument());
 		}
 		query.setQuery(vector);
 	}
@@ -83,19 +84,18 @@ public class KCoreQuery extends TfIdfVectorSentence implements GraphBasedIn<Word
 	public Query getQuery() {
 		return query;
 	}
-	
-	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return super.isOutCompatible(compatibleMethod) || compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class));
-	}
 
-	/**
-	 * donne le/les paramètre(s) d'output en input à la class comp méthode
-	 */
 	@Override
-	public void setCompatibility(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
+		return super.isOutCompatible(compatibleMethod) || compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(null, double[].class, QueryBasedIn.class));
+	}
+ 
+	@Override
+	public void setCompatibility(ParameterizedMethod compatibleMethod) {
 		super.setCompatibility(compatibleMethod);
-		if (compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(null, double[].class, QueryBasedIn.class)))
-			((QueryBasedIn)compatibleMethod).setQuery(query);
+		if (compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(null, double[].class, QueryBasedIn.class)))
+			((QueryBasedIn) compatibleMethod).setQuery(query);
 	}
 }

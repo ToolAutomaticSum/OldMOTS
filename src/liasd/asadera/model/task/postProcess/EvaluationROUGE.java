@@ -31,43 +31,32 @@ import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.tools.OSDetector;
 
 public class EvaluationROUGE extends AbstractPostProcess {
-	
+
 	private String rougePath = "";
 	private List<String> rougeMeasure = new ArrayList<String>();
 	protected String modelRoot;
 	protected String peerRoot;
 	protected String rougeTempFilePath;
-	
+
 	public EvaluationROUGE(int id) throws SupportADNException {
 		super(id);
 	}
 
 	/**
-	 * Ecrit le fichier system.xml nécessaire au fonction de ROUGE
-	 * ainsi que les différents résumé sous forme de html.
-	 * @throws TransformerException 
-	 * @throws ParserConfigurationException 
+	 * Write setting.xml for ROUGE evaluation
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
 	 */
 	@Override
 	public void init() throws LacksOfFeatures, ParserConfigurationException, TransformerException, Exception {
 		rougeTempFilePath = getModel().getOutputPath() + File.separator + getModel().getName();
 		new File(rougeTempFilePath + File.separator + peerRoot).mkdirs();
 		new File(rougeTempFilePath + File.separator + modelRoot).mkdirs();
-		
-//		File f = new File(getModel().getOutputPath() + File.separator + modelRoot);
-//    	File[] lf = f.listFiles();
-//    	for (int i = 0; i<lf.length; i++) {
-//    		if (Tools.getFileExtension(lf[i]).equals("html"))
-//    			lf[i].delete();
-//    	}
-    	
-    	boolean modelWrite = false;
-    	// boucle sur les process (1 résumé par process par execution)
-		for (int i = 0; i<getModel().getProcess().size(); i++) {
-			if (((SummarizeProcess)getModel().getProcess().get(i)).getSummary() != null) {
-				// boucle sur les multiCorpus, 1 execution de process par multicorpus
-				for (int j = 0; j<getModel().getMultiCorpusModels().size();j++) {
-					// boucle sur les corpus à résumer
+
+		boolean modelWrite = false;
+		for (int i = 0; i < getModel().getProcess().size(); i++) {
+			if (((SummarizeProcess) getModel().getProcess().get(i)).getSummary() != null) {
+				for (int j = 0; j < getModel().getMultiCorpusModels().size(); j++) {
 					for (int k : getModel().getProcess().get(i).getListCorpusId()) {
 						writeHtmlGeneratedSummary(i, j, k);
 						if (!modelWrite)
@@ -84,29 +73,25 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	@Override
 	public void process() throws Exception {
 		if (OSDetector.isUnix()) {
-			for (int i = 0; i<getModel().getProcess().size(); i++) {
-				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + 
-						" -e " + rougePath + File.separator + "data -n 2 -x -m -c 95 -r 1000 -f A -p 0.5 -t 0 -a " +
-						rougeTempFilePath + File.separator + "settings" + getModel().getTaskID() + i + ".xml";
+			for (int i = 0; i < getModel().getProcess().size(); i++) {
+				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + " -e " + rougePath
+						+ File.separator + "data -n 2 -x -m -c 95 -r 1000 -f A -p 0.5 -t 0 -a " + rougeTempFilePath
+						+ File.separator + "settings" + getModel().getTaskID() + i + ".xml";
 				System.out.println(cmd);
 
 				Process proc = Runtime.getRuntime().exec(cmd);
-				//inheritIO(proc.getInputStream(), new PrintStream(new FileOutputStream(getModel().getOutputPath() + File.separator + "test" + getModel().getTaskID() + i + ".txt", false)));
-				
-				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-			    
-			    Writer w = new Writer(rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt");
-			    w.open(false);
-				String line = "";
-			    while ((line = input.readLine()) != null)
-			    	w.write(line + "\n");
-			    
-			    w.close();
-			    //inheritIO(proc.getInputStream(), System.out);
-				//inheritIO(proc.getErrorStream(), System.err);
 
-				//Thread.sleep(100);
-			    proc.waitFor();
+				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+				Writer w = new Writer(
+						rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt");
+				w.open(false);
+				String line = "";
+				while ((line = input.readLine()) != null)
+					w.write(line + "\n");
+
+				w.close();
+				proc.waitFor();
 			}
 		}
 	}
@@ -114,13 +99,14 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	@Override
 	public void finish() throws Exception {
 		if (OSDetector.isUnix()) {
-			for (int i = 0; i<getModel().getProcess().size(); i++) {
-				Reader r = new Reader(rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt", true);
+			for (int i = 0; i < getModel().getProcess().size(); i++) {
+				Reader r = new Reader(rougeTempFilePath + File.separator + "test" + getModel().getTaskID() + i + ".txt",
+						true);
 				r.open();
 				String t = r.read();
 				while (t != null) {
 					String[] result = t.split(" ");
-					if(result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_R:")) {
+					if (result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_R:")) {
 						if (result[1].equals("ROUGE-2"))
 							getModel().getProcess().get(i).setScore(Double.parseDouble(result[3]));
 						System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
@@ -130,120 +116,129 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			}
 		}
 	}
-	
+
 	private void writeHtmlGeneratedSummary(int processID, int multiCorpusId, int corpusId) throws Exception {
-		if (((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId) != null) {
-			Writer w = new Writer(rougeTempFilePath + File.separator + peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
+		if (((SummarizeProcess) getModel().getProcess().get(processID)).getSummary().get(multiCorpusId)
+				.get(corpusId) != null) {
+			Writer w = new Writer(rougeTempFilePath + File.separator + peerRoot + File.separator + "T"
+					+ getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
 			w.open(false);
-			w.write("<html>\n<head><title>" + processID + "</title></head>" +
-			"<body bgcolor=\"white\">\n");
-			for (int j = 0; j<((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId).size(); j++) {
-				w.write("<a name=\""+ String.valueOf(j) + "\">[" + String.valueOf(j) + "]</a> <a href=\"#" + String.valueOf(j) + 
-						"\" id=" + String.valueOf(j) + ">" +  ((SummarizeProcess)getModel().getProcess().get(processID)).getSummary().get(multiCorpusId).get(corpusId).get(j).toString() + "</a>\n");
+			w.write("<html>\n<head><title>" + processID + "</title></head>" + "<body bgcolor=\"white\">\n");
+			for (int j = 0; j < ((SummarizeProcess) getModel().getProcess().get(processID)).getSummary()
+					.get(multiCorpusId).get(corpusId).size(); j++) {
+				w.write("<a name=\"" + String.valueOf(j) + "\">[" + String.valueOf(j) + "]</a> <a href=\"#"
+						+ String.valueOf(j) + "\" id=" + String.valueOf(j) + ">"
+						+ ((SummarizeProcess) getModel().getProcess().get(processID)).getSummary().get(multiCorpusId)
+								.get(corpusId).get(j).toString()
+						+ "</a>\n");
 			}
 			w.write("</body>\n</html>");
 			w.close();
-		}
-		else
+		} else
 			System.out.println("Summary corpus " + corpusId + " MultiCorpus " + multiCorpusId + " is null.");
 	}
-	
+
 	private void writeHtmlModelSummary(int multiCorpusId, int corpusId) throws Exception {
-		for (String modelSummary : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryNames()) {
-    		Writer w = new Writer(rougeTempFilePath + File.separator + modelRoot + File.separator + modelSummary.replace(".txt", "") + ".html");
+		for (String modelSummary : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId)
+				.getSummaryNames()) {
+			Writer w = new Writer(rougeTempFilePath + File.separator + modelRoot + File.separator
+					+ modelSummary.replace(".txt", "") + ".html");
 			w.open(false);
-			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>" +
-			"<body bgcolor=\"white\">\n");
-			Reader r = new Reader(getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryPath() + File.separator + modelSummary, true);
+			w.write("<html>\n<head><title>" + modelSummary.replace(".txt", "") + ".html" + "</title></head>"
+					+ "<body bgcolor=\"white\">\n");
+			Reader r = new Reader(getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryPath()
+					+ File.separator + modelSummary, true);
 			r.open();
 			int j = 0;
 			String text = r.read();
-	        while (text != null) {
-				w.write("<a name=\""+ String.valueOf(j) + "\">[" + String.valueOf(j) + "]</a> <a href=\"#" + String.valueOf(j) + 
-						"\" id=" + String.valueOf(j) + ">" + text + "</a>\n");
+			while (text != null) {
+				w.write("<a name=\"" + String.valueOf(j) + "\">[" + String.valueOf(j) + "]</a> <a href=\"#"
+						+ String.valueOf(j) + "\" id=" + String.valueOf(j) + ">" + text + "</a>\n");
 				text = r.read();
 				j++;
-	        }
-	        r.close();
+			}
+			r.close();
 			w.write("</body>\n</html>");
 			w.close();
-    	}
+		}
 	}
-	
+
 	private void writeSettingsXml(int processID) throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	    DocumentBuilder builder = factory.newDocumentBuilder();
-	    Document document= builder.newDocument();
-	    
-	    Element rootNode = document.createElement("ROUGE_EVAL");
-	    rootNode.setAttribute("version", "1.55");
-	    document.appendChild(rootNode);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document document = builder.newDocument();
 
-	    for (int multiCorpusId = 0; multiCorpusId<getModel().getMultiCorpusModels().size(); multiCorpusId++) {
-	    	for (int corpusId : getModel().getProcess().get(processID).getListCorpusId()) {
-		    	Element process = document.createElement("EVAL");
-		    	process.setAttribute("ID", "CORPUS_" + corpusId);
-		    	//process.appendChild(document.createTextNode(getModel().getProcess().get(i).getClass().toString()));
-		    	
-		    	Element modelRoot = document.createElement("MODEL-ROOT");
-		    	modelRoot.appendChild(document.createTextNode(rougeTempFilePath + File.separator + this.modelRoot));
-		    	process.appendChild(modelRoot);
-		    	
-		    	Element peerRoot = document.createElement("PEER-ROOT");
-		    	peerRoot.appendChild(document.createTextNode(rougeTempFilePath + File.separator + this.peerRoot));
-		    	process.appendChild(peerRoot);
-		    	
-		    	Element inputFormat = document.createElement("INPUT-FORMAT");
-		    	inputFormat.setAttribute("TYPE", "SEE");
-		    	process.appendChild(inputFormat);
-		    	
-		    	Element peers = document.createElement("PEERS");
+		Element rootNode = document.createElement("ROUGE_EVAL");
+		rootNode.setAttribute("version", "1.55");
+		document.appendChild(rootNode);
 
-		    	Element generatedSummary = document.createElement("P");
-	    		generatedSummary.setAttribute("ID", String.valueOf(processID/*getModel().getProcess().get(j).getId()*/));
-	    		generatedSummary.appendChild(document.createTextNode("T" + getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html"));
-	    		peers.appendChild(generatedSummary);
-	    		
-		    	process.appendChild(peers);
-	
-		    	Element models = document.createElement("MODELS");
-	    	
-		    	for (String modelSummaryName : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId).getSummaryNames()) {
-		    		Element modelSummary = document.createElement("M");
-		    		modelSummary.setAttribute("ID", String.valueOf(multiCorpusId) + String.valueOf(corpusId));
-		    		modelSummary.appendChild(document.createTextNode(modelSummaryName.replace(".txt", "") + ".html"));
-		    		models.appendChild(modelSummary);
-		    	}
-		    		
-		    	process.appendChild(models);
-		    	
-		    	rootNode.appendChild(process);
-	    	}
-	    }
-    	TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    	Transformer transformer = transformerFactory.newTransformer();
-    	DOMSource source = new DOMSource(document);
-    	StreamResult sortie = new StreamResult(new File(rougeTempFilePath + File.separator + "settings" + getModel().getTaskID() + processID + ".xml"));
-    	transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
-    	transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-    	transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-    	
-    	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    	transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-    	
-    	transformer.transform(source, sortie);	
+		for (int multiCorpusId = 0; multiCorpusId < getModel().getMultiCorpusModels().size(); multiCorpusId++) {
+			for (int corpusId : getModel().getProcess().get(processID).getListCorpusId()) {
+				Element process = document.createElement("EVAL");
+				process.setAttribute("ID", "CORPUS_" + corpusId);
+				Element modelRoot = document.createElement("MODEL-ROOT");
+				modelRoot.appendChild(document.createTextNode(rougeTempFilePath + File.separator + this.modelRoot));
+				process.appendChild(modelRoot);
+
+				Element peerRoot = document.createElement("PEER-ROOT");
+				peerRoot.appendChild(document.createTextNode(rougeTempFilePath + File.separator + this.peerRoot));
+				process.appendChild(peerRoot);
+
+				Element inputFormat = document.createElement("INPUT-FORMAT");
+				inputFormat.setAttribute("TYPE", "SEE");
+				process.appendChild(inputFormat);
+
+				Element peers = document.createElement("PEERS");
+
+				Element generatedSummary = document.createElement("P");
+				generatedSummary.setAttribute("ID",
+						String.valueOf(processID));
+				generatedSummary.appendChild(document.createTextNode("T" + getModel().getTaskID() + "_" + processID
+						+ "_" + multiCorpusId + "_" + corpusId + ".html"));
+				peers.appendChild(generatedSummary);
+
+				process.appendChild(peers);
+
+				Element models = document.createElement("MODELS");
+
+				for (String modelSummaryName : getModel().getMultiCorpusModels().get(multiCorpusId).get(corpusId)
+						.getSummaryNames()) {
+					Element modelSummary = document.createElement("M");
+					modelSummary.setAttribute("ID", String.valueOf(multiCorpusId) + String.valueOf(corpusId));
+					modelSummary.appendChild(document.createTextNode(modelSummaryName.replace(".txt", "") + ".html"));
+					models.appendChild(modelSummary);
+				}
+
+				process.appendChild(models);
+
+				rootNode.appendChild(process);
+			}
+		}
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		StreamResult sortie = new StreamResult(new File(
+				rougeTempFilePath + File.separator + "settings" + getModel().getTaskID() + processID + ".xml"));
+		transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+		transformer.transform(source, sortie);
 	}
-	
+
 	public static void inheritIO(final InputStream src, final PrintStream dest) throws InterruptedException {
-	    new Thread(new Runnable() {
-	        public void run() {
-	            Scanner sc = new Scanner(src);
-	            while (sc.hasNextLine()) {
-	                dest.println(sc.nextLine());
-	            }
-	            sc.close();
-	        }
-	    }).join();
+		new Thread(new Runnable() {
+			public void run() {
+				Scanner sc = new Scanner(src);
+				while (sc.hasNextLine()) {
+					dest.println(sc.nextLine());
+				}
+				sc.close();
+			}
+		}).join();
 	}
 
 	public String getRougePath() {

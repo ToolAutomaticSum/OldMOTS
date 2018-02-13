@@ -14,14 +14,14 @@ public class LearningModel extends AbstractModel {
 	public void run() {
 		try {
 			loadMultiCorpusModels();
-			
+
 			Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
 			while (preProIt.hasNext()) {
 				AbstractPreProcess p = preProIt.next();
 				p.setModel(this);
 				p.init();
 			}
-			
+
 			Iterator<MultiCorpus> multiCorpusIt = getMultiCorpusModels().iterator();
 			while (multiCorpusIt.hasNext()) {
 				currentMultiCorpus = multiCorpusIt.next();
@@ -35,16 +35,16 @@ public class LearningModel extends AbstractModel {
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
 					p.finish();
-				}				
+				}
 
 				System.out.println(currentMultiCorpus);
 			}
-			
+
 			multiCorpusIt = getMultiCorpusModels().iterator();
 			while (multiCorpusIt.hasNext()) {
-				currentMultiCorpus = multiCorpusIt.next();		
+				currentMultiCorpus = multiCorpusIt.next();
 				System.out.println("MultiCorpus : " + currentMultiCorpus.getiD());
-				
+
 				Iterator<AbstractProcess> proIt = getProcess().iterator();
 				while (proIt.hasNext()) {
 					long time = System.currentTimeMillis();
@@ -57,8 +57,7 @@ public class LearningModel extends AbstractModel {
 					System.out.println(System.currentTimeMillis() - time);
 				}
 			}
-		}
-		catch (LacksOfFeatures e) {
+		} catch (LacksOfFeatures e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,7 +65,6 @@ public class LearningModel extends AbstractModel {
 	}
 
 	/**
-	 * Traitement du AbstractProcess p sur le MultiCorpus
 	 * @param multiCorpus
 	 * @param p
 	 * @throws Exception

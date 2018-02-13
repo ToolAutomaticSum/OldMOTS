@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import liasd.asadera.model.task.process.AbstractProcess;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 
-public abstract class AbstractSelectionMethod extends ParametrizedMethod {
+public abstract class AbstractSelectionMethod extends ParameterizedMethod {
 
 	protected AbstractProcess currentProcess;
 
@@ -18,17 +18,16 @@ public abstract class AbstractSelectionMethod extends ParametrizedMethod {
 	}
 
 	public abstract AbstractSelectionMethod makeCopy() throws Exception;
-	
-	//TODO virer initCopy et mettre dans makeCopy without abstract;
+
 	protected void initCopy(AbstractSelectionMethod p) {
 		p.setCurrentProcess(currentProcess);
 		if (supportADN != null)
 			p.setSupportADN(new HashMap<String, Class<?>>(supportADN));
 		p.setModel(model);
 	}
-	
+
 	public abstract void initADN() throws Exception;
-	
+
 	public abstract List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception;
 
 	public AbstractProcess getCurrentProcess() {
@@ -38,10 +37,10 @@ public abstract class AbstractSelectionMethod extends ParametrizedMethod {
 	public void setCurrentProcess(AbstractProcess currentProcess) {
 		this.currentProcess = currentProcess;
 	}
-	
-	@Override
-	public abstract boolean isOutCompatible(ParametrizedMethod compatibleMethod);
 
 	@Override
-	public abstract void setCompatibility(ParametrizedMethod compMethod);
+	public abstract boolean isOutCompatible(ParameterizedMethod compatibleMethod);
+
+	@Override
+	public abstract void setCompatibility(ParameterizedMethod compMethod);
 }

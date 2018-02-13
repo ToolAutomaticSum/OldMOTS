@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
 import liasd.asadera.model.task.process.selectionMethod.scorer.Scorer;
 import liasd.asadera.optimize.SupportADNException;
@@ -21,11 +21,11 @@ public class BigramComparisonEvaluation extends Scorer implements SentenceNGramB
 
 	private List<double[]> listCorpusOcc;
 	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
-	
+
 	public BigramComparisonEvaluation(AbstractSelectionMethod method) throws SupportADNException {
 		super(method);
 
-		listParameterIn.add(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
+		listParameterIn.add(new ParameterizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
 	}
 
 	@Override
@@ -41,38 +41,33 @@ public class BigramComparisonEvaluation extends Scorer implements SentenceNGramB
 			else {
 				Map<NGram, Double> occ = new TreeMap<NGram, Double>();
 				for (SentenceModel sent : summary) {
-					Set <NGram> curr_ngrams_list = ngrams_in_sentences.get(sent);
+					Set<NGram> curr_ngrams_list = ngrams_in_sentences.get(sent);
 					for (NGram ng : curr_ngrams_list)
-							if (occ.containsKey(ng))
-								occ.put(ng, occ.get(ng) + 1.);
-							else
-								occ.put(ng, 1.);
+						if (occ.containsKey(ng))
+							occ.put(ng, occ.get(ng) + 1.);
+						else
+							occ.put(ng, 1.);
 				}
-				
+
 				double score = 0;
-				for (NGram ng : occ.keySet()) {
-					int nbCorpusNGramPresent;
-					for (double[] c : listCorpusOcc);
-				}
 				summary.setScore(score);
 				return score;
 			}
-		}
-		else
+		} else
 			return 0;
 	}
 
 	private void computeCorpusDistributions() {
 		for (Corpus corpus : method.getCurrentProcess().getCurrentMultiCorpus()) {
-			Map<NGram, Double> sourceOccurences = new TreeMap <NGram, Double>();
-			
+			Map<NGram, Double> sourceOccurences = new TreeMap<NGram, Double>();
+
 			for (TextModel text : corpus)
 				for (SentenceModel sen : text) {
 					List<NGram> curr_ngrams_list = new ArrayList<NGram>(ngrams_in_sentences.get(sen));
 					for (NGram ng : curr_ngrams_list)
-						if (!sourceOccurences.containsKey(ng))//If ng not already counted, put 1
+						if (!sourceOccurences.containsKey(ng))// If ng not already counted, put 1
 							sourceOccurences.put(ng, 1.);
-						else //If ng already counted, add 1
+						else // If ng already counted, add 1
 							sourceOccurences.put(ng, sourceOccurences.get(ng) + 1.);
 				}
 			double[] corpusOcc = new double[sourceOccurences.size()];
@@ -84,7 +79,7 @@ public class BigramComparisonEvaluation extends Scorer implements SentenceNGramB
 			listCorpusOcc.add(corpusOcc);
 		}
 	}
-	
+
 	@Override
 	public void setSentenceNGram(Map<SentenceModel, Set<NGram>> ngrams_in_sentences) {
 		this.ngrams_in_sentences = ngrams_in_sentences;

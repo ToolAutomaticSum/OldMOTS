@@ -14,8 +14,8 @@ import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracterist
 import liasd.asadera.model.task.process.caracteristicBuilder.hLDA.HierarchicalLDA.NCRPNode;
 import liasd.asadera.model.task.process.caracteristicBuilder.hLDA.HldaCaracteristicBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
@@ -24,12 +24,13 @@ import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.tools.Pair;
 import liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
-public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<WordIndex>, SentenceCaracteristicBasedIn, HldaCaracteristicBasedIn {
+public class PathSum extends AbstractSelectionMethod
+		implements IndexBasedIn<WordIndex>, SentenceCaracteristicBasedIn, HldaCaracteristicBasedIn {
 
 	protected Map<SentenceModel, Object> sentenceCaracteristic;
 	protected Map<SentenceModel, double[]> sentenceLevelDistribution;
 	protected Map<NCRPNode, double[]> topicWordDistribution;
-	
+
 	protected Index<WordIndex> index;
 	protected Map<Integer, Integer> mapId_Path;
 	protected Map<Integer, NCRPNode> mapPath_Node;
@@ -37,22 +38,22 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 	protected Set<SentenceModel> availableSentence;
 	private Set<SentenceModel> summary;
 	protected Set<Integer> alreadySeenWord;
-	
+
 	protected double[] docPathDistribution;
 	protected double[] sumPathDistribution;
 	protected int numLevels;
 	protected int nbDimension;
-	
+
 	private int size = 100;
 	private SimilarityMetric sim;
-	
+
 	public PathSum(int id) throws SupportADNException {
 		super(id);
 
-		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
-		listParameterIn.add(new ParametrizedType(NCRPNode[].class, Map.class, SentenceCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[].class, SentenceModel.class, HldaCaracteristicBasedIn.class));
-		listParameterIn.add(new ParametrizedType(double[].class, NCRPNode.class, HldaCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParameterizedType(NCRPNode[].class, Map.class, SentenceCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[].class, SentenceModel.class, HldaCaracteristicBasedIn.class));
+		listParameterIn.add(new ParameterizedType(double[].class, NCRPNode.class, HldaCaracteristicBasedIn.class));
 	}
 
 	@Override
@@ -65,14 +66,14 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 	@Override
 	public void initADN() throws Exception {
 		size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
-		
+
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
-		
-		sim = SimilarityMetric.instanciateSentenceSimilarity(/*this,*/ similarityMethod);	
+
+		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);
 	}
-	
+
 	private void init() {
-		numLevels = ((NCRPNode[])sentenceCaracteristic.values().iterator().next()).length;
+		numLevels = ((NCRPNode[]) sentenceCaracteristic.values().iterator().next()).length;
 		nbDimension = 0;
 		availableSentence = new TreeSet<SentenceModel>(sentenceCaracteristic.keySet());
 		alreadySeenWord = new TreeSet<Integer>();
@@ -87,7 +88,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 				mapPath_Node.put(pathId, node);
 				pathId++;
 			}
-		
+
 		docPathDistribution = new double[nbDimension];
 		sumPathDistribution = new double[nbDimension];
 	}
@@ -98,21 +99,18 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 		int summarySize = 0;
 		while (summarySize <= size && availableSentence.size() > 0) {
 			Iterator<SentenceModel> itSen = availableSentence.iterator();
-			while(itSen.hasNext()) {
+			while (itSen.hasNext()) {
 				SentenceModel sent = itSen.next();
 				if (summarySize + sent.getNbMot() > size)
 					itSen.remove();
 			}
-//			System.out.println("Summary size : " + summarySize);
-//			System.out.println(("NbAvailableSentence : " + availableSentence.size()));
 			SentenceModel sen = selectNextSentence();
 			if (sen != null) {
 				summary.add(sen);
 				summarySize += sen.getNbMot();
-				availableSentence.remove(sen); //Reduction proba mots dans phrase;
+				availableSentence.remove(sen);
 				for (WordIndex word : sen)
-//					if (getCurrentProcess().getFilter().passFilter(word))
-						alreadySeenWord.add(word.getiD()); //index.getKeyId(word.getmLemma())
+					alreadySeenWord.add(word.getiD());
 			}
 		}
 
@@ -125,20 +123,20 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 		List<Pair<Integer, Double>> listPath = selectNextPath(docPathDistribution, sumPathDistribution, summary.size());
 
 		List<SentenceModel> sentencesInPath = new ArrayList<SentenceModel>();
-		
+
 		NCRPNode node = mapPath_Node.get(listPath.get(0).getKey());
-		
+
 		for (SentenceModel sen : availableSentence)
-			if (((NCRPNode[])sentenceCaracteristic.get(sen))[numLevels-1] == node)
+			if (((NCRPNode[]) sentenceCaracteristic.get(sen))[numLevels - 1] == node)
 				sentencesInPath.add(sen);
-		
+
 		if (sentencesInPath.size() == 0) {
 			int iPath = 1;
-			while (sentencesInPath.size() == 0 && iPath<listPath.size()) {
+			while (sentencesInPath.size() == 0 && iPath < listPath.size()) {
 				node = mapPath_Node.get(listPath.get(0).getKey());
-			
+
 				for (SentenceModel sen : availableSentence)
-					if (((NCRPNode[])sentenceCaracteristic.get(sen))[numLevels-1] == node)
+					if (((NCRPNode[]) sentenceCaracteristic.get(sen))[numLevels - 1] == node)
 						sentencesInPath.add(sen);
 				iPath++;
 			}
@@ -147,7 +145,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 				return null;
 			}
 		}
-		
+
 		NCRPNode[] path = new NCRPNode[numLevels];
 		for (int level = numLevels - 1; level >= 0; level--) {
 			path[level] = node;
@@ -158,73 +156,71 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 		double[][] weightedTopicDistribution = new double[numLevels][index.size()];
 		double[][] weightedWordDistribution = new double[index.size()][numLevels];
 		double[][] weightedSentenceDistribution = new double[sentencesInPath.size()][numLevels];
-		double priorTopic = 1.0/topicWordDistribution.size();
-		
-		for (int level=0; level<numLevels; level++) {
+		double priorTopic = 1.0 / topicWordDistribution.size();
+
+		for (int level = 0; level < numLevels; level++) {
 			for (SentenceModel sen : sentencesInPath)
 				averageThetaS[level] += sentenceLevelDistribution.get(sen)[level];
 			averageThetaS[level] /= sentencesInPath.size();
 		}
-		
-		for (int level=0; level<numLevels; level++) {
+
+		for (int level = 0; level < numLevels; level++) {
 			NCRPNode topic = path[level];
-			for (int tokenId=0; tokenId<index.size(); tokenId++)
-				weightedTopicDistribution[level][tokenId] += averageThetaS[level] * topicWordDistribution.get(topic)[tokenId];
+			for (int tokenId = 0; tokenId < index.size(); tokenId++)
+				weightedTopicDistribution[level][tokenId] += averageThetaS[level]
+						* topicWordDistribution.get(topic)[tokenId];
 		}
 
-		for (int tokenId=0; tokenId<index.size(); tokenId++)
-			for (int level=0; level<numLevels; level++)
-				weightedWordDistribution[tokenId][level] = weightedTopicDistribution[level][tokenId]*priorTopic/index.get(tokenId).getWeight();
-		
+		for (int tokenId = 0; tokenId < index.size(); tokenId++)
+			for (int level = 0; level < numLevels; level++)
+				weightedWordDistribution[tokenId][level] = weightedTopicDistribution[level][tokenId] * priorTopic
+						/ index.get(tokenId).getWeight();
+
 		int currSen = 0;
 		for (SentenceModel sen : sentencesInPath) {
 			for (WordIndex word : sen) {
-//				if (getCurrentProcess().getFilter().passFilter(word)) {
-					int tokenId = word.getiD(); //index.getKeyId(word.getmLemma());
-					for (int level=0; level<numLevels; level++)
-						weightedSentenceDistribution[currSen][level] += (alreadySeenWord.contains(tokenId)) ? weightedWordDistribution[tokenId][level]/2 : weightedWordDistribution[tokenId][level];
+				int tokenId = word.getiD();
+				for (int level = 0; level < numLevels; level++)
+					weightedSentenceDistribution[currSen][level] += (alreadySeenWord.contains(tokenId))
+							? weightedWordDistribution[tokenId][level] / 2
+							: weightedWordDistribution[tokenId][level];
 			}
 			currSen++;
 		}
-		
+
 		int bestSen = -1;
 		double bestProba = 0;
-		for (currSen=0; currSen<sentencesInPath.size(); currSen++)
-			for (int level=0; level<numLevels; level++)
+		for (currSen = 0; currSen < sentencesInPath.size(); currSen++)
+			for (int level = 0; level < numLevels; level++)
 				if (weightedSentenceDistribution[currSen][level] > bestProba) {
 					bestSen = currSen;
 					bestProba = weightedSentenceDistribution[currSen][level];
 				}
-		
+
 		return sentencesInPath.get(bestSen);
 	}
-	
+
 	private List<Pair<Integer, Double>> selectNextPath(double[] p, double[] q, int qNbAlloc) throws Exception {
 		List<Pair<Integer, Double>> listPath = new ArrayList<Pair<Integer, Double>>();
-		for (int i=0; i<nbDimension; i++) {
-			q[i] = (qNbAlloc==0 ? 1 : (q[i]*qNbAlloc + 1)/qNbAlloc);
+		for (int i = 0; i < nbDimension; i++) {
+			q[i] = (qNbAlloc == 0 ? 1 : (q[i] * qNbAlloc + 1) / qNbAlloc);
 			listPath.add(new Pair<Integer, Double>(i, sim.computeSimilarity(p, q)));
-//			if (current < bestDiv) {
-//				bestDiv = current;
-//				path = i;
-//			}
-			q[i] = (qNbAlloc==0 ? 0 : (q[i]*qNbAlloc - 1)/qNbAlloc);
+			q[i] = (qNbAlloc == 0 ? 0 : (q[i] * qNbAlloc - 1) / qNbAlloc);
 		}
 		Collections.sort(listPath);
-		//Collections.reverse(listPath);
 		return listPath;
 	}
-	
+
 	private void buildPathDistribution(Set<SentenceModel> listSentence, double[] pathDistribution) {
 		int nbPath = listSentence.size();
 		Arrays.fill(pathDistribution, 0.0);
-		if (nbPath != 0){
-			for(SentenceModel sen : listSentence) {
-				NCRPNode path = ((NCRPNode[])sentenceCaracteristic.get(sen))[numLevels-1];
+		if (nbPath != 0) {
+			for (SentenceModel sen : listSentence) {
+				NCRPNode path = ((NCRPNode[]) sentenceCaracteristic.get(sen))[numLevels - 1];
 				pathDistribution[mapId_Path.get(path.nodeID)]++;
 			}
-			for(int i=0; i<pathDistribution.length; i++)
-				pathDistribution[i]/=nbPath;
+			for (int i = 0; i < pathDistribution.length; i++)
+				pathDistribution[i] /= nbPath;
 		}
 	}
 
@@ -232,7 +228,7 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 	public void setIndex(Index<WordIndex> index) {
 		this.index = index;
 	}
-	
+
 	@Override
 	public void setSentenceLevelDistribution(Map<SentenceModel, double[]> sentenceLevelDistribution) {
 		this.sentenceLevelDistribution = sentenceLevelDistribution;
@@ -244,12 +240,12 @@ public class PathSum extends AbstractSelectionMethod implements IndexBasedIn<Wor
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
 		return false;
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import liasd.asadera.model.task.process.caracteristicBuilder.hLDA.HierarchicalLD
 import liasd.asadera.textModeling.SentenceModel;
 
 public interface HldaCaracteristicBasedOut {
-	
+
 	public Map<SentenceModel, double[]> getSentenceLevelDistribution();
-	
+
 	public Map<NCRPNode, double[]> getTopicWordDistribution();
 }

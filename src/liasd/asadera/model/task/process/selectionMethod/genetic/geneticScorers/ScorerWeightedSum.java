@@ -12,23 +12,23 @@ import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class ScorerWeightedSum extends GeneticIndividualScorer {
-	
-	private HashMap <GeneticIndividualScorer, Double> scorers;
-	
-	public ScorerWeightedSum(HashMap <GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss, Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight, Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
+
+	private HashMap<GeneticIndividualScorer, Double> scorers;
+
+	public ScorerWeightedSum(HashMap<GeneticIndividualScorer, Double> scorers, ArrayList<SentenceModel> ss,
+			Corpus corpus, InvertedIndex<WordIndex> invertedIndex, Index<WordIndex> index, Double divWeight,
+			Double delta, Double firstSentenceConceptsFactor, Integer window, Double fsc_factor) {
 		super(scorers, ss, corpus, null, null, null, null, null, null, null);
 	}
-	
-	
+
 	@Override
 	public double computeScore(GeneticIndividual gi) {
 		double sum = 0;
-		
-		for (Entry <GeneticIndividualScorer, Double> scorer : this.scorers.entrySet())
-		{
+
+		for (Entry<GeneticIndividualScorer, Double> scorer : this.scorers.entrySet()) {
 			sum += scorer.getValue() * scorer.getKey().computeScore(gi);
 		}
-		
+
 		return sum;
 	}
 

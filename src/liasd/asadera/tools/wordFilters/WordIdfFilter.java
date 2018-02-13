@@ -8,24 +8,22 @@ public class WordIdfFilter extends WordFilter {
 
 	private double threshold;
 	private Index<WordIndex> index;
-	
-	public WordIdfFilter (Index<WordIndex> dico, double absoluteThreshold) throws Exception
-	{
+
+	public WordIdfFilter(Index<WordIndex> dico, double absoluteThreshold) throws Exception {
 		if (dico.values().toArray()[0].getClass() == WordIndex.class) {
 			this.threshold = absoluteThreshold;
 			this.index = dico;
-		}
-		else
+		} else
 			throw new Exception("WordIdfFilter need TfIdf process !");
 	}
-	
+
 	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public boolean passFilter(WordModel w) {
-		
-		if (((WordIndex)this.index.get(w.getmLemma())).getIdf(index.getNbDocument()) > this.threshold)
+
+		if (((WordIndex) this.index.get(w.getmLemma())).getIdf(index.getNbDocument()) > this.threshold)
 			return true;
 		return false;
 	}
-	
+
 }

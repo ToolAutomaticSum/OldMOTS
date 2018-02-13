@@ -2,52 +2,29 @@ package liasd.asadera.textModeling.wordIndex;
 
 import java.util.HashMap;
 
-/**
- * change extends to list instead of arraylist ?
- * voir pour ajouter <T>
- * @author valnyz
- *
- */
-public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<WordIndex> {
-	
-	//private static int count = 0;
+public class WordIndex implements Comparable<WordIndex> {
+
 	private int iD;
 	private double weight;
 	private int nbDocumentWithWordSeen;
-	
-	//public static void reset() {count = 0;}
-	
+
 	protected String word;
 	private int nbOccurence = 0;
-//	protected Index<?> index;
-	
-	/**
-	 * Tf et Idf par documents : Key = idCorpus
-	 */
+
 	protected HashMap<Integer, Integer> docOccurences = new HashMap<Integer, Integer>();
 	protected HashMap<Integer, Integer> corpusOccurences = new HashMap<Integer, Integer>();
 
 	public WordIndex() {
 		super();
-//		index = null;
-		//iD = count++;
 	}
-	
-//	public WordIndex(Index<?> index) {
-//		super();
-//		this.index = index;
-//		//iD = count++;
-//	}
-	
-	public WordIndex(String word, /*Index<?> index,*/ int nbDocumentWithWordSeen) {
+
+	public WordIndex(String word, int nbDocumentWithWordSeen) {
 		this.nbDocumentWithWordSeen = nbDocumentWithWordSeen;
 	}
-	
-	public WordIndex(String word/*, Index<?> index*/) {
+
+	public WordIndex(String word) {
 		super();
 		this.word = word;
-//		this.index = index;
-		//iD = count++;
 	}
 
 	public Integer getiD() {
@@ -65,7 +42,7 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	public HashMap<Integer, Integer> getCorpusOccurences() {
 		return corpusOccurences;
 	}
-	
+
 	public String getWord() {
 		return word;
 	}
@@ -74,53 +51,42 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 		this.word = word;
 	}
 
-//	public Index<?> getIndex() {
-//		return index;
-//	}
-//
-//	public void setIndex(Index<?> index) {
-//		this.index = index;
-//	}
-	
 	public void addDocumentOccurence(int idCorpus, int idDoc) {
 		nbOccurence++;
 		if (!corpusOccurences.containsKey(idCorpus))
 			corpusOccurences.put(idCorpus, 1);
 		else
-			corpusOccurences.put(idCorpus, corpusOccurences.get(idCorpus)+1);
+			corpusOccurences.put(idCorpus, corpusOccurences.get(idCorpus) + 1);
 		if (!docOccurences.containsKey(idDoc))
 			docOccurences.put(idDoc, 1);
 		else
-			docOccurences.put(idDoc, docOccurences.get(idDoc)+1);
+			docOccurences.put(idDoc, docOccurences.get(idDoc) + 1);
 	}
-	
+
 	public double getTfDocument(int idDoc) {
-		return (double)docOccurences.get(idDoc);
+		return (double) docOccurences.get(idDoc);
 	}
-	
+
 	public double getTfCorpus(int idCorpus) {
-		return (double)corpusOccurences.get(idCorpus);
+		return (double) corpusOccurences.get(idCorpus);
 	}
-	
+
 	public int getNbOccurence() {
 		return nbOccurence;
 	}
-	
+
 	public double getIdf(int nbDocument) {
-		/**
-		 * Smooth IDF (1+log à la place de log simple) si rencontre de mot inconnu du dictionnaire
-		 */
-		return Math.log(nbDocument/*index.getNbDocument()*//getNbDocumentWithWordSeen());
+		return Math.log(nbDocument / getNbDocumentWithWordSeen());
 	}
-	
+
 	public double getTf() {
-		return (double)getNbOccurence();
+		return (double) getNbOccurence();
 	}
-	
+
 	public int getNbDocumentWithWordSeen() {
-		return nbDocumentWithWordSeen+docOccurences.size();
+		return nbDocumentWithWordSeen + docOccurences.size();
 	}
-	
+
 	public double getWeight() {
 		return weight;
 	}
@@ -128,15 +94,15 @@ public class WordIndex /*extends ArrayList<WordModel>*/ implements Comparable<Wo
 	public void setWeight(double weight) {
 		this.weight = weight;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o.getClass() != this.getClass())
 			return false;
 		WordIndex wi = (WordIndex) o;
-		return iD == wi.getiD() ;
+		return iD == wi.getiD();
 	}
-	
+
 	@Override
 	public String toString() {
 		return word;

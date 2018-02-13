@@ -13,19 +13,17 @@ import liasd.asadera.tools.wordFilters.WordStopListFilter;
 public class StopWordsRemover extends AbstractPreProcess {
 
 	WordStopListFilter filter;
-	
-	/**
-	 * ProcessOption lié StopWordListPath, String.
-	 */
+
 	public StopWordsRemover(int id) {
 		super(id);
 	}
-	
+
 	@Override
 	public void init() throws LacksOfFeatures {
-			filter = new WordStopListFilter(getModel().getProcessOption(id, "StopWordListPath") + File.separator + getModel().getLanguage() + "StopWords.txt");
+		filter = new WordStopListFilter(getModel().getProcessOption(id, "StopWordListPath") + File.separator
+				+ getModel().getLanguage() + "StopWords.txt");
 	}
-	
+
 	@Override
 	public void process() {
 		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
@@ -37,11 +35,11 @@ public class StopWordsRemover extends AbstractPreProcess {
 			}
 		}
 	}
-	
+
 	@Override
 	public void finish() {
 	}
-	
+
 	public void removeGramWords(TextModel textModel) {
 		for (SentenceModel sen : textModel)
 			for (WordModel word : sen.getListWordModel())

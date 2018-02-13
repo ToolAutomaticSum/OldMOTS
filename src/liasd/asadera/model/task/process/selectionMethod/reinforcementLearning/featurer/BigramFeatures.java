@@ -5,8 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
-import liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.model.task.process.selectionMethod.reinforcementLearning.ReinforcementLearning;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.SentenceModel;
@@ -20,11 +19,11 @@ public class BigramFeatures extends Featurer implements IndexBasedIn<NGram> {
 	private List<WordIndex> topTfIdf;
 	private int maxLength;
 	private int nbWord;
-	
+
 	public BigramFeatures(ReinforcementLearning rl) throws SupportADNException {
 		super(rl);
 
-		listParameterIn.add(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class));
+		listParameterIn.add(new ParameterizedType(NGram.class, Index.class, IndexBasedIn.class));
 	}
 
 	@Override
@@ -32,13 +31,14 @@ public class BigramFeatures extends Featurer implements IndexBasedIn<NGram> {
 		nbWord = Integer.parseInt(rl.getCurrentProcess().getModel().getProcessOption(rl.getId(), "NbWord"));
 		int corpusId = rl.getCurrentProcess().getCorpusToSummarize().getiD();
 		this.maxLength = maxLength;
-		
+
 		topTfIdf = new ArrayList<WordIndex>(indexNG.values());
-		Collections.sort(topTfIdf, (a, b) -> -Double.compare(a.getTfCorpus(corpusId)*a.getIdf(indexNG.getNbDocument()),
-															 b.getTfCorpus(corpusId)*b.getIdf(indexNG.getNbDocument())));
-		topTfIdf = topTfIdf.subList(0, nbWord-1);
+		Collections.sort(topTfIdf,
+				(a, b) -> -Double.compare(a.getTfCorpus(corpusId) * a.getIdf(indexNG.getNbDocument()),
+						b.getTfCorpus(corpusId) * b.getIdf(indexNG.getNbDocument())));
+		topTfIdf = topTfIdf.subList(0, nbWord - 1);
 	}
-	
+
 	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public double[] getFeatures(List<SentenceModel> summary) {
@@ -48,21 +48,21 @@ public class BigramFeatures extends Featurer implements IndexBasedIn<NGram> {
 		for (SentenceModel sen : summary) {
 			for (WordIndex ng : sen) {
 				int indexOf = topTfIdf.indexOf(indexNG.get(ng.getWord()));
-				if(indexOf != -1) {
+				if (indexOf != -1) {
 					features[indexOf]++;
 					redundancy[indexOf]++;
 					features[nbWord]++;
 				}
 			}
 			length += sen.getNbMot();
-			features[nbWord + 3] += 1.0/(double)sen.getPosition();
+			features[nbWord + 3] += 1.0 / (double) sen.getPosition();
 		}
-		for (int i=0; i<nbWord; i++)
-			features[nbWord + 1] += 2*(redundancy[i] - Math.min(redundancy[i], 1));
-		features[nbWord + 2] = length/maxLength;
+		for (int i = 0; i < nbWord; i++)
+			features[nbWord + 1] += 2 * (redundancy[i] - Math.min(redundancy[i], 1));
+		features[nbWord + 2] = length / maxLength;
 		return features;
 	}
-	
+
 	@Override
 	public double[] instanciateVector() {
 		return new double[nbWord + 4 + 1];

@@ -6,19 +6,17 @@ import java.util.Map;
 import liasd.asadera.textModeling.SentenceModel;
 
 public class NodeGraphSentenceBased {
-	
-	private SentenceModel currentSentence; //vertices (i.e. nodes)
+
+	private SentenceModel currentSentence; // vertices (i.e. nodes)
 	private int idNode;
-	private Map<SentenceModel, Double> adjacentSentence = new HashMap<SentenceModel, Double>(); //edges (i.e. branch)
-	//Map<SentenceModel, double[]> sentenceCaracteristic;
-	
-	public NodeGraphSentenceBased(int iD, SentenceModel currentSentence/*, Map<SentenceModel, double[]> sentenceCaracteristic*/) {
+	private Map<SentenceModel, Double> adjacentSentence = new HashMap<SentenceModel, Double>(); // edges (i.e. branch)
+
+	public NodeGraphSentenceBased(int iD, SentenceModel currentSentence) {
 		super();
 		this.idNode = iD;
 		this.currentSentence = currentSentence;
-		//this.sentenceCaracteristic = sentenceCaracteristic;
 	}
-	
+
 	public void addAdjacentSentence(SentenceModel sentence, double weigth) {
 		adjacentSentence.put(sentence, weigth);
 	}

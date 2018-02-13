@@ -15,21 +15,19 @@ import liasd.asadera.textModeling.SentenceModel;
 public class SummarizeModel extends AbstractModel {
 
 	/**
-	 * Applique les PreProcess {@link #preProcess} sur les MultiCorpus {@link #multiCorpusModels}
-	 * Lance l'exécution des AbstractProcess dans {@link #process} sur les MultiCorpus {@link #multiCorpusModels}
 	 */
 	@Override
 	public void run() {
 		try {
 			loadMultiCorpusModels();
-			
+
 			Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
 			while (preProIt.hasNext()) {
 				AbstractPreProcess p = preProIt.next();
 				p.setModel(this);
 				p.init();
 			}
-			
+
 			Iterator<MultiCorpus> multiCorpusIt = getMultiCorpusModels().iterator();
 			while (multiCorpusIt.hasNext()) {
 				currentMultiCorpus = multiCorpusIt.next();
@@ -43,16 +41,16 @@ public class SummarizeModel extends AbstractModel {
 				while (preProIt.hasNext()) {
 					AbstractPreProcess p = preProIt.next();
 					p.finish();
-				}				
+				}
 
 				System.out.println(currentMultiCorpus);
 			}
-			
+
 			multiCorpusIt = getMultiCorpusModels().iterator();
 			while (multiCorpusIt.hasNext()) {
-				currentMultiCorpus = multiCorpusIt.next();		
+				currentMultiCorpus = multiCorpusIt.next();
 				System.out.println("MultiCorpus : " + currentMultiCorpus.getiD());
-				
+
 				Iterator<AbstractProcess> proIt = getProcess().iterator();
 				while (proIt.hasNext()) {
 					long time = System.currentTimeMillis();
@@ -64,10 +62,9 @@ public class SummarizeModel extends AbstractModel {
 					runProcess(currentMultiCorpus, p);
 					time = System.currentTimeMillis() - time;
 					System.out.println(time);
-					//String name = getName().split(File.separator)[0];
-					Writer w = new Writer(getOutputPath() + File.separator + getName().split(File.separator)[0] + File.separator + "process_time.txt");
+					Writer w = new Writer(getOutputPath() + File.separator + getName().split(File.separator)[0]
+							+ File.separator + "process_time.txt");
 					w.open(true);
-					//System.out.println(name);
 					w.write(getName().split(File.separator)[1] + "\t" + time + "\n");
 					w.close();
 				}
@@ -79,16 +76,14 @@ public class SummarizeModel extends AbstractModel {
 				getEvalRouge().process();
 				getEvalRouge().finish();
 			}
-		}
-		catch (LacksOfFeatures e) {
+		} catch (LacksOfFeatures e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Traitement du AbstractProcess p sur le MultiCorpus
 	 * @param multiCorpus
 	 * @param p
 	 * @throws Exception
@@ -96,11 +91,11 @@ public class SummarizeModel extends AbstractModel {
 	public void runProcess(MultiCorpus multiCorpus, SummarizeProcess p) throws Exception {
 		if (isMultiThreading()) {
 			int nbThreads = p.getListCorpusId().size();
-			
+
 			SummarizeProcess[] threads = new SummarizeProcess[nbThreads];
 
 			threads[0] = p;
-			for (int i=0; i<nbThreads; i++) {
+			for (int i = 0; i < nbThreads; i++) {
 				if (i != 0)
 					threads[i] = p.makeCopy();
 				threads[i].setCurrentMultiCorpus(new MultiCorpus(multiCorpus));
@@ -109,18 +104,13 @@ public class SummarizeModel extends AbstractModel {
 				threads[i].initADN();
 				threads[i].init();
 			}
-			for (int i=0; i<nbThreads; i++) {
+			for (int i = 0; i < nbThreads; i++) {
 				threads[i].start();
 			}
-			for (int i=0; i<nbThreads; i++) {
+			for (int i = 0; i < nbThreads; i++) {
 				threads[i].join();
 			}
-			/*for (int i : p.getListCorpusId()) {
-				setChanged();
-				notifyObservers("Corpus " + i + "\n" + SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i)));
-			}*/
-		}
-		else {
+		} else {
 			for (int i : p.getListCorpusId()) {
 				p.setCurrentMultiCorpus(multiCorpus);
 				p.setSummarizeIndex(i);
@@ -128,7 +118,8 @@ public class SummarizeModel extends AbstractModel {
 				p.process();
 				p.finish();
 				setChanged();
-				notifyObservers("Corpus " + i + "\n" + SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i)));
+				notifyObservers("Corpus " + i + "\n"
+						+ SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i)));
 			}
 		}
 	}

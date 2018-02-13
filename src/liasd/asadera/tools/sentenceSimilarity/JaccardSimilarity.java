@@ -11,9 +11,8 @@ public class JaccardSimilarity extends SimilarityMetric {
 
 	public JaccardSimilarity() {
 		super();
-//		listParameterIn.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
 	}
-	
+
 	@Override
 	public double computeSimilarity(Object s1, Object s2) throws Exception {
 		if (s1 instanceof double[]) {
@@ -29,13 +28,12 @@ public class JaccardSimilarity extends SimilarityMetric {
 				if (v1[i] != 0 || v2[i] != 0)
 					union++;
 			}
-			return (double)(intersection)/(double)union;
-		}
-		else if (s1 instanceof double[][])
+			return (double) (intersection) / (double) union;
+		} else if (s1 instanceof double[][])
 			throw new RuntimeException("Similarity Measure for vector only.");
 		else if (s1 instanceof double[][][])
 			throw new RuntimeException("Similarity Measure for vector only.");
-		throw new RuntimeException("4D vector can't be compute for now.");		
+		throw new RuntimeException("4D vector can't be compute for now.");
 	}
 
 	public double computeSimilarity(SentenceModel s1, SentenceModel s2) {
@@ -53,6 +51,6 @@ public class JaccardSimilarity extends SimilarityMetric {
 			if (!union.contains(w.getmLemma()))
 				union.add(w.getmLemma());
 		}
-		return (double)(intersection.size())/(double)(union.size());
+		return (double) (intersection.size()) / (double) (union.size());
 	}
 }

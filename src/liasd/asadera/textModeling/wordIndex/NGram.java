@@ -7,39 +7,31 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * TODO revoir certaine méthode issue de List afin de mieux lier word et listWord
+ * 
  * @author valnyz
  *
  */
 public class NGram extends WordIndex implements List<WordIndex> {
 
 	private List<WordIndex> listWord = new ArrayList<WordIndex>();
-	
+
 	public NGram() {
 		super();
 		word = "";
 	}
-	
-//	public NGram(Index<NGram> index) {
-//		super(index);
-//		word = "";
-//	}
-	
-	public NGram(String ngram/*, Index<NGram> index*/) {
-		super(ngram/*, index*/);
-//		word = "";
+
+	public NGram(String ngram) {
+		super(ngram);
 	}
-	
+
 	/**
-	 * Constructeur de copie
 	 * @param ng
 	 */
-	public NGram (NGram ng)	{
-		super(ng.getWord()/*, ng.getIndex()*/);
-//		word = ng.getWord();
+	public NGram(NGram ng) {
+		super(ng.getWord());
 		listWord.addAll(ng);
 	}
-	
+
 	@Override
 	public int compareTo(WordIndex o) {
 		if (o.getClass() != this.getClass())
@@ -47,57 +39,56 @@ public class NGram extends WordIndex implements List<WordIndex> {
 		NGram ngram = (NGram) o;
 		if (ngram.size() < this.size())
 			return 1;
-		if ( this.size() < ngram.size() )
+		if (this.size() < ngram.size())
 			return -1;
-		for (int i=0; i < this.size(); i++) {
-			if(!this.get(i).getiD().equals(ngram.get(i).getiD()))
+		for (int i = 0; i < this.size(); i++) {
+			if (!this.get(i).getiD().equals(ngram.get(i).getiD()))
 				return this.get(i).compareTo(ngram.get(i));
 		}
 		return 0;
 	}
-	
+
 	@Override
-	public boolean equals (Object o) {
+	public boolean equals(Object o) {
 		if (o.getClass() != this.getClass())
 			return false;
 		NGram ngram = (NGram) o;
-		if (ngram.size() != this.size() )
+		if (ngram.size() != this.size())
 			return false;
-		for (int i=0; i < this.size(); i++) {
-			if(!this.get(i).equals(ngram.get(i)))
+		for (int i = 0; i < this.size(); i++) {
+			if (!this.get(i).equals(ngram.get(i)))
 				return false;
 		}
 		return true;
 	}
-	
+
 	public void printNGram() {
 		for (WordIndex i : listWord) {
-			System.out.print(" | "+i);
+			System.out.print(" | " + i);
 		}
 	}
-	
+
 	public void removeLastGram() {
 		if (this.size() == 0)
 			return;
-		this.remove(this.size()-1);
+		this.remove(this.size() - 1);
 	}
-	
+
 	public void removeFirstGram() {
 		if (this.size() == 0)
 			return;
 		this.remove(0);
 	}
-	
+
 	@Override
 	public String toString() {
 		return super.toString();
 	}
-	
+
 	@Override
-    public int hashCode() {
+	public int hashCode() {
 		String word = "";
-		for (WordIndex w : this)
-		{
+		for (WordIndex w : this) {
 			word += w.getWord() + "_";
 		}
 		return word.hashCode();
@@ -105,13 +96,13 @@ public class NGram extends WordIndex implements List<WordIndex> {
 
 	@Override
 	public boolean add(WordIndex e) {
-		setWord(getWord() + " | "+ e.getWord());
+		setWord(getWord() + " | " + e.getWord());
 		return listWord.add(e);
 	}
 
 	@Override
 	public void add(int index, WordIndex element) {
-		setWord(getWord() + " | "+ element.getWord());
+		setWord(getWord() + " | " + element.getWord());
 		listWord.add(element);
 	}
 
@@ -119,7 +110,7 @@ public class NGram extends WordIndex implements List<WordIndex> {
 	public boolean addAll(Collection<? extends WordIndex> c) {
 		String s = "";
 		for (WordIndex w : c)
-			s+= " | " + w.getWord();
+			s += " | " + w.getWord();
 		setWord(getWord() + s);
 		return listWord.addAll(c);
 	}
@@ -223,6 +214,5 @@ public class NGram extends WordIndex implements List<WordIndex> {
 	public <T> T[] toArray(T[] a) {
 		return listWord.toArray(a);
 	}
-	
-	
+
 }

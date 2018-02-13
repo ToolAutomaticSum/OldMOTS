@@ -16,7 +16,7 @@ public class WordSplitter extends AbstractPreProcess {
 	public WordSplitter(int id) {
 		super(id);
 	}
-	
+
 	@Override
 	public void init() throws LacksOfFeatures {
 	}
@@ -32,33 +32,33 @@ public class WordSplitter extends AbstractPreProcess {
 			}
 		}
 	}
-	
+
 	@Override
 	public void finish() {
 	}
-	
+
 	private void splitSentenceIntoWord(TextModel textModel) {
 		Iterator<SentenceModel> sentenceIt = textModel.iterator();
 		while (sentenceIt.hasNext()) {
 			SentenceModel sentenceModel = sentenceIt.next();
 			String[] words = sentenceModel.getSentence().split(" ");
-			for (int i = 0;i<words.length;i++) {
+			for (int i = 0; i < words.length; i++) {
 				WordModel word = new WordModel();
 				word.setSentence(sentenceModel);
-				word.setWord(Tools.enleverPonctuation(words[i]));
+				word.setWord(Tools.removePonctuation(words[i]));
 				sentenceModel.getListWordModel().add(word);
-				textModel.setTextSize(textModel.getTextSize()+1);
+				textModel.setTextSize(textModel.getTextSize() + 1);
 			}
 		}
 	}
-	
+
 	public static List<String> splitSentenceIntoWord(String sentence) {
 		List<String> listOfWord = new ArrayList<String>();
-		
+
 		String[] words = sentence.split(" ");
 		if (words.length > 5) {
-			for (int i = 0;i<words.length;i++) {
-				listOfWord.add(Tools.enleverPonctuation(words[i]));
+			for (int i = 0; i < words.length; i++) {
+				listOfWord.add(Tools.removePonctuation(words[i]));
 			}
 		}
 		return listOfWord;

@@ -8,15 +8,15 @@ import liasd.asadera.optimize.SupportADNException;
 public abstract class AbstractPostProcess extends Individu implements AbstractTask {
 
 	protected AbstractProcess currentProcess;
-	
+
 	public AbstractPostProcess(int id) throws SupportADNException {
-		super(id);	
+		super(id);
 	}
-	
+
 	@Override
-	public void process() throws Exception {		
+	public void process() throws Exception {
 	}
-	
+
 	@Override
 	public abstract void finish() throws Exception;
 

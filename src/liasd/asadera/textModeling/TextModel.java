@@ -10,7 +10,7 @@ import java.util.ListIterator;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
 public class TextModel implements List<SentenceModel> {
-	
+
 	private List<SentenceModel> listSentenceModel = new ArrayList<SentenceModel>();
 
 	private static int iD = 0;
@@ -19,19 +19,19 @@ public class TextModel implements List<SentenceModel> {
 	protected String documentFilePath;
 	protected String textName;
 	protected List<String> labels = new ArrayList<String>();
-	
+
 	protected int textSize = 0;
 	protected String text = "";
 
 	protected int nbSentence;
-	
+
 	public TextModel(Corpus parentCorpus, String filePath) {
 		this.parentCorpus = parentCorpus;
 		iD++;
 		documentFilePath = filePath;
-		textName = documentFilePath.split(File.separator)[documentFilePath.split(File.separator).length-1];
+		textName = documentFilePath.split(File.separator)[documentFilePath.split(File.separator).length - 1];
 	}
-	
+
 	public TextModel(TextModel t) {
 		this.textID = t.getiD();
 		this.documentFilePath = t.getDocumentFilePath();
@@ -43,10 +43,9 @@ public class TextModel implements List<SentenceModel> {
 			SentenceModel sen = new SentenceModel(s);
 			sen.setText(this);
 			listSentenceModel.add(sen);
-			
 		}
 	}
-	
+
 	public String getDocumentFilePath() {
 		return documentFilePath;
 	}
@@ -62,7 +61,7 @@ public class TextModel implements List<SentenceModel> {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+
 	public SentenceModel getSentenceByID(int id) {
 		boolean notFind = true;
 		SentenceModel sen = null;
@@ -85,7 +84,7 @@ public class TextModel implements List<SentenceModel> {
 		}
 		return listSentence;
 	}
-	
+
 	public List<String> getStringSentence() {
 		List<String> listSentence = new ArrayList<String>();
 		for (SentenceModel s : this) {
@@ -94,7 +93,7 @@ public class TextModel implements List<SentenceModel> {
 		}
 		return listSentence;
 	}
-	
+
 	public int getNbSentence() {
 		return nbSentence;
 	}
@@ -110,12 +109,12 @@ public class TextModel implements List<SentenceModel> {
 	public void setTextSize(int textSize) {
 		this.textSize = textSize;
 	}
-	
+
 	@Override
 	public String toString() {
 		String str = "";
-		for (int i = 0; i<size(); i++) {
-			str+=get(i).toString() + "\n";
+		for (int i = 0; i < size(); i++) {
+			str += get(i).toString() + "\n";
 		}
 		return str;
 	}
@@ -138,7 +137,7 @@ public class TextModel implements List<SentenceModel> {
 			nbWord += p.getLength(filter);
 		return nbWord;
 	}
-	
+
 	public List<String> getLabels() {
 		return labels;
 	}
@@ -146,7 +145,7 @@ public class TextModel implements List<SentenceModel> {
 	public String getTextName() {
 		return textName;
 	}
-	
+
 	@Override
 	public boolean add(SentenceModel e) {
 		return listSentenceModel.add(e);

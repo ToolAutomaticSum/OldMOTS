@@ -8,8 +8,8 @@ import liasd.asadera.model.task.process.caracteristicBuilder.AbstractCaracterist
 import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedOut;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
@@ -18,19 +18,20 @@ import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.textModeling.wordIndex.WordVector;
 
-public class MeanVectorSentence extends AbstractCaracteristicBuilder implements IndexBasedIn<WordVector>, SentenceCaracteristicBasedOut {
+public class MeanVectorSentence extends AbstractCaracteristicBuilder
+		implements IndexBasedIn<WordVector>, SentenceCaracteristicBasedOut {
 
 	private int dimension;
 	private Index<WordVector> index;
-	protected Map<SentenceModel, Object>  sentenceCaracteristic;
-	
+	protected Map<SentenceModel, Object> sentenceCaracteristic;
+
 	public MeanVectorSentence(int id) throws SupportADNException {
 		super(id);
 
 		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
-		
-		listParameterIn.add(new ParametrizedType(WordVector.class, Index.class, IndexBasedIn.class));
-		listParameterOut.add(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedOut.class));
+
+		listParameterIn.add(new ParameterizedType(WordVector.class, Index.class, IndexBasedIn.class));
+		listParameterOut.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedOut.class));
 	}
 
 	@Override
@@ -48,29 +49,27 @@ public class MeanVectorSentence extends AbstractCaracteristicBuilder implements 
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) {
 		dimension = index.values().iterator().next().getDimension();
-		
+
 		for (Corpus corpus : listCorpus) {
 			for (TextModel text : corpus) {
 				for (SentenceModel sentenceModel : text) {
 					int nbWord = 0;
 					double[] sentenceVector = new double[dimension];
 					for (WordIndex wi : sentenceModel) {
-//						if (getCurrentProcess().getFilter().passFilter(wm)) {
-//							@SuppressWarnings("unlikely-arg-type")
-							WordVector word = (WordVector) wi; //index.get(wm.getmLemma());
-							for (int i=0; i<dimension; i++)
-								sentenceVector[i]+=word.getWordVector()[i];
-							nbWord++;
-//						}
+						WordVector word = (WordVector) wi; 
+						for (int i = 0; i < dimension; i++)
+							sentenceVector[i] += word.getWordVector()[i];
+						nbWord++;
+						// }
 					}
-					for (int i=0; i<dimension; i++)
-						sentenceVector[i]/=nbWord;
+					for (int i = 0; i < dimension; i++)
+						sentenceVector[i] /= nbWord;
 					sentenceCaracteristic.put(sentenceModel, sentenceVector);
 				}
 			}
 		}
 	}
-	
+
 	public void finish() {
 		sentenceCaracteristic.clear();
 	}
@@ -89,19 +88,21 @@ public class MeanVectorSentence extends AbstractCaracteristicBuilder implements 
 			throw new NullPointerException("Index is null.");
 		this.index = index;
 	}
-	
+
 	@Override
-	public Map<SentenceModel, Object>  getVectorCaracterisic() {
+	public Map<SentenceModel, Object> getVectorCaracterisic() {
 		return sentenceCaracteristic;
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
+		return compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
-		((SentenceCaracteristicBasedIn)compMethod).setCaracterisics(sentenceCaracteristic);;
+	public void setCompatibility(ParameterizedMethod compMethod) {
+		((SentenceCaracteristicBasedIn) compMethod).setCaracterisics(sentenceCaracteristic);
+		;
 	}
 }

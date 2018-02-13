@@ -9,9 +9,9 @@ public class SupportADNException extends Exception {
 
 	public SupportADNException() {
 		super("Individu need a support for his ADN.");
-	} 
+	}
 
-	public SupportADNException(String e){
+	public SupportADNException(String e) {
 		super("Individu need a support for his ADN : " + e);
-	} 
+	}
 }

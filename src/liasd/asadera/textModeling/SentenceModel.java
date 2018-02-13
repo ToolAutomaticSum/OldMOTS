@@ -16,30 +16,28 @@ import liasd.asadera.tools.wordFilters.WordFilter;
 public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel> {
 
 	private List<WordModel> listWordModel = new ArrayList<WordModel>();
-	
+
 	protected int n;
 	protected Map<Integer, List<WordIndex>> mapNGram;
-	
+
 	protected String sentence;
 	protected int nbMot;
-	//protected Set<NGram> listNGram;
 	protected int iD;
 	protected double score;
 	protected TextModel text;
-	
+
 	public SentenceModel(String sen) {
 		mapNGram = new HashMap<Integer, List<WordIndex>>();
 		sentence = sen;
 	}
-	
+
 	public SentenceModel(String sen, int iD, TextModel text) {
 		mapNGram = new HashMap<Integer, List<WordIndex>>();
 		sentence = sen;
 		this.iD = iD;
 		this.text = text;
 	}
-	
-	//TODO add copy of mapNGram
+
 	public SentenceModel(SentenceModel s) {
 		mapNGram = new HashMap<Integer, List<WordIndex>>();
 		this.sentence = s.toString();
@@ -51,14 +49,15 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 			listWordModel.add(word);
 		}
 	}
-	
+
 	public List<WordModel> getListWordModel() {
 		return listWordModel;
 	}
 
 	/**
 	 * 
-	 * @return Sentence as a list of lemme with  stopword notified with "%%" before them
+	 * @return Sentence as a list of lemme with stopword notified with "%%" before
+	 *         them
 	 */
 	public String getSentence() {
 		String txt = "";
@@ -70,7 +69,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		}
 		return txt;
 	}
-	
+
 	public String getRawSentence() {
 		String txt = "";
 		for (WordModel w : listWordModel)
@@ -82,14 +81,6 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		this.sentence = sentence;
 	}
 
-	/*public ArrayList<WordModel> getListWord() {
-		return listWord;
-	}
-
-	public void setListWord(ArrayList<WordModel> listWord) {
-		this.listWord = listWord;
-	}*/
-	
 	public int getiD() {
 		return iD;
 	}
@@ -98,14 +89,6 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		this.iD = iD;
 	}
 
-	/*public Caracteristic getCaracteristic() {
-		return caracteristic;
-	}
-
-	public void setCaracteristic(Caracteristic caracteristic) {
-		this.caracteristic = caracteristic;
-	}*/
-
 	/**
 	 * @return full sentence
 	 */
@@ -113,8 +96,8 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	public String toString() {
 		return sentence;
 	}
-	
-	public static String listSentenceModelToString (List<SentenceModel> list) {
+
+	public static String listSentenceModelToString(List<SentenceModel> list) {
 		String str = "";
 		int nbMot = 0;
 		for (SentenceModel sen : list)
@@ -127,7 +110,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		}
 		return str;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return (text.getParentCorpus().getiD() + "_" + iD).hashCode();
@@ -140,7 +123,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	public void setScore(double score) {
 		this.score = score;
 	}
-	
+
 	public void setN(int n) {
 		this.n = n;
 	}
@@ -151,31 +134,29 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 
 	@SuppressWarnings("unlikely-arg-type")
 	public static void getUnigram(SentenceModel sen, Index<WordIndex> index, WordFilter filter) {
-		List<WordIndex> ngrams_list = new ArrayList<WordIndex>() ;
+		List<WordIndex> ngrams_list = new ArrayList<WordIndex>();
 		for (WordModel u1 : sen.getListWordModel())
 			if (filter.passFilter(u1) && index.containsKey(u1.getmLemma()))
 				ngrams_list.add(index.get(u1.getmLemma()));
 		sen.setListWordIndex(1, ngrams_list);
 	}
-	
+
 	@SuppressWarnings("unlikely-arg-type")
-	public static void getListNGrams(SentenceModel sen, int n, Index<WordIndex> index, Index<NGram> indexNG, WordFilter filter) {
+	public static void getListNGrams(SentenceModel sen, int n, Index<WordIndex> index, Index<NGram> indexNG,
+			WordFilter filter) {
 		if (n == 1)
 			getUnigram(sen, index, filter);
 		else {
 			List<WordIndex> ngrams_list = new ArrayList<WordIndex>();
 			WordModel u;
-			for (int i = 0; i < sen.size() - n + 1; i++)
-			{
+			for (int i = 0; i < sen.size() - n + 1; i++) {
 				boolean cond = false;
-				boolean filtered = false; //Un stopWord par Ngram
+				boolean filtered = false;
 				NGram ng = new NGram();
 
-				for (int j = i; j < i + n; j++)
-				{
-					//System.out.println("j : "+j);
+				for (int j = i; j < i + n; j++) {
 					u = sen.getListWordModel().get(j);
-	
+
 					if (!filtered || (filtered && !filter.passFilter(u))) {
 						cond = true;
 						WordIndex w = index.get(u.getmLemma());
@@ -200,41 +181,33 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 					}
 					ngrams_list.add(ng);
 				}
-				//else
-					//System.out.println("Filtrée !");
 			}
 			sen.setListWordIndex(n, ngrams_list);
 		}
 	}
 
 	public List<WordIndex> getListWordIndex(int n) {
-		if (n<=0)
+		if (n <= 0)
 			return mapNGram.get(1);
 		else
 			return mapNGram.get(n);
 	}
-	
+
 	public void setListWordIndex(int n, Collection<? extends WordIndex> listWordIndex) {
 		this.mapNGram.put(n, new ArrayList<WordIndex>(listWordIndex));
 	}
-	
-//	public List<WordIndex> getNGrams(int n, Index<WordIndex> indexWord, Index<NGram> index) {
-//		if(listWordIndex == null)
-//			getListNGrams(n, indexWord, index);
-//		return (List<WordIndex>)listWordIndex.get(n);
-//	}
-	
+
 	public double getPosScore() {
 		if (text.size() > 1)
-			return (double)(text.size() - 1 - text.indexOf(this)) / (double)(text.size() - 1);
+			return (double) (text.size() - 1 - text.indexOf(this)) / (double) (text.size() - 1);
 		else
 			return 1;
 	}
-	
+
 	public int getPosition() {
-		return (text.indexOf(this)+1);
+		return (text.indexOf(this) + 1);
 	}
-	
+
 	public TextModel getText() {
 		return text;
 	}
@@ -243,9 +216,10 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		this.text = text;
 	}
 
-	
 	/**
-	 * Iterate words in sentence and if the word pass the filter, add it to the length
+	 * Iterate words in sentence and if the word pass the filter, add it to the
+	 * length
+	 * 
 	 * @return int, number of words of the sentence passing through the filter
 	 */
 	public int getLength(WordFilter filter) {
@@ -258,7 +232,9 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	}
 
 	/**
-	 * Return the length of the sentence via the preprocessing step (with stop words)
+	 * Return the length of the sentence via the preprocessing step (with stop
+	 * words)
+	 * 
 	 * @return int, length of the sentence with stop words
 	 */
 	public int getNbMot() {
@@ -268,7 +244,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	public void setNbMot(int nbMot) {
 		this.nbMot = nbMot;
 	}
-	
+
 	public List<String> getLabels() {
 		return text.getLabels();
 	}
@@ -401,7 +377,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		else
 			return 0;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

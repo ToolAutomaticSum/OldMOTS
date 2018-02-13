@@ -13,7 +13,7 @@ public abstract class AbstractMethod {
 		super();
 		this.id = id;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -21,7 +21,7 @@ public abstract class AbstractMethod {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public AbstractModel getModel() {
 		return model;
 	}

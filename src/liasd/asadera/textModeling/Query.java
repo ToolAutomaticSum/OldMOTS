@@ -11,7 +11,7 @@ public class Query {
 	public void setQuery(Object query) {
 		this.query = query;
 	}
-	
+
 	public void clear() {
 		query = null;
 	}

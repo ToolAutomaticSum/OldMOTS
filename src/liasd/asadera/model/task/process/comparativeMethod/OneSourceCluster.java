@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import liasd.asadera.model.task.process.caracteristicBuilder.ListClusterBasedIn;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.model.task.process.scoringMethod.ScoreBasedIn;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
@@ -22,11 +22,11 @@ public class OneSourceCluster extends AbstractComparativeMethod implements ListC
 
 	protected List<Cluster> listCluster;
 	protected Map<SentenceModel, Double> score;
-	
+
 	public OneSourceCluster(int id) throws SupportADNException {
 		super(id);
-		
-		listParameterIn.add(new ParametrizedType(Cluster.class, List.class, ListClusterBasedIn.class));
+
+		listParameterIn.add(new ParameterizedType(Cluster.class, List.class, ListClusterBasedIn.class));
 	}
 
 	@Override
@@ -46,26 +46,26 @@ public class OneSourceCluster extends AbstractComparativeMethod implements ListC
 			Iterator<SentenceModel> itSen = clust.iterator();
 			boolean oneSource = true;
 			Set<String> setClustLabel = new TreeSet<String>();
-			
+
 			while (oneSource && itSen.hasNext())
 				for (String label : itSen.next().getLabels())
-					oneSource = setClustLabel.add(label); //return false if label already in the set
-			
+					oneSource = setClustLabel.add(label); // return false if label already in the set
+
 			if (oneSource) {
 				for (SentenceModel sen : clust)
 					listScore.add(new Pair<SentenceModel, Double>(sen, getScore(score, sen)));
 				Collections.sort(listScore);
 				listInfo.add(new Pair<SentenceModel, String>(listScore.get(0).getKey(), "LACK_OF_INFORMATION"));
 				listScore.clear();
-			}	
+			}
 		}
 		return listInfo;
 	}
-	
+
 	@Override
 	public void finish() {
 	}
-	
+
 	public static double getScore(Map<SentenceModel, Double> score, SentenceModel sen) {
 		double s = 0;
 		boolean find = false;
@@ -91,11 +91,11 @@ public class OneSourceCluster extends AbstractComparativeMethod implements ListC
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
 		return false;
 	}
 
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 	}
 }

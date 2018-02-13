@@ -8,8 +8,8 @@ import liasd.asadera.model.task.preProcess.GenerateTextModel;
 import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedOut;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
@@ -23,8 +23,8 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 
 	public TF_IDF(int id) throws SupportADNException {
 		super(id);
-		
-		listParameterOut.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedOut.class));
+
+		listParameterOut.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedOut.class));
 	}
 
 	@Override
@@ -44,55 +44,38 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 		TF_IDF.generateDictionary(listCorpus, index, getCurrentProcess().getFilter());
 		for (Corpus c : getCurrentMultiCorpus()) {
 			if (!listCorpus.contains(c)) {
-				boolean clear = c.size()==0;
-				Corpus temp=c;
+				boolean clear = c.size() == 0;
+				Corpus temp = c;
 				if (clear)
-					temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, true);
+					temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c,
+							true);
 				TF_IDF.majIDFDictionnary(temp, index, getCurrentProcess().getFilter());
 				if (clear)
 					temp.clear();
 			}
 		}
-
-//		List<Pair<WordTF_IDF, Double>> listWord = new ArrayList<Pair<WordTF_IDF, Double>>();
-//		Writer w = new Writer("indexTF_IDF.txt");
-//		w.open();
-//		for (WordTF_IDF word : index.values())
-//			listWord.add(new Pair<WordTF_IDF, Double>(word,word.getIdf()));
-//		Collections.sort(listWord);
-//		for (Pair<WordTF_IDF, Double> p: listWord)
-//			w.write(p.getKey().getWord() + "\t" + p.getValue() + "\n");
 	}
 
-	/**
-	 * Construction du dictionnaire des mots des documents ({@see WordTF_IDF})
-	 */
 	@SuppressWarnings("unlikely-arg-type")
 	public static void generateDictionary(List<Corpus> listCorpus, Index<WordIndex> index, WordFilter filter) {
 		for (Corpus corpus : listCorpus) {
-			index.setNbDocument(index.getNbDocument()+corpus.size());
-			//Construction du dictionnaire
+			index.setNbDocument(index.getNbDocument() + corpus.size());
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
 					List<WordIndex> listWordIndex = new ArrayList<WordIndex>();
 					for (WordModel word : sentenceModel.getListWordModel())
-						//TODO ajouter filtre à la place de getmLemma
 						if (filter.passFilter(word)) {
 							WordIndex w;
-							if(!index.containsKey(word.getmLemma())) {
+							if (!index.containsKey(word.getmLemma())) {
 								w = new WordIndex(word.getmLemma());
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 								index.put(word.getmLemma(), w);
-							}
-							else {
+							} else {
 								w = index.get(word.getmLemma());
 								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
 							}
 							listWordIndex.add(w);
-							//dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 						}
-						//else if (!dictionnary.containsKey(word.getmLemma()))
-							//dictionnary.put(word.getmLemma(), new WordIndex(word.getmLemma(), dictionnary));
 					sentenceModel.setN(1);
 					sentenceModel.setListWordIndex(1, listWordIndex);
 				}
@@ -100,27 +83,21 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
 		}
 	}
-	
+
 	/**
-	 * MAJ de l'index dictionnary avec les mots rencontrés dans Corpus corpus.
 	 * @param corpus
 	 * @param dictionnary
 	 */
 	public static void majIDFDictionnary(Corpus corpus, Index<WordIndex> index, WordFilter filter) {
-		index.setNbDocument(index.getNbDocument()+corpus.getNbDocument());			
-		//Construction du dictionnaire
+		index.setNbDocument(index.getNbDocument() + corpus.getNbDocument());
 		for (TextModel text : corpus) {
 			for (SentenceModel sentenceModel : text) {
 				for (WordModel word : sentenceModel.getListWordModel()) {
-					//TODO ajouter filtre à la place de getmLemma
 					if (filter.passFilter(word) && index.containsKey(word.getmLemma())) {
 						@SuppressWarnings("unlikely-arg-type")
 						WordIndex w = (WordIndex) index.get(word.getmLemma());
 						w.addDocumentOccurence(corpus.getiD(), text.getiD());
-						//dictionnary.get(word.getmLemma()).add(word); //Ajout au wordIndex des WordModel correspondant
 					}
-					//else
-					//	dictionnary.put(word.getmLemma(), new WordIndex(word.getmLemma(), dictionnary));
 				}
 			}
 		}
@@ -128,16 +105,17 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 	}
 
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return super.isOutCompatible(compatibleMethod) || compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
+		return super.isOutCompatible(compatibleMethod) || compatibleMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 		if (super.isOutCompatible(compMethod))
 			super.setCompatibility(compMethod);
 		else
-			((IndexBasedIn<WordIndex>)compMethod).setIndex(index);
+			((IndexBasedIn<WordIndex>) compMethod).setIndex(index);
 	}
 }

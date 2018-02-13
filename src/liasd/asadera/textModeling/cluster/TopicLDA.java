@@ -4,19 +4,16 @@ import java.util.List;
 
 import liasd.asadera.textModeling.SentenceModel;
 
-// id�e ajouter score sur le corpus puis implements Comparable
-// permettrai tri par score sur le corpus et it�rer la dessus
-public class TopicLDA extends Cluster implements Comparable<TopicLDA>{
+public class TopicLDA extends Cluster implements Comparable<TopicLDA> {
 
 	protected double scoreCorpus = 0;
 
 	public TopicLDA(int id, double scoreCorpus) {
-		super(id/*, listSentenceTopic*/);
+		super(id);
 		this.id = id;
-		//this.listSentenceTopic = listSentenceTopic;
 		this.scoreCorpus = scoreCorpus;
 	}
-	
+
 	public TopicLDA(int id, List<SentenceModel> listSentenceModel, double scoreCorpus) {
 		super(id, listSentenceModel);
 		this.id = id;

@@ -10,11 +10,11 @@ import java.util.ListIterator;
 import liasd.asadera.model.AbstractModel;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
-public class Corpus implements List<TextModel>{
+public class Corpus implements List<TextModel> {
 
 	private List<TextModel> listTextModel = new ArrayList<TextModel>();
 	private List<SentenceModel> listSentence;
-	
+
 	protected int iD;
 	protected String corpusName;
 	protected String inputPath;
@@ -22,11 +22,11 @@ public class Corpus implements List<TextModel>{
 	protected AbstractModel model;
 	protected List<String> docNames;
 	protected List<String> summaryNames;
-	
+
 	public Corpus(int iD) {
 		this.iD = iD;
 	}
-	
+
 	public Corpus(Corpus c) {
 		this.iD = c.getiD();
 		this.corpusName = c.getCorpusName();
@@ -35,24 +35,24 @@ public class Corpus implements List<TextModel>{
 		this.model = c.getModel();
 		this.docNames = new ArrayList<String>(c.getDocNames());
 		this.summaryNames = new ArrayList<String>(c.getSummaryNames());
-		
+
 		for (TextModel t : c) {
 			TextModel text = new TextModel(t);
 			text.setParentCorpus(this);
 			this.listTextModel.add(text);
 		}
 	}
-	
+
 	public void loadDocumentModels() {
-		corpusName = inputPath.split(File.separator)[inputPath.split(File.separator).length-1]; //TODO use file.getName()
+		corpusName = new File(inputPath).getName(); //.split(File.separator)[inputPath.split(File.separator).length - 1];
 		Iterator<String> it = docNames.iterator();
 		while (it.hasNext()) {
 			String docName = it.next();
 			if (new File(inputPath + File.separator + docName).isFile())
 				listTextModel.add(new TextModel(this, inputPath + File.separator + docName));
 		}
-    }
-	
+	}
+
 	public SentenceModel getSentenceByID(int id) {
 		int current = id;
 		boolean notFind = true;
@@ -69,14 +69,14 @@ public class Corpus implements List<TextModel>{
 		}
 		return sen;
 	}
-	
+
 	public int getNbWord(WordFilter filter) {
 		int nbWord = 0;
 		for (TextModel t : this)
 			nbWord += t.getNbWord(filter);
 		return nbWord;
 	}
-	
+
 	public int getNbSentence() {
 		int nbSentence = 0;
 		for (TextModel t : this)
@@ -127,12 +127,12 @@ public class Corpus implements List<TextModel>{
 	public void setSummaryNames(List<String> summaryNames) {
 		this.summaryNames = summaryNames;
 	}
-	
+
 	@Override
 	public String toString() {
 		int current = 0;
-		for(TextModel text : this) {
-				current += text.getNbSentence();
+		for (TextModel text : this) {
+			current += text.getNbSentence();
 		}
 		String str = "Corpus " + iD + " \n" + current + "\n";
 		return str;
@@ -145,7 +145,7 @@ public class Corpus implements List<TextModel>{
 		}
 		return allSentenceList;
 	}
-	
+
 	public List<SentenceModel> getAllSentence() {
 		if (listSentence == null) {
 			listSentence = new ArrayList<SentenceModel>();
@@ -159,7 +159,7 @@ public class Corpus implements List<TextModel>{
 	public String getCorpusName() {
 		return corpusName;
 	}
-	
+
 	public int getNbDocument() {
 		return docNames.size();
 	}
@@ -214,7 +214,7 @@ public class Corpus implements List<TextModel>{
 	public boolean isEmpty() {
 		return listTextModel.isEmpty();
 	}
-	
+
 	@Override
 	public Iterator<TextModel> iterator() {
 		return listTextModel.iterator();

@@ -10,16 +10,16 @@ public class Summary implements List<SentenceModel> {
 
 	private List<SentenceModel> summary;
 	private double score;
-	
+
 	public Summary() {
 		this.summary = new ArrayList<SentenceModel>();
 	}
-	
+
 	public Summary(Summary summary) {
 		this.summary = new ArrayList<SentenceModel>(summary);
 		this.score = summary.getScore();
 	}
-	
+
 	public double getScore() {
 		return score;
 	}
@@ -31,22 +31,22 @@ public class Summary implements List<SentenceModel> {
 	public int size(String mode) {
 		int size = 0;
 		switch (mode) {
-			case "char":
-				for (SentenceModel sen : summary)
-					size += sen.toString().length();
-				break;
-			case "word":
-				for (SentenceModel sen : summary)
-					size += sen.getNbMot();
-				break;
-			case "sen":
-				return size();
-			default:
-				return size();
+		case "char":
+			for (SentenceModel sen : summary)
+				size += sen.toString().length();
+			break;
+		case "word":
+			for (SentenceModel sen : summary)
+				size += sen.getNbMot();
+			break;
+		case "sen":
+			return size();
+		default:
+			return size();
 		}
 		return size;
 	}
-	
+
 	@Override
 	public boolean add(SentenceModel e) {
 		if (summary.contains(e))
@@ -160,7 +160,7 @@ public class Summary implements List<SentenceModel> {
 	public SentenceModel set(int index, SentenceModel element) {
 		return summary.set(index, element);
 	}
-	
+
 	@Override
 	public int size() {
 		return summary.size();
@@ -180,7 +180,7 @@ public class Summary implements List<SentenceModel> {
 	public <T> T[] toArray(T[] a) {
 		return summary.toArray(a);
 	}
-	
+
 	@Override
 	public String toString() {
 		if (size() == 0)
@@ -188,6 +188,6 @@ public class Summary implements List<SentenceModel> {
 		String str = "";
 		for (SentenceModel sen : summary)
 			str += sen.toString() + "\n";
-		return "Score : " + score + "\n" + size("word") + "\n" + str.substring(0, str.length()-2);
+		return "Score : " + score + "\n" + size("word") + "\n" + str.substring(0, str.length() - 2);
 	}
 }

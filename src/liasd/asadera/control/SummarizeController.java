@@ -22,11 +22,11 @@ public class SummarizeController extends AbstractController {
 
 	@Override
 	public void notifyProcessChanged(String processName) {
-    	getModel().getProcessIDs().put("SummarizeProcess", processID);
-    	Object o = dynamicConstructor("process.SummarizeProcess"/* + processName*/);
-    	currentProcess = (SummarizeProcess) o;
+		getModel().getProcessIDs().put("SummarizeProcess", processID);
+		Object o = dynamicConstructor("process.SummarizeProcess");
+		currentProcess = (SummarizeProcess) o;
 		getModel().getProcess().add(currentProcess);
-    }
+	}
 
 	@Override
 	public void notifyIndexBuilderChanged(String processName, String indexBuilder) {
@@ -37,8 +37,8 @@ public class SummarizeController extends AbstractController {
 			listIndexBuilders = currentProcess.getIndexBuilders();
 		Object o = dynamicConstructor("process.indexBuilder." + indexBuilder);
 		listIndexBuilders.add((AbstractIndexBuilder) o);
-    	currentProcess.setIndexBuilders(listIndexBuilders);
-    }
+		currentProcess.setIndexBuilders(listIndexBuilders);
+	}
 
 	@Override
 	public void notifyCaracteristicBuilderChanged(String processName, String caracteristicBuilder) {
@@ -48,9 +48,9 @@ public class SummarizeController extends AbstractController {
 		else
 			listCaracBuilder = currentProcess.getCaracteristicBuilders();
 		Object o = dynamicConstructor("process.caracteristicBuilder." + caracteristicBuilder);
-    	listCaracBuilder.add((AbstractCaracteristicBuilder) o);
-    	currentProcess.setCaracteristicBuilders(listCaracBuilder);
-    }
+		listCaracBuilder.add((AbstractCaracteristicBuilder) o);
+		currentProcess.setCaracteristicBuilders(listCaracBuilder);
+	}
 
 	@Override
 	public void notifyScoringMethodChanged(String processName, String scoringMethod) {
@@ -60,14 +60,14 @@ public class SummarizeController extends AbstractController {
 		else
 			listScoringMethod = currentProcess.getScoringMethods();
 		Object o = dynamicConstructor("process.scoringMethod." + scoringMethod);
-    	listScoringMethod.add((AbstractScoringMethod) o);
-    	currentProcess.setScoringMethods(listScoringMethod);
-    }
+		listScoringMethod.add((AbstractScoringMethod) o);
+		currentProcess.setScoringMethods(listScoringMethod);
+	}
 
 	@Override
 	public void notifySelectionMethodChanged(String processName, String selectionMethod) {
-    	Object o = dynamicConstructor("process.selectionMethod." + selectionMethod);
-    	currentProcess.setSelectionMethod((AbstractSelectionMethod) o);
-    }
+		Object o = dynamicConstructor("process.selectionMethod." + selectionMethod);
+		currentProcess.setSelectionMethod((AbstractSelectionMethod) o);
+	}
 
 }

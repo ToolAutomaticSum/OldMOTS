@@ -10,7 +10,7 @@ public class Finish extends Action {
 		state.setFinish(true);
 		state.addAction(this);
 	}
-	
+
 	@Override
 	public void undoAction(State state) throws StateException {
 		state.setFinish(false);

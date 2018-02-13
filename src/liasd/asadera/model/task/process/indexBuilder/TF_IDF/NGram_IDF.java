@@ -15,8 +15,8 @@ import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedOut;
 import liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
 import liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedOut;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedMethod;
-import liasd.asadera.model.task.process.processCompatibility.ParametrizedType;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
+import liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
@@ -30,19 +30,19 @@ import liasd.asadera.tools.wordFilters.WordFilter;
 public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBasedIn<WordIndex> {
 
 	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
-	
+
 	private Index<WordIndex> indexWord;
-	
+
 	private int n;
-	
+
 	public NGram_IDF(int id) throws SupportADNException {
 		super(id);
 
 		ngrams_in_sentences = new HashMap<SentenceModel, Set<NGram>>();
-		
-		listParameterIn.add(new ParametrizedType(WordIndex.class, Index.class, IndexBasedIn.class));
-		listParameterOut.add(new ParametrizedType(NGram.class, Index.class, IndexBasedOut.class));
-		listParameterOut.add(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedOut.class));
+
+		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
+		listParameterOut.add(new ParameterizedType(NGram.class, Index.class, IndexBasedOut.class));
+		listParameterOut.add(new ParameterizedType(NGram.class, List.class, SentenceNGramBasedOut.class));
 	}
 
 	@Override
@@ -65,32 +65,30 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 		NGram_IDF.generateIndex(n, listCorpus, ngrams_in_sentences, index, indexWord, getCurrentProcess().getFilter());
 		for (Corpus c : getCurrentMultiCorpus()) {
 			if (!listCorpus.contains(c)) {
-				Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c, true);
+				Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp",
+						c, true);
 				NGram_IDF.majIDFIndex(n, temp, index, indexWord, getCurrentProcess().getFilter());
 				if (!getModel().isMultiThreading())
 					temp.clear();
 			}
 		}
 	}
-	
+
 	@Override
 	public void finish() {
 		super.finish();
 		ngrams_in_sentences.clear();
 	}
-	
-	/**
-	 * Construction du dictionnaire des mots des documents ({@see WordTF_IDF})
-	 */
+ 
 	@SuppressWarnings("unlikely-arg-type")
-	public static void generateIndex(int n, List<Corpus> listCorpus, Map<SentenceModel, Set<NGram>> ngrams_in_sentences, Index<NGram> index, Index<WordIndex> indexWord, WordFilter filter) {
+	public static void generateIndex(int n, List<Corpus> listCorpus, Map<SentenceModel, Set<NGram>> ngrams_in_sentences,
+			Index<NGram> index, Index<WordIndex> indexWord, WordFilter filter) {
 		for (Corpus corpus : listCorpus) {
-			index.setNbDocument(index.getNbDocument()+corpus.size());
-			//Construction du dictionnaire
+			index.setNbDocument(index.getNbDocument() + corpus.size()); 
 			for (TextModel textModel : corpus)
 				for (SentenceModel sen : textModel) {
 					Set<NGram> senNG;
-					if (n==2)
+					if (n == 2)
 						senNG = NGram_IDF.getBiGrams(indexWord, sen, filter);
 					else
 						senNG = NGram_IDF.getNGrams(n, indexWord, sen, filter);
@@ -104,26 +102,25 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 						indexedSenNG.add(ng);
 					}
 					sen.setN(n);
-					sen.setListWordIndex(n, indexedSenNG);//setNGrams(indexedSenNG);
+					sen.setListWordIndex(n, indexedSenNG); 
 					ngrams_in_sentences.put(sen, indexedSenNG);
 				}
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
 		}
 	}
-	
+
 	/**
-	 * MAJ de l'index dictionnary avec les mots rencontrés dans Corpus corpus.
 	 * @param corpus
 	 * @param dictionnary
 	 */
 	@SuppressWarnings("unlikely-arg-type")
-	public static void majIDFIndex(int n, Corpus corpus, Index<NGram> index, Index<WordIndex> indexWord, WordFilter filter) {
-		index.setNbDocument(index.getNbDocument()+corpus.size());
-		//Construction du dictionnaire
+	public static void majIDFIndex(int n, Corpus corpus, Index<NGram> index, Index<WordIndex> indexWord,
+			WordFilter filter) {
+		index.setNbDocument(index.getNbDocument() + corpus.size()); 
 		for (TextModel textModel : corpus) {
 			for (SentenceModel sen : textModel) {
 				Set<NGram> senNG;
-				if (n==2)
+				if (n == 2)
 					senNG = NGram_IDF.getBiGrams(indexWord, sen, filter);
 				else
 					senNG = NGram_IDF.getNGrams(n, indexWord, sen, filter);
@@ -142,33 +139,34 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 		Set<NGram> ngrams_list = new LinkedHashSet<NGram>();
 		for (int i = 0; i < sen.getListWordModel().size() - 1; i++) {
 			u1 = sen.getListWordModel().get(i);
-			u2 = sen.getListWordModel().get(i+1);
-			
-			if (filter.passFilter(u1) && filter.passFilter(u2) && index.containsKey(u1.getmLemma()) && index.containsKey(u2.getmLemma())) {
+			u2 = sen.getListWordModel().get(i + 1);
+
+			if (filter.passFilter(u1) && filter.passFilter(u2) && index.containsKey(u1.getmLemma())
+					&& index.containsKey(u2.getmLemma())) {
 				NGram ng = new NGram();
 				ng.add(index.get(u1.getmLemma()));
 				ng.add(index.get(u2.getmLemma()));
 				ngrams_list.add(ng);
-			}			
+			}
 		}
 		sen.setListWordIndex(2, ngrams_list);
 		return ngrams_list;
 	}
-	
+
 	@SuppressWarnings("unlikely-arg-type")
 	public static Set<NGram> getNGrams(int n, Index<WordIndex> index, SentenceModel sen, WordFilter filter) {
 		Set<NGram> ngrams_list = new LinkedHashSet<NGram>();
 		WordModel u;
 		for (int i = 0; i < sen.getListWordModel().size() - n + 1; i++) {
 			boolean cond = false;
-			boolean filtered = false; //Un stopWord par Ngram
+			boolean filtered = false; // Un stopWord par Ngram
 			int nbFiltered = 0;
 			NGram ng = new NGram();
 
-			for (int j = i; j < i + n; j++)	{
-				//System.out.println("j : "+j);
+			for (int j = i; j < i + n; j++) {
+				// System.out.println("j : "+j);
 				u = sen.getListWordModel().get(j);
-				
+
 				if (index.containsKey(u.getmLemma()) && (!filtered || (filtered && !filter.passFilter(u)))) {
 					cond = true;
 					WordIndex w = index.get(u.getmLemma());
@@ -181,7 +179,7 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 					}
 					if (!filter.passFilter(u))
 						nbFiltered++;
-					if (nbFiltered==n-1)
+					if (nbFiltered == n - 1)
 						filtered = true;
 				} else
 					cond = false;
@@ -191,23 +189,27 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 		}
 		return ngrams_list;
 	}
-	
+
 	@Override
-	public boolean isOutCompatible(ParametrizedMethod compatibleMethod) {
-		return  super.isOutCompatible(compatibleMethod)
-				|| compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class))
-				|| compatibleMethod.getParameterTypeIn().contains(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
+	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
+		return super.isOutCompatible(compatibleMethod)
+				|| compatibleMethod.getParameterTypeIn()
+						.contains(new ParameterizedType(NGram.class, Index.class, IndexBasedIn.class))
+				|| compatibleMethod.getParameterTypeIn()
+						.contains(new ParameterizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setCompatibility(ParametrizedMethod compMethod) {
+	public void setCompatibility(ParameterizedMethod compMethod) {
 		if (super.isOutCompatible(compMethod))
 			super.setCompatibility(compMethod);
-		if (compMethod.getParameterTypeIn().contains(new ParametrizedType(NGram.class, Index.class, IndexBasedIn.class)))
-			((IndexBasedIn<NGram>)compMethod).setIndex(index);
-		if(compMethod.getParameterTypeIn().contains(new ParametrizedType(NGram.class, List.class, SentenceNGramBasedIn.class)))
-			((SentenceNGramBasedIn)compMethod).setSentenceNGram(ngrams_in_sentences);
+		if (compMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(NGram.class, Index.class, IndexBasedIn.class)))
+			((IndexBasedIn<NGram>) compMethod).setIndex(index);
+		if (compMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(NGram.class, List.class, SentenceNGramBasedIn.class)))
+			((SentenceNGramBasedIn) compMethod).setSentenceNGram(ngrams_in_sentences);
 	}
 
 	@Override

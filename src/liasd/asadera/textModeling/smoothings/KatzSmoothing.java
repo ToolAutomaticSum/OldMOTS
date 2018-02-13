@@ -9,88 +9,69 @@ import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.NGram;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 
-public class KatzSmoothing extends Smoothing{
+public class KatzSmoothing extends Smoothing {
 
-	private ArrayList <TreeMap <NGram, Double>> probs;
-	private ArrayList <Double> alphas;
-	private ArrayList <SentenceModel> sentences;
+	private ArrayList<TreeMap<NGram, Double>> probs;
+	private ArrayList<Double> alphas;
+	private ArrayList<SentenceModel> sentences;
 	private int maxN;
-	
-	public KatzSmoothing ( int maxN, ArrayList <Double> alphas, ArrayList <SentenceModel> sentences, Index<WordIndex> index, int vocab_card )
-	{
-		super (sentences, vocab_card, index);
+
+	public KatzSmoothing(int maxN, ArrayList<Double> alphas, ArrayList<SentenceModel> sentences, Index<WordIndex> index,
+			int vocab_card) {
+		super(sentences, vocab_card, index);
 		this.alphas = alphas;
-		//this.index = index;
 		this.sentences = sentences;
 		this.maxN = maxN;
 		this.constructProbs();
 	}
-	
-	
-	private void constructProbs()
-	{
-		this.probs = new ArrayList <TreeMap <NGram, Double>> ();
-		for (int i = 0; i < this.maxN; i++)
-		{
-			TreeMap<NGram, Double> curr_distrib_n = new TreeMap<NGram, Double> ();
+
+	private void constructProbs() {
+		this.probs = new ArrayList<TreeMap<NGram, Double>>();
+		for (int i = 0; i < this.maxN; i++) {
+			TreeMap<NGram, Double> curr_distrib_n = new TreeMap<NGram, Double>();
 			double summOcc = 0.;
-			for (SentenceModel sent : this.sentences)
-			{
-				ArrayList <NGram> curr_ngrams_list = new ArrayList<NGram>();
-				for (WordIndex wi : sent.getListWordIndex(i+1))
+			for (SentenceModel sent : this.sentences) {
+				ArrayList<NGram> curr_ngrams_list = new ArrayList<NGram>();
+				for (WordIndex wi : sent.getListWordIndex(i + 1))
 					curr_ngrams_list.add((NGram) wi);
-				for (NGram ng : curr_ngrams_list)
-				{
-					/*We filter the sourceDistribution upon every NGram occurrence, so we have to check if this 
-					ngram belongs to the sourceDistribution if we want parallel lists*/
-					//if (this.sourceDistribution.containsKey(ng))
-					//{
-						if (curr_distrib_n.containsKey(ng))
-						{
-							curr_distrib_n.put(ng, curr_distrib_n.get(ng) + 1.);
-						}
-						else
-						{
-							curr_distrib_n.put(ng, 1.);
-						}
-						summOcc ++;
-					//}
+				for (NGram ng : curr_ngrams_list) {
+					/*
+					 * We filter the sourceDistribution upon every NGram occurrence, so we have to
+					 * check if this ngram belongs to the sourceDistribution if we want parallel
+					 * lists
+					 */
+					if (curr_distrib_n.containsKey(ng)) {
+						curr_distrib_n.put(ng, curr_distrib_n.get(ng) + 1.);
+					} else {
+						curr_distrib_n.put(ng, 1.);
+					}
+					summOcc++;
 				}
-				
+
 			}
-			for (Entry <NGram, Double> entry : curr_distrib_n.entrySet())
-			{
-				entry.setValue(entry.getValue() / summOcc );
+			for (Entry<NGram, Double> entry : curr_distrib_n.entrySet()) {
+				entry.setValue(entry.getValue() / summOcc);
 			}
 			this.probs.add(curr_distrib_n);
 		}
 	}
-	
-	
+
 	@Override
 	public double getSmoothedProb(NGram ng) {
 		double smoothed_prob = 1.;
-		
-		NGram ng_copy = new NGram (ng);
-		
-		for (int i = this.maxN - 1; i >= 0; i-- )
-		{
-			//System.out.println("size of "+i+" : "+this.probs.get(i).size());
-			if (this.probs.get(i).containsKey(ng_copy))
-			{
-				smoothed_prob *= this.alphas.get(i+1) * this.probs.get(i).get(ng_copy);
-				//System.out.println("Contient "+smoothed_prob);
+
+		NGram ng_copy = new NGram(ng);
+
+		for (int i = this.maxN - 1; i >= 0; i--) {
+			if (this.probs.get(i).containsKey(ng_copy)) {
+				smoothed_prob *= this.alphas.get(i + 1) * this.probs.get(i).get(ng_copy);
 				return smoothed_prob;
-			}
-			else
-			{
+			} else {
 				smoothed_prob *= this.alphas.get(i + 1);
-				//System.out.println("Contient pas "+smoothed_prob);
 				ng_copy.removeLastGram();
 			}
 		}
 		smoothed_prob *= this.alphas.get(0);
-		//System.out.println("Contient pas "+smoothed_prob);
-		return smoothed_prob ;
+		return smoothed_prob;
 	}
 }

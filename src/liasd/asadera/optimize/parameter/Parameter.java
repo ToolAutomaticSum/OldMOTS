@@ -19,14 +19,14 @@ public class Parameter<T> {
 		this.parameterName = parameterName;
 		this.parameterValue = parameterValue;
 	}
-	
-	public Parameter<T> aleaParameter (Random rand, Function<Random, T> creator) {
+
+	public Parameter<T> aleaParameter(Random rand, Function<Random, T> creator) {
 		Parameter<T> param = new Parameter<T>(parameterName, creator.apply(rand));
 		param.setMinValue(minValue);
 		param.setMaxValue(maxValue);
 		return param;
 	}
-	
+
 	public String getParameterName() {
 		return parameterName;
 	}
@@ -40,9 +40,9 @@ public class Parameter<T> {
 	}
 
 	public void setValue(T value) {
-        this.parameterValue = value;
-    }
-	
+		this.parameterValue = value;
+	}
+
 	public Class<?> getParameterClass() {
 		return parameterValue.getClass();
 	}
@@ -62,16 +62,16 @@ public class Parameter<T> {
 	public void setMaxValue(T maxValue) {
 		this.maxValue = maxValue;
 	}
-	
+
 	@Override
 	public String toString() {
 		return parameterName;
 	}
-	
+
 	public String toAllString() {
 		return parameterName + " : " + parameterValue.toString();
 	}
-	
+
 	public String toValueString() {
 		return parameterValue.toString();
 	}

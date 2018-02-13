@@ -18,7 +18,7 @@ import liasd.asadera.tools.vector.ToolsVector;
 public class State {
 
 	private double gamma;
-	
+
 	private double penalty;
 	private Scorer scorer;
 	private Featurer featurer;
@@ -38,7 +38,7 @@ public class State {
 		this.maxLength = maxLength;
 		rand = new Random();
 	}
-	
+
 	public void init(List<SentenceModel> listSentence) {
 		available = new ArrayList<Action>();
 		temp = new ArrayList<Action>();
@@ -50,27 +50,27 @@ public class State {
 		currentLength = 0;
 		bFinish = false;
 	}
-	
+
 	public Action selectActionWithCurrentPolicy(double[] theta, double temperature) throws Exception {
 		double div = 0;
 		List<Action> list = new ArrayList<Action>(available);
 		for (Action avail : list)
-			div += Math.exp(actionValueFunction(avail, theta)/temperature);
-		
+			div += Math.exp(actionValueFunction(avail, theta) / temperature);
+
 		double[] listPolicy = new double[available.size()];
 		double policy = 0;
-		for (int i=0; i<available.size(); i++) {
+		for (int i = 0; i < available.size(); i++) {
 			policy += policy(div, available.get(i), theta, temperature);
 			listPolicy[i] = policy;
 		}
-		listPolicy[available.size()-1] = 1.0;
+		listPolicy[available.size() - 1] = 1.0;
 		int i = 0;
 		double select = rand.nextDouble();
 		while (listPolicy[i] <= select)
 			i++;
 		return available.get(i);
 	}
-	
+
 	public Action selectBestAction(double[] theta) throws Exception {
 		List<Pair<Action, Double>> listAction = new ArrayList<Pair<Action, Double>>();
 		List<Action> list = new ArrayList<Action>(available);
@@ -79,70 +79,65 @@ public class State {
 		Collections.sort(listAction);
 		return listAction.get(0).getKey();
 	}
-	
+
 	protected double reward() throws Exception {
 		if (lastAction().getClass().equals(Finish.class)) {
 			if (isTooLong())
 				return penalty;
 			else
 				return scorer.getScore(summary);
-		}
-		else
+		} else
 			return 0.0;
 	}
-	
+
 	protected double stateValueFunction(double[] theta) throws Exception {
 		return ToolsVector.scalar(theta, getFeatures());
 	}
-	
+
 	protected double actionValueFunction(Action action, double[] theta) throws Exception {
 		action.doAction(this);
-		double score = reward() + gamma*stateValueFunction(theta);
+		double score = reward() + gamma * stateValueFunction(theta);
 		action.undoAction(this);
 		return score;
 	}
-	
+
 	protected double policy(double div, Action action, double[] theta, double temperature) throws Exception {
-		return Math.exp(actionValueFunction(action, theta)/temperature)/div;
+		return Math.exp(actionValueFunction(action, theta) / temperature) / div;
 	}
-	
+
 	public void availableAction() {
 		temp.clear();
 		temp.addAll(available);
 		if (bFinish || isTooLong())
 			available.removeIf(a -> a.getClass().equals(Insert.class));
 		else
-			//available.removeAll(listAction);
 			available.remove(lastAction());
 	}
-	
+
 	public double[] getFeatures() throws Exception {
 		double[] features;
 		if (isTooLong()) {
 			features = featurer.instanciateVector();
-			features[features.length-1] = 1;
-		}
+			features[features.length - 1] = 1;
+		} 
 		else {
-//			for (SentenceModel sen : summary)
-//				System.out.println(sen.getRawSentence());
 			features = featurer.getFeatures(summary);
-			features[features.length-1] = 0;
-//			ToolsVector.printVector(features);
+			features[features.length - 1] = 0;
 		}
 		return features;
 	}
-	
+
 	public void setGamma(double gamma) {
 		this.gamma = gamma;
 	}
-	
+
 	protected Action lastAction() {
 		if (listAction.size() != 0)
-			return listAction.get(listAction.size()-1);
+			return listAction.get(listAction.size() - 1);
 		else
 			return null;
 	}
-	
+
 	public boolean isTooLong() {
 		return maxLength < currentLength;
 	}
@@ -150,27 +145,27 @@ public class State {
 	public boolean isFinish() {
 		return bFinish;
 	}
-	
+
 	public void setFinish(boolean b) {
 		bFinish = b;
 	}
-	
+
 	public void addAction(Action action) {
 		listAction.add(action);
 		availableAction();
 	}
-	
+
 	public void removeAction(Action action) {
 		listAction.remove(action);
 		available.clear();
 		available.addAll(temp);
 	}
-	
+
 	public void insertSentence(SentenceModel sentence) {
 		summary.add(sentence);
 		currentLength += sentence.getNbMot();
 	}
-	
+
 	public void removeSentence(SentenceModel sentence) {
 		summary.remove(sentence);
 		currentLength -= sentence.getNbMot();

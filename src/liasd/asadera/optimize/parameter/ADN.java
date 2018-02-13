@@ -9,91 +9,91 @@ import java.util.Set;
 
 /**
  * map Name of param / class of param
+ * 
  * @author valnyz
  *
  */
 public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
-	
+
 	/**
 	 * map Name of param / class of param
 	 */
-	private HashMap<String, Class<?>>  mapNameClass = new HashMap<String, Class<?>>();
+	private HashMap<String, Class<?>> mapNameClass = new HashMap<String, Class<?>>();
 	/**
 	 * map name of param / param itself
 	 */
 	private HashMap<String, Parameter<Class<?>>> mapNameParam = new HashMap<String, Parameter<Class<?>>>();
-	
-	
+
 	private double score = 0;
-	
+
 	public ADN(HashMap<String, Class<?>> supportADN) {
 		mapNameClass = new HashMap<String, Class<?>>(supportADN);
-		for(String s : this.keySet())
+		for (String s : this.keySet())
 			mapNameParam.put(s, null);
 	}
-	
+
 	/**
-	 * Constructeur de copie !!
-	 * à voir !
 	 * @param adn
 	 */
 	public ADN(ADN adn) {
 		mapNameClass = new HashMap<String, Class<?>>(adn);
-		for(String parameterName : this.keySet()) {
+		for (String parameterName : this.keySet()) {
 			if (adn.getParameterClass(parameterName) == Integer.class) {
-				putParameter(new Parameter<Integer>(parameterName, adn.getParameterValue(Integer.class, parameterName)));
-			}
-			else if (adn.getParameterClass(parameterName) == Boolean.class) {
-				putParameter(new Parameter<Boolean>(parameterName, adn.getParameterValue(Boolean.class, parameterName)));				
-			}
-			else if (adn.getParameterClass(parameterName) == Float.class) {
-				putParameter(new Parameter<Float>(parameterName, adn.getParameterValue(Float.class, parameterName)));				
-			}
-			else if (adn.getParameterClass(parameterName) == Double.class) {
-				putParameter(new Parameter<Double>(parameterName, adn.getParameterValue(Double.class, parameterName)));				
+				putParameter(
+						new Parameter<Integer>(parameterName, adn.getParameterValue(Integer.class, parameterName)));
+			} else if (adn.getParameterClass(parameterName) == Boolean.class) {
+				putParameter(
+						new Parameter<Boolean>(parameterName, adn.getParameterValue(Boolean.class, parameterName)));
+			} else if (adn.getParameterClass(parameterName) == Float.class) {
+				putParameter(new Parameter<Float>(parameterName, adn.getParameterValue(Float.class, parameterName)));
+			} else if (adn.getParameterClass(parameterName) == Double.class) {
+				putParameter(new Parameter<Double>(parameterName, adn.getParameterValue(Double.class, parameterName)));
 			}
 		}
 	}
-	
+
 	public Class<?> getParameterClass(String parameterName) {
 		return get(parameterName);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T> Parameter<T> getParameter(Class<T> key, String parameterName) {
-		if(key == null) {
+		if (key == null) {
 			throw new NullPointerException("No null keys are allowed in this code");
 		}
 		if (get(parameterName) != key)
-			throw new ClassFormatError("Class<T> " + key + " for parameter " + parameterName + " isn't good, it should be : " + get(parameterName));
+			throw new ClassFormatError("Class<T> " + key + " for parameter " + parameterName
+					+ " isn't good, it should be : " + get(parameterName));
 		Parameter<T> p = (Parameter<T>) mapNameParam.get(parameterName);
 		return p;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(Class<T> key, String parameterName) {
-		if(key == null) {
+		if (key == null) {
 			throw new NullPointerException("No null keys are allowed in this code");
 		}
 		if (get(parameterName) != key)
-			throw new ClassFormatError("Class<T> " + key + " for parameter " + parameterName + " isn't good, it should be : " + get(parameterName));
+			throw new ClassFormatError("Class<T> " + key + " for parameter " + parameterName
+					+ " isn't good, it should be : " + get(parameterName));
 		Parameter<T> p = (Parameter<T>) mapNameParam.get(parameterName);
 		return p.getValue();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T> void putParameter(Parameter<T> p) {
 		String parameterName = p.getParameterName();
 		if (!(get(parameterName) == p.getParameterClass()))
-			throw new ClassFormatError("T class of Parameter<T> " + parameterName + " isn't good, it should be : " + get(parameterName));
+			throw new ClassFormatError(
+					"T class of Parameter<T> " + parameterName + " isn't good, it should be : " + get(parameterName));
 		mapNameParam.put(parameterName, (Parameter<Class<?>>) p);
 	}
-	
+
 	public boolean isAdnCorrect(HashMap<String, Class<?>> adn) {
 		boolean correct = true;
 		ADN temp = this;
 		Iterator<String> adnIt = adn.keySet().iterator();
-		while(correct && adnIt.hasNext()) {
+		while (correct && adnIt.hasNext()) {
 			String adnParam = adnIt.next();
 			if (temp.get(adnParam) != adn.get(adnParam))
 				correct = false;
@@ -102,7 +102,7 @@ public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
 			correct = false;
 		return correct;
 	}
-	
+
 	public double getScore() {
 		return score;
 	}
@@ -124,7 +124,7 @@ public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
 			str += paramIt.next().toString() + "\t";
 		return str;
 	}
-	
+
 	public String toValueString() {
 		String str = "";
 		Iterator<Parameter<Class<?>>> paramIt = mapNameParam.values().iterator();
@@ -132,7 +132,7 @@ public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
 			str += paramIt.next().toValueString() + "\t";
 		return str;
 	}
-	
+
 	public static ADN croisementADN(Random random, ADN pere, ADN mere) {
 		ADN enfant = new ADN(pere);
 		Iterator<String> paramNameIt = enfant.keySet().iterator();
@@ -140,23 +140,16 @@ public class ADN implements Comparable<ADN>, Map<String, Class<?>> {
 			String parameterName = paramNameIt.next();
 			if (random.nextBoolean()) {
 				enfant.putParameter(pere.getParameter(pere.getParameterClass(parameterName), parameterName));
-			}
-			else {
+			} else {
 				enfant.putParameter(mere.getParameter(mere.getParameterClass(parameterName), parameterName));
 			}
 		}
 		return enfant;
 	}
-	
+
 	public HashMap<String, Parameter<Class<?>>> getMapNameParam() {
 		return mapNameParam;
 	}
-
-	/*public void putAllADN(ADN a) {
-		mapNameClass.putAll(a);
-		for (String s : a.keySet())
-			mapNameParam.put(s, null);
-	}*/
 
 	@Override
 	public void clear() {

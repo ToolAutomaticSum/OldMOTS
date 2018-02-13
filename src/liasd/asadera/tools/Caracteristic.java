@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class Caracteristic {
 	protected double d;
 	protected double[] dTab;
-	
+
 	public Caracteristic() {
 		super();
 		d = 0;
@@ -30,8 +30,7 @@ public class Caracteristic {
 
 	@Override
 	public String toString() {
-		return ((d==0) ? "" : d) + ((dTab==null) ? "" : Arrays.toString(dTab));
+		return ((d == 0) ? "" : d) + ((dTab == null) ? "" : Arrays.toString(dTab));
 	}
-	
-	
+
 }
