@@ -5,10 +5,10 @@ if [ -z $JAVA_HOME ];then
 	exit 0
 fi
 
-if [ -z $ROUGE_HOME ];then
-	echo "You need to define \$ROUGE_HOME to your folder containing rouge.1.5.5.pl."
-	exit 0
-fi
+#if [ -z $ROUGE_HOME ];then
+	#echo "You need to define \$ROUGE_HOME to your folder containing rouge.1.5.5.pl."
+	#exit 0
+#fi
 
 if [ -z $STANFORD_NLP_HOME ];then
 	echo "You need to define \$STANFORD_NLP_HOME to your folder containing stanford models."
@@ -16,11 +16,11 @@ if [ -z $STANFORD_NLP_HOME ];then
 fi
 
 if [ -z $CORPUS_DATA ]; then
-	echo "You need to define \$CORPUS_DATA to your folder containing TAC/DUC corpus."
+	echo "You might define \$CORPUS_DATA to your folder containing TAC/DUC corpus."
 
-if [ ! -f "lib/ROUGE-1.5.5" ];then 
-	ln -s $ROUGE_HOME lib/
-fi
+#if [ ! -f "lib/ROUGE-1.5.5" ];then 
+	#ln -s $ROUGE_HOME lib/
+#fi
 
 if [ ! -f "lib/stanford-corenlp-3.8.0.jar" ];then
 	ln -s $STANFORD_NLP_HOME/stanford-corenlp-\d\.\d\.\d.jar "lib/stanford-corenlp-3.8.0.jar"
@@ -73,6 +73,8 @@ if [ -n $(command -v jep) ]; then
 fi
 
 tar xvf "mots.tar" "MOTS"
-sed -i "s/\$CORPUS_DATA/$CORPUS_DATA/g" MOTS/conf/*.xml
+if [ -z $CORPUS_DATA ]; then
+	sed -i "s/\$CORPUS_DATA/$CORPUS_DATA/g" MOTS/conf/*.xml
+fi
 echo "Installation of MOTS succeed !"
 exit 1 
