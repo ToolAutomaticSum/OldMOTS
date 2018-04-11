@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import com.valnyz.reader_writer.Writer;
-
 import liasd.asadera.optimize.parameter.ADN;
 import liasd.asadera.optimize.parameter.Parameter;
+import liasd.asadera.tools.reader_writer.Writer;
 
 public class AlgoGenetique extends Optimize {
 

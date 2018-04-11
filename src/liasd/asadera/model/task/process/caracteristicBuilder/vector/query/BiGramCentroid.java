@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jgibblda.Pair;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
 import liasd.asadera.model.task.process.caracteristicBuilder.vector.BiGramVectorSentence;
@@ -16,6 +15,7 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.Query;
 import liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import liasd.asadera.textModeling.wordIndex.NGram;
+import liasd.asadera.tools.jgibblda.Pair;
 
 @Deprecated
 public class BiGramCentroid extends BiGramVectorSentence implements QueryBasedOut {

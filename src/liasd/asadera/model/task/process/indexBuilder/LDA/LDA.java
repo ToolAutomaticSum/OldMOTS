@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import jgibblda.Estimator;
-import jgibblda.LDACmdOption;
-import jgibblda.Model;
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.preProcess.GenerateTextModel;
 import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
@@ -30,6 +27,9 @@ import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.textModeling.wordIndex.WordVector;
+import liasd.asadera.tools.jgibblda.Estimator;
+import liasd.asadera.tools.jgibblda.LDACmdOption;
+import liasd.asadera.tools.jgibblda.Model;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
 public class LDA extends AbstractIndexBuilder<WordVector> implements LearningModelBuilder {

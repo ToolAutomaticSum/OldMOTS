@@ -1,9 +1,7 @@
 package liasd.asadera.model.task.process.scoringMethod.ILP;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +20,7 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.NGram;
+import liasd.asadera.tools.reader_writer.Writer;
 
 public class GenerateModel_ILP extends AbstractScoringMethod
 		implements IndexBasedIn<NGram>, SentenceNGramBasedIn, FileNameBasedOut {
@@ -33,6 +32,7 @@ public class GenerateModel_ILP extends AbstractScoringMethod
 	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
 
 	private String model;
+	private String fileName = new File("").getAbsolutePath();
 
 	private Integer maxSummLength;
 
@@ -40,7 +40,7 @@ public class GenerateModel_ILP extends AbstractScoringMethod
 		super(id);
 		ilp_id = ilp_nb;
 		ilp_nb++;
-
+		fileName += "/tempILP" + ilp_id;
 		listParameterIn.add(new ParameterizedType(NGram.class, Index.class, IndexBasedIn.class));
 		listParameterIn.add(new ParameterizedType(NGram.class, List.class, SentenceNGramBasedIn.class));
 		listParameterOut.add(new ParameterizedType(null, String.class, FileNameBasedOut.class));
@@ -131,14 +131,21 @@ public class GenerateModel_ILP extends AbstractScoringMethod
 
 	private void writeModelToTmpFile() {
 		try {
-			File file = new File("tempILP" + ilp_id + ".ilp_out");
-			file.delete();
+//			File file = new File("tempILP" + ilp_id + ".ilp_out");
+//			file.delete();
+			Writer w = new Writer(fileName + ".ilp_in");
+			w.open(false);
+//			FileOutputStream fw = new FileOutputStream("tempILP" + ilp_id + ".ilp_out");
+//			OutputStreamWriter osr = new OutputStreamWriter(fw, "UTF-8");
+			System.out.println("Model length : " + model.length());
+//			System.out.println(model);
+			try {
+				w.write(model);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			w.close();
 
-			FileOutputStream fw = new FileOutputStream("tempILP" + ilp_id + ".ilp_out");
-			OutputStreamWriter osr = new OutputStreamWriter(fw, "UTF-8");
-			osr.write(model);
-			osr.flush();
-			osr.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -167,6 +174,6 @@ public class GenerateModel_ILP extends AbstractScoringMethod
 
 	@Override
 	public String getFileName() {
-		return "tempILP" + ilp_id + ".ilp_out";
+		return fileName;
 	}
 }

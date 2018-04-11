@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.valnyz.reader_writer.Writer;
-
 import liasd.asadera.model.task.preProcess.GenerateTextModel;
 import liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
 import liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
@@ -21,6 +19,7 @@ import liasd.asadera.textModeling.wordIndex.WordIndex;
 import liasd.asadera.textModeling.wordIndex.WordVector;
 import liasd.asadera.tools.pythonWrapper.Word2VecPython;
 import liasd.asadera.tools.pythonWrapper.Word2VecPythonBuilder;
+import liasd.asadera.tools.reader_writer.Writer;
 import liasd.asadera.tools.vector.ToolsVector;
 
 public class WordToVec extends AbstractIndexBuilder<WordVector> {

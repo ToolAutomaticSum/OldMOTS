@@ -3,14 +3,13 @@ package liasd.asadera.model;
 import java.io.File;
 import java.util.Iterator;
 
-import com.valnyz.reader_writer.Writer;
-
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import liasd.asadera.model.task.process.AbstractProcess;
 import liasd.asadera.model.task.process.SummarizeProcess;
 import liasd.asadera.textModeling.MultiCorpus;
 import liasd.asadera.textModeling.SentenceModel;
+import liasd.asadera.tools.reader_writer.Writer;
 
 public class SummarizeModel extends AbstractModel {
 

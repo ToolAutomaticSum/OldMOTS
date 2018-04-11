@@ -16,11 +16,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.valnyz.reader_writer.Writer;
-
 import liasd.asadera.exception.VectorDimensionException;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
+import liasd.asadera.tools.reader_writer.Writer;
 import liasd.asadera.tools.vector.ToolsVector;
 
 public class Tools {

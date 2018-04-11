@@ -22,13 +22,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.valnyz.reader_writer.Reader;
-import com.valnyz.reader_writer.Writer;
-
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.process.SummarizeProcess;
 import liasd.asadera.optimize.SupportADNException;
 import liasd.asadera.tools.OSDetector;
+import liasd.asadera.tools.reader_writer.Reader;
+import liasd.asadera.tools.reader_writer.Writer;
 
 public class EvaluationROUGE extends AbstractPostProcess {
 

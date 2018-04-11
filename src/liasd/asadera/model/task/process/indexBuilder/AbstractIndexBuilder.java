@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.valnyz.reader_writer.Reader;
-
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.process.AbstractProcess;
 import liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
@@ -16,6 +14,7 @@ import liasd.asadera.textModeling.Corpus;
 import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.wordIndex.Index;
 import liasd.asadera.textModeling.wordIndex.WordIndex;
+import liasd.asadera.tools.reader_writer.Reader;
 
 public abstract class AbstractIndexBuilder<T extends WordIndex> extends ParameterizedMethod
 		implements IndexBasedOut<T>, ListSentenceBasedOut {

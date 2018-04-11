@@ -15,9 +15,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.valnyz.reader_writer.Reader;
-import com.valnyz.reader_writer.Writer;
-
 import liasd.asadera.exception.LacksOfFeatures;
 import liasd.asadera.model.task.preProcess.stanfordNLP.StanfordNLPSimplePreProcess;
 import liasd.asadera.textModeling.Corpus;
@@ -26,6 +23,8 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.tools.Tools;
+import liasd.asadera.tools.reader_writer.Reader;
+import liasd.asadera.tools.reader_writer.Writer;
 import liasd.asadera.tools.wordFilters.WordFilter;
 import liasd.asadera.tools.wordFilters.WordStopListFilter;
 

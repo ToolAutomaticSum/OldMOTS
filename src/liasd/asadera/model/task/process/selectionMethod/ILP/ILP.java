@@ -22,6 +22,9 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 
 	private String fileName = "";
 
+	private String fileIn = "";
+	private String fileOut = "";
+
 	public ILP(int id) throws SupportADNException {
 		super(id);
 
@@ -44,7 +47,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
 		for (Corpus c : listCorpus)
 			listSentence.addAll(c.getAllSentence());
-
+		
 		runGLPK();
 
 		ArrayList<Integer> ind_selected_sentences;
@@ -57,7 +60,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 				summary.add(listSentence.get(i));
 		}
 
-		this.eraseTmpFiles();
+//		eraseTmpFiles();
 		return summary;
 	}
 
@@ -66,7 +69,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 		String line = "";
 		int ind;
 		try {
-			InputStreamReader isr = new InputStreamReader(new FileInputStream(fileName), "ASCII");
+			InputStreamReader isr = new InputStreamReader(new FileInputStream(fileOut), "ASCII");
 			BufferedReader br = new BufferedReader(isr);
 			while ((line = br.readLine()) != null) {
 				if ((ind = this.decodeLine(line)) != -1) {
@@ -105,15 +108,11 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 		File file = new File(fileName);
 		if (!file.delete())
 			System.err.println(file.getName() + " not deleted!");
-
-		file = new File(fileName);
-		if (!file.delete())
-			System.err.println(file.getName() + " not deleted!");
 	}
 
 	private void runGLPK() {
-		GLPLauncher glp = new GLPLauncher(fileName);
-		glp.runGLP(fileName);
+		GLPLauncher glp = new GLPLauncher(fileIn);
+		glp.runGLP(fileOut);
 	}
 
 	@Override
@@ -128,5 +127,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 	@Override
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+		this.fileIn = fileName + ".ilp_in";
+		this.fileOut = fileName + ".ilp_out";
 	}
 }

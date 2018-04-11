@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import com.valnyz.reader_writer.Writer;
-
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -24,6 +22,7 @@ import liasd.asadera.textModeling.SentenceModel;
 import liasd.asadera.textModeling.TextModel;
 import liasd.asadera.textModeling.WordModel;
 import liasd.asadera.tools.Tools;
+import liasd.asadera.tools.reader_writer.Writer;
 import liasd.asadera.tools.wordFilters.TrueFilter;
 import liasd.asadera.tools.wordFilters.WordFilter;
 
@@ -151,9 +150,46 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 	 * @param textToProcess
 	 * @param writer
 	 */
+	public static List<SentenceModel> liveProcessToListSentenceModel(String propStanfordNLP, StanfordCoreNLP pipeline, String textToProcess) {
+		List<SentenceModel> listSentence = new ArrayList<SentenceModel>();
+
+		Annotation document = new Annotation(textToProcess);
+		// run all Annotators on this text
+		pipeline.annotate(document);
+		// these are all the sentences in this document
+		// a CoreMap is essentially a Map that uses class objects as keys and has values
+		// with custom types
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		for (CoreMap sentence : sentences) {
+			if (!sentence.toString().replace("_", "").isEmpty()) {
+				String senText = sentence.toString();
+				SentenceModel sen = new SentenceModel(senText);
+				// traversing the words in the current sentence
+				// a CoreLabel is a CoreMap with additional token-specific methods
+				for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+					String w = token.get(TextAnnotation.class);
+					if (!Tools.removePonctuation(w).isEmpty() && senText.contains(w)) {
+						WordModel word = new WordModel();
+						word.setmForm(w);
+						word.setSentence(sen);
+						if (propStanfordNLP.contains("pos"))
+							word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
+						if (propStanfordNLP.contains("lemma"))
+							word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
+						else
+							word.setmLemma(w.toLowerCase());
+						word.setWord(w);
+						sen.getListWordModel().add(word);
+					}
+				}
+				listSentence.add(sen);
+			}
+		}
+		return listSentence;
+	}
+	
 	public static List<String> liveProcessToListString(StanfordCoreNLP pipeline, String textToProcess) {
 		List<String> listSentence = new ArrayList<String>();
-
 		Annotation document = new Annotation(textToProcess);
 		// run all Annotators on this text
 		pipeline.annotate(document);
@@ -175,8 +211,36 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 			}
 		}
 		return listSentence;
+
 	}
 
+	public static List<String> processListStringToListString(StanfordCoreNLP pipeline, List<String> textToProcess) {
+		List<String> listSentence = new ArrayList<String>();
+		for (String sent : textToProcess) {
+			Annotation document = new Annotation(sent);
+			// run all Annotators on this text
+			pipeline.annotate(document);
+			// these are all the sentences in this document
+			// a CoreMap is essentially a Map that uses class objects as keys and has values
+			// with custom types
+			List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+			for (CoreMap sentence : sentences) {
+				if (!sentence.toString().replace("_", "").isEmpty()) {
+					// traversing the words in the current sentence
+					// a CoreLabel is a CoreMap with additional token-specific methods
+					String s = "";
+					for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+						if (!Tools.removePonctuation(token.get(TextAnnotation.class)).isEmpty()) {
+							s += token.get(LemmaAnnotation.class).toLowerCase() + " ";
+						}
+					}
+					listSentence.add(s);
+				}
+			}
+		}
+		return listSentence;
+	}
+	
 	public String getLemma(String word) {
 		Annotation tokenAnnotation = new Annotation(word);
 		pipeline.annotate(tokenAnnotation);
