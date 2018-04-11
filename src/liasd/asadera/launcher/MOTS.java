@@ -23,6 +23,16 @@ import liasd.asadera.view.CommandView;
 
 public class MOTS {
 
+	/**
+	 * MOTS main command line launcher.
+	 * -c : configuration's file path. REQUIRED
+	 * -m : multicorpus configuration's file path RECOMMENDED
+	 * -o : hyperparameter optimization mode with genetic algorithm
+	 * -C : Comparative Summarization Mode EXPERIMENTAL
+	 * -L : Model learning mode (for LDA, Word Embeddings)
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		CommandLine commandLine;
 		Option option_C = Option.builder("C").required(false).desc("Mode for comparative summarization.")
@@ -56,6 +66,7 @@ public class MOTS {
 			String name = configFileName + File.separator + "UnknownMultiCorpus";
 			if (commandLine.hasOption("m")) {
 				String corpusFileName = new File(commandLine.getOptionValue("m")).getName();
+				/*String name for the save of multicorpus preprocess and results*/
 				name = configFileName.substring(7, configFileName.length() - 4) + File.separator
 						+ corpusFileName.substring(0, corpusFileName.length() - 4);
 				view = new CommandView(commandLine.getOptionValue("c"), commandLine.getOptionValue("m"));
@@ -85,6 +96,7 @@ public class MOTS {
 						p.initADN();
 						AlgoGenetique ag;
 						try {
+							//TODO Genetic parameter hardcoded
 							ag = new AlgoGenetique(0, 0.5, 0.50, 0, 50, 100, 0.14, p);
 							ag.init();
 							ag.optimize();

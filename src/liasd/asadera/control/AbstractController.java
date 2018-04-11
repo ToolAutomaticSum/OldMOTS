@@ -172,7 +172,7 @@ public abstract class AbstractController {
 		else
 			evalRouge = null;
 		getModel().setEvalRouge(evalRouge);
-		getModel().setbRougeEvaluation(bRougeEvaluation);
+		getModel().setRougeEvaluation(bRougeEvaluation);
 	}
 
 	public void notifyRougeMeasureChanged(String rougeMeasure) {

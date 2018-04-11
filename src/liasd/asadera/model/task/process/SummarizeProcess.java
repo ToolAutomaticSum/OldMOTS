@@ -27,12 +27,12 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 	private SummarizeProcess[] threads = null;
 	int nbThreads = 0;
 
-	protected List<AbstractIndexBuilder> indexBuilders;
-	protected List<AbstractCaracteristicBuilder> caracteristicBuilders;
-	protected List<AbstractScoringMethod> scoringMethods;
-	protected AbstractSelectionMethod selectionMethod;
+	private List<AbstractIndexBuilder> indexBuilders;
+	private List<AbstractCaracteristicBuilder> caracteristicBuilders;
+	private List<AbstractScoringMethod> scoringMethods;
+	private AbstractSelectionMethod selectionMethod;
 
-	protected Map<Integer, Map<Integer, List<SentenceModel>>> summary = new HashMap<Integer, Map<Integer, List<SentenceModel>>>();
+	private Map<Integer, Map<Integer, List<SentenceModel>>> summary = new HashMap<Integer, Map<Integer, List<SentenceModel>>>();
 
 	public SummarizeProcess(int id) throws SupportADNException {
 		super(id);

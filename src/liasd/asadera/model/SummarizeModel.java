@@ -68,7 +68,7 @@ public class SummarizeModel extends AbstractModel {
 					w.close();
 				}
 			}
-			if (isbRougeEvaluation()) {
+			if (isRougeEvaluation()) {
 				getEvalRouge().setModel(this);
 				getEvalRouge().setCurrentMultiCorpus(currentMultiCorpus);
 				getEvalRouge().init();

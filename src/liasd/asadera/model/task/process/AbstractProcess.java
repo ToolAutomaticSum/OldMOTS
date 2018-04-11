@@ -109,7 +109,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTask {
 
 	@Override
 	public double getScore() {
-		if (!getModel().isbRougeEvaluation())
+		if (!getModel().isRougeEvaluation())
 			return 0;
 		else
 			return score;
