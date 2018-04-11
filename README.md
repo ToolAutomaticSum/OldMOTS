@@ -4,14 +4,14 @@ MOTS is a summarization system, written in Java. Ir is as modular as possible, a
 
 ## Getting Started
 
-
+[Javadoc](https://toolautomaticsum.github.io/Tool/) available.
 
 ### Prerequisites
 
-* Stanford Core NLP library
-* Stanford Core NLP English Model
+* [Stanford Core NLP library](https://stanfordnlp.github.io/CoreNLP/)
+* [Stanford Core NLP English Model](https://stanfordnlp.github.io/CoreNLP/)
 * At least python 2.7 in order to use WordEmbeddings
-* gensim
+* [gensim](https://radimrehurek.com/gensim/) in order to use WordEmbeddings
 
 
 ### Installing
@@ -20,10 +20,6 @@ MOTS is a summarization system, written in Java. Ir is as modular as possible, a
 * Define $STANFORD_NLP_HOME to your STANFORD library's installation folder.
 * You might define $CORPUS_DATA to your DUC/TAC folder.
 * Run install.sh script.
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
