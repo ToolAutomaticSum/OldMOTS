@@ -1,0 +1,4 @@
+<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="StopWordListFile">/home/nyzam/data/stopwords/englishStopWords.txt</OPTION>
+</PREPROCESS>

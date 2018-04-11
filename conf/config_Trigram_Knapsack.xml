@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>doc</INPUT_PATH>
+		<OUTPUT_PATH>doc/output</OUTPUT_PATH>
+		<MULTITHREADING>true</MULTITHREADING>
+		<PROCESS>
+			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
+			<OPTION NAME="ReadStopWords">true</OPTION>
+			<INDEX_BUILDER NAME="BasicIndexBuilder">
+			</INDEX_BUILDER>
+			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
+				<OPTION NAME="n">3</OPTION>
+			</INDEX_BUILDER>
+			<SUMMARIZE_METHOD NAME="Knapsack">
+				<OPTION NAME="Size">100</OPTION>
+				<OPTION NAME="ScoreMethod">JSBigramScorer</OPTION>
+				<OPTION NAME="Delta">0.0005</OPTION>
+				<OPTION NAME="Fsc">1.0</OPTION>
+				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
+			</SUMMARIZE_METHOD>
+		</PROCESS>
+		<ROUGE_EVALUATION>
+			<ROUGE-MEASURE>ROUGE-1	ROUGE-2	ROUGE-SU4</ROUGE-MEASURE>
+			<ROUGE-PATH>lib/ROUGE-1.5.5/RELEASE-1.5.5</ROUGE-PATH>
+			<MODEL-ROOT>models</MODEL-ROOT>
+			<PEER-ROOT>systems</PEER-ROOT>
+		</ROUGE_EVALUATION>
+	</TASK>
+</CONFIG>

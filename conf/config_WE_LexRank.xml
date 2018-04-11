@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>doc</INPUT_PATH>
+		<OUTPUT_PATH>doc/output</OUTPUT_PATH>
+		<MULTITHREADING>false</MULTITHREADING>		
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="StopWordListFile">/home/nyzam/data/stopwords/englishStopWords.txt</OPTION>
+			<OPTION NAME="PropStanfordNLP">tokenize, ssplit</OPTION>
+		</PREPROCESS>
+		<PROCESS>
+			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
+			<OPTION NAME="ReadStopWords">false</OPTION>
+			<INDEX_BUILDER NAME="wordEmbeddings.WordToVec">
+				<OPTION NAME="ModelPath">/home/nyzam/data/wikipedia/enwiki-20171001-model.bin</OPTION>
+			</INDEX_BUILDER>
+			<CARACTERISTIC_BUILDER NAME="vector.MeanVectorSentence">
+			</CARACTERISTIC_BUILDER>
+			<SCORING_METHOD NAME="graphBased.LexRank">
+				<OPTION NAME="DumpingParameter">0.15</OPTION>
+				<OPTION NAME="GraphThreshold">0.1</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+			</SCORING_METHOD>
+			<SUMMARIZE_METHOD NAME="MMR">
+				<OPTION NAME="CharLimitBoolean">true</OPTION>
+				<OPTION NAME="Size">100</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
+			</SUMMARIZE_METHOD>
+		</PROCESS>
+		<ROUGE_EVALUATION>
+			<ROUGE-MEASURE>ROUGE-1	ROUGE-2	ROUGE-SU4</ROUGE-MEASURE>
+			<ROUGE-PATH>lib/ROUGE-1.5.5/RELEASE-1.5.5</ROUGE-PATH>
+			<MODEL-ROOT>models</MODEL-ROOT>
+			<PEER-ROOT>systems</PEER-ROOT>
+		</ROUGE_EVALUATION>
+	</TASK>
+</CONFIG>
