@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ROUGE_EVAL version="1.55">
+  <EVAL ID="CORPUS_0">
+    <MODEL-ROOT>doc/output/ILP/RCCML/models</MODEL-ROOT>
+    <PEER-ROOT>doc/output/ILP/RCCML/systems</PEER-ROOT>
+    <INPUT-FORMAT TYPE="SEE"/>
+    <PEERS>
+      <P ID="0">T1_0_0_0.html</P>
+    </PEERS>
+    <MODELS/>
+  </EVAL>
+  <EVAL ID="CORPUS_1">
+    <MODEL-ROOT>doc/output/ILP/RCCML/models</MODEL-ROOT>
+    <PEER-ROOT>doc/output/ILP/RCCML/systems</PEER-ROOT>
+    <INPUT-FORMAT TYPE="SEE"/>
+    <PEERS>
+      <P ID="0">T1_0_0_1.html</P>
+    </PEERS>
+    <MODELS/>
+  </EVAL>
+</ROUGE_EVAL>
