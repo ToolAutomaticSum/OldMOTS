@@ -9,7 +9,7 @@
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
 			<INDEX_BUILDER NAME="wordEmbeddings.WordToVec">
-				<OPTION NAME="ModelPath">/home/$CORPUS_DATA/wikipedia/enwiki-20171001-model.bin</OPTION>
+				<OPTION NAME="ModelPath">$CORPUS_DATA/wikipedia/enwiki-20171001-model.bin</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="matrix.DocQueryMatrix">
 			</CARACTERISTIC_BUILDER>

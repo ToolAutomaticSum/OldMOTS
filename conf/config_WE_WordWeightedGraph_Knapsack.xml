@@ -7,14 +7,14 @@
                 <MULTITHREADING>false</MULTITHREADING>
                 <PREPROCESS NAME="GenerateTextModel">
                         <OPTION NAME="StanfordNLP">true</OPTION>
-                        <OPTION NAME="StopWordListFile">/home/$CORPUS_DATA/stopwords/englishStopWords.txt</OPTION>
+                        <OPTION NAME="StopWordListFile">$CORPUS_DATA/stopwords/englishStopWords.txt</OPTION>
                         <OPTION NAME="PropStanfordNLP">tokenize, ssplit</OPTION>
                 </PREPROCESS>
                 <PROCESS>
                         <OPTION NAME="CorpusIdToSummarize">all</OPTION>
                         <OPTION NAME="ReadStopWords">false</OPTION>
 			<INDEX_BUILDER NAME="wordEmbeddings.WordToVec">
-                                <OPTION NAME="ModelPath">/home/$CORPUS_DATA/wikipedia/enwiki-20171001-model.bin</OPTION>
+                                <OPTION NAME="ModelPath">$CORPUS_DATA/wikipedia/enwiki-20171001-model.bin</OPTION>
                         </INDEX_BUILDER>
                         <CARACTERISTIC_BUILDER NAME="graphBased.SimilarityGraphOfWordsBuilder">
                                 <OPTION NAME="DumpingParameter">0.15</OPTION>
