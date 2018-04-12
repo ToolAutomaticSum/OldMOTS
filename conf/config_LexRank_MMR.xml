@@ -7,7 +7,7 @@
 		<MULTITHREADING>true</MULTITHREADING>		
 <PREPROCESS NAME="GenerateTextModel">
 			<OPTION NAME="StanfordNLP">true</OPTION>
-			<OPTION NAME="StopWordListFile">/home/nyzam/data/stopwords/englishStopWords.txt</OPTION>
+			<OPTION NAME="StopWordListFile">/home/$CORPUS_DATA/stopwords/englishStopWords.txt</OPTION>
 </PREPROCESS>
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>

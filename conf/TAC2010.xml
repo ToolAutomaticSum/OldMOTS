@@ -3,279 +3,279 @@
 	<TASK ID="1">
 		<MULTICORPUS ID="0">
 			<CORPUS ID="0">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1001A/D1001A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1001A/D1001A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1001-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="1">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1002A/D1002A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1002A/D1002A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1002-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="2">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1003A/D1003A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1003A/D1003A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1003-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="3">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1004A/D1004A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1004A/D1004A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1004-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="4">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1005A/D1005A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1005A/D1005A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1005-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="5">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1006A/D1006A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1006A/D1006A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1006-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="6">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1007B/D1007B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1007B/D1007B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1007-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="7">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1008B/D1008B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1008B/D1008B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1008-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="8">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1009B/D1009B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1009B/D1009B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1009-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="9">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1010B/D1010B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1010B/D1010B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1010-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="10">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1011C/D1011C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1011C/D1011C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1011-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="11">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1012C/D1012C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1012C/D1012C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1012-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="12">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1013C/D1013C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1013C/D1013C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1013-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="13">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1014C/D1014C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1014C/D1014C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1014-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="14">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1015C/D1015C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1015C/D1015C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1015-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="15">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1016C/D1016C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1016C/D1016C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1016-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="16">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1017D/D1017D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1017D/D1017D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1017-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="17">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1018D/D1018D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1018D/D1018D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1018-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="18">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1019D/D1019D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1019D/D1019D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1019-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="19">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1020D/D1020D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1020D/D1020D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1020-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="20">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1021D/D1021D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1021D/D1021D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1021-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="21">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1022D/D1022D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1022D/D1022D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1022-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="22">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1023E/D1023E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1023E/D1023E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1023-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="23">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1024E/D1024E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1024E/D1024E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1024-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="24">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1025E/D1025E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1025E/D1025E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1025-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="25">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1026E/D1026E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1026E/D1026E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1026-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="26">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1027E/D1027E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1027E/D1027E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1027-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="27">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1028E/D1028E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1028E/D1028E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1028-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="28">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1029F/D1029F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1029F/D1029F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1029-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="29">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1030F/D1030F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1030F/D1030F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1030-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="30">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1031F/D1031F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1031F/D1031F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1031-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="31">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1032F/D1032F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1032F/D1032F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1032-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="32">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1033F/D1033F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1033F/D1033F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1033-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="33">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1034F/D1034F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1034F/D1034F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1034-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="34">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1035G/D1035G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1035G/D1035G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1035-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="35">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1036G/D1036G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1036G/D1036G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1036-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="36">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1037G/D1037G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1037G/D1037G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1037-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="37">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1038G/D1038G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1038G/D1038G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1038-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="38">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1039G/D1039G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1039G/D1039G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1039-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="39">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1040G/D1040G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1040G/D1040G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1040-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="40">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1041H/D1041H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1041H/D1041H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1041-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="41">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1042H/D1042H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1042H/D1042H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1042-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="42">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1043H/D1043H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1043H/D1043H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1043-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="43">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1044H/D1044H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1044H/D1044H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1044-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="44">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1045H/D1045H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1045H/D1045H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1045-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="45">
-				<INPUT_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_test_docs_files/D1046H/D1046H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_test_docs_files/D1046H/D1046H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2010/GuidedSumm10_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D1046-A.*</SUMMARY>
 			</CORPUS>
 		</MULTICORPUS>

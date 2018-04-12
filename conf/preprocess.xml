@@ -1,4 +1,13 @@
-<PREPROCESS NAME="GenerateTextModel">
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<INPUT_PATH>doc</INPUT_PATH>
+		<OUTPUT_PATH>doc/output</OUTPUT_PATH>
+		<MULTITHREADING>true</MULTITHREADING>		
+		<PREPROCESS NAME="GenerateTextModel">
 			<OPTION NAME="StanfordNLP">true</OPTION>
-			<OPTION NAME="StopWordListFile">/home/nyzam/data/stopwords/englishStopWords.txt</OPTION>
-</PREPROCESS>
+			<OPTION NAME="StopWordListFile">/home/$CORPUS_DATA/stopwords/englishStopWords.txt</OPTION>
+		</PREPROCESS>	
+	</TASK>
+</CONFIG>

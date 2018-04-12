@@ -3,291 +3,291 @@
 	<TASK ID="1">
 		<MULTICORPUS ID="0">
 			<CORPUS ID="0">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0801A/D0801A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0801A/D0801A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0801-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="1">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0802A/D0802A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0802A/D0802A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0802-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="2">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0803A/D0803A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0803A/D0803A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0803-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="3">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0804A/D0804A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0804A/D0804A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0804-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="4">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0805A/D0805A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0805A/D0805A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0805-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="5">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0806A/D0806A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0806A/D0806A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0806-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="6">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0807A/D0807A-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0807A/D0807A-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0807-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="7">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0808B/D0808B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0808B/D0808B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0808-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="8">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0809B/D0809B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0809B/D0809B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0809-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="9">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0810B/D0810B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0810B/D0810B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0810-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="10">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0811B/D0811B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0811B/D0811B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0811-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="11">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0812B/D0812B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0812B/D0812B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0812-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="12">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0813B/D0813B-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0813B/D0813B-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0813-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="13">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0814C/D0814C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0814C/D0814C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0814-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="14">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0815C/D0815C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0815C/D0815C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0815-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="15">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0816C/D0816C-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0816C/D0816C-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0816-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="16">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0817D/D0817D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0817D/D0817D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0817-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="17">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0818D/D0818D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0818D/D0818D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0818-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="18">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0819D/D0819D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0819D/D0819D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0819-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="19">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0820D/D0820D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0820D/D0820D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0820-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="20">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0821D/D0821D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0821D/D0821D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0821-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="21">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0822D/D0822D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0822D/D0822D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0822-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="22">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0823D/D0823D-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0823D/D0823D-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0823-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="23">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0824E/D0824E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0824E/D0824E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0824-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="24">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0825E/D0825E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0825E/D0825E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0825-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="25">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0826E/D0826E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0826E/D0826E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0826-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="26">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0827E/D0827E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0827E/D0827E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0827-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="27">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0828E/D0828E-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0828E/D0828E-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0828-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="28">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0829F/D0829F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0829F/D0829F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0829-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="29">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0830F/D0830F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0830F/D0830F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0830-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="30">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0831F/D0831F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0831F/D0831F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0831-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="31">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0832F/D0832F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0832F/D0832F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0832-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="32">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0833F/D0833F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0833F/D0833F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0833-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="33">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0834F/D0834F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0834F/D0834F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0834-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="34">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0835F/D0835F-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0835F/D0835F-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0835-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="35">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0836G/D0836G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0836G/D0836G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0836-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="36">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0837G/D0837G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0837G/D0837G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0837-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="37">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0838G/D0838G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0838G/D0838G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0838-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="38">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0839G/D0839G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0839G/D0839G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0839-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="39">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0840G/D0840G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0840G/D0840G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0840-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="40">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0841G/D0841G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0841G/D0841G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0841-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="41">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0842G/D0842G-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0842G/D0842G-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0842-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="42">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0843H/D0843H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0843H/D0843H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0843-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="43">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0844H/D0844H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0844H/D0844H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0844-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="44">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0845H/D0845H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0845H/D0845H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0845-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="45">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0846H/D0846H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0846H/D0846H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0846-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="46">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0847H/D0847H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0847H/D0847H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0847-A.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="47">
-				<INPUT_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_test_docs_files/D0848H/D0848H-A</INPUT_PATH>
+				<INPUT_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_test_docs_files/D0848H/D0848H-A</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
-				<SUMMARY_PATH>/home/nyzam/data/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY_PATH>/home/$CORPUS_DATA/TAC2008/UpdateSumm08_eval/ROUGE/models</SUMMARY_PATH>
 				<SUMMARY ID="0">D0848-A.*</SUMMARY>
 			</CORPUS>
 		</MULTICORPUS>
