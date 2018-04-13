@@ -9,61 +9,61 @@
     <pluginManagement>
     	<plugins>
     		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-    		<plugin>
-    			<groupId>org.eclipse.m2e</groupId>
-    			<artifactId>lifecycle-mapping</artifactId>
-    			<version>1.0.0</version>
-    			<configuration>
-    				<lifecycleMappingMetadata>
-    					<pluginExecutions>
-    						<pluginExecution>
-    							<pluginExecutionFilter>
-    								<groupId>
-    									org.apache.maven.plugins
-    								</groupId>
-    								<artifactId>
-    									maven-compiler-plugin
-    								</artifactId>
-    								<versionRange>
-    									[2.3.2,)
-    								</versionRange>
-    								<goals>
-    									<goal>testCompile</goal>
-    									<goal>compile</goal>
-    								</goals>
-    							</pluginExecutionFilter>
-    							<action>
-    								<ignore></ignore>
-    							</action>
-    						</pluginExecution>
-    					</pluginExecutions>
-    				</lifecycleMappingMetadata>
-    			</configuration>
-    		</plugin>
+			<plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>
+										org.apache.maven.plugins
+									</groupId>
+									<artifactId>
+										maven-compiler-plugin
+									</artifactId>
+									<versionRange>
+										[2.3.2,)
+									</versionRange>
+									<goals>
+										<goal>testCompile</goal>
+										<goal>compile</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore></ignore>
+								</action>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
+				</configuration>
+			</plugin>
     			  <!-- Set a compiler level -->
-	  <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-compiler-plugin</artifactId>
-		<version>2.3.2</version>
-		<configuration>
-			<source>1.8</source>
-			<target>1.8</target>
-		</configuration>
-	  </plugin>
-	  <plugin>
-  		<groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-jar-plugin</artifactId>
-	        <version>3.0.2</version>
-	        <configuration>
-	        	<archive>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+		       	<artifactId>maven-jar-plugin</artifactId>
+		       	<version>3.0.2</version>
+		      	<configuration>
+			       	<archive>
 					<manifest>
 						<addClasspath>true</addClasspath>
 						<classpathPrefix>lib/</classpathPrefix>
 						<mainClass>liasd.asadera.launcher.MOTS</mainClass>
-					</manifest>
-				</archive>
-	        </configuration>
-	  	</plugin>
+						</manifest>
+					</archive>
+			    </configuration>
+		 	</plugin>
 		<!-- <plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 	        <artifactId>maven-assembly-plugin</artifactId>
@@ -94,19 +94,24 @@
 <!-- 				</execution> -->
 <!-- 			</executions> -->
 <!-- 		</plugin> -->
-		<plugin>
- 			<groupId>org.apache.maven.plugins</groupId>
- 			<artifactId>maven-source-plugin</artifactId>
- 			<version>2.1.2</version> 
- 			<executions>
- 				<execution>
- 					<id>attach-source</id>
- 					<goals>
- 						<goal>jar</goal>
- 					</goals>
- 				</execution>
- 			</executions>
- 		</plugin>
+			<plugin>
+	 			<groupId>org.apache.maven.plugins</groupId>
+	 			<artifactId>maven-source-plugin</artifactId>
+	 			<version>2.1.2</version> 
+	 			<executions>
+	 				<execution>
+	 					<id>attach-source</id>
+	 					<goals>
+	 						<goal>jar</goal>
+	 					</goals>
+	 				</execution>
+	 			</executions>
+	 		</plugin>
+<!-- 	 		<plugin>
+			    <groupId>org.eluder.coveralls</groupId>
+			    <artifactId>coveralls-maven-plugin</artifactId>
+			    <version>4.3.0</version>
+			</plugin> -->
     	</plugins>
     </pluginManagement>
   </build>
@@ -161,6 +166,7 @@
   	</repository>
   </repositories>
   <properties>
+	<sourceEncoding>UTF-8</sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
