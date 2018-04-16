@@ -21,6 +21,17 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 * You might define $CORPUS_DATA to your DUC/TAC folder.
 * Run install.sh script.
 
+### Usage
+
+MOTS is a command line tool than can be used like this :
+Say what the step will be
+
+```
+java -jar mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file>
+```
+
+Example config file and multicorpus file are provided in /conf but should be adapted to your setup.
+
 ## Built With
 
 * [Maven](https://maven.apache.org/) - Dependency Management
