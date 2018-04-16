@@ -1,12 +1,14 @@
-# MOTS
-
 [![Build Status](https://travis-ci.org/ToolAutomaticSum/MOTS.svg?branch=master)](https://travis-ci.org/ToolAutomaticSum/MOTS)
+[![Wiki link] (https://img.shields.io/badge/docs-wiki-orange.svg)](https://toolautomaticsum.github.io/MOTS/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+# MOTS
 
 MOTS (MOdular Tool for Summarization) is a summarization system, written in Java. It is as modular as possible, and is intended to provide an architecture to implement and test new summarization methods, as well as to ease comparison with already implemented methods, in an unified framework. This system is the first completely modular system for automatic summarization  and already allows to summarize using more than a hundred combinations of modules. The need for such a system is important. Indeed, several evaluation campaigns exist in AS field, but summarization algorithms are not easy to compare due to the large variety of pre and post-processings they use.
 
 ## Getting Started
 
-[Javadoc](https://toolautomaticsum.github.io/Tool/) available.
+[Javadoc](https://toolautomaticsum.github.io/MOTS/) available.
 
 ### Prerequisites
 
