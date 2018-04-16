@@ -81,22 +81,22 @@ Example for LexRank_MMR configuration file :
 		* \<LANGUAGE\> is the input's document language for preprocessing goal. USELESS AT THE MOMENT.
 		* \<OUTPUT_PATH\> is the forlder's output path of the system. It is used to save preprocessed documents, ROUGE xml generated file, old score, ...
 		* \<MULTITHREADING\> (boolean) launch the system in a mutltithreading way or not.
-		* <PREPROCESS> is the preprocess step for the system. The preprocess java class to use is pass by the name variable. Here it's GenerateTextModel. It also needs two <OPTION> :
-			* <OPTION NAME="StanfordNLP"> (boolean), true if you want to use StanfordNLP pipeline and tool to do the preprocessing.
-			* <OPTION NAME="StopWordListPath"> (String), path of the stopwords list you want to use.
-		<PROCESS> is the main step of the system. It should have at least one <SUMMARIZE_METHOD> node and two <OPTION>. It often has an <INDEX_BUILDER> node and a <CARACTERISTIC_BUILDER> node :
-			* <OPTION NAME="CorpusIdToSummarize"> (String as a list of int separated by \t), the list of CorpusId to summarize from the MultiCorpus configuration file. "all" will do summarization for all corpus.
-			* <OPTION NAME="ReadStopWords"> (boolean), state if the system count stopwords as part of the texts or not.
-			* <INDEX_BUILDER> is the step where the system generate a computer friendly representation of each text's textual unit. (TF-IDF, Bigram, WordEmbeddings, ...)
-			* <CARATERISTIC_BUILDER> is the sentence caracteristic generation step based on the textual unit index building.
-			* <SCORING_METHOD> weight each sentences. 
-			* <SUMMARIZE_BUILDER> generate a summary usually by ranking sentence based on their score.
-		* <ROUGE_EVALUATION> is the ROUGE evaluation step. For detail, look at ROUGE readme in /lib/ROUGE folder.
-			* <ROUGE_MEASURE>  represent the list of ROUGE measure you want to use.
-			* <MODEL_ROOT> is the model's folder name for ROUGE xml input files. 
-			* <PEER_ROOT> is the peer's folder name for ROUGE xml input files. 
+		* \<PREPROCESS\> is the preprocess step for the system. The preprocess java class to use is pass by the name variable. Here it's GenerateTextModel. It also needs two \<OPTION\> :
+			* \<OPTION NAME="StanfordNLP"\> (boolean), true if you want to use StanfordNLP pipeline and tool to do the preprocessing.
+			* \<OPTION NAME="StopWordListPath"\> (String), path of the stopwords list you want to use.
+		\<PROCESS\> is the main step of the system. It should have at least one \<SUMMARIZE_METHOD\> node and two \<OPTION\>. It often has an \<INDEX_BUILDER\> node and a \<CARACTERISTIC_BUILDER\> node :
+			* \<OPTION NAME="CorpusIdToSummarize"\> (String as a list of int separated by \t), the list of CorpusId to summarize from the MultiCorpus configuration file. "all" will do summarization for all corpus.
+			* \<OPTION NAME="ReadStopWords"\> (boolean), state if the system count stopwords as part of the texts or not.
+			* \<INDEX_BUILDER\> is the step where the system generate a computer friendly representation of each text's textual unit. (TF-IDF, Bigram, WordEmbeddings, ...)
+			* \<CARATERISTIC_BUILDER\> is the sentence caracteristic generation step based on the textual unit index building.
+			* \<SCORING_METHOD\> weights each sentences. 
+			* \<SUMMARIZE_BUILDER\> generate a summary usually by ranking sentence based on their score.
+		* \<ROUGE_EVALUATION\> is the ROUGE evaluation step. For detail, look at ROUGE readme in /lib/ROUGE folder.
+			* \<ROUGE_MEASURE\>  represent the list of ROUGE measure you want to use.
+			* \<MODEL_ROOT\> is the model's folder name for ROUGE xml input files. 
+			* \<PEER_ROOT\> is the peer's folder name for ROUGE xml input files. 
 
-The <PROCESS> node is the system's core and you should look for more detail in the javadoc and the source code of the different INDEX_BUILDER, CARACTERISTIC_BUILDER, SCORING_METHOD and SUMMARIZE_METHOD.
+The \<PROCESS\> node is the system's core and you should look for more detail in the javadoc and the source code of the different INDEX_BUILDER, CARACTERISTIC_BUILDER, SCORING_METHOD and SUMMARIZE_METHOD class.
 
 ## Built With
 
