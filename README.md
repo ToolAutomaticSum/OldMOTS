@@ -94,7 +94,7 @@ Example for LexRank_MMR configuration file :
 			* <b>\<SCORING_METHOD\></b> weights each sentences. 
 			* <b>\<SUMMARIZE_BUILDER\></b> generate a summary usually by ranking sentence based on their score.
 		* <b>\<ROUGE_EVALUATION\></b> is the ROUGE evaluation step. For detail, look at ROUGE readme in /lib/ROUGE folder.
-			* <b>\<ROUGE_MEASURE\></b>  represent the list of ROUGE measure you want to use.
+			* <b>\<ROUGE_MEASURE\></b> (String as a list of int separated by \t), represent the list of ROUGE measure you want to use.
 			* <b>\<MODEL_ROOT\></b> is the model's folder name for ROUGE xml input files. 
 			* <b>\<PEER_ROOT\></b> is the peer's folder name for ROUGE xml input files. 
 
