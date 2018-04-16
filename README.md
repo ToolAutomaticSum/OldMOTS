@@ -36,6 +36,8 @@ Example config file and multicorpus file are provided in /conf but should be ada
 
 Each summarization process is defined in a configuration file and the test corpus is defined in a multicorpus configuration file.
 
+### Process configuration
+
 Example for LexRank_MMR configuration file :
 ```
 <CONFIG>
@@ -84,7 +86,7 @@ Example for LexRank_MMR configuration file :
 		* \<PREPROCESS\> is the preprocess step for the system. The preprocess java class to use is pass by the name variable. Here it's GenerateTextModel. It also needs two \<OPTION\> :
 			* \<OPTION NAME="StanfordNLP"\> (boolean), true if you want to use StanfordNLP pipeline and tool to do the preprocessing.
 			* \<OPTION NAME="StopWordListPath"\> (String), path of the stopwords list you want to use.
-		\<PROCESS\> is the main step of the system. It should have at least one \<SUMMARIZE_METHOD\> node and two \<OPTION\>. It often has an \<INDEX_BUILDER\> node and a \<CARACTERISTIC_BUILDER\> node :
+		* \<PROCESS\> is the main step of the system. It should have at least one \<SUMMARIZE_METHOD\> node and two \<OPTION\>. It often has an \<INDEX_BUILDER\> node and a \<CARACTERISTIC_BUILDER\> node :
 			* \<OPTION NAME="CorpusIdToSummarize"\> (String as a list of int separated by \t), the list of CorpusId to summarize from the MultiCorpus configuration file. "all" will do summarization for all corpus.
 			* \<OPTION NAME="ReadStopWords"\> (boolean), state if the system count stopwords as part of the texts or not.
 			* \<INDEX_BUILDER\> is the step where the system generate a computer friendly representation of each text's textual unit. (TF-IDF, Bigram, WordEmbeddings, ...)
@@ -98,6 +100,35 @@ Example for LexRank_MMR configuration file :
 
 The \<PROCESS\> node is the system's core and you should look for more detail in the javadoc and the source code of the different INDEX_BUILDER, CARACTERISTIC_BUILDER, SCORING_METHOD and SUMMARIZE_METHOD class.
 
+### Multicorpus configuration
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<MULTICORPUS ID="0">
+			<CORPUS ID="0">
+				<INPUT_PATH>$CORPUS_DATA/TAC2009/UpdateSumm09_test_docs_files/D0901A/D0901A-A</INPUT_PATH>
+				<DOCUMENT ID="0">.*</DOCUMENT>
+				<SUMMARY_PATH>$CORPUS_DATA/TAC2009/UpdateSumm09_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY ID="0">D0901-A.*</SUMMARY>
+			</CORPUS>
+		</MULTICORPUS>
+	</TASK>
+</CONFIG>
+```
+
+For now, all ID are useless and could be avoided.
+
+* \<CONFIG\> is the root node.
+	* \<TASK\> represent a summarization task. You could do multiple in a simple run. At start, stick with one.
+		* \<MULTICORPUS\> is a list of \<CORPUS\>
+			* \<CORPUS\> can be one or more documents. The system will generate one summary per corpus.
+				* \<INPUT_PATH\> is the folder containing the corpus' documents.
+				* \<DOCUMENT\> is the regex for the documents you want to load. You could use multiple \<DOCUMENT\> node.
+				* \<SUMMARY_PATH\> is the human summaries folder path.
+				* \<SUMMARY\> is the regex for human summary file associating to this corpus. You could use multiple \<SUMMARY\> node.
+				 
 ## Built With
 
 * [Maven](https://maven.apache.org/) - Dependency Management
