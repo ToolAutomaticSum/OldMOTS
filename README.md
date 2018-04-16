@@ -78,27 +78,27 @@ Example for LexRank_MMR configuration file :
 </CONFIG>
 ```
 
-* \<CONFIG\> is the root node.
-	* \<TASK\> represent a summarization task. You could do multiple in a simple run. At start, stick with one.
-		* \<LANGUAGE\> is the input's document language for preprocessing goal. USELESS AT THE MOMENT.
-		* \<OUTPUT_PATH\> is the forlder's output path of the system. It is used to save preprocessed documents, ROUGE xml generated file, old score, ...
-		* \<MULTITHREADING\> (boolean) launch the system in a mutltithreading way or not.
-		* \<PREPROCESS\> is the preprocess step for the system. The preprocess java class to use is pass by the name variable. Here it's GenerateTextModel. It also needs two \<OPTION\> :
-			* \<OPTION NAME="StanfordNLP"\> (boolean), true if you want to use StanfordNLP pipeline and tool to do the preprocessing.
-			* \<OPTION NAME="StopWordListPath"\> (String), path of the stopwords list you want to use.
-		* \<PROCESS\> is the main step of the system. It should have at least one \<SUMMARIZE_METHOD\> node and two \<OPTION\>. It often has an \<INDEX_BUILDER\> node and a \<CARACTERISTIC_BUILDER\> node :
-			* \<OPTION NAME="CorpusIdToSummarize"\> (String as a list of int separated by \t), the list of CorpusId to summarize from the MultiCorpus configuration file. "all" will do summarization for all corpus.
-			* \<OPTION NAME="ReadStopWords"\> (boolean), state if the system count stopwords as part of the texts or not.
-			* \<INDEX_BUILDER\> is the step where the system generate a computer friendly representation of each text's textual unit. (TF-IDF, Bigram, WordEmbeddings, ...)
-			* \<CARATERISTIC_BUILDER\> is the sentence caracteristic generation step based on the textual unit index building.
-			* \<SCORING_METHOD\> weights each sentences. 
-			* \<SUMMARIZE_BUILDER\> generate a summary usually by ranking sentence based on their score.
-		* \<ROUGE_EVALUATION\> is the ROUGE evaluation step. For detail, look at ROUGE readme in /lib/ROUGE folder.
-			* \<ROUGE_MEASURE\>  represent the list of ROUGE measure you want to use.
-			* \<MODEL_ROOT\> is the model's folder name for ROUGE xml input files. 
-			* \<PEER_ROOT\> is the peer's folder name for ROUGE xml input files. 
+* <b>\<CONFIG\><\b> is the root node.
+	* <b>\<TASK\><\b> represent a summarization task. You could do multiple in a simple run. At start, stick with one.
+		* <b>\<LANGUAGE\><\b> is the input's document language for preprocessing goal. USELESS AT THE MOMENT.
+		* <b>\<OUTPUT_PATH\><\b> is the forlder's output path of the system. It is used to save preprocessed documents, ROUGE xml generated file, old score, ...
+		* <b>\<MULTITHREADING\><\b> (boolean) launch the system in a mutltithreading way or not.
+		* <b>\<PREPROCESS\><\b> is the preprocess step for the system. The preprocess java class to use is pass by the name variable. Here it's GenerateTextModel. It also needs two <b>\<OPTION\><\b> :
+			* <b>\<OPTION NAME="StanfordNLP"\><\b> (boolean), true if you want to use StanfordNLP pipeline and tool to do the preprocessing.
+			* <b>\<OPTION NAME="StopWordListPath"\><\b> (String), path of the stopwords list you want to use.
+		* <b>\<PROCESS\><\b> is the main step of the system. It should have at least one <b>\<SUMMARIZE_METHOD\><\b> node and two <b>\<OPTION\><\b> It often has an <b>\<INDEX_BUILDER\><\b> node and a <b>\<CARACTERISTIC_BUILDER\><\b> node :
+			* <b>\<OPTION NAME="CorpusIdToSummarize"\><\b> (String as a list of int separated by \t), the list of CorpusId to summarize from the MultiCorpus configuration file. "all" will do summarization for all corpus.
+			* <b>\<OPTION NAME="ReadStopWords"\><\b> (boolean), state if the system count stopwords as part of the texts or not.
+			* <b>\<INDEX_BUILDER\><\b> is the step where the system generate a computer friendly representation of each text's textual unit. (TF-IDF, Bigram, WordEmbeddings, ...)
+			* <b>\<CARATERISTIC_BUILDER\><\b> is the sentence caracteristic generation step based on the textual unit index building.
+			* <b>\<SCORING_METHOD\><\b> weights each sentences. 
+			* <b>\<SUMMARIZE_BUILDER\><\b> generate a summary usually by ranking sentence based on their score.
+		* <b>\<ROUGE_EVALUATION\><\b> is the ROUGE evaluation step. For detail, look at ROUGE readme in /lib/ROUGE folder.
+			* <b>\<ROUGE_MEASURE\><\b>  represent the list of ROUGE measure you want to use.
+			* <b>\<MODEL_ROOT\><\b> is the model's folder name for ROUGE xml input files. 
+			* <b>\<PEER_ROOT\><\b> is the peer's folder name for ROUGE xml input files. 
 
-The \<PROCESS\> node is the system's core and you should look for more detail in the javadoc and the source code of the different INDEX_BUILDER, CARACTERISTIC_BUILDER, SCORING_METHOD and SUMMARIZE_METHOD class.
+The <b>\<PROCESS\><\b> node is the system's core and you should look for more detail in the javadoc and the source code of the different INDEX_BUILDER, CARACTERISTIC_BUILDER, SCORING_METHOD and SUMMARIZE_METHOD class.
 
 ### Multicorpus configuration
 
@@ -120,14 +120,14 @@ The \<PROCESS\> node is the system's core and you should look for more detail in
 
 For now, all ID are useless and could be avoided.
 
-* \<CONFIG\> is the root node.
-	* \<TASK\> represent a summarization task. You could do multiple in a simple run. At start, stick with one.
-		* \<MULTICORPUS\> is a list of \<CORPUS\>
-			* \<CORPUS\> can be one or more documents. The system will generate one summary per corpus.
-				* \<INPUT_PATH\> is the folder containing the corpus' documents.
-				* \<DOCUMENT\> is the regex for the documents you want to load. You could use multiple \<DOCUMENT\> node.
-				* \<SUMMARY_PATH\> is the human summaries folder path.
-				* \<SUMMARY\> is the regex for human summary file associating to this corpus. You could use multiple \<SUMMARY\> node.
+* <b>\<CONFIG\><\b> is the root node.
+	* <b>\<TASK\><\b> represent a summarization task. You could do multiple in a simple run. At start, stick with one.
+		* <b>\<MULTICORPUS\><\b> is a list of <b>\<CORPUS\><\b>
+			* <b>\<CORPUS\><\b> can be one or more documents. The system will generate one summary per corpus.
+				* <b>\<INPUT_PATH\><\b> is the folder containing the corpus' documents.
+				* <b>\<DOCUMENT\><\b> is the regex for the documents you want to load. You could use multiple <b>\<DOCUMENT\><\b> node.
+				* <b>\<SUMMARY_PATH\><\b> is the human summaries folder path.
+				* <b>\<SUMMARY\><\b> is the regex for human summary file associating to this corpus. You could use multiple <b>\<SUMMARY\><\b> node.
 				 
 ## Built With
 
