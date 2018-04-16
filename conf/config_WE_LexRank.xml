@@ -19,7 +19,7 @@
 			<CARACTERISTIC_BUILDER NAME="vector.MeanVectorSentence">
 			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="graphBased.LexRank">
-				<OPTION NAME="DumpingParameter">0.15</OPTION>
+				<OPTION NAME="DampingParameter">0.15</OPTION>
 				<OPTION NAME="GraphThreshold">0.1</OPTION>
 				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 			</SCORING_METHOD>

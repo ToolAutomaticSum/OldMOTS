@@ -27,7 +27,7 @@ public abstract class AbstractController {
 
 	protected static int processID = 0;
 	protected String language;
-	protected String inputDir;
+//	protected String inputDir;
 	protected List<Corpus> corpusList = new ArrayList<Corpus>();
 	protected String outputDir;
 	protected List<String> preProcess = new ArrayList<String>();
@@ -203,13 +203,13 @@ public abstract class AbstractController {
 		this.language = language;
 	}
 
-	public String getInputDir() {
-		return inputDir;
-	}
-
-	public void setInputDir(String inputDir) {
-		this.inputDir = inputDir;
-	}
+//	public String getInputDir() {
+//		return inputDir;
+//	}
+//
+//	public void setInputDir(String inputDir) {
+//		this.inputDir = inputDir;
+//	}
 
 	public List<String> getPreProcess() {
 		return preProcess;
