@@ -24,7 +24,20 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 * Define $JAVA_HOME to your java home folder.
 * You might define $CORPUS_DATA to your DUC/TAC folder.
 * Define $JEP_HOME to your folder containing your jep python package. It should be /usr/lib/pythonX.Y/site-packages/jep or $HOME/.local/lib/pythonX.Y/site-packages/jep"
-* You might define $ROUGE_HOME to your ROUGE installation folder.
+* Install ROUGE :
+	* Define $ROUGE_HOME to your ROUGE installation folder.
+	* Define $ROUGE_EVAL_HOME to $ROUGE_HOME/data.
+	* Install XML::DOM module in order to use ROUGE perl script. (sudo cpan install XML::DOM).
+	* Recreate database :
+	```
+	cd data/WordNet-2.0-Exceptions/
+	rm WordNet-2.0.exc.db # only if exist
+	./buildExeptionDB.pl . exc WordNet-2.0.exc.db
+
+	cd ../
+	rm WordNet-2.0.exc.db # only if exist
+	ln -s WordNet-2.0-Exceptions/WordNet-2.0.exc.db WordNet-2.0.exc.db
+	```
 * Run install.sh script.
 
 ### Usage

@@ -1,3 +1,8 @@
-doc
 AutomaticSummarization.git
+/lib/
 /target/
+/bin/
+/conf/
+/output/
+assembly.xml
+*.pyc
