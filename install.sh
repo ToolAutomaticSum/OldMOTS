@@ -16,6 +16,7 @@ fi
 
 if [ -z $JEP_HOME ]; then
 	echo "You need to define \$JEP_HOME to your folder containing your jep python package. It should be /usr/lib/pythonX.Y/site-packages/jep or $HOME/.local/lib/pythonX.Y/site-packages/jep"
+	exit 0
 fi
 
 mvn install

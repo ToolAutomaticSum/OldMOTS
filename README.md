@@ -15,8 +15,8 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 
 * [Maven](https://maven.apache.org/) - Dependency Manager
 * At least python 2.7 in order to use WordEmbeddings
-* [jep](https://github.com/ninia/jep) in order to use WordEmbeddings
-* [gensim](https://radimrehurek.com/gensim/) in order to use WordEmbeddings
+* [jep](https://github.com/ninia/jep) in order to use WordEmbeddings (pip install jep)
+* [gensim](https://radimrehurek.com/gensim/) in order to use WordEmbeddings (pip install gensim)
 
 
 ### Installing
@@ -32,9 +32,9 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 	```
 	cd data/WordNet-2.0-Exceptions/
 	rm WordNet-2.0.exc.db # only if exist
-	./buildExeptionDB.pl . exc WordNet-2.0.exc.db
+	perl buildExeptionDB.pl . exc WordNet-2.0.exc.db
 
-	cd ../
+	cd ..
 	rm WordNet-2.0.exc.db # only if exist
 	ln -s WordNet-2.0-Exceptions/WordNet-2.0.exc.db WordNet-2.0.exc.db
 	```
@@ -159,8 +159,6 @@ For now, all ID are useless and could be avoided.
 ## Authors
 
 * **Valentin Nyzam** - [ValNyz](https://github.com/ValNyz)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
