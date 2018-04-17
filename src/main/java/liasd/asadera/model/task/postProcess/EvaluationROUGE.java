@@ -31,7 +31,7 @@ import main.java.liasd.asadera.tools.reader_writer.Writer;
 
 public class EvaluationROUGE extends AbstractPostProcess {
 
-	private String rougePath = "";
+	private String rougePath = System.getenv("ROUGE_HOME");
 	private List<String> rougeMeasure = new ArrayList<String>();
 	protected String modelRoot;
 	protected String peerRoot;
@@ -240,13 +240,13 @@ public class EvaluationROUGE extends AbstractPostProcess {
 		}).join();
 	}
 
-	public String getRougePath() {
-		return rougePath;
-	}
-
-	public void setRougePath(String rougePath) {
-		this.rougePath = rougePath;
-	}
+//	public String getRougePath() {
+//		return rougePath;
+//	}
+//
+//	public void setRougePath(String rougePath) {
+//		this.rougePath = rougePath;
+//	}
 
 	public List<String> getRougeMeasure() {
 		return rougeMeasure;

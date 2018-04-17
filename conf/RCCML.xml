@@ -3,13 +3,11 @@
 	<TASK ID="1">
 		<MULTICORPUS ID="0">
 			<CORPUS ID="0">
-				<INPUT_PATH>/home/arch/valnyz/PhD/data/comparative/eval_doc/C1801/C1801</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
 				<SUMMARY_PATH>/home/arch/valnyz/PhD/data/comparative/model_sum</SUMMARY_PATH>
 				<SUMMARY ID="0">C1801um.*</SUMMARY>
 			</CORPUS>
 			<CORPUS ID="1">
-				<INPUT_PATH>/home/arch/valnyz/PhD/data/comparative/eval_doc/C1802/C1802</INPUT_PATH>
 				<DOCUMENT ID="0">.*</DOCUMENT>
 				<SUMMARY_PATH>/home/arch/valnyz/PhD/data/comparative/model_sum</SUMMARY_PATH>
 				<SUMMARY ID="0">C1802um.*</SUMMARY>

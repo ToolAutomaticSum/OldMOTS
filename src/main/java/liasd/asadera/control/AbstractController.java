@@ -183,9 +183,9 @@ public abstract class AbstractController {
 		evalRouge.setRougeMeasure(listRougeMeasure);
 	}
 
-	public void notifyRougePathChanged(String rougePath) {
-		evalRouge.setRougePath(rougePath);
-	}
+//	public void notifyRougePathChanged(String rougePath) {
+//		evalRouge.setRougePath(rougePath);
+//	}
 
 	public void notifyModelRootChanged(String modelRoot) {
 		evalRouge.setModelRoot(modelRoot);

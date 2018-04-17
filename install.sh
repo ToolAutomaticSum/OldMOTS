@@ -32,45 +32,8 @@ if [ ! -f "lib/stanford-corenlp-3.8.0-models-english.jar" ];then
 fi
 
 if [ -n $(command -v jep) ]; then
-	echo -n "MOTS need the python installation of python package jep. Continue (y/n) ? "
-	read rep
-	case $rep in 
-		y|Y) ;;
-		n|N) exit 1
-	esac
-
-	python3=$(command -v python3)
-	if [ -z $python3 ]; then 
-		python2=$(command -v python2)
-		if [ -z $python2 ]; then
-			echo "Need at least python2.7. Please install python package."
-			exit 0
-		else
-			python2path=$(python2 -c "import sys; print sys.executable")
-			if [ -z $(command -v pip) ]; then
-				echo "Please install pip or jep and gensim python packages." 
-				exit 0
-			else
-				pip install --user jep
-				if [ -z $(echo $JEP_HOME) ]; then
-					echo JEP_HOME=\"$python2path/jep\" >> $HOME/.profile
-					echo LD_LIBRARY_PATH=$JEP_HOME >> $HOME/.profile
-					echo LD_PRELOAD=\"/$(ldconfig -p | grep libpython2.7.so.1.0 | cut -d'/' -f2-)\" >> $HOME/.profile
-				fi
-			fi
-		fi
-	else
-		python3path=$(python3 -c "import sys; print(sys.executable)")
-		if [ -z $(command -v pip3) ]; then
-			echo "Please install pip3 or jep and gensim python packages."
-			exit 0 
-		else
-			pip3 install --user jep
-			echo JEP_HOME=\"$python3path/jep\" >> $HOME/.profile
-			echo LD_LIBRARY_PATH=$JEP_HOME >> $HOME/.profile
-			echo LD_PRELOAD=\"/$(ldconfig -p | grep libpython3.5m.so.1.0 | cut -d'/' -f2-)\" >> $HOME/.profile
-		fi
-	fi 
+	echo -n "MOTS need the installation of python package jep. Use 'pip install jep'"
+	exit 0
 fi
 
 mvn install
