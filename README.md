@@ -8,8 +8,8 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 
 ## Getting Started
 
-[Javadoc](https://toolautomaticsum.github.io/MOTS/) available.
-We provide an example corpus from TAC2009 in /src/resources and its associated human summaries.
+* [Javadoc](https://toolautomaticsum.github.io/MOTS/) available.
+* We provide an example corpus from TAC2009 in /src/resources and its associated human summaries.
 
 ### Prerequisites
 
