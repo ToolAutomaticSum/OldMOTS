@@ -12,23 +12,29 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 
 ### Prerequisites
 
-* [Stanford Core NLP library](https://stanfordnlp.github.io/CoreNLP/)
-* [Stanford Core NLP English Model](https://stanfordnlp.github.io/CoreNLP/)
+* [Maven](https://maven.apache.org/) - Dependency Manager
 * At least python 2.7 in order to use WordEmbeddings
+* [jep](https://github.com/ninia/jep) in order to use WordEmbeddings
 * [gensim](https://radimrehurek.com/gensim/) in order to use WordEmbeddings
 
 
 ### Installing
 
 * Define $JAVA_HOME to your java home folder.
-* Define $STANFORD_NLP_HOME to your STANFORD library's installation folder.
 * You might define $CORPUS_DATA to your DUC/TAC folder.
+* Define $JEP_HOME to your folder containing your jep python package. It should be /usr/lib/pythonX.Y/site-packages/jep or $HOME/.local/lib/pythonX.Y/site-packages/jep"
+* You might define $ROUGE_HOME to your ROUGE installation folder.
 * Run install.sh script.
 
 ### Usage
 
 MOTS is a command line tool than can be used like this :
-Say what the step will be
+
+```
+./MOTS mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file>
+```
+
+MOTS script encapsulate some environnement variable needed for the execution of WordEmbeddings. If you don't use WordEmbeddings you could launch via :
 
 ```
 java -jar mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file>
@@ -74,7 +80,6 @@ Example for LexRank_MMR configuration file :
 		</PROCESS>
 		<ROUGE_EVALUATION>
 			<ROUGE-MEASURE>ROUGE-1	ROUGE-2	ROUGE-SU4</ROUGE-MEASURE>
-			<ROUGE-PATH>lib/ROUGE-1.5.5/RELEASE-1.5.5</ROUGE-PATH>
 			<MODEL-ROOT>models</MODEL-ROOT>
 			<PEER-ROOT>systems</PEER-ROOT>
 		</ROUGE_EVALUATION>
