@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<MULTICORPUS ID="0">
+			<CORPUS ID="0">
+				<INPUT_PATH>src/main/resources/TAC2009/UpdateSumm09_test_docs_files/D0901A/D0901A-A</INPUT_PATH>
+				<DOCUMENT ID="0">.*</DOCUMENT>
+				<SUMMARY_PATH>src/main/resources/TAC2009/UpdateSumm09_eval/ROUGE/models</SUMMARY_PATH>
+				<SUMMARY ID="0">D0901-A.*</SUMMARY>
+			</CORPUS>
+		</MULTICORPUS>
+	</TASK>
+</CONFIG>

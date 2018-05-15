@@ -162,7 +162,7 @@ For now, all ID are useless and could be avoided.
 
 ## License
 
-This project is licensed under the under GPL3 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GPL3 License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
