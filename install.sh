@@ -9,7 +9,7 @@ if [ -z $CORPUS_DATA ]; then
 	echo "You might define \$CORPUS_DATA to your folder containing TAC/DUC corpus."
 fi
 
-if [ -n $(command -v jep) ]; then
+if [ ! -x $(command -v jep) ]; then
 	echo -n "MOTS need the installation of python package jep. Use 'pip install jep'"
 	exit 0
 fi
@@ -21,7 +21,8 @@ fi
 
 mvn install
 #tar xvf "mots.tar" "MOTS"
-if [ -z $CORPUS_DATA ]; then
+if [ -n $CORPUS_DATA ]; then
+	echo Update TAC/DUC multicorpus configuration file to your \$CORPUS_DATA folder.
 	sed -i "s/\$CORPUS_DATA/$CORPUS_DATA/g" conf/*.xml
 fi
 
