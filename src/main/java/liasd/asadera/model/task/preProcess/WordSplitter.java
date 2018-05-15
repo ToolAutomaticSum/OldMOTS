@@ -41,11 +41,17 @@ public class WordSplitter extends AbstractPreProcess {
 		Iterator<SentenceModel> sentenceIt = textModel.iterator();
 		while (sentenceIt.hasNext()) {
 			SentenceModel sentenceModel = sentenceIt.next();
-			String[] words = sentenceModel.getSentence().split(" ");
+			String[] words = sentenceModel.toString().split(" ");
+			// System.out.println(sentenceModel.toString());
+			// System.out.println(words.length);
+			sentenceModel.setNbMot(words.length);
 			for (int i = 0; i < words.length; i++) {
 				WordModel word = new WordModel();
 				word.setSentence(sentenceModel);
-				word.setWord(Tools.removePonctuation(words[i]));
+				String w = Tools.removePonctuation(words[i]);
+				word.setmForm(w);
+				word.setmLemma(w.toLowerCase());
+				word.setWord(w);
 				sentenceModel.getListWordModel().add(word);
 				textModel.setTextSize(textModel.getTextSize() + 1);
 			}

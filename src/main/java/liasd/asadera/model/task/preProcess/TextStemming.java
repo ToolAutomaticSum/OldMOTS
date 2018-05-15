@@ -21,7 +21,7 @@ public class TextStemming extends AbstractPreProcess {
 		String language = getModel().getLanguage();
 		Class<?> stemClass;
 		try {
-			stemClass = Class.forName("model.task.preProcess.snowballStemmer.ext." + language + "Stemmer");
+			stemClass = Class.forName("main.java.liasd.asadera.model.task.preProcess.snowballStemmer.ext." + language.toLowerCase() + "Stemmer");
 			stemmer = (SnowballStemmer) stemClass.newInstance();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class TextStemming extends AbstractPreProcess {
 
 	public void stemming(WordModel word) {
 		int repeat = 1;
-		String currentWord = word.getWord() + " ";
+		String currentWord = word.getmLemma() + " ";
 		StringBuffer input = new StringBuffer();
 		int i = 0;
 		boolean isDigit = true;

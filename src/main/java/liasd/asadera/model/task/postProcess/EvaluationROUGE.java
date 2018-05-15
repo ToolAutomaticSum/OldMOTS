@@ -83,7 +83,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
 				Writer w = new Writer(
-						rougeTempFilePath + File.separator + "test.java.liasd.asadera.tools.pythonWrapper" + getModel().getTaskID() + i + ".txt");
+						rougeTempFilePath + File.separator + "rouge_result" + getModel().getTaskID() + i + ".txt");
 				w.open(false);
 				String line = "";
 				while ((line = input.readLine()) != null)
@@ -99,19 +99,21 @@ public class EvaluationROUGE extends AbstractPostProcess {
 	public void finish() throws Exception {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i < getModel().getProcess().size(); i++) {
-				Reader r = new Reader(rougeTempFilePath + File.separator + "test.java.liasd.asadera.tools.pythonWrapper" + getModel().getTaskID() + i + ".txt",
+				Reader r = new Reader(rougeTempFilePath + File.separator + "rouge_result" + getModel().getTaskID() + i + ".txt",
 						true);
 				r.open();
 				String t = r.read();
 				while (t != null) {
-					String[] result = t.split(" ");
+					System.out.println(t);
+					/*String[] result = t.split(" ");
 					if (result.length > 1 && rougeMeasure.contains(result[1]) && result[2].equals("Average_R:")) {
 						if (result[1].equals("ROUGE-2"))
 							getModel().getProcess().get(i).setScore(Double.parseDouble(result[3]));
 						System.out.println(result[1] + "\t" + result[2] + "\t" + result[3]);
-					}
+					}*/
 					t = r.read();
 				}
+				r.close();
 			}
 		}
 	}

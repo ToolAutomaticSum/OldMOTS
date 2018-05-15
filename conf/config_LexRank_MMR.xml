@@ -4,10 +4,10 @@
 		<LANGUAGE>english</LANGUAGE>
 		<OUTPUT_PATH>output</OUTPUT_PATH>
 		<MULTITHREADING>true</MULTITHREADING>		
-<PREPROCESS NAME="GenerateTextModel">
-			<OPTION NAME="StanfordNLP">true</OPTION>
-			<OPTION NAME="StopWordListFile">$CORPUS_DATA/stopwords/englishStopWords.txt</OPTION>
-</PREPROCESS>
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">false</OPTION>
+			<OPTION NAME="StopWordListFile">docs/StopWords/englishStopWords.txt</OPTION>
+		</PREPROCESS>
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
@@ -22,7 +22,7 @@
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="MMR">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
-				<OPTION NAME="Size">200</OPTION>
+				<OPTION NAME="Size">100</OPTION>
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 				<OPTION NAME="Lambda">0.6</OPTION>
 			</SUMMARIZE_METHOD>

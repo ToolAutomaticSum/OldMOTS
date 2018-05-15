@@ -54,6 +54,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 		} else {
 			preProcess.add(new SentenceSplitter(id));
 			preProcess.add(new WordSplitter(id));
+			preProcess.add(new TextStemming(id));
 		}
 		for (AbstractPreProcess pp : preProcess)
 			pp.setCurrentProcess(this);
