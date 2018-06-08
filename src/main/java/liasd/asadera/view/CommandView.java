@@ -44,7 +44,7 @@ public class CommandView extends AbstractView {
 	}
 
 	@Override
-	public void display() throws ClassNotFoundException {
+	public void display() throws Exception {
 		if (separateConfFile) {
 			loadProcessConfiguration(confProcessFilePath);
 			loadMultiCorpusConfiguration(confMultiCorpusFilePath);

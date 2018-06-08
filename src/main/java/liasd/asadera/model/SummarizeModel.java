@@ -16,8 +16,8 @@ public class SummarizeModel extends AbstractModel {
 	/**
 	 */
 	@Override
-	public void run() {
-		try {
+	public void run() throws Exception {
+		//try {
 			loadMultiCorpusModels();
 
 			Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
@@ -75,11 +75,11 @@ public class SummarizeModel extends AbstractModel {
 				getEvalRouge().process();
 				getEvalRouge().finish();
 			}
-		} catch (LacksOfFeatures e) {
+		/*} catch (LacksOfFeatures e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	/**

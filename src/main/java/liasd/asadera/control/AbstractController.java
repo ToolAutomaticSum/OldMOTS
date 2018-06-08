@@ -46,7 +46,7 @@ public abstract class AbstractController {
 		model.addObserver(view);
 	}
 
-	public void displayView() throws ClassNotFoundException {
+	public void displayView() throws Exception {
 		view.display();
 	}
 
@@ -54,7 +54,7 @@ public abstract class AbstractController {
 		view.close();
 	}
 
-	public void run() {
+	public void run() throws Exception {
 		model.run();
 	}
 

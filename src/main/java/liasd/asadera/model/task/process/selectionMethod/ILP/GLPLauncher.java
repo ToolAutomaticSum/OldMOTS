@@ -14,7 +14,7 @@ public class GLPLauncher {
 		System.out.println("Starting solver");
 		try {
 			System.out.println(fileName);
-			String[] commande = { "src/main/resources/tool/glpsol", "--tmlim", "100", "--lp", entryFile, "-o", fileName};
+			String[] commande = { "glpsol", "--tmlim", "100", "--lp", entryFile, "-o", fileName};
 			Process p = Runtime.getRuntime().exec(commande);
 
 			p.waitFor();

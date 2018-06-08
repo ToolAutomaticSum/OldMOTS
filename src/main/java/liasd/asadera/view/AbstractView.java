@@ -8,7 +8,7 @@ import main.java.liasd.asadera.control.AbstractController;
 public abstract class AbstractView implements Observer {
 	protected AbstractController ctrl;
 
-	public abstract void display() throws ClassNotFoundException;
+	public abstract void display() throws Exception;
 
 	public abstract void close();
 

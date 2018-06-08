@@ -75,8 +75,9 @@ public abstract class AbstractModel extends Observable {
 
 	/**
 	 * Launch the task whatever it is. Override by {@link SummarizeModel}, {@link ComparativeModel} and {@link LearningModel}
+	 * @throws Exception 
 	 */
-	public abstract void run();
+	public abstract void run() throws Exception;
 
 	/**
 	 * Load Multicorpus files name into memory
