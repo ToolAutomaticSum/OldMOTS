@@ -4,11 +4,6 @@
 		<LANGUAGE>english</LANGUAGE>
 		<OUTPUT_PATH>output</OUTPUT_PATH>
 		<MULTITHREADING>false</MULTITHREADING>		
-		<PREPROCESS NAME="GenerateTextModel">
-			<OPTION NAME="StanfordNLP">true</OPTION>
-			<OPTION NAME="StopWordListFile">$CORPUS_DATA/stopwords/englishStopWords.txt</OPTION>
-			<OPTION NAME="PropStanfordNLP">tokenize, ssplit</OPTION>
-		</PREPROCESS>
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<OUTPUT_PATH>output</OUTPUT_PATH>
+		<MULTITHREADING>true</MULTITHREADING>		
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="StopWordListFile">docs/StopWords/englishStopWords.txt</OPTION>
+		</PREPROCESS>	
+	</TASK>
+</CONFIG>
