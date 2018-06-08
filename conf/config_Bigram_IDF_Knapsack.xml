@@ -9,12 +9,13 @@
 			<OPTION NAME="ReadStopWords">false</OPTION>
 			<INDEX_BUILDER NAME="BasicIndexBuilder">
 			</INDEX_BUILDER>
-			<INDEX_BUILDER NAME="TF_IDF.BiGram_IDF">
+			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
+				<OPTION NAME="n">2</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.BiGramVectorSentence">
 			</CARACTERISTIC_BUILDER>
 			<SUMMARIZE_METHOD NAME="Knapsack">
-				<OPTION NAME="Size">200</OPTION>
+				<OPTION NAME="Size">100</OPTION>
 				<OPTION NAME="ScoreMethod">GenericScorer</OPTION>
 				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 				<OPTION NAME="Lambda">0.7</OPTION>

@@ -46,7 +46,7 @@ public abstract class AbstractController {
 		model.addObserver(view);
 	}
 
-	public void displayView() {
+	public void displayView() throws ClassNotFoundException {
 		view.display();
 	}
 
@@ -58,18 +58,18 @@ public abstract class AbstractController {
 		model.run();
 	}
 
-	protected final Object dynamicConstructor(String className) {
+	protected final Object dynamicConstructor(String className) throws ClassNotFoundException {
 		Class<?> cl;
+		cl = Class.forName("main.java.liasd.asadera.model.task." + className);
 		try {
-			cl = Class.forName("main.java.liasd.asadera.model.task." + className);
 			Constructor<?> ct = cl.getConstructor(int.class);
 			Object o = ct.newInstance(processID);
 			processID++;
 			return o;
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	public void notifyTaskChanged(int taskID) {
@@ -141,34 +141,39 @@ public abstract class AbstractController {
 		getModel().setOutputPath(outputDir);
 	}
 
-	public void notifyPreProcessChanged(String preProcessName) {
+	public void notifyPreProcessChanged(String preProcessName) throws ClassNotFoundException {
 		Object o = dynamicConstructor("preProcess." + preProcessName);
 		getModel().getPreProcess().add((AbstractPreProcess) o);
 	}
 
-	public abstract void notifyProcessChanged(String processName);
+	public abstract void notifyProcessChanged(String processName) throws ClassNotFoundException;
 
 	public void notifyProcessOptionChanged(Map<String, String> processOption) {
 		this.processOption.add(processOption);
 		getModel().setProcessOption(this.processOption);
 	}
 
-	public abstract void notifyIndexBuilderChanged(String processName, String indexBuilder);
+	public abstract void notifyIndexBuilderChanged(String processName, String indexBuilder) throws ClassNotFoundException;
 
-	public abstract void notifyCaracteristicBuilderChanged(String processName, String caracteristicBuilder);
+	public abstract void notifyCaracteristicBuilderChanged(String processName, String caracteristicBuilder) throws ClassNotFoundException;
 
-	public abstract void notifyScoringMethodChanged(String processName, String scoringMethod);
+	public abstract void notifyScoringMethodChanged(String processName, String scoringMethod) throws ClassNotFoundException;
+	
+	public abstract void notifySelectionMethodChanged(String processName, String summarizeMethod) throws ClassNotFoundException;
 
-	public abstract void notifySelectionMethodChanged(String processName, String summarizeMethod);
-
-	public void notifyPostProcessChanged(String processName, String postProcessName) {
+	public void notifyPostProcessChanged(String processName, String postProcessName) throws ClassNotFoundException {
 		Object o = dynamicConstructor("postProcess." + postProcessName);
 		getModel().getPostProcess().add((AbstractPostProcess) o);
 	}
 
-	public void notifyRougeEvaluationChanged(boolean bRougeEvaluation) throws SupportADNException {
+	public void notifyRougeEvaluationChanged(boolean bRougeEvaluation) {
 		if (bRougeEvaluation)
-			evalRouge = new EvaluationROUGE(incrementProcessID());
+			try {
+				evalRouge = new EvaluationROUGE(incrementProcessID());
+			} catch (SupportADNException e) {
+				e.printStackTrace();
+				evalRouge = null;
+			}
 		else
 			evalRouge = null;
 		getModel().setEvalRouge(evalRouge);

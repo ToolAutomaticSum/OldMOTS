@@ -4,10 +4,6 @@
 		<LANGUAGE>english</LANGUAGE>
 		<OUTPUT_PATH>output</OUTPUT_PATH>
 		<MULTITHREADING>true</MULTITHREADING>		
-		<PREPROCESS NAME="GenerateTextModel">
-			<OPTION NAME="StanfordNLP">true</OPTION>
-			<OPTION NAME="StopWordListFile">/home/arch/valnyz/PhD/data/stopwords/englishStopWords.txt</OPTION>
-		</PREPROCESS>	
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
@@ -22,7 +18,7 @@
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="BestIsBetter">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
-				<OPTION NAME="Size">250</OPTION>
+				<OPTION NAME="Size">100</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>

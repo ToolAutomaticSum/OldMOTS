@@ -22,7 +22,7 @@
 				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 				<OPTION NAME="FeatureMethod">BasicFeatures</OPTION>
 				<OPTION NAME="NbWord">100</OPTION>
-				<OPTION NAME="NbIteration">500</OPTION>
+				<OPTION NAME="NbIteration">100</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>

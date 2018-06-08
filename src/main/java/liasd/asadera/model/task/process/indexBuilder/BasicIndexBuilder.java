@@ -55,6 +55,7 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 							listWordIndex.add(w);
 						}
 					}
+					sentenceModel.setN(1);
 					sentenceModel.setListWordIndex(1, listWordIndex);
 				}
 			}

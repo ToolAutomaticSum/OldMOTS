@@ -11,7 +11,7 @@
 			</INDEX_BUILDER>
 			<INDEX_BUILDER NAME="ILP.BiGram_ILP">
 				<OPTION NAME="fscFactor">0</OPTION>
-				<OPTION NAME="minSenLength">8</OPTION>
+				<OPTION NAME="minSenLength">7</OPTION>
 			</INDEX_BUILDER>
 			<SUMMARIZE_METHOD NAME="Knapsack">
 				<OPTION NAME="Size">100</OPTION>

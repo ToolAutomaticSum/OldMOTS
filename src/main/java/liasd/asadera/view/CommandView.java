@@ -44,7 +44,7 @@ public class CommandView extends AbstractView {
 	}
 
 	@Override
-	public void display() {
+	public void display() throws ClassNotFoundException {
 		if (separateConfFile) {
 			loadProcessConfiguration(confProcessFilePath);
 			loadMultiCorpusConfiguration(confMultiCorpusFilePath);
@@ -57,7 +57,7 @@ public class CommandView extends AbstractView {
 	public void close() {
 	}
 
-	public void init() {
+	public void init() throws ClassNotFoundException {
 		if (separateConfFile) {
 			loadProcessConfiguration(confProcessFilePath);
 			loadMultiCorpusConfiguration(confMultiCorpusFilePath);
@@ -120,12 +120,17 @@ public class CommandView extends AbstractView {
 		}
 	}
 
-	private void loadProcessConfiguration(String configFilePath) {
+	private void loadProcessConfiguration(String configFilePath) throws ClassNotFoundException {
+		Document doc = null;
 		try {
 			File fXmlFile = new File(configFilePath);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(fXmlFile);
+			doc = dBuilder.parse(fXmlFile);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+		}
+			
 			Element root = doc.getDocumentElement();
 			NodeList listTask = root.getChildNodes();
 
@@ -231,9 +236,7 @@ public class CommandView extends AbstractView {
 						getCtrl().notifyRougeEvaluationChanged(false);
 				}
 			}
-		} catch (Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
-		}
+
 	}
 
 	private void loadConfiguration(String configFilePath) {

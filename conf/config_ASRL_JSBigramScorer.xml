@@ -7,9 +7,10 @@
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">true</OPTION>
-			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
+			<INDEX_BUILDER NAME="BasicIndexBuilder">
 			</INDEX_BUILDER>
-			<INDEX_BUILDER NAME="TF_IDF.BiGram_IDF">
+			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
+				<OPTION NAME="n">2</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.BiGramVectorSentence">
 			</CARACTERISTIC_BUILDER>
@@ -24,7 +25,7 @@
 				<OPTION NAME="Fsc">1.0</OPTION>	
 				<OPTION NAME="Delta">0.0005</OPTION>
 				<OPTION NAME="NbWord">100</OPTION>
-				<OPTION NAME="NbIteration">500</OPTION>
+				<OPTION NAME="NbIteration">100</OPTION>
 				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>

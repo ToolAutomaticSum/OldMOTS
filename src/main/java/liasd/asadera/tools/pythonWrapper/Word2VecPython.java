@@ -27,7 +27,7 @@ public interface Word2VecPython {
 
 	public void train_file(String fname, int epochs);
 
-	public int getVocabSize();
+	public Long getVocabSize();
 
 	public List<String> getVocab();
 

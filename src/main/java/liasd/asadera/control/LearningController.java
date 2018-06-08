@@ -17,7 +17,7 @@ public class LearningController extends AbstractController {
 	private LearningProcess currentProcess;
 
 	@Override
-	public void notifyProcessChanged(String processName) {
+	public void notifyProcessChanged(String processName) throws ClassNotFoundException {
 		getModel().getProcessIDs().put("LearningProcess", processID);
 		Object o = dynamicConstructor("process.LearningProcess");
 		currentProcess = (LearningProcess) o;
@@ -25,7 +25,7 @@ public class LearningController extends AbstractController {
 	}
 
 	@Override
-	public void notifyIndexBuilderChanged(String processName, String indexBuilder) {
+	public void notifyIndexBuilderChanged(String processName, String indexBuilder) throws ClassNotFoundException {
 		List<LearningModelBuilder> listModelBuilders;
 		if (currentProcess.getModelBuilders() == null) {
 			listModelBuilders = new ArrayList<LearningModelBuilder>();

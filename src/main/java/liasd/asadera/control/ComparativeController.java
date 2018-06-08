@@ -21,7 +21,7 @@ public class ComparativeController extends AbstractController {
 	}
 
 	@Override
-	public void notifyProcessChanged(String processName) {
+	public void notifyProcessChanged(String processName) throws ClassNotFoundException {
 		getModel().getProcessIDs().put("ComparativeProcess", processID);
 		Object o = dynamicConstructor("process.ComparativeProcess");
 		currentProcess = (ComparativeProcess) o;
@@ -29,7 +29,7 @@ public class ComparativeController extends AbstractController {
 	}
 
 	@Override
-	public void notifyIndexBuilderChanged(String processName, String indexBuilder) {
+	public void notifyIndexBuilderChanged(String processName, String indexBuilder) throws ClassNotFoundException {
 		List<AbstractIndexBuilder> listIndexBuilders;
 		if (currentProcess.getIndexBuilders() == null) {
 			listIndexBuilders = new ArrayList<AbstractIndexBuilder>();
@@ -42,7 +42,7 @@ public class ComparativeController extends AbstractController {
 	}
 
 	@Override
-	public void notifyCaracteristicBuilderChanged(String processName, String caracteristicBuilder) {
+	public void notifyCaracteristicBuilderChanged(String processName, String caracteristicBuilder) throws ClassNotFoundException {
 		List<AbstractCaracteristicBuilder> listCaracBuilder;
 		if (currentProcess.getCaracteristicBuilders() == null) {
 			listCaracBuilder = new ArrayList<AbstractCaracteristicBuilder>();
@@ -55,7 +55,7 @@ public class ComparativeController extends AbstractController {
 	}
 
 	@Override
-	public void notifyScoringMethodChanged(String processName, String scoringMethod) {
+	public void notifyScoringMethodChanged(String processName, String scoringMethod) throws ClassNotFoundException {
 		List<AbstractScoringMethod> listScoringMethod;
 		if (currentProcess.getScoringMethods() == null) {
 			listScoringMethod = new ArrayList<AbstractScoringMethod>();
@@ -68,7 +68,7 @@ public class ComparativeController extends AbstractController {
 	}
 
 	@Override
-	public void notifySelectionMethodChanged(String processName, String summarizeMethod) {
+	public void notifySelectionMethodChanged(String processName, String summarizeMethod) throws ClassNotFoundException {
 		Object o = dynamicConstructor("process.comparativeMethod." + summarizeMethod);
 		currentProcess.setComparativeMethod((AbstractComparativeMethod) o);
 	}

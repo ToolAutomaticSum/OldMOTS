@@ -8,7 +8,6 @@ import main.java.liasd.asadera.optimize.SupportADNException;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.Summary;
 import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
-import main.java.liasd.asadera.textModeling.wordIndex.WordVector;
 import main.java.liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class SumWeigthScorer extends Scorer {
@@ -38,12 +37,12 @@ public class SumWeigthScorer extends Scorer {
 		Set<WordIndex> listWI = new HashSet<WordIndex>();
 		for (SentenceModel sen : summary)
 			for (WordIndex wi : sen) {
-				double similarity = 0;
-				for (WordIndex wi2 : listWI)
-					similarity = Math.max(similarity, sim.computeSimilarity(((WordVector) wi).getWordVector(),
-							((WordVector) wi2).getWordVector()));
-				if (similarity < 0.95)
-					score += wi.getWeight();
+//				double similarity = 0;
+//				for (WordIndex wi2 : listWI)
+//					similarity = Math.max(similarity, sim.computeSimilarity(((WordVector) wi).getWordVector(),
+//							((WordVector) wi2).getWordVector()));
+//				if (similarity < 0.95)
+				score += wi.getWeight();
 				listWI.add(wi);
 			}
 
