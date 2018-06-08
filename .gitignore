@@ -1,8 +1,12 @@
 AutomaticSummarization.git
-/lib/
-/target/
-/bin/
-/conf/
-/output/
+lib/*
+target/*
+bin/*
+conf/*
+output/*
 assembly.xml
 *.pyc
+fitness_scores.txt
+hlda.state
+tempILP0.ilp_in
+tempILP0.ilp_out
