@@ -1,15 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 if [ -z $JEP_HOME ]; then
 	echo "You need to define \$JEP_HOME to your folder containing your jep python package."
 	exit 1
 fi
 
-if [ -z $ROUGE_HOME ]; then
-	echo "You should define $ROUGE_HOME, assuming it is in the current directory."
-	export ROUGE_HOME="$(pwd)/ROUGE-1.5.5/RELEASE-1.5.5"
-	echo $ROUGE_HOME
-fi
 array=($(echo $(ldd $JEP_HOME/libjep.so | grep python) | tr ' ' '\n'))
 preload=${array[2]}
 if [ -z $preload ]; then
@@ -18,11 +13,8 @@ fi
 echo "Running with :
 LD_PRELOAD=$preload
 LD_LIBRARY_PATH=$JEP_HOME
-ROUGE_HOME=$ROUGE_HOME
 "
+
 export LD_PRELOAD=$preload
 export LD_LIBRARY_PATH=$JEP_HOME
-java -jar "$@"
-export LD_PRELOAD=""
-export LD_LIBRARY_PATH=""
 exit 0
