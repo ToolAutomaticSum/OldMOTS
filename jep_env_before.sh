@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 if [ -z $JEP_HOME ]; then
 	echo "You need to define \$JEP_HOME to your folder containing your jep python package."

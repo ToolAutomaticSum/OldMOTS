@@ -2,7 +2,6 @@ language: java
 env:
         - JEP_HOME="$(python -m site --user-site)/jep"
 before_install:
-        - ./test.sh
         - sudo apt-get install -y python3
         - sudo apt-get install -y glpk-utils
         - pip install gensim --user
