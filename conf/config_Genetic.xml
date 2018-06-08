@@ -18,7 +18,7 @@
 				<OPTION NAME="MutationNumber">80</OPTION>
 				<OPTION NAME="RandomNumber">80</OPTION>
 				<OPTION NAME="MaxSummLength">100</OPTION>
-				<OPTION NAME="GenerationsNb">50</OPTION>
+				<OPTION NAME="GenerationsNb">25</OPTION>
 				<OPTION NAME="MaxMutatedGenes">1</OPTION>
 				<OPTION NAME="GeneticScorerMethod">JSBigramScorer</OPTION>
 				<OPTION NAME="FirstSentenceConceptsFactor">1.0</OPTION>
