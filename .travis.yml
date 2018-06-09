@@ -1,7 +1,7 @@
 language: java
 env:
     global:
-        - JEP_HOME="$(python -m site --user-site)/jep"
+        - JEP_HOME="$(python3 -m site --user-site)/jep"
         - ROUGE_HOME="./ROUGE-1.5.5/RELEASE-1.5.5"
 before_install:
         - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM
