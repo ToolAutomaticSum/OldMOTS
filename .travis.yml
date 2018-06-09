@@ -3,7 +3,7 @@ env:
         - JEP_HOME="$(python -m site --user-site)/jep"
         - ROUGE_HOME="./ROUGE-1.5.5/RELEASE-1.5.5"
 before_install:
-        - sudo cpan install XML::DOM
+        - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM
         - ./rouge_install.sh
         - sudo apt-get install -y glpk-utils
         - pip install gensim --user
