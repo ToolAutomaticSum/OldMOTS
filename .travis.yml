@@ -4,10 +4,10 @@ env:
         - JEP_HOME="$(python3 -m site --user-site)/jep"
         - ROUGE_HOME="./ROUGE-1.5.5/RELEASE-1.5.5"
 before_install:
-        - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM
+        - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM >> cpan_log
         - ./rouge_install.sh
-        - sudo apt-get install -y glpk-utils
-        - pip install gensim --user
+        - sudo apt-get install -y glpk-utils >> glpk_log
+        - pip install gensim --user >> gensim_log
         - pip install jep --user
         - source jep_env_before
 after_install:
