@@ -19,8 +19,10 @@ if [ -z $JEP_HOME ]; then
 	exit 1
 fi
 
+source ./jep_env_before
 mvn install
-#tar xvf "mots.tar" "MOTS"
+source ./jep_env_after
+
 if [ -n $CORPUS_DATA ]; then
 	echo Update TAC/DUC multicorpus configuration file to your \$CORPUS_DATA folder.
 	sed -i "s/\$CORPUS_DATA/$CORPUS_DATA/g" conf/*.xml

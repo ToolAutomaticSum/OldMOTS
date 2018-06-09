@@ -1,5 +1,4 @@
 language: java
-dist: "trusty"
 env:
     global:
         - JEP_HOME="$(python3 -m site --user-site)/jep"
@@ -13,6 +12,8 @@ before_install:
         - sudo pip3 install --upgrade pip
         - pip3 --version
         - pip3 install jep --user
+        - pip3 install --upgrade six --user
+        - pip3 install --upgrade requests --user
         - pip3 install --upgrade gensim --user
         - source jep_env_before
 after_install:
