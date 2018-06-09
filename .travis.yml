@@ -11,7 +11,7 @@ before_install:
         - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM >> cpan_log
         - ./rouge_install.sh
         - pip3 --version
-        - pip3 install --upgrade pip3
+        - pip3 install --upgrade pip
         - pip3 --version
         - pip3 install jep --user
         - sudo pip3 install --upgrade gensim
