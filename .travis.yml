@@ -1,10 +1,13 @@
 language: java
 env:
         - JEP_HOME="$(python -m site --user-site)/jep"
+        - ROUGE_HOME="./ROUGE-1.5.5/RELEASE-1.5.5"
 before_install:
+        - sudo cpan install XML::DOM
+        - ./rouge_install.sh
         - sudo apt-get install -y glpk-utils
         - pip install gensim --user
         - pip install jep --user
-        - ./jep_env_before.sh
+        - source jep_env_before
 after_install:
-        - ./jep_env_after.sh
+        - source jep_env_after
