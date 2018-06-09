@@ -9,9 +9,9 @@ import main.java.liasd.asadera.launcher.MOTS;
 
 public abstract class MethodTest {
 
-	private String methodName;
-	private String configFile;
-	private String multiCorpusFile = "conf" + File.separator + "test.xml";
+	protected String methodName;
+	protected String configFile;
+	protected String multiCorpusFile = "conf" + File.separator + "test.xml";
 
 	public MethodTest(String methodName) {
 		this.methodName = methodName;

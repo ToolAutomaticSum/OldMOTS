@@ -107,7 +107,7 @@ public class Word2VecPythonBuilder {
 	public Word2VecPython load(String fname) {
 		try {
 			jep.eval("import sys, logging, jep");
-			jep.eval("sys.path.append('" + System.getProperty("user.dir") + "/python')");
+			jep.eval("sys.path.append('" + System.getProperty("user.dir") + "/src/main/python')");
 			jep.eval("from pythonword2vecwrapper import *");
 			/*
 			 * jep.eval("logger = logging.getLogger('w2v.log')"); jep.

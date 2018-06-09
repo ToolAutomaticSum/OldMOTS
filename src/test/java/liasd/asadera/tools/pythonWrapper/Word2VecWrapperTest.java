@@ -18,7 +18,7 @@ public class Word2VecWrapperTest {
 	private List<List<String>> sentences = new ArrayList<List<String>>();
 
 	@Before
-	public void init() {
+	public void init() {	
 		String testText = "anarchism is a political philosophy that advocates self-governed societies based on voluntary institutions . these are often described as stateless societies although several authors have defined them more specifically as institutions based on non-hierarchical free associations . anarchism holds the state to be undesirable unnecessary and harmful . while anti-statism is central anarchism entails opposing authority or hierarchical organization in the conduct of all human relations including but not limited to the state system .";
 		List<String> sentence = new ArrayList<String>();
 		for (String word : testText.split(" ")) {
@@ -29,7 +29,6 @@ public class Word2VecWrapperTest {
 				sentence.add(word);
 			}
 		}
-
 	}
 
 	@Test
