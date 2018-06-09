@@ -10,11 +10,10 @@ before_install:
         - sudo apt-get install -y glpk-utils
         - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM >> cpan_log
         - ./rouge_install.sh
-        - pip3 --version
-        - pip3 install --upgrade pip
+        - sudo pip3 install --upgrade pip
         - pip3 --version
         - pip3 install jep --user
-        - sudo pip3 install --upgrade gensim
+        - pip3 install --upgrade gensim --user
         - source jep_env_before
 after_install:
         - source jep_env_after
