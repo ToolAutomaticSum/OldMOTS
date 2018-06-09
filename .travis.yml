@@ -1,5 +1,6 @@
 language: java
 env:
+    global:
         - JEP_HOME="$(python -m site --user-site)/jep"
         - ROUGE_HOME="./ROUGE-1.5.5/RELEASE-1.5.5"
 before_install:
