@@ -60,7 +60,8 @@ public class Word2VecPythonBuilder {
 			jep.eval("import sys, logging, jep");
 			jep.eval("sys.path.append('"
 					+ System.getProperty("user.dir")
-					+ "/src/main/python')");
+					+ "/src/main/python') if " + System.getProperty("user.dir")
+					+ "/src/main/python') not in sys.path else none");
 			jep.eval("logger = logging.getLogger('w2v.log')");
 			jep.eval("logging.basicConfig(format='%(asctime)s: %(levelname)s: %(message)s')");
 			jep.eval("logging.root.setLevel(level=logging.INFO)");

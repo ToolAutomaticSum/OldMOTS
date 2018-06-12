@@ -12,7 +12,6 @@ before_install:
         - sudo pip3 install --upgrade pip
         - pip3 install jep --user
         - pip3 install --upgrade gensim --user
-        - ls /home/travis/.local
         - sudo rm -f /etc/boto.cfg
         - source jep_env_before
 after_install:
