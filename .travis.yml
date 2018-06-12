@@ -8,7 +8,7 @@ before_install:
         - sudo apt-get install -y python3-pip
         - sudo apt-get install -y glpk-utils
         - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM >> cpan_log
-        - ./rouge_install.sh
+        - ./rouge_install.sh >> rouge.log
         - sudo pip3 install --upgrade pip
         - pip3 install jep --user
         - pip3 install --upgrade gensim --user
