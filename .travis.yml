@@ -10,11 +10,12 @@ before_install:
         - (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | sudo cpan install XML::DOM >> cpan_log
         - ./rouge_install.sh
         - sudo pip3 install --upgrade pip
-        - pip3 --version
         - pip3 install jep --user
-        - pip3 install --upgrade six --user
-        - pip3 install --upgrade requests --user
         - pip3 install --upgrade gensim --user
+        - sudo rm -f /etc/boto.cfg
+        - ls /usr/travis/.local/lib/python3.4/site-packages
+        - ls /usr/local/lib/python3.4/dist-packages
+        - ls /usr/lib/python3/dist-packages
         - source jep_env_before
 after_install:
         - source jep_env_after
