@@ -14,30 +14,31 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 ### Prerequisites
 
 * [Maven](https://maven.apache.org/) - Dependency Manager
-* At least python 2.7 in order to use WordEmbeddings
-* [jep](https://github.com/ninia/jep) in order to use WordEmbeddings (pip install jep)
-* [gensim](https://radimrehurek.com/gensim/) in order to use WordEmbeddings (pip install gensim)
+* glpk-utils in order to use ILP (sudo apt-get install glpk-utils)
+* At least python3 in order to use WordEmbeddings, make sure to have an updated version of pip3 (sudo pip3 install --upgrade pip)
+* [gensim](https://radimrehurek.com/gensim/) in order to use WordEmbeddings (pip3 install gensim --user)
+* [jep](https://github.com/ninia/jep) in order to use WordEmbeddings (pip3 install jep --user)
 
 
 ### Installing
 
-* Define $JAVA_HOME to your java home folder.
 * You might define $CORPUS_DATA to your DUC/TAC folder.
-* Define $JEP_HOME to your folder containing your jep python package. It should be /usr/lib/pythonX.Y/site-packages/jep or $HOME/.local/lib/pythonX.Y/site-packages/jep"
 * Install ROUGE :
-	* Define $ROUGE_HOME to your ROUGE installation folder.
-	* Define $ROUGE_EVAL_HOME to $ROUGE_HOME/data.
+	* Define $ROUGE_HOME to your ROUGE installation folder (or to ./ROUGE-1.5.5/RELEASE-1.5.5).
 	* Install XML::DOM module in order to use ROUGE perl script. (sudo cpan install XML::DOM).
-	* Recreate database :
-	```
-	cd data/WordNet-2.0-Exceptions/
-	rm WordNet-2.0.exc.db # only if exist
-	perl buildExeptionDB.pl . exc WordNet-2.0.exc.db
+	* Run ./install_rouge.sh
+	or :
+		* Define $ROUGE_EVAL_HOME to $ROUGE_HOME/data.
+		* Recreate database :
+		```
+		cd data/WordNet-2.0-Exceptions/
+		rm WordNet-2.0.exc.db # only if exist
+		perl buildExeptionDB.pl . exc WordNet-2.0.exc.db
 
-	cd ..
-	rm WordNet-2.0.exc.db # only if exist
-	ln -s WordNet-2.0-Exceptions/WordNet-2.0.exc.db WordNet-2.0.exc.db
-	```
+		cd ..
+		rm WordNet-2.0.exc.db # only if exist
+		ln -s WordNet-2.0-Exceptions/WordNet-2.0.exc.db WordNet-2.0.exc.db
+		```
 * Run install.sh script.
 
 ### Usage
