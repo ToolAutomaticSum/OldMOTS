@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import main.java.liasd.asadera.model.task.process.scoringMethod.FileNameBasedIn;
@@ -19,6 +22,8 @@ import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 
 public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
+
+	private static Logger logger = LoggerFactory.getLogger(ILP.class);
 
 	private String fileName = "";
 
@@ -51,7 +56,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 		runGLPK();
 
 		ArrayList<Integer> ind_selected_sentences;
-		System.out.println("Summary computation");
+		logger.info("Summary computation");
 		ind_selected_sentences = this.getSentencesFromGLPKSol();
 		ArrayList<SentenceModel> summary = new ArrayList<SentenceModel>();
 

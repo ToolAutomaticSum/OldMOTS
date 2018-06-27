@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import main.java.liasd.asadera.model.task.process.scoringMethod.ScoreBasedIn;
@@ -15,6 +18,8 @@ import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.Summary;
 
 public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedIn {
+
+	private static Logger logger = LoggerFactory.getLogger(BestIsBetter.class);
 
 	private Map<SentenceModel, Double> sentencesScore;
 	private boolean nbCharSizeOrNbSentenceSize;
@@ -74,7 +79,7 @@ public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedI
 		double s = 0.0;
 		for (SentenceModel sen : summary)
 			s += sentencesScore.get(sen);
-		System.out.println(s);
+		logger.info(String.valueOf(s));
 		return summary;
 	}
 

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.AbstractModel;
 import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.AbstractCaracteristicBuilder;
@@ -23,6 +26,8 @@ import main.java.liasd.asadera.textModeling.SentenceModel;
 @SuppressWarnings("rawtypes")
 public class SummarizeProcess extends AbstractProcess implements Runnable {
 
+	private static Logger logger = LoggerFactory.getLogger(SummarizeProcess.class);
+	
 	private Thread t;
 	private SummarizeProcess[] threads = null;
 	int nbThreads = 0;
@@ -115,7 +120,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		super.init();
 		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp",
 				getCurrentMultiCorpus().get(getSummarizeCorpusId()), true);
-		System.out.println("Corpus " + corpusToSummarize.getiD() + " read");
+		logger.info("Corpus " + corpusToSummarize.getiD() + " read");
 	}
 
 	private void initCompatibility() {
@@ -204,7 +209,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 	}
 
 	public void start() throws Exception {
-		System.out.println("Starting " + this.getClass().getSimpleName() + " " + getSummarizeCorpusId());
+		logger.trace("Starting " + this.getClass().getSimpleName() + " " + getSummarizeCorpusId());
 		t = new Thread(this, this.getClass() + " " + getSummarizeCorpusId());
 		t.start();
 	}
@@ -213,7 +218,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		t.join();
 		getModel().setModelChanged();
 		getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(
-				this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId())));
+				this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId()), getModel().isVerbose()));
 	}
 
 	@Override
@@ -314,7 +319,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 	@Override
 	public void optimize() throws Exception {
 
-		System.out.println("MultiCorpus : " + currentMultiCorpus.getiD());
+		logger.trace("MultiCorpus : " + currentMultiCorpus.getiD());
 
 		if (getModel().isMultiThreading()) {
 			threads[0].setCorpusToSummarize(getCurrentMultiCorpus().get(0));

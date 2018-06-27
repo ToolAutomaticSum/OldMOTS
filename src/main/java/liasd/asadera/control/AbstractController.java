@@ -11,6 +11,9 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.AbstractModel;
 import main.java.liasd.asadera.model.task.postProcess.AbstractPostProcess;
 import main.java.liasd.asadera.model.task.postProcess.EvaluationROUGE;
@@ -21,6 +24,8 @@ import main.java.liasd.asadera.textModeling.MultiCorpus;
 import main.java.liasd.asadera.view.AbstractView;
 
 public abstract class AbstractController {
+	
+	private static Logger logger = LoggerFactory.getLogger(AbstractController.class);
 
 	private final AbstractModel model;
 	private final AbstractView view;
@@ -91,7 +96,7 @@ public abstract class AbstractController {
 	}
 
 	public void notifyMultiThreadBoolChanged(boolean multithread) {
-		System.out.println("Multithread " + multithread);
+		logger.info("Multithread " + multithread);
 		getModel().setMultiThreading(multithread);
 	}
 

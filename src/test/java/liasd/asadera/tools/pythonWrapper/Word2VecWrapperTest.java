@@ -8,11 +8,15 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import main.java.liasd.asadera.tools.pythonWrapper.Word2VecPython;
 import main.java.liasd.asadera.tools.pythonWrapper.Word2VecPythonBuilder;
 
 public class Word2VecWrapperTest {
+
+	private static Logger logger = LoggerFactory.getLogger(Word2VecWrapperTest.class);
 
 	private Word2VecPython w2vp = null;
 	private List<List<String>> sentences = new ArrayList<List<String>>();
@@ -36,7 +40,7 @@ public class Word2VecWrapperTest {
 		Word2VecPythonBuilder factory = new Word2VecPythonBuilder();
 		w2vp = factory.setSentences(sentences).setSize(200).setIter(1).setMin_count(1).build();
 		assert (w2vp != null);
-		System.out.println(w2vp.getVocabSize());
+		logger.info(String.valueOf(w2vp.getVocabSize()));
 		assert (w2vp.getVocabSize() == 59);
 	}
 
@@ -52,7 +56,7 @@ public class Word2VecWrapperTest {
 		build_vocab();
 		w2vp.train(Arrays.asList(Arrays.asList("bonjour", "le", "Monde")), 1);
 		try {
-			System.out.println(w2vp.getVector("bonjour").toArray().length);
+			logger.info(String.valueOf(w2vp.getVector("bonjour").toArray().length));
 			assert (w2vp.getVector("bonjour") != null);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,7 +72,7 @@ public class Word2VecWrapperTest {
 	@Test
 	public void getVectorVocab() throws IOException {
 		train();
-		System.out.println(w2vp.getVectorVocab().get("bonjour").toArray()[0]);
+		logger.info(w2vp.getVectorVocab().get("bonjour").toArray()[0].toString());
 		assert (w2vp.getVectorVocab().containsKey("bonjour"));
 		assert (w2vp.getVectorVocab().get("bonjour").toArray()[0] instanceof Double);
 	}
@@ -86,7 +90,7 @@ public class Word2VecWrapperTest {
 		Word2VecPythonBuilder factory = new Word2VecPythonBuilder();
 		w2vp = null;
 		w2vp = factory.load("Test.bin");
-		System.out.println(w2vp.getVectorVocab().get("bonjour").toArray()[0]);
+		logger.info(w2vp.getVectorVocab().get("bonjour").toArray()[0].toString());
 		assert (w2vp.getVectorVocab().containsKey("bonjour"));
 	}
 }

@@ -4,10 +4,14 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import main.java.liasd.asadera.launcher.MOTS;
 
 public abstract class MethodTest {
+
+	private static Logger logger = LoggerFactory.getLogger(MethodTest.class);
 
 	protected String methodName;
 	protected String configFile;
@@ -42,7 +46,7 @@ public abstract class MethodTest {
 			assert (false);
 		}
 		if (new File("output/" + methodName + "/test/systems/T1_0_0_0.html").length() < 80) {
-			System.out.println(new File("output/" + methodName + "/test/systems/T1_0_0_0.html").length());
+			logger.debug(String.valueOf(new File("output/" + methodName + "/test/systems/T1_0_0_0.html").length()));
 			assert(false);
 		}
 	}

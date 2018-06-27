@@ -6,12 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * @author valnyz
  *
  */
 public class NGram extends WordIndex implements List<WordIndex> {
+
+	private static Logger logger = LoggerFactory.getLogger(NGram.class);
 
 	private List<WordIndex> listWord = new ArrayList<WordIndex>();
 
@@ -64,7 +69,7 @@ public class NGram extends WordIndex implements List<WordIndex> {
 
 	public void printNGram() {
 		for (WordIndex i : listWord) {
-			System.out.print(" | " + i);
+			logger.debug(" | " + i);
 		}
 	}
 

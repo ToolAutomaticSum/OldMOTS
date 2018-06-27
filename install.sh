@@ -14,9 +14,9 @@ if [ -z $JAVA_HOME ];then
 	esac
 fi
 
-if [ -z $CORPUS_DATA ]; then
-	echo "You might define \$CORPUS_DATA to your folder containing TAC/DUC corpus."
-fi
+#if [ -z $CORPUS_DATA ]; then
+	#echo "You might define \$CORPUS_DATA to your folder containing TAC/DUC corpus."
+#fi
 
 if [ ! -x $(command -v jep) ]; then
 	echo -n "MOTS need the installation of python package jep. Use 'pip3 install jep --user'"
@@ -32,10 +32,10 @@ source ./jep_env_before
 mvn install
 source ./jep_env_after
 
-if [ -n $CORPUS_DATA ]; then
-	echo Update TAC/DUC multicorpus configuration file to your \$CORPUS_DATA folder.
-	sed -i "s/\$CORPUS_DATA/$CORPUS_DATA/g" conf/*.xml
-fi
+#if [ -n $CORPUS_DATA ]; then
+	#echo Update TAC/DUC multicorpus configuration file to your \$CORPUS_DATA folder.
+	#sed -i "s/\$CORPUS_DATA/$CORPUS_DATA/g" conf/*.xml
+#fi
 
 echo "Installation of MOTS succeed in the target directory !"
 exit 0 

@@ -1,9 +1,12 @@
-package main.java.liasd.asadera.model.task.preProcess.stanfordNLP;
+package main.java.liasd.asadera.model.task.preProcess;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
@@ -16,52 +19,49 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.exception.UnknownLanguage;
-import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
-import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
+import main.java.liasd.asadera.model.task.preProcess.stanfordNLP.StanfordNLPProperties;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
-import main.java.liasd.asadera.tools.wordFilters.TrueFilter;
-import main.java.liasd.asadera.tools.wordFilters.WordFilter;
 
-public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
+public class StanfordNLPPreProcess extends AbstractPreProcess {
+		
+	private static Logger logger = LoggerFactory.getLogger(StanfordNLPPreProcess.class);
 
 	private Properties props;
 	private StanfordCoreNLP pipeline;
 	private String propStanfordNLP;
-	private WordFilter filter;
-
-	public StanfordNLPSimplePreProcess(int id) {
+	
+	public StanfordNLPPreProcess(int id) {
 		super(id);
 	}
 
 	@Override
 	public void init() throws LacksOfFeatures, UnknownLanguage {
-		String language = getModel().getLanguage();
-		if (!StanfordNLPProperties.languageAbbr.containsKey(language))
-			throw new UnknownLanguage(language);
-		// creates a StanfordCoreNLP object, with properties
-		try {
-			propStanfordNLP = getModel().getProcessOption(id, "PropStanfordNLP");
-		} catch (LacksOfFeatures lof) {
-			propStanfordNLP = "tokenize, ssplit, pos, lemma";
+		if (pipeline == null) {
+			String language = getModel().getLanguage();
+			if (!StanfordNLPProperties.languageAbbr.containsKey(language))
+				throw new UnknownLanguage(language);
+			// creates a StanfordCoreNLP object, with properties
+			try {
+				propStanfordNLP = getModel().getProcessOption(id, "PropStanfordNLP");
+			} catch (LacksOfFeatures lof) {
+				propStanfordNLP = "tokenize, ssplit, pos, lemma";
+			}
+			props = new StanfordNLPProperties(language);
+			props.put("annotators", propStanfordNLP);
+			props.put("tokenize.language", null);
+			props.put("pos.model", null);
+			pipeline = new StanfordCoreNLP(props);
 		}
-		props = new StanfordNLPProperties(language);
-		props.put("annotators", propStanfordNLP);
-		props.put("tokenize.language", null);
-		props.put("pos.model", null);
-		pipeline = new StanfordCoreNLP(props);
-
-		if (getCurrentProcess() != null && getCurrentProcess().getClass() == GenerateTextModel.class)
-			filter = ((GenerateTextModel) getCurrentProcess()).getFilter();
-		else
-			filter = new TrueFilter();
 	}
 
 	@Override
 	public void process() throws Exception {
+		logger.trace("StanfordNLP pipeline starting");
+		
 		int iD = 0;
 
 		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
@@ -105,7 +105,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 								sen.getListWordModel().add(word);
 							}
 						}
-						if (sen.getLength(filter) > 7)
+						if (sen.getLength(getModel().getFilter()) > 7)
 							textModel.add(sen);
 						iD++;
 					}

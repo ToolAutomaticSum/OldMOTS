@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,11 +19,11 @@ import org.w3c.dom.NodeList;
 
 public class CommandView extends AbstractView {
 
+	private static Logger logger = LoggerFactory.getLogger(CommandView.class);
+
 	private boolean separateConfFile;
 	private String confProcessFilePath;
 	private String confMultiCorpusFilePath;
-
-	private static final Logger logger = Logger.getLogger("CommandView");
 
 	public CommandView(String confFilePath) {
 		super();
@@ -40,7 +40,7 @@ public class CommandView extends AbstractView {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		logger.log(Level.INFO, "\n" + (String) arg);
+		System.out.println("\n" + (String) arg);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class CommandView extends AbstractView {
 				}
 			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+			logger.warn(e.getMessage(), e);
 		}
 	}
 
@@ -133,7 +133,7 @@ public class CommandView extends AbstractView {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			doc = dBuilder.parse(fXmlFile);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+			logger.warn(e.getMessage(), e);
 		}
 			
 			Element root = doc.getDocumentElement();
@@ -394,7 +394,7 @@ public class CommandView extends AbstractView {
 				}
 			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, e.getMessage(), e);
+			logger.warn(e.getMessage(), e);
 		}
 	}
 

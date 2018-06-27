@@ -5,8 +5,9 @@
 		<OUTPUT_PATH>output</OUTPUT_PATH>
 		<MULTITHREADING>true</MULTITHREADING>		
 		<PREPROCESS NAME="GenerateTextModel">
-			<OPTION NAME="StanfordNLP">true</OPTION>
 			<OPTION NAME="StopWordListFile">docs/StopWords/englishStopWords.txt</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="StanfordNLPPreProcess">
 		</PREPROCESS>	
 	</TASK>
 </CONFIG>
