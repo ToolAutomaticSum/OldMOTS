@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import main.java.liasd.asadera.model.task.process.indexBuilder.ILP.SentenceNGramBasedIn;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
@@ -24,6 +27,8 @@ import main.java.liasd.asadera.tools.reader_writer.Writer;
 
 public class GenerateModel_ILP extends AbstractScoringMethod
 		implements IndexBasedIn<NGram>, SentenceNGramBasedIn, FileNameBasedOut {
+
+	private static Logger logger = LoggerFactory.getLogger(GenerateModel_ILP.class);
 
 	private static int ilp_nb = 0;
 	private final int ilp_id;
@@ -137,7 +142,7 @@ public class GenerateModel_ILP extends AbstractScoringMethod
 			w.open(false);
 //			FileOutputStream fw = new FileOutputStream("tempILP" + ilp_id + ".ilp_out");
 //			OutputStreamWriter osr = new OutputStreamWriter(fw, "UTF-8");
-			System.out.println("Model length : " + model.length());
+			logger.trace("Model length : " + model.length());
 //			System.out.println(model);
 			try {
 				w.write(model);

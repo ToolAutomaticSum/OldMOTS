@@ -1,9 +1,14 @@
 package main.java.liasd.asadera.model.task.process.selectionMethod.ILP;
 
-import java.io.File;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class GLPLauncher {
+
+	private static Logger logger = LoggerFactory.getLogger(GLPLauncher.class);
+	
 	private String entryFile;
 
 	public GLPLauncher(String entryFile) {
@@ -11,9 +16,9 @@ public class GLPLauncher {
 	}
 
 	public void runGLP(String fileName) {
-		System.out.println("Starting solver");
+		logger.trace("Starting solver");
 		try {
-			System.out.println(fileName);
+			logger.trace(fileName);
 			String[] commande = { "glpsol", "--tmlim", "100", "--lp", entryFile, "-o", fileName};
 			Process p = Runtime.getRuntime().exec(commande);
 
@@ -23,6 +28,6 @@ public class GLPLauncher {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Fin du programme");
+		logger.trace("End solver");
 	}
 }

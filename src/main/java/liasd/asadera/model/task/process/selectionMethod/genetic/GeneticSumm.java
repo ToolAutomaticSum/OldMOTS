@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
@@ -26,6 +29,8 @@ import main.java.liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
 
 public class GeneticSumm extends AbstractSelectionMethod implements IndexBasedIn<WordIndex> {
+
+	private static Logger logger = LoggerFactory.getLogger(GeneticSumm.class);
 
 	private Index<WordIndex> index;
 
@@ -141,10 +146,9 @@ public class GeneticSumm extends AbstractSelectionMethod implements IndexBasedIn
 		scorer.computeScore(population);
 		for (GeneticIndividual gi : this.population) {
 			currScore = gi.getScore(); // this.scorer);
-			// System.out.println("Score indiv "+cpt+" : "+currScore);
 			if (currScore == 0) {
 				for (SentenceModel p : gi.getGenes())
-					System.out.println(p);
+					logger.debug(p.toString());
 			}
 			if (currScore > maxScore) {
 				maxScore = currScore;

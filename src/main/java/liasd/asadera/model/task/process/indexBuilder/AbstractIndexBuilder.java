@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.model.task.process.AbstractProcess;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
@@ -18,6 +21,8 @@ import main.java.liasd.asadera.tools.reader_writer.Reader;
 
 public abstract class AbstractIndexBuilder<T extends WordIndex> extends ParameterizedMethod
 		implements IndexBasedOut<T>, ListSentenceBasedOut {
+
+	private static Logger logger = LoggerFactory.getLogger(AbstractIndexBuilder.class);
 
 	private AbstractProcess currentProcess;
 	protected final Index<T> index;
@@ -69,7 +74,7 @@ public abstract class AbstractIndexBuilder<T extends WordIndex> extends Paramete
 						try {
 							listSen.add(corpus.getSentenceByID(Integer.parseInt(line)));
 						} catch (Exception e) {
-							System.out.println(folder[i].getPath());
+							logger.error(folder[i].getPath());
 						}
 					reader.close();
 				}

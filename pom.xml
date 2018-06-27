@@ -2,7 +2,7 @@
   	<modelVersion>4.0.0</modelVersion>
   	<groupId>liasd.asadera</groupId>
   	<artifactId>mots</artifactId>
-  	<version>0.4.6</version>
+  	<version>0.4.7</version>
   	<build>
 		<sourceDirectory>src</sourceDirectory>
     
@@ -141,9 +141,9 @@
 		    <!-- <scope>test</scope> -->
 		</dependency>
 		<dependency>
-    			<groupId>org.slf4j</groupId>
+   			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-    			<version>1.7.25</version>
+   			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 		    <groupId>fi.seco</groupId>

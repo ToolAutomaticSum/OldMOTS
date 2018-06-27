@@ -8,12 +8,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.textModeling.wordIndex.Index;
 import main.java.liasd.asadera.textModeling.wordIndex.NGram;
 import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
 import main.java.liasd.asadera.tools.wordFilters.WordFilter;
 
 public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel> {
+
+	private static Logger logger = LoggerFactory.getLogger(SentenceModel.class);
 
 	private List<WordModel> listWordModel = new ArrayList<WordModel>();
 
@@ -97,16 +102,16 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		return sentence;
 	}
 
-	public static String listSentenceModelToString(List<SentenceModel> list) {
+	public static String listSentenceModelToString(List<SentenceModel> list, boolean verbose) {
 		String str = "";
-		int nbMot = 0;
-		for (SentenceModel sen : list)
-			nbMot += sen.getNbMot();
-		str += nbMot + "\n";
-		Iterator<SentenceModel> it = list.iterator();
-		while (it.hasNext()) {
-			SentenceModel sen = it.next();
-			str += sen.getNbMot() + "\t" + sen.getScore() + "\t" + sen.toString() + "\n";
+		if (verbose) {
+			int nbMot = 0;
+			for (SentenceModel sen : list)
+				nbMot += sen.getNbMot();
+			str += nbMot + "\n";
+		}
+		for (SentenceModel sen : list) {
+			str += ((verbose) ? sen.getNbMot() + "\t" + sen.getScore() + "\t" : "\t") + sen.toString() + "\n";
 		}
 		return str;
 	}
@@ -163,7 +168,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 						if (w != null)
 							ng.add(w);
 						else {
-							System.out.println("BREAK!!! " + u.getmLemma());
+							logger.error("BREAK!!! " + u.getmLemma());
 							cond = false;
 							break;
 						}
@@ -177,7 +182,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 						ng = indexNG.get(ng.getWord());
 					else if (indexNG != null) {
 						indexNG.put(0, ng);
-						System.out.println("BREAK!!! " + ng);
+						logger.error("BREAK!!! " + ng);
 					}
 					ngrams_list.add(ng);
 				}

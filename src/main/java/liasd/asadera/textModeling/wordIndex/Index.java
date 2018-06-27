@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Index<T extends WordIndex> implements Map<Integer, T> {
+
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
 	private HashMap<Integer, T> mapWord = new HashMap<Integer, T>();
 	private HashMap<String, Integer> mapIndex = new HashMap<String, Integer>();
@@ -76,7 +81,7 @@ public class Index<T extends WordIndex> implements Map<Integer, T> {
 
 	@Override
 	public T remove(Object key) {
-		System.out.println("Remove !!");
+		logger.warn("Remove !!");
 		return mapWord.remove(key);
 	}
 

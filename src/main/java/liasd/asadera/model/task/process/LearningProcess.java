@@ -12,7 +12,7 @@ import java.util.Properties;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import main.java.liasd.asadera.model.AbstractModel;
 import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
-import main.java.liasd.asadera.model.task.preProcess.stanfordNLP.StanfordNLPSimplePreProcess;
+import main.java.liasd.asadera.model.task.preProcess.StanfordNLPPreProcess;
 import main.java.liasd.asadera.model.task.process.indexBuilder.LearningModelBuilder;
 import main.java.liasd.asadera.optimize.SupportADNException;
 import main.java.liasd.asadera.optimize.parameter.ADN;
@@ -97,7 +97,7 @@ public class LearningProcess extends AbstractProcess {
 							textToProcess += line;
 							if (readSize > limitSize) {
 								System.out.println("Reading : " + (System.currentTimeMillis() - time));
-								List<String> listSentence = StanfordNLPSimplePreProcess
+								List<String> listSentence = StanfordNLPPreProcess
 										.liveProcessToListString(pipeline, textToProcess);
 								textToProcess = "";
 								System.out.println("Reading + processing : " + (System.currentTimeMillis() - time));

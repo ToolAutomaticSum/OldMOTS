@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
@@ -15,8 +18,11 @@ import main.java.liasd.asadera.optimize.parameter.Parameter;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
+import main.java.liasd.asadera.view.CommandView;
 
 public class MMR extends AbstractSelectionMethod implements SentenceCaracteristicBasedIn, ScoreBasedIn {
+
+	private static Logger logger = LoggerFactory.getLogger(MMR.class);
 
 	public static enum MMR_Parameter {
 		Lambda("Lambda");
@@ -164,7 +170,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 			double valSim;
 
 			if (sentenceCaracteristic.get(p) == null)
-				System.out.println("Error");
+				logger.error("Error");
 			if ((valSim = sim.computeSimilarity(sentenceCaracteristic, p1, p)) >= maxSim) {
 				maxSim = valSim;
 			}

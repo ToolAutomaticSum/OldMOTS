@@ -22,7 +22,9 @@ import main.java.liasd.asadera.optimize.AlgoGenetique;
 import main.java.liasd.asadera.view.CommandView;
 
 public class MOTS {
-
+	
+//	private static Logger logger = LoggerFactory.getLogger(MOTS.class);
+	
 	/**
 	 * MOTS main command line launcher.
 	 * -c : configuration's file path. REQUIRED
@@ -46,6 +48,8 @@ public class MOTS {
 				.build();
 		Option option_o = Option.builder("o").required(false)
 				.desc("Run the genetic algorithm for parameter optimisation.").longOpt("optimization").build();
+		Option option_v = Option.builder("v").required(false).desc("Enable verbose behavior").longOpt("verbose")
+				.build();
 		Options options = new Options();
 		CommandLineParser parser = new DefaultParser();
 
@@ -54,6 +58,7 @@ public class MOTS {
 		options.addOption(option_c);
 		options.addOption(option_m);
 		options.addOption(option_o);
+		options.addOption(option_v);
 
 		CommandView view;
 		AbstractModel model;
@@ -61,6 +66,14 @@ public class MOTS {
 
 		try {
 			commandLine = parser.parse(options, args);
+			
+			System.setProperty("org.slf4j.simpleLogger.showShortLogName", "true");
+			System.setProperty("org.slf4j.simpleLogger.showLogName", "false");
+
+			if (commandLine.hasOption("v"))
+				System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "trace");
+			else
+				System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
 
 			String configFileName = new File(commandLine.getOptionValue("c")).getName();
 			String name = configFileName + File.separator + "UnknownMultiCorpus";
@@ -87,6 +100,8 @@ public class MOTS {
 			} else {
 				model = new SummarizeModel();
 				model.setName(name);
+				if (commandLine.hasOption("v"))
+					model.setVerbose(true);
 				controller = new SummarizeController(model, view);
 				if (commandLine.hasOption("o")) {
 					view.init();
@@ -108,8 +123,7 @@ public class MOTS {
 					controller.displayView();
 			}
 		} catch (ParseException exception) {
-			System.err.print("Parse error: ");
-			System.err.println(exception.getMessage());
+			exception.printStackTrace();;
 		}
 	}
 }

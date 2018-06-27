@@ -67,7 +67,7 @@ public class Lemmatization extends AbstractPreProcess {
 
 	@Override
 	public void process() {
-		logger.info("Lemmatization");
+		logger.trace("Lemmatization");
 		for (Corpus corpus : getCurrentMultiCorpus())
 			for (TextModel text : corpus)
 				for (SentenceModel sentence : text)

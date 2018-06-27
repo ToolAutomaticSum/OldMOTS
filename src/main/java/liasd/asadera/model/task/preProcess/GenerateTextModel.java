@@ -1,22 +1,21 @@
 package main.java.liasd.asadera.model.task.preProcess;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import main.java.liasd.asadera.exception.LacksOfFeatures;
-import main.java.liasd.asadera.model.task.preProcess.stanfordNLP.StanfordNLPSimplePreProcess;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.MultiCorpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
@@ -25,16 +24,13 @@ import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
 import main.java.liasd.asadera.tools.reader_writer.Reader;
 import main.java.liasd.asadera.tools.reader_writer.Writer;
-import main.java.liasd.asadera.tools.wordFilters.WordFilter;
+import main.java.liasd.asadera.tools.wordFilters.TrueFilter;
 import main.java.liasd.asadera.tools.wordFilters.WordStopListFilter;
 
 public class GenerateTextModel extends AbstractPreProcess {
 
-	private WordFilter filter;
-	private boolean stanford = false;
-
-	protected List<AbstractPreProcess> preProcess = new ArrayList<AbstractPreProcess>();
-
+	private static Logger logger = LoggerFactory.getLogger(GenerateTextModel.class);
+	
 	public GenerateTextModel(int id) {
 		super(id);
 	}
@@ -43,25 +39,15 @@ public class GenerateTextModel extends AbstractPreProcess {
 	public void init() throws Exception {
 
 		try {
-			filter = new WordStopListFilter(getModel().getProcessOption(id, "StopWordListFile"));
+			getModel().setFilter(new WordStopListFilter(getModel().getProcessOption(id, "StopWordListFile")));
 		} catch (LacksOfFeatures e) {
-			filter = null;
+			getModel().setFilter(new TrueFilter());
 		}
-		stanford = Boolean.parseBoolean(getModel().getProcessOption(id, "StanfordNLP"));
-
-		if (stanford) {
-			preProcess.add(new StanfordNLPSimplePreProcess(id));
-		} else {
-			preProcess.add(new SentenceSplitter(id));
-			preProcess.add(new WordSplitter(id));
-			preProcess.add(new TextStemming(id));
-		}
-		for (AbstractPreProcess pp : preProcess)
-			pp.setCurrentProcess(this);
 	}
 
 	@Override
 	public void process() throws Exception {
+		logger.trace("Reading documents from files");
 		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
 		while (corpusIt.hasNext()) {
 			Iterator<TextModel> textIt = corpusIt.next().iterator();
@@ -72,40 +58,16 @@ public class GenerateTextModel extends AbstractPreProcess {
 				}
 			}
 		}
-
-		Iterator<AbstractPreProcess> it = preProcess.iterator();
-		while (it.hasNext()) {
-			AbstractPreProcess p = it.next();
-			p.setModel(getModel());
-			p.setCurrentMultiCorpus(currentMultiCorpus);
-			p.init();
-		}
-
-		it = preProcess.iterator();
-		while (it.hasNext()) {
-			AbstractPreProcess p = it.next();
-			p.setModel(getModel());
-			p.process();
-		}
-
-		it = preProcess.iterator();
-		while (it.hasNext()) {
-			AbstractPreProcess p = it.next();
-			p.setModel(getModel());
-			p.finish();
-		}
 	}
 
 	@Override
 	public void finish() {
-		preProcess = null;
-
-		if (filter != null) {
+		if (getModel().getFilter() != null) {
 			for (Corpus corpus : getCurrentMultiCorpus()) {
 				for (TextModel text : corpus) {
 					for (SentenceModel sen : text) {
 						for (WordModel word : sen.getListWordModel())
-							if (!filter.passFilter(word))
+							if (!getModel().getFilter().passFilter(word))
 								word.setStopWord(true);
 					}
 				}
@@ -117,7 +79,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 			GenerateTextModel.writeTempDocumentBySentence(getModel().getOutputPath() + File.separator + "temp",
 					getCurrentMultiCorpus());
 		} catch (Exception e) {
-			System.out.println("Error while writing preprocessed document in temp folder.");
+			logger.error("Error while writing preprocessed document in temp folder.");
 			e.printStackTrace();
 		}
 	}
@@ -179,7 +141,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 							}
 						}
 					}
-					System.out.println("Reading " + textModel.getTextName());
+					logger.info("Reading " + textModel.getTextName());
 					return true;
 				} else
 					return false;
@@ -187,14 +149,6 @@ public class GenerateTextModel extends AbstractPreProcess {
 				return true;
 		} else
 			return true;
-	}
-
-	public List<AbstractPreProcess> getPreProcess() {
-		return preProcess;
-	}
-
-	public void setPreProcess(List<AbstractPreProcess> preProcess) {
-		this.preProcess = preProcess;
 	}
 
 	public static void writeTempDocumentBySentence(String outputPath, MultiCorpus mc) throws Exception {
@@ -281,13 +235,5 @@ public class GenerateTextModel extends AbstractPreProcess {
 			e.printStackTrace();
 		}
 		return c;
-	}
-
-	public WordFilter getFilter() {
-		return filter;
-	}
-
-	public void setFilter(WordFilter filter) {
-		this.filter = filter;
 	}
 }

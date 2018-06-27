@@ -16,6 +16,7 @@ import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import main.java.liasd.asadera.model.task.process.AbstractProcess;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.MultiCorpus;
+import main.java.liasd.asadera.tools.wordFilters.WordFilter;
 
 /**
  * Represent an automatic summarizatin system split in 3 steps :
@@ -59,6 +60,11 @@ public abstract class AbstractModel extends Observable {
 	 * List of Map of ids (from @processIDs)
 	 */
 	private List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
+	
+	/**
+	 * Filter dertimining which words are to be considering as Stopwords
+	 */
+	private WordFilter filter;
 
 	/**
 	 * List of MultiCorpus
@@ -70,6 +76,8 @@ public abstract class AbstractModel extends Observable {
 	private boolean bMultiThreading = false;
 
 	private boolean bRougeEvaluation = false;
+	
+	private boolean isVerbose = false;
 
 	private EvaluationROUGE evalRouge;
 
@@ -225,6 +233,14 @@ public abstract class AbstractModel extends Observable {
 		return process;
 	}
 
+	public WordFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(WordFilter filter) {
+		this.filter = filter;
+	}
+
 	/**
 	 * Specify if the tool must be used with multithreading.
 	 * Multithreading is implemented as one thread per corpus from the multicorpus.
@@ -300,6 +316,14 @@ public abstract class AbstractModel extends Observable {
 	 */
 	public boolean isMultiThreading() {
 		return bMultiThreading;
+	}
+
+	public boolean isVerbose() {
+		return isVerbose;
+	}
+
+	public void setVerbose(boolean isVerbose) {
+		this.isVerbose = isVerbose;
 	}
 
 	/** Clear instance's attribute.

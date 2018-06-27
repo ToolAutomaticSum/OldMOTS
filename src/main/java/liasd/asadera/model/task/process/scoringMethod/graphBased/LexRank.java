@@ -110,7 +110,6 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 		graph = new GraphSentenceBased(graphThreshold, sentenceCaracteristic, sim);
 
 		graph.generateGraph();
-		// System.out.println(graph);
 	}
 
 	@Override

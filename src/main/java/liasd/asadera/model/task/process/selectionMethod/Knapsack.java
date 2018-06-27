@@ -3,6 +3,9 @@ package main.java.liasd.asadera.model.task.process.selectionMethod;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
 import main.java.liasd.asadera.model.task.process.selectionMethod.scorer.Scorer;
 import main.java.liasd.asadera.optimize.SupportADNException;
@@ -11,6 +14,8 @@ import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.Summary;
 
 public class Knapsack extends AbstractSelectionMethod {
+
+	private static Logger logger = LoggerFactory.getLogger(Knapsack.class);
 
 	private int K;
 	private Scorer scorer;
@@ -76,7 +81,7 @@ public class Knapsack extends AbstractSelectionMethod {
 				bestK = k;
 			}
 		}
-		System.out.println(bestScore);
+		logger.trace(String.valueOf(bestScore));
 		return s[n][bestK];
 	}
 

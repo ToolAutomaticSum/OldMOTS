@@ -3,6 +3,9 @@ package main.java.liasd.asadera.model;
 import java.io.File;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import main.java.liasd.asadera.model.task.process.AbstractProcess;
 import main.java.liasd.asadera.model.task.process.SummarizeProcess;
@@ -11,76 +14,80 @@ import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.tools.reader_writer.Writer;
 
 public class SummarizeModel extends AbstractModel {
+	
+	private static Logger logger = LoggerFactory.getLogger(SummarizeModel.class);
 
 	/**
 	 */
 	@Override
 	public void run() throws Exception {
-		//try {
-			loadMultiCorpusModels();
+		loadMultiCorpusModels();
+		
+		if (getPreProcess().size() != 0)
+			logger.trace("Starting preprocess.");
 
-			Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
+		Iterator<AbstractPreProcess> preProIt = getPreProcess().iterator();
+		while (preProIt.hasNext()) {
+			AbstractPreProcess p = preProIt.next();
+			p.setModel(this);
+			p.init();
+		}
+
+		Iterator<MultiCorpus> multiCorpusIt = getMultiCorpusModels().iterator();
+		while (multiCorpusIt.hasNext()) {
+			currentMultiCorpus = multiCorpusIt.next();
+			preProIt = getPreProcess().iterator();
 			while (preProIt.hasNext()) {
 				AbstractPreProcess p = preProIt.next();
+				p.setCurrentMultiCorpus(currentMultiCorpus);
+				p.process();
+			}
+			preProIt = getPreProcess().iterator();
+			while (preProIt.hasNext()) {
+				AbstractPreProcess p = preProIt.next();
+				p.finish();
+			}
+		}
+		
+		if (getPreProcess().size() != 0)
+			logger.trace("End of preprocessing.");
+		if (getProcess().size() != 0)
+			logger.trace("Starting generation of abstract.");
+
+		multiCorpusIt = getMultiCorpusModels().iterator();
+		while (multiCorpusIt.hasNext()) {
+			currentMultiCorpus = multiCorpusIt.next();
+			logger.trace("MultiCorpus : " + currentMultiCorpus.getiD());
+
+			Iterator<AbstractProcess> proIt = getProcess().iterator();
+			while (proIt.hasNext()) {
+				long time = System.currentTimeMillis();
+				SummarizeProcess p = (SummarizeProcess) proIt.next();
+				p.setCurrentMultiCorpus(currentMultiCorpus);
 				p.setModel(this);
-				p.init();
+				p.initCorpusToCompress();
+				p.initADN();
+				runProcess(currentMultiCorpus, p);
+				time = System.currentTimeMillis() - time;
+				Writer w = new Writer(getOutputPath() + File.separator + getName().split(File.separator)[0]
+						+ File.separator + "process_time.txt");
+				w.open(true);
+				w.write(getName().split(File.separator)[1] + "\t" + time + "\n");
+				w.close();
 			}
-
-			Iterator<MultiCorpus> multiCorpusIt = getMultiCorpusModels().iterator();
-			while (multiCorpusIt.hasNext()) {
-				currentMultiCorpus = multiCorpusIt.next();
-				preProIt = getPreProcess().iterator();
-				while (preProIt.hasNext()) {
-					AbstractPreProcess p = preProIt.next();
-					p.setCurrentMultiCorpus(currentMultiCorpus);
-					p.process();
-				}
-				preProIt = getPreProcess().iterator();
-				while (preProIt.hasNext()) {
-					AbstractPreProcess p = preProIt.next();
-					p.finish();
-				}
-
-				System.out.println(currentMultiCorpus);
-			}
-
-			multiCorpusIt = getMultiCorpusModels().iterator();
-			while (multiCorpusIt.hasNext()) {
-				currentMultiCorpus = multiCorpusIt.next();
-				System.out.println("MultiCorpus : " + currentMultiCorpus.getiD());
-
-				Iterator<AbstractProcess> proIt = getProcess().iterator();
-				while (proIt.hasNext()) {
-					long time = System.currentTimeMillis();
-					SummarizeProcess p = (SummarizeProcess) proIt.next();
-					p.setCurrentMultiCorpus(currentMultiCorpus);
-					p.setModel(this);
-					p.initCorpusToCompress();
-					p.initADN();
-					runProcess(currentMultiCorpus, p);
-					time = System.currentTimeMillis() - time;
-					System.out.println(time);
-					Writer w = new Writer(getOutputPath() + File.separator + getName().split(File.separator)[0]
-							+ File.separator + "process_time.txt");
-					w.open(true);
-					w.write(getName().split(File.separator)[1] + "\t" + time + "\n");
-					w.close();
-				}
-			}
-			if (isRougeEvaluation()) {
-				if (currentMultiCorpus.hasModelSummaries())
-					System.out.println("WARNING : Multicorpus don't have model summaries for each corpus. Evaluation might send an error.");
-				getEvalRouge().setModel(this);
-				getEvalRouge().setCurrentMultiCorpus(currentMultiCorpus);
-				getEvalRouge().init();
-				getEvalRouge().process();
-				getEvalRouge().finish();
-			}
-		/*} catch (LacksOfFeatures e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
+		}
+		if (getProcess().size() != 0)
+			logger.trace("End of abstract's generation.");
+		if (isRougeEvaluation()) {
+			logger.trace("ROUGE Evaluation");
+			if (currentMultiCorpus.hasModelSummaries())
+				logger.error("WARNING : Multicorpus don't have model summaries for each corpus. Evaluation might send an error.");
+			getEvalRouge().setModel(this);
+			getEvalRouge().setCurrentMultiCorpus(currentMultiCorpus);
+			getEvalRouge().init();
+			getEvalRouge().process();
+			getEvalRouge().finish();
+		}
 	}
 
 	/**
@@ -119,7 +126,7 @@ public class SummarizeModel extends AbstractModel {
 				p.finish();
 				setChanged();
 				notifyObservers("Corpus " + i + "\n"
-						+ SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i)));
+						+ SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i), isVerbose()));
 			}
 		}
 	}

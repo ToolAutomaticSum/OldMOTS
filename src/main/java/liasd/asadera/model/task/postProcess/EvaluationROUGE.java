@@ -19,6 +19,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,6 +32,8 @@ import main.java.liasd.asadera.tools.reader_writer.Reader;
 import main.java.liasd.asadera.tools.reader_writer.Writer;
 
 public class EvaluationROUGE extends AbstractPostProcess {
+	
+	private static Logger logger = LoggerFactory.getLogger(EvaluationROUGE .class);
 
 	private String rougePath = System.getenv("ROUGE_HOME");
 	private List<String> rougeMeasure = new ArrayList<String>();
@@ -76,8 +80,8 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + " -e " + rougePath
 						+ File.separator + "data -n 2 -x -m -c 95 -r 1000 -f A -p 0.5 -t 0 -a " + rougeTempFilePath
 						+ File.separator + "settings" + getModel().getTaskID() + i + ".xml";
-				System.out.println(cmd);
-
+				logger.trace(cmd);
+				System.out.println("");
 				Process proc = Runtime.getRuntime().exec(cmd);
 
 				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -136,7 +140,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			w.write("</body>\n</html>");
 			w.close();
 		} else
-			System.out.println("Summary corpus " + corpusId + " MultiCorpus " + multiCorpusId + " is null.");
+			logger.error("Summary corpus " + corpusId + " MultiCorpus " + multiCorpusId + " is null.");
 	}
 
 	private void writeHtmlModelSummary(int multiCorpusId, int corpusId) throws Exception {

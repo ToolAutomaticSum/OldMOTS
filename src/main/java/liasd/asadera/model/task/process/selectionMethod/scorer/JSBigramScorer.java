@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.indexBuilder.ListSentenceBasedIn;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import main.java.liasd.asadera.model.task.process.selectionMethod.AbstractSelectionMethod;
@@ -15,6 +18,8 @@ import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
 import main.java.liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
 
 public class JSBigramScorer extends Scorer implements ListSentenceBasedIn {
+
+	private static Logger logger = LoggerFactory.getLogger(JSBigramScorer.class);
 
 	private List<SentenceModel> listSen;
 	private Map<WordIndex, Double> sourceDistribution;
@@ -96,7 +101,7 @@ public class JSBigramScorer extends Scorer implements ListSentenceBasedIn {
 
 		corpusDistri = new double[sourceOccurences.size()];
 		int i = 0;
-		System.out.println(
+		logger.trace(
 				"Number of ngrams after filtering : " + nbBiGramsInSource + " | " + modified_nbBiGramsInSource);
 		for (WordIndex ng : sourceOccurences.keySet()) {
 			sourceDistribution.put(ng, (double) sourceOccurences.get(ng) / modified_nbBiGramsInSource);

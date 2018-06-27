@@ -1,9 +1,12 @@
-package main.java.liasd.asadera.model.task.preProcess.stanfordNLP;
+package main.java.liasd.asadera.model.task.preProcess;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
@@ -16,53 +19,49 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.exception.UnknownLanguage;
-import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
-import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
+import main.java.liasd.asadera.model.task.preProcess.stanfordNLP.StanfordNLPProperties;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
-import main.java.liasd.asadera.tools.reader_writer.Writer;
-import main.java.liasd.asadera.tools.wordFilters.TrueFilter;
-import main.java.liasd.asadera.tools.wordFilters.WordFilter;
 
-public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
+public class StanfordNLPPreProcess extends AbstractPreProcess {
+		
+	private static Logger logger = LoggerFactory.getLogger(StanfordNLPPreProcess.class);
 
 	private Properties props;
 	private StanfordCoreNLP pipeline;
 	private String propStanfordNLP;
-	private WordFilter filter;
-
-	public StanfordNLPSimplePreProcess(int id) {
+	
+	public StanfordNLPPreProcess(int id) {
 		super(id);
 	}
 
 	@Override
 	public void init() throws LacksOfFeatures, UnknownLanguage {
-		String language = getModel().getLanguage();
-		if (!StanfordNLPProperties.languageAbbr.containsKey(language))
-			throw new UnknownLanguage(language);
-		// creates a StanfordCoreNLP object, with properties
-		try {
-			propStanfordNLP = getModel().getProcessOption(id, "PropStanfordNLP");
-		} catch (LacksOfFeatures lof) {
-			propStanfordNLP = "tokenize, ssplit, pos, lemma";
+		if (pipeline == null) {
+			String language = getModel().getLanguage();
+			if (!StanfordNLPProperties.languageAbbr.containsKey(language))
+				throw new UnknownLanguage(language);
+			// creates a StanfordCoreNLP object, with properties
+			try {
+				propStanfordNLP = getModel().getProcessOption(id, "PropStanfordNLP");
+			} catch (LacksOfFeatures lof) {
+				propStanfordNLP = "tokenize, ssplit, pos, lemma";
+			}
+			props = new StanfordNLPProperties(language);
+			props.put("annotators", propStanfordNLP);
+			props.put("tokenize.language", null);
+			props.put("pos.model", null);
+			pipeline = new StanfordCoreNLP(props);
 		}
-		props = new StanfordNLPProperties(language);
-		props.put("annotators", propStanfordNLP);
-		props.put("tokenize.language", null);
-		props.put("pos.model", null);
-		pipeline = new StanfordCoreNLP(props);
-
-		if (getCurrentProcess() != null && getCurrentProcess().getClass() == GenerateTextModel.class)
-			filter = ((GenerateTextModel) getCurrentProcess()).getFilter();
-		else
-			filter = new TrueFilter();
 	}
 
 	@Override
 	public void process() throws Exception {
+		logger.trace("StanfordNLP pipeline starting");
+		
 		int iD = 0;
 
 		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
@@ -106,7 +105,7 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 								sen.getListWordModel().add(word);
 							}
 						}
-						if (sen.getLength(filter) > 7)
+						if (sen.getLength(getModel().getFilter()) > 7)
 							textModel.add(sen);
 						iD++;
 					}
@@ -117,38 +116,6 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 
 	@Override
 	public void finish() {
-		// props = new Properties();
-		// props.put("annotators", "tokenize,ssplit,pos,lemma");
-		// pipeline = new StanfordCoreNLP(props);
-	}
-
-	/**
-	 * 
-	 * @param textToProcess
-	 * @param writer
-	 * @throws Exception
-	 */
-	public static void liveProcessToFile(StanfordCoreNLP pipeline, String textToProcess, Writer writer)
-			throws Exception {
-		Annotation document = new Annotation(textToProcess);
-		// run all Annotators on this text
-		pipeline.annotate(document);
-		// these are all the sentences in this document
-		// a CoreMap is essentially a Map that uses class objects as keys and has values
-		// with custom types
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-		for (CoreMap sentence : sentences) {
-			if (!sentence.toString().replace("_", "").isEmpty()) {
-				// traversing the words in the current sentence
-				// a CoreLabel is a CoreMap with additional token-specific methods
-				for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-					if (!Tools.removePonctuation(token.get(TextAnnotation.class)).isEmpty()) {
-						writer.write(token.get(LemmaAnnotation.class).toLowerCase() + " ");
-					}
-				}
-				writer.write("\n");
-			}
-		}
 	}
 
 	/**
@@ -218,43 +185,5 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 		}
 		return listSentence;
 
-	}
-
-	public static List<String> processListStringToListString(StanfordCoreNLP pipeline, List<String> textToProcess) {
-		List<String> listSentence = new ArrayList<String>();
-		for (String sent : textToProcess) {
-			Annotation document = new Annotation(sent);
-			// run all Annotators on this text
-			pipeline.annotate(document);
-			// these are all the sentences in this document
-			// a CoreMap is essentially a Map that uses class objects as keys and has values
-			// with custom types
-			List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-			for (CoreMap sentence : sentences) {
-				if (!sentence.toString().replace("_", "").isEmpty()) {
-					// traversing the words in the current sentence
-					// a CoreLabel is a CoreMap with additional token-specific methods
-					String s = "";
-					for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-						if (!Tools.removePonctuation(token.get(TextAnnotation.class)).isEmpty()) {
-							s += token.get(LemmaAnnotation.class).toLowerCase() + " ";
-						}
-					}
-					listSentence.add(s);
-				}
-			}
-		}
-		return listSentence;
-	}
-	
-	public String getLemma(String word) {
-		Annotation tokenAnnotation = new Annotation(word);
-		pipeline.annotate(tokenAnnotation);
-		List<CoreMap> list = tokenAnnotation.get(SentencesAnnotation.class);
-		if (!list.isEmpty()) {
-			String tokenLemma = list.get(0).get(TokensAnnotation.class).get(0).get(LemmaAnnotation.class);
-			return tokenLemma;
-		} else
-			return null;
 	}
 }
