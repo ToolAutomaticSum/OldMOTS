@@ -2,7 +2,7 @@
   	<modelVersion>4.0.0</modelVersion>
   	<groupId>liasd.asadera</groupId>
   	<artifactId>mots</artifactId>
-  	<version>0.4.5</version>
+  	<version>0.4.6</version>
   	<build>
 		<sourceDirectory>src</sourceDirectory>
     
@@ -119,6 +119,12 @@
 		    <classifier>models</classifier>
 		</dependency>
 		<dependency>
+		    <groupId>edu.stanford.nlp</groupId>
+		    <artifactId>stanford-corenlp</artifactId>
+		    <version>3.8.0</version>
+		    <classifier>models-french</classifier>
+		</dependency>
+		<dependency>
 		  	<groupId>org.jgrapht</groupId>
 	  		<artifactId>jgrapht-core</artifactId>
 	  		<version>1.1.0</version>
@@ -139,6 +145,11 @@
 			<artifactId>slf4j-simple</artifactId>
     			<version>1.7.25</version>
 		</dependency>
+		<dependency>
+		    <groupId>fi.seco</groupId>
+		    <artifactId>hfst</artifactId>
+		    <version>1.1.5</version>
+		</dependency>	
 	</dependencies>
   	<!-- <repositories>
   		<repository>

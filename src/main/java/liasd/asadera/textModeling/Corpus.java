@@ -127,6 +127,10 @@ public class Corpus implements List<TextModel> {
 	public void setSummaryNames(List<String> summaryNames) {
 		this.summaryNames = summaryNames;
 	}
+	
+	public boolean hasModelSummary() {
+		return summaryNames == null || summaryNames.isEmpty();
+	}
 
 	@Override
 	public String toString() {

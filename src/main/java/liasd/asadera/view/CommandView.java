@@ -89,8 +89,10 @@ public class CommandView extends AbstractView {
 							for (int j = 0; j < corpusList.getLength(); j++) {
 								if (corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 									Element corpus = (Element) corpusList.item(j);
-									String summaryInputPath = corpus.getElementsByTagName("SUMMARY_PATH").item(0)
-											.getTextContent();
+									NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
+									String summaryInputPath = null;
+									if (summaryElement.getLength() != 0)
+										summaryInputPath = summaryElement.item(0).getTextContent();
 									String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0)
 											.getTextContent();
 									NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
@@ -107,7 +109,10 @@ public class CommandView extends AbstractView {
 											summaryNames.add(summaryList.item(k).getTextContent());
 										}
 									}
-									getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath,
+									if (summaryInputPath == null)
+										getCtrl().notifyCorpusChanged(corpusInputPath, docNames);
+									else
+										getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath,
 											docNames);
 								}
 							}
@@ -271,10 +276,10 @@ public class CommandView extends AbstractView {
 							for (int j = 0; j < corpusList.getLength(); j++) {
 								if (corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 									Element corpus = (Element) corpusList.item(j);
-									String summaryInputPath = "";
-									if (corpus.getElementsByTagName("SUMMARY_PATH").getLength() != 0)
-										summaryInputPath = corpus.getElementsByTagName("SUMMARY_PATH").item(0)
-											.getTextContent();
+									NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
+									String summaryInputPath = null;
+									if (summaryElement .getLength() != 0)
+										summaryInputPath = summaryElement.item(0).getTextContent();
 									String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0)
 											.getTextContent();
 									NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
@@ -291,7 +296,10 @@ public class CommandView extends AbstractView {
 											summaryNames.add(summaryList.item(k).getTextContent());
 										}
 									}
-									getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath,
+									if (summaryInputPath == null)
+										getCtrl().notifyCorpusChanged(corpusInputPath, docNames);
+									else
+										getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath,
 											docNames);
 								}
 							}

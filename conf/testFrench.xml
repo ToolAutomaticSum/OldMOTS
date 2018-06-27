@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<MULTICORPUS ID="0">
+			<CORPUS ID="0">
+				<INPUT_PATH>src/main/resources/COMP2018/ComparativeSumm18_test_docs_files/DF1801A/DF1801A-A</INPUT_PATH>
+				<DOCUMENT ID="0">.*</DOCUMENT>
+			</CORPUS>
+		</MULTICORPUS>
+	</TASK>
+</CONFIG>

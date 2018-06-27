@@ -15,6 +15,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import main.java.liasd.asadera.exception.LacksOfFeatures;
+import main.java.liasd.asadera.exception.UnknownLanguage;
 import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
 import main.java.liasd.asadera.textModeling.Corpus;
@@ -38,15 +39,20 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 	}
 
 	@Override
-	public void init() throws LacksOfFeatures {
+	public void init() throws LacksOfFeatures, UnknownLanguage {
+		String language = getModel().getLanguage();
+		if (!StanfordNLPProperties.languageAbbr.containsKey(language))
+			throw new UnknownLanguage(language);
 		// creates a StanfordCoreNLP object, with properties
 		try {
 			propStanfordNLP = getModel().getProcessOption(id, "PropStanfordNLP");
 		} catch (LacksOfFeatures lof) {
 			propStanfordNLP = "tokenize, ssplit, pos, lemma";
 		}
-		props = new Properties();
+		props = new StanfordNLPProperties(language);
 		props.put("annotators", propStanfordNLP);
+		props.put("tokenize.language", null);
+		props.put("pos.model", null);
 		pipeline = new StanfordCoreNLP(props);
 
 		if (getCurrentProcess() != null && getCurrentProcess().getClass() == GenerateTextModel.class)

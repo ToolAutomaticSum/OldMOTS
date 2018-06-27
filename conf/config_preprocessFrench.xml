@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>french</LANGUAGE>
+		<OUTPUT_PATH>output</OUTPUT_PATH>
+		<MULTITHREADING>true</MULTITHREADING>		
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StanfordNLP">true</OPTION>
+			<OPTION NAME="StopWordListFile">docs/StopWords/frenchStopWords.txt</OPTION>
+			<OPTION NAME="PropStanfordNLP">tokenize, ssplit, pos</OPTION> <!-- Need to remove lemma because StanfordNLP don't handle French lemmatization -->
+		</PREPROCESS>
+		<PREPROCESS NAME="Lemmatization">
+		</PREPROCESS>	
+	</TASK>
+</CONFIG>

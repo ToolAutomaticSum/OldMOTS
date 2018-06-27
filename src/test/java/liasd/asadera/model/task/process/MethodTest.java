@@ -15,7 +15,7 @@ public abstract class MethodTest {
 
 	public MethodTest(String methodName) {
 		this.methodName = methodName;
-		configFile = "conf" + File.separator + "config_" + methodName + ".xml";
+		this.configFile = "conf" + File.separator + "config_" + methodName + ".xml";
 	}
 
 	@Before
