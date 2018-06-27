@@ -135,6 +135,29 @@ public abstract class AbstractController {
 			currentMultiCorpus.add(corpus);
 		}
 	}
+	
+	public final void notifyCorpusChanged(String inputCorpusPath,
+			List<String> docNames) {
+		Set<String> set_docNames = new TreeSet<String>();
+
+		File f = new File(inputCorpusPath);
+		if (f.exists()) {
+			List<String> lf = Arrays.asList(f.list());
+			for (String doc : docNames) {
+				Pattern pattern = Pattern.compile(doc);
+				set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+			}
+			docNames.clear();
+			docNames.addAll(set_docNames);
+
+			Corpus corpus = new Corpus(currentMultiCorpus.size());
+
+			corpus.setModel(model);
+			corpus.setDocNames(docNames);
+			corpus.setInputPath(inputCorpusPath);
+			currentMultiCorpus.add(corpus);
+		}
+	}
 
 	public void notifyOutputPathChanged(String outputDir) {
 		this.outputDir = outputDir;

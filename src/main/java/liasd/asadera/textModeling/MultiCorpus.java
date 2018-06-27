@@ -11,7 +11,7 @@ import main.java.liasd.asadera.model.SummarizeModel;
 public class MultiCorpus implements List<Corpus> {
 
 	private List<Corpus> listCorpus = new ArrayList<Corpus>();
-
+	private boolean hasAllModelSummary = true;
 	protected int iD;
 	protected SummarizeModel model;
 
@@ -47,24 +47,34 @@ public class MultiCorpus implements List<Corpus> {
 	public int getiD() {
 		return iD;
 	}
+	
+	public boolean hasModelSummaries() {
+		return hasAllModelSummary;
+	}
 
 	@Override
 	public boolean add(Corpus e) {
+		hasAllModelSummary = hasAllModelSummary && e.hasModelSummary();
 		return listCorpus.add(e);
 	}
 
 	@Override
 	public void add(int index, Corpus element) {
+		hasAllModelSummary = hasAllModelSummary && element.hasModelSummary();
 		listCorpus.add(index, element);
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends Corpus> c) {
+		for (Corpus corpus: c)
+			hasAllModelSummary = hasAllModelSummary && corpus.hasModelSummary();
 		return listCorpus.addAll(c);
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends Corpus> c) {
+		for (Corpus corpus: c)
+			hasAllModelSummary = hasAllModelSummary && corpus.hasModelSummary();
 		return listCorpus.addAll(index, c);
 	}
 

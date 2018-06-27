@@ -3,7 +3,6 @@ package main.java.liasd.asadera.model;
 import java.io.File;
 import java.util.Iterator;
 
-import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import main.java.liasd.asadera.model.task.process.AbstractProcess;
 import main.java.liasd.asadera.model.task.process.SummarizeProcess;
@@ -69,6 +68,8 @@ public class SummarizeModel extends AbstractModel {
 				}
 			}
 			if (isRougeEvaluation()) {
+				if (currentMultiCorpus.hasModelSummaries())
+					System.out.println("WARNING : Multicorpus don't have model summaries for each corpus. Evaluation might send an error.");
 				getEvalRouge().setModel(this);
 				getEvalRouge().setCurrentMultiCorpus(currentMultiCorpus);
 				getEvalRouge().init();
