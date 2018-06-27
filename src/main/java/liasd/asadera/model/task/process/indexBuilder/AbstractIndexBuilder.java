@@ -18,7 +18,6 @@ import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.wordIndex.Index;
 import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
 import main.java.liasd.asadera.tools.reader_writer.Reader;
-import main.java.liasd.asadera.view.CommandView;
 
 public abstract class AbstractIndexBuilder<T extends WordIndex> extends ParameterizedMethod
 		implements IndexBasedOut<T>, ListSentenceBasedOut {

@@ -10,7 +10,6 @@ import main.java.liasd.asadera.model.AbstractModel;
 import main.java.liasd.asadera.model.task.process.LearningProcess;
 import main.java.liasd.asadera.model.task.process.indexBuilder.LearningModelBuilder;
 import main.java.liasd.asadera.view.AbstractView;
-import main.java.liasd.asadera.view.CommandView;
 
 public class LearningController extends AbstractController {
 

@@ -12,7 +12,6 @@ import main.java.liasd.asadera.optimize.SupportADNException;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.Summary;
-import main.java.liasd.asadera.view.CommandView;
 
 public class Knapsack extends AbstractSelectionMethod {
 
@@ -82,7 +81,7 @@ public class Knapsack extends AbstractSelectionMethod {
 				bestK = k;
 			}
 		}
-		logger.info(String.valueOf(bestScore));
+		logger.trace(String.valueOf(bestScore));
 		return s[n][bestK];
 	}
 
