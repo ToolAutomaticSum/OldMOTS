@@ -104,7 +104,7 @@ Example for LexRank_MMR configuration file :
 
 * <b>\<CONFIG\></b> is the root node.
 	* <b>\<TASK\></b> represent a summarization task. You could do multiple in a simple run. At start, stick with one.
-		* <b>\<LANGUAGE\></b> is the input's document language for preprocessing goal. USELESS AT THE MOMENT.
+		* <b>\<LANGUAGE\></b> is the input's document language for preprocessing goal. (english / french for now) 
 		* <b>\<OUTPUT_PATH\></b> is the forlder's output path of the system. It is used to save preprocessed documents, ROUGE xml generated file, old score, ...
 		* <b>\<MULTITHREADING\></b> (boolean) launch the system in a mutltithreading way or not.
 		* <b>\<PREPROCESS\></b> is the preprocess step for the system. The preprocess java class to use is pass by the name variable. Here it's GenerateTextModel. It also needs two <b>\<OPTION\></b> :
