@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/ToolAutomaticSum/MOTS.svg?branch=master)](https://travis-ci.org/ToolAutomaticSum/MOTS)
 [![Docs](https://img.shields.io/badge/java-docs-yellow.svg)](https://toolautomaticsum.github.io/MOTS/)
-[![Wiki](https://img.shields.io/badge/MOTS-wiki-orange.svg)](https://toolautomaticsum.github.io/MOTS/)
+[![Wiki](https://img.shields.io/badge/MOTS-wiki-orange.svg)](https://github.com/ToolAutomaticSum/MOTS/wiki)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # MOTS
