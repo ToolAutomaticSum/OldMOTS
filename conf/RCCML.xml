@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<MULTICORPUS ID="0">
+			<CORPUS ID="0">
+				<INPUT_PATH>$CORPUS_DATA/comparative/eval_doc/C1801/C1801</INPUT_PATH>
+				<DOCUMENT ID="0">.*</DOCUMENT>
+				<SUMMARY_PATH>$CORPUS_DATA/comparative/model_sum</SUMMARY_PATH>
+				<SUMMARY ID="0">C1801.sum.*</SUMMARY>
+			</CORPUS>
+		</MULTICORPUS>
+	</TASK>
+</CONFIG>
