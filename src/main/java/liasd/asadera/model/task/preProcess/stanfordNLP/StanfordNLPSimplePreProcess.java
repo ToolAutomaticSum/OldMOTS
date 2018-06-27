@@ -23,7 +23,6 @@ import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
-import main.java.liasd.asadera.tools.reader_writer.Writer;
 import main.java.liasd.asadera.tools.wordFilters.TrueFilter;
 import main.java.liasd.asadera.tools.wordFilters.WordFilter;
 
@@ -117,38 +116,6 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 
 	@Override
 	public void finish() {
-		// props = new Properties();
-		// props.put("annotators", "tokenize,ssplit,pos,lemma");
-		// pipeline = new StanfordCoreNLP(props);
-	}
-
-	/**
-	 * 
-	 * @param textToProcess
-	 * @param writer
-	 * @throws Exception
-	 */
-	public static void liveProcessToFile(StanfordCoreNLP pipeline, String textToProcess, Writer writer)
-			throws Exception {
-		Annotation document = new Annotation(textToProcess);
-		// run all Annotators on this text
-		pipeline.annotate(document);
-		// these are all the sentences in this document
-		// a CoreMap is essentially a Map that uses class objects as keys and has values
-		// with custom types
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-		for (CoreMap sentence : sentences) {
-			if (!sentence.toString().replace("_", "").isEmpty()) {
-				// traversing the words in the current sentence
-				// a CoreLabel is a CoreMap with additional token-specific methods
-				for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-					if (!Tools.removePonctuation(token.get(TextAnnotation.class)).isEmpty()) {
-						writer.write(token.get(LemmaAnnotation.class).toLowerCase() + " ");
-					}
-				}
-				writer.write("\n");
-			}
-		}
 	}
 
 	/**
@@ -218,43 +185,5 @@ public class StanfordNLPSimplePreProcess extends AbstractPreProcess {
 		}
 		return listSentence;
 
-	}
-
-	public static List<String> processListStringToListString(StanfordCoreNLP pipeline, List<String> textToProcess) {
-		List<String> listSentence = new ArrayList<String>();
-		for (String sent : textToProcess) {
-			Annotation document = new Annotation(sent);
-			// run all Annotators on this text
-			pipeline.annotate(document);
-			// these are all the sentences in this document
-			// a CoreMap is essentially a Map that uses class objects as keys and has values
-			// with custom types
-			List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-			for (CoreMap sentence : sentences) {
-				if (!sentence.toString().replace("_", "").isEmpty()) {
-					// traversing the words in the current sentence
-					// a CoreLabel is a CoreMap with additional token-specific methods
-					String s = "";
-					for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-						if (!Tools.removePonctuation(token.get(TextAnnotation.class)).isEmpty()) {
-							s += token.get(LemmaAnnotation.class).toLowerCase() + " ";
-						}
-					}
-					listSentence.add(s);
-				}
-			}
-		}
-		return listSentence;
-	}
-	
-	public String getLemma(String word) {
-		Annotation tokenAnnotation = new Annotation(word);
-		pipeline.annotate(tokenAnnotation);
-		List<CoreMap> list = tokenAnnotation.get(SentencesAnnotation.class);
-		if (!list.isEmpty()) {
-			String tokenLemma = list.get(0).get(TokensAnnotation.class).get(0).get(LemmaAnnotation.class);
-			return tokenLemma;
-		} else
-			return null;
 	}
 }
