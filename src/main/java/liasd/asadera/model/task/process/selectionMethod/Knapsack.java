@@ -20,6 +20,10 @@ public class Knapsack extends AbstractSelectionMethod {
 	private int K;
 	private Scorer scorer;
 
+	public void setScorer(Scorer scorer) {
+		this.scorer = scorer;
+	}
+
 	public Knapsack(int id) throws SupportADNException {
 		super(id);
 	}
@@ -89,7 +93,7 @@ public class Knapsack extends AbstractSelectionMethod {
 
 	@Override
 	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
-		return false;
+		return compatibleMethod.isOutCompatible(scorer);
 	}
 
 	@Override

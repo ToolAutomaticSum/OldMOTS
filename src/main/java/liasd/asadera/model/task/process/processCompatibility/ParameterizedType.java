@@ -60,4 +60,11 @@ public class ParameterizedType {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		String str = "";
+		str += classT.getSimpleName() + " / " + principalClass.getSimpleName() + " / " + associatedInterface.getSimpleName();
+		return str;
+	}
 }
