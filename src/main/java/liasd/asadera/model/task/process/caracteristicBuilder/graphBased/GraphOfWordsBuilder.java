@@ -34,8 +34,6 @@ public class GraphOfWordsBuilder extends AbstractCaracteristicBuilder
 		listParameterIn.add(new ParameterizedType(NGram.class, Index.class, IndexBasedIn.class));
 		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedOut.class));
-
-		graph = new SimpleWeightedGraph<WordIndex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 	}
 
 	@Override
@@ -47,7 +45,11 @@ public class GraphOfWordsBuilder extends AbstractCaracteristicBuilder
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		slidingWindow = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Window"));
+		
+		graph = new SimpleWeightedGraph<WordIndex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 	}
 
 	@Override

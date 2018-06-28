@@ -22,7 +22,6 @@ public class ComparativeController extends AbstractController {
 
 	@Override
 	public void notifyProcessChanged(String processName) throws ClassNotFoundException {
-		getModel().getProcessIDs().put("ComparativeProcess", processID);
 		Object o = dynamicConstructor("process.ComparativeProcess");
 		currentProcess = (ComparativeProcess) o;
 		getModel().getProcess().add(currentProcess);

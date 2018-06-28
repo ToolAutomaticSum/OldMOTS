@@ -65,6 +65,8 @@ public class PathSum extends AbstractSelectionMethod
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
 
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");

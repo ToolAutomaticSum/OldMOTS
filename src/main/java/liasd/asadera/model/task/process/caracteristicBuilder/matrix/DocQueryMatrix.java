@@ -20,9 +20,7 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 
 	public DocQueryMatrix(int id) throws SupportADNException {
 		super(id);
-
-		query = new Query();
-
+		
 		listParameterOut.add(new ParameterizedType(null, double[][].class, QueryBasedOut.class));
 	}
 
@@ -33,6 +31,13 @@ public class DocQueryMatrix extends ConcatMatrixSentence implements QueryBasedOu
 		return p;
 	}
 
+	@Override
+	public void initADN() throws Exception {
+		super.initADN();
+	
+		query = new Query();
+	}
+	
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) {
 		super.processCaracteristics(listCorpus);

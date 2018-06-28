@@ -1,8 +1,6 @@
 package main.java.liasd.asadera.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -49,12 +47,6 @@ public abstract class AbstractModel extends Observable {
 	 * List of AbstractPostProcess for summary postProcessing.
 	 */
 	private List<AbstractPostProcess> postProcess = new ArrayList<AbstractPostProcess>();
-	/**
-	 * Map of AbstractMethod class ({@link AbstractProcess}, {@link AbstractPreProcess},
-	 * {@link AbstractPostProcess} and their ids
-	 * Use for passing option (parameter) from file to object
-	 */
-	private Map<String, Integer> processIDs = new HashMap<String, Integer>();
 
 	/**
 	 * List of Map of ids (from @processIDs)
@@ -204,26 +196,6 @@ public abstract class AbstractModel extends Observable {
 		this.processOption = processOption;
 	}
 
-	@Deprecated
-	public Map<String, Integer> getProcessIDs() {
-		return processIDs;
-	}
-
-	@Deprecated
-	public AbstractProcess getProcessByID(int ID) {
-		AbstractProcess returnProcess = null;
-		boolean notFind = true;
-		Iterator<AbstractProcess> it = process.iterator();
-		while (notFind && it.hasNext()) {
-			AbstractProcess p = it.next();
-			if (p.getId() == ID) {
-				returnProcess = p;
-				notFind = false;
-			}
-		}
-		return returnProcess;
-	}
-
 	/**
 	 * Get the AbstractProcess's list. i.e. Comparative/Learning/Summarize 
 	 * @return List<AbstractProcess>
@@ -278,18 +250,7 @@ public abstract class AbstractModel extends Observable {
 	public List<MultiCorpus> getMultiCorpusModels() {
 		return multiCorpusModels;
 	}
-
-	@Deprecated
-	public void setCurrentMultiCorpus(MultiCorpus currentMultiCorpus) {
-		this.currentMultiCorpus = currentMultiCorpus;
-		for (AbstractPreProcess pre : preProcess)
-			pre.setCurrentMultiCorpus(currentMultiCorpus);
-		for (AbstractProcess p : process)
-			p.setCurrentMultiCorpus(currentMultiCorpus);
-		for (AbstractPostProcess post : postProcess)
-			post.setCurrentMultiCorpus(currentMultiCorpus);
-	}
-
+	
 	/**
 	 * Get EvaluationROUGE's instance to evaluate generated summaries
 	 * @return {@link EvaluationROUGE} evalRouge
@@ -336,7 +297,6 @@ public abstract class AbstractModel extends Observable {
 
 		process.clear();
 		preProcess.clear();
-		processIDs.clear();
 		processOption.clear();
 		multiCorpusModels.clear();
 	}

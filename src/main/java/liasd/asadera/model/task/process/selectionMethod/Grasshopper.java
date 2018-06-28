@@ -15,11 +15,9 @@ public class Grasshopper extends AbstractSelectionMethod {
 
 	@Override
 	public AbstractSelectionMethod makeCopy() throws Exception {
-		return null;
-	}
-
-	@Override
-	public void initADN() throws Exception {
+		Grasshopper p = new Grasshopper(id);
+		initCopy(p);
+		return p;
 	}
 
 	@Override

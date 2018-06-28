@@ -58,7 +58,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 
 	public LexRank(int id) throws SupportADNException {
 		super(id);
-		supportADN = new HashMap<String, Class<?>>();
+
 		supportADN.put("DampingParameter", Double.class);
 		// supportADN.put("Epsilon", Double.class);
 		supportADN.put("GraphThreshold", Double.class);
@@ -77,6 +77,8 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(LexRank_Parameter.DampingParameter.getName(),
 				Double.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DampingParameter.getName()))));
 		getCurrentProcess().getADN().getParameter(Double.class, LexRank_Parameter.DampingParameter.getName())

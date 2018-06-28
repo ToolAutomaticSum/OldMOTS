@@ -38,8 +38,6 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 	public NGram_IDF(int id) throws SupportADNException {
 		super(id);
 
-		ngrams_in_sentences = new HashMap<SentenceModel, Set<NGram>>();
-
 		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(NGram.class, Index.class, IndexBasedOut.class));
 		listParameterOut.add(new ParameterizedType(NGram.class, List.class, SentenceNGramBasedOut.class));
@@ -54,6 +52,10 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		ngrams_in_sentences = new HashMap<SentenceModel, Set<NGram>>();
+
 		n = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "n"));
 		if (n <= 1)
 			throw new InvalidValue("N need to be >1 for NGram_IDF.");

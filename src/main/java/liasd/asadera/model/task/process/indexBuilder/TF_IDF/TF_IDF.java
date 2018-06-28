@@ -35,10 +35,6 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 	}
 
 	@Override
-	public void initADN() throws Exception {
-	}
-
-	@Override
 	public void processIndex(List<Corpus> listCorpus) throws Exception {
 		super.processIndex(listCorpus);
 		TF_IDF.generateDictionary(listCorpus, index, getCurrentProcess().getFilter());

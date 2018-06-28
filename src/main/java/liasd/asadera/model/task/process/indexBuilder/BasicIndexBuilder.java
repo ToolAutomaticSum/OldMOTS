@@ -28,10 +28,6 @@ public class BasicIndexBuilder extends AbstractIndexBuilder<WordIndex> {
 		return p;
 	}
 
-	@Override
-	public void initADN() throws Exception {
-	}
-
 	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void processIndex(List<Corpus> listCorpus) throws Exception {

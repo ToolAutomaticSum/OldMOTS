@@ -59,10 +59,6 @@ public class GenerateModel_ILP extends AbstractScoringMethod
 	}
 
 	@Override
-	public void initADN() throws Exception {
-	}
-
-	@Override
 	public void computeScores(List<Corpus> listCorpus) throws Exception {
 		maxSummLength = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "SummarySize"));
 

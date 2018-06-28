@@ -66,6 +66,8 @@ public class GeneticSumm extends AbstractSelectionMethod implements IndexBasedIn
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		this.parentsNumber = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "ParentsNumber"));
 		this.hybridationNumber = Integer
 				.parseInt(getCurrentProcess().getModel().getProcessOption(id, "HybridationNumber"));

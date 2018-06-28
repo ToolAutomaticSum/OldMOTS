@@ -16,11 +16,9 @@ public class SumWeigth extends AbstractScoringMethod {
 
 	@Override
 	public AbstractScoringMethod makeCopy() throws Exception {
-		return null;
-	}
-
-	@Override
-	public void initADN() throws Exception {
+		SumWeigth p = new SumWeigth(id);
+		initCopy(p);
+		return p;
 	}
 
 	@Override

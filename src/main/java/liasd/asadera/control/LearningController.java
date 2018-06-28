@@ -23,7 +23,6 @@ public class LearningController extends AbstractController {
 
 	@Override
 	public void notifyProcessChanged(String processName) throws ClassNotFoundException {
-		getModel().getProcessIDs().put("LearningProcess", processID);
 		Object o = dynamicConstructor("process.LearningProcess");
 		currentProcess = (LearningProcess) o;
 		getModel().getProcess().add(currentProcess);

@@ -28,11 +28,9 @@ public class DeepLearning extends AbstractSelectionMethod implements IndexBasedI
 
 	@Override
 	public AbstractSelectionMethod makeCopy() throws Exception {
-		return null;
-	}
-
-	@Override
-	public void initADN() throws Exception {
+		DeepLearning p = new DeepLearning(id);
+		initCopy(p);
+		return p;
 	}
 
 	@Override
