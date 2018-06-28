@@ -47,13 +47,13 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 MOTS is a command line tool than can be used like this :
 
 ```
-./MOTS mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file>
+./MOTS mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file> -v <OPTIONAL>
 ```
 
 MOTS script encapsulate some environnement variable needed for the execution of WordEmbeddings. If you don't use WordEmbeddings you could launch via :
 
 ```
-java -jar mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file>
+java -jar mots.X.Y.Z.jar -c <config_file> -m <multicorpus_file> -v <OPTIONAL>
 ```
 
 Example config file and multicorpus file are provided in /conf but should be adapted to your setup.
