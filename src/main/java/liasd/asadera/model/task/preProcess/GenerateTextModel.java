@@ -49,13 +49,18 @@ public class GenerateTextModel extends AbstractPreProcess {
 
 	@Override
 	public void process() throws Exception {
-		logger.trace("Reading documents from files");
+		int nbDoc = 0;
+		for (Corpus corpus : getCurrentMultiCorpus())
+			nbDoc += corpus.size();
+		logger.trace("Reading " + nbDoc + " documents from files");
 		for (Corpus corpus : getCurrentMultiCorpus()) {
 			if (corpus.size() == 0)
 				logger.error("Corpus list is empty.", new EmptyTextListException(String.valueOf(corpus.getiD())));
 			for (TextModel text : corpus) {
 				if (text != null)
-					loadText(text);
+					if (!loadText(text)) {
+						logger.warn("Can't load " + text.getDocumentFilePath() + ".");
+					}
 			}
 		}
 	}
@@ -146,9 +151,9 @@ public class GenerateTextModel extends AbstractPreProcess {
 				} else
 					return false;
 			} else
-				return true;
+				return false;
 		} else
-			return true;
+			return false;
 	}
 
 	public static void writeTempDocumentBySentence(String outputPath, MultiCorpus mc) throws Exception {
