@@ -201,7 +201,7 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 	}
 
 	public static void writeTempInputFile(String modelName, String corpusId, List<Corpus> listCorpus, WordFilter filter,
-			String outputPath) throws IOException {
+			String outputPath) throws Exception {
 		new File(outputPath + File.separator + "modelLDA").mkdir();
 
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -246,7 +246,7 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 
 	public synchronized static Model ldaModelLearning(String modelName, String corpusId, List<Corpus> listCorpus,
 			WordFilter filter, boolean forceWriting, int K, double alpha, double beta, String outputPath)
-			throws IOException {
+			throws Exception {
 		LDACmdOption option = new LDACmdOption();
 		Estimator estimator;
 

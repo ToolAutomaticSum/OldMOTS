@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import main.java.liasd.asadera.exception.EmptyCorpusListException;
 import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import main.java.liasd.asadera.model.task.process.AbstractProcess;
 import main.java.liasd.asadera.model.task.process.SummarizeProcess;
@@ -59,6 +60,11 @@ public class SummarizeModel extends AbstractModel {
 			currentMultiCorpus = multiCorpusIt.next();
 			logger.trace("MultiCorpus : " + currentMultiCorpus.getiD());
 
+			if (currentMultiCorpus.size() == 0) {
+				logger.error("Multicorpus is empty. You need to add at least one corpus with one document.");
+				throw new EmptyCorpusListException(String.valueOf(currentMultiCorpus.getiD()));
+			}
+			
 			Iterator<AbstractProcess> proIt = getProcess().iterator();
 			while (proIt.hasNext()) {
 				long time = System.currentTimeMillis();
@@ -99,6 +105,8 @@ public class SummarizeModel extends AbstractModel {
 		if (isMultiThreading()) {
 			int nbThreads = p.getListCorpusId().size();
 
+			if (nbThreads == 0)
+				throw new EmptyCorpusListException(String.valueOf(multiCorpus.getiD()));
 			SummarizeProcess[] threads = new SummarizeProcess[nbThreads];
 
 			threads[0] = p;

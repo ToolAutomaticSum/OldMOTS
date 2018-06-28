@@ -15,7 +15,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import main.java.liasd.asadera.exception.EmptyTextListException;
 import main.java.liasd.asadera.exception.LacksOfFeatures;
+import main.java.liasd.asadera.exception.StateException;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.MultiCorpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
@@ -48,14 +50,12 @@ public class GenerateTextModel extends AbstractPreProcess {
 	@Override
 	public void process() throws Exception {
 		logger.trace("Reading documents from files");
-		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
-		while (corpusIt.hasNext()) {
-			Iterator<TextModel> textIt = corpusIt.next().iterator();
-			while (textIt.hasNext()) {
-				TextModel textModel = textIt.next();
-				if (textModel != null) {
-					loadText(textModel);
-				}
+		for (Corpus corpus : getCurrentMultiCorpus()) {
+			if (corpus.size() == 0)
+				logger.error("Corpus list is empty.", new EmptyTextListException(String.valueOf(corpus.getiD())));
+			for (TextModel text : corpus) {
+				if (text != null)
+					loadText(text);
 			}
 		}
 	}
@@ -178,61 +178,60 @@ public class GenerateTextModel extends AbstractPreProcess {
 		}
 	}
 
-	public static Corpus readTempDocument(String inputPath, Corpus c, boolean readStopWords) {
+	public static Corpus readTempDocument(String inputPath, Corpus c, boolean readStopWords) throws Exception {
 		c.clear();
 		File corpusDoc = new File(inputPath + File.separator + c.getCorpusName());
+		if (!corpusDoc.exists()) {
+			throw new StateException("Corpus file don't exist, so we can't read it.");
+		}
 		int id = 0;
-		try {
-			for (File textFile : corpusDoc.listFiles()) {
-				TextModel text = new TextModel(c, textFile.getAbsolutePath());
-				int nbSentence = 0;
-				Reader r = new Reader(textFile.getAbsolutePath(), true);
-				r.open();
-				String s = r.read();
-				String[] tabs = s.split("=");
+		for (File textFile : corpusDoc.listFiles()) {
+			TextModel text = new TextModel(c, textFile.getAbsolutePath());
+			int nbSentence = 0;
+			Reader r = new Reader(textFile.getAbsolutePath(), true);
+			r.open();
+			String s = r.read();
+			String[] tabs = s.split("=");
+			if (tabs.length == 2) {
+				String[] labels = tabs[1].split(File.separator + "%%" + File.separator);
+				for (String l : labels)
+					text.getLabels().add(l);
+			}
+			s = r.read();
+			while (s != null) {
+				tabs = s.split("]");
 				if (tabs.length == 2) {
-					String[] labels = tabs[1].split(File.separator + "%%" + File.separator);
-					for (String l : labels)
-						text.getLabels().add(l);
-				}
-				s = r.read();
-				while (s != null) {
-					tabs = s.split("]");
-					if (tabs.length == 2) {
-						String[] label = tabs[0].split(File.separator + "%%" + File.separator);
-						SentenceModel sen = new SentenceModel(label[0].split("=")[1], id, text);
-						nbSentence++;
-						sen.setNbMot(Integer.parseInt(label[1].split("=")[1]));
-						text.add(sen);
-						String[] word = tabs[1].split(" ");
-						for (String w : word) {
-							WordModel wm;
-							if (w.startsWith("%%")) {
-								if (readStopWords) {
-									w = w.replace("%%", "");
-									wm = new WordModel(w);
-									wm.setStopWord(true);
-									wm.setmLemma(w);
-									wm.setSentence(sen);
-									sen.getListWordModel().add(wm);
-								}
-							} else {
+					String[] label = tabs[0].split(File.separator + "%%" + File.separator);
+					SentenceModel sen = new SentenceModel(label[0].split("=")[1], id, text);
+					nbSentence++;
+					sen.setNbMot(Integer.parseInt(label[1].split("=")[1]));
+					text.add(sen);
+					String[] word = tabs[1].split(" ");
+					for (String w : word) {
+						WordModel wm;
+						if (w.startsWith("%%")) {
+							if (readStopWords) {
+								w = w.replace("%%", "");
 								wm = new WordModel(w);
+								wm.setStopWord(true);
 								wm.setmLemma(w);
 								wm.setSentence(sen);
 								sen.getListWordModel().add(wm);
 							}
+						} else {
+							wm = new WordModel(w);
+							wm.setmLemma(w);
+							wm.setSentence(sen);
+							sen.getListWordModel().add(wm);
 						}
 					}
-					s = r.read();
-					id++;
 				}
-				text.setNbSentence(nbSentence);
-				r.close();
-				c.add(text);
+				s = r.read();
+				id++;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			text.setNbSentence(nbSentence);
+			r.close();
+			c.add(text);
 		}
 		return c;
 	}
