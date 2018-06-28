@@ -25,16 +25,21 @@ public class Corpus implements List<TextModel> {
 
 	public Corpus(int iD) {
 		this.iD = iD;
+		this.summaryNames = new ArrayList<String>();
 	}
 
 	public Corpus(Corpus c) {
 		this.iD = c.getiD();
 		this.corpusName = c.getCorpusName();
 		this.inputPath = c.getInputPath();
-		this.summaryPath = c.getSummaryPath();
+		if (c.getSummaryPath() != null)
+			this.summaryPath = c.getSummaryPath();
 		this.model = c.getModel();
 		this.docNames = new ArrayList<String>(c.getDocNames());
-		this.summaryNames = new ArrayList<String>(c.getSummaryNames());
+		if (c.getSummaryNames() != null)
+			this.summaryNames = new ArrayList<String>(c.getSummaryNames());
+		else
+			this.summaryNames = new ArrayList<String>();
 
 		for (TextModel t : c) {
 			TextModel text = new TextModel(t);
