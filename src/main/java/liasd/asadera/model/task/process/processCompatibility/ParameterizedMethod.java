@@ -14,6 +14,7 @@ public abstract class ParameterizedMethod extends Individu {
 
 	public ParameterizedMethod(int id) throws SupportADNException {
 		super(id);
+		
 		listParameterIn = new ArrayList<ParameterizedType>();
 		listParameterOut = new ArrayList<ParameterizedType>();
 		listSubMethod = new ArrayList<ParameterizedMethod>();
@@ -22,6 +23,7 @@ public abstract class ParameterizedMethod extends Individu {
 	public ParameterizedMethod(int id, List<ParameterizedType> in, List<ParameterizedType> out)
 			throws SupportADNException {
 		super(id);
+		
 		listParameterIn = in;
 		listParameterOut = out;
 		listSubMethod = new ArrayList<ParameterizedMethod>();

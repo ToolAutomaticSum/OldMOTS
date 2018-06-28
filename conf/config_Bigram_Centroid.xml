@@ -12,7 +12,7 @@
 			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
 				<OPTION NAME="n">2</OPTION>
 			</INDEX_BUILDER>
-			<CARACTERISTIC_BUILDER NAME="vector.query.BiGramCentroid">
+			<CARACTERISTIC_BUILDER NAME="vector.query.Centroid">
 				<OPTION NAME="NbMaxWordInCentroid">80</OPTION>
 			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="QuerySimilarity">

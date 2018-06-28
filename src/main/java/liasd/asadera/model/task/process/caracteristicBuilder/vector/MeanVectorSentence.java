@@ -27,9 +27,7 @@ public class MeanVectorSentence extends AbstractCaracteristicBuilder
 
 	public MeanVectorSentence(int id) throws SupportADNException {
 		super(id);
-
-		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
-
+		
 		listParameterIn.add(new ParameterizedType(WordVector.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedOut.class));
 	}
@@ -44,6 +42,9 @@ public class MeanVectorSentence extends AbstractCaracteristicBuilder
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
 	}
 
 	@Override

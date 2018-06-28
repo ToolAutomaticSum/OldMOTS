@@ -33,6 +33,8 @@ public class Knapsack extends AbstractSelectionMethod {
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		K = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
 
 		String sco = getCurrentProcess().getModel().getProcessOption(id, "ScoreMethod");

@@ -37,7 +37,7 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 
 	public TfIdfThreshold(int id) throws SupportADNException {
 		super(id);
-		supportADN = new HashMap<String, Class<?>>();
+
 		supportADN.put("TfIdfThreshold", Double.class);
 
 		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
@@ -52,6 +52,8 @@ public class TfIdfThreshold extends AbstractScoringMethod implements ScoreBasedI
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(ScoringTfIdf_Parameter.TfIdfThreshold.getName(),
 				Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "TfIdfThreshold"))));
 	}

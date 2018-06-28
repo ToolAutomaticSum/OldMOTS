@@ -24,7 +24,8 @@ public abstract class AbstractCaracteristicBuilder extends ParameterizedMethod {
 		p.setModel(model);
 	}
 
-	public abstract void initADN() throws Exception;
+	public void initADN() throws Exception {
+	}
 
 	public abstract void processCaracteristics(List<Corpus> listCorpus) throws Exception;
 

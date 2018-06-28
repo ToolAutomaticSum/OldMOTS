@@ -19,8 +19,6 @@ public class TfIdfDocument extends TfIdfVectorSentence implements QueryBasedOut 
 	public TfIdfDocument(int id) throws SupportADNException {
 		super(id);
 
-		query = new Query();
-
 		listParameterOut.add(new ParameterizedType(null, double[].class, QueryBasedOut.class));
 	}
 
@@ -31,6 +29,13 @@ public class TfIdfDocument extends TfIdfVectorSentence implements QueryBasedOut 
 		return p;
 	}
 
+	@Override
+	public void initADN() throws Exception {
+		super.initADN();
+		
+		query = new Query();
+	}
+	
 	@Override
 	public void processCaracteristics(List<Corpus> listCorpus) throws Exception {
 		super.processCaracteristics(listCorpus);

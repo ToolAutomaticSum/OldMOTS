@@ -36,8 +36,6 @@ public class SimilarityGraphOfWordsBuilder extends AbstractCaracteristicBuilder
 
 		listParameterIn.add(new ParameterizedType(WordVector.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedOut.class));
-
-		graph = new SimpleWeightedGraph<WordIndex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 	}
 
 	@Override
@@ -49,6 +47,10 @@ public class SimilarityGraphOfWordsBuilder extends AbstractCaracteristicBuilder
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		graph = new SimpleWeightedGraph<WordIndex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		
 		threshold = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "SimilarityThreshold"));
 		dampingFactor = Double
 				.parseDouble(getModel().getProcessOption(id, LexRank_Parameter.DampingParameter.getName()));

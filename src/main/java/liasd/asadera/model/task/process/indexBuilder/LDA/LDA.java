@@ -55,7 +55,7 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 
 	public LDA(int id) throws SupportADNException {
 		super(id);
-		supportADN = new HashMap<String, Class<?>>();
+
 		supportADN.put("K", Integer.class);
 		supportADN.put("Alpha", Double.class);
 		supportADN.put("Beta", Double.class);
@@ -72,6 +72,8 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		int tempK = Integer.parseInt(getModel().getProcessOption(id, InferenceLDA_Parameter.K.getName()));
 		getCurrentProcess().getADN().putParameter(new Parameter<Integer>(InferenceLDA_Parameter.K.getName(), tempK));
 		getCurrentProcess().getADN().getParameter(Integer.class, InferenceLDA_Parameter.K.getName())

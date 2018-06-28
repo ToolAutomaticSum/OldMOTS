@@ -46,6 +46,8 @@ public class WordToVec extends AbstractIndexBuilder<WordVector> {
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		pythonBuilder = new Word2VecPythonBuilder();
 	}
 

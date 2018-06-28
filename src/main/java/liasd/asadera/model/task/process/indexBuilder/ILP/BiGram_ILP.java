@@ -51,11 +51,9 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 	 */
 	public BiGram_ILP(int id) throws SupportADNException {
 		super(id);
-		supportADN = new HashMap<String, Class<?>>();
+		
 		supportADN.put(BiGramILP_Parameter.fscFactor.getName(), Double.class);
 		supportADN.put(BiGramILP_Parameter.minSenLength.getName(), Integer.class);
-
-		ngrams_in_sentences = new HashMap<SentenceModel, Set<NGram>>();
 
 		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(NGram.class, Index.class, IndexBasedOut.class));
@@ -71,6 +69,10 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		ngrams_in_sentences = new HashMap<SentenceModel, Set<NGram>>();
+		
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(BiGramILP_Parameter.fscFactor.getName(),
 				Double.parseDouble(getModel().getProcessOption(id, BiGramILP_Parameter.fscFactor.getName()))));
 		getCurrentProcess().getADN().putParameter(new Parameter<Integer>(BiGramILP_Parameter.minSenLength.getName(),

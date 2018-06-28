@@ -204,26 +204,6 @@ public abstract class AbstractModel extends Observable {
 		this.processOption = processOption;
 	}
 
-	@Deprecated
-	public Map<String, Integer> getProcessIDs() {
-		return processIDs;
-	}
-
-	@Deprecated
-	public AbstractProcess getProcessByID(int ID) {
-		AbstractProcess returnProcess = null;
-		boolean notFind = true;
-		Iterator<AbstractProcess> it = process.iterator();
-		while (notFind && it.hasNext()) {
-			AbstractProcess p = it.next();
-			if (p.getId() == ID) {
-				returnProcess = p;
-				notFind = false;
-			}
-		}
-		return returnProcess;
-	}
-
 	/**
 	 * Get the AbstractProcess's list. i.e. Comparative/Learning/Summarize 
 	 * @return List<AbstractProcess>
@@ -278,18 +258,7 @@ public abstract class AbstractModel extends Observable {
 	public List<MultiCorpus> getMultiCorpusModels() {
 		return multiCorpusModels;
 	}
-
-	@Deprecated
-	public void setCurrentMultiCorpus(MultiCorpus currentMultiCorpus) {
-		this.currentMultiCorpus = currentMultiCorpus;
-		for (AbstractPreProcess pre : preProcess)
-			pre.setCurrentMultiCorpus(currentMultiCorpus);
-		for (AbstractProcess p : process)
-			p.setCurrentMultiCorpus(currentMultiCorpus);
-		for (AbstractPostProcess post : postProcess)
-			post.setCurrentMultiCorpus(currentMultiCorpus);
-	}
-
+	
 	/**
 	 * Get EvaluationROUGE's instance to evaluate generated summaries
 	 * @return {@link EvaluationROUGE} evalRouge
@@ -336,7 +305,6 @@ public abstract class AbstractModel extends Observable {
 
 		process.clear();
 		preProcess.clear();
-		processIDs.clear();
 		processOption.clear();
 		multiCorpusModels.clear();
 	}

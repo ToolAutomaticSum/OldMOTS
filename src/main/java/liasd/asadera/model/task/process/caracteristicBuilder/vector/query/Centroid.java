@@ -40,7 +40,7 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 
 	public Centroid(int id) throws SupportADNException {
 		super(id);
-		query = new Query();
+		
 		supportADN.put("NbMaxWordInCentroid", Integer.class);
 
 		listParameterOut.add(new ParameterizedType(null, double[].class, QueryBasedOut.class));
@@ -56,18 +56,20 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 
 	@Override
 	public void initADN() throws Exception {
-		int n = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbMaxWordInCentroid"));
+		super.initADN();
+		
+		query = new Query();
+		
+		nbMaxWordInCentroid = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "NbMaxWordInCentroid"));
 		getCurrentProcess().getADN()
-				.putParameter(new Parameter<Integer>(Centroid_Parameter.NbMaxWordInCentroid.getName(), n));
+				.putParameter(new Parameter<Integer>(Centroid_Parameter.NbMaxWordInCentroid.getName(), nbMaxWordInCentroid));
 		getCurrentProcess().getADN().getParameter(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName())
-				.setMaxValue(2 * n + 1);
+				.setMaxValue(2 * nbMaxWordInCentroid + 1);
 		getCurrentProcess().getADN().getParameter(Integer.class, Centroid_Parameter.NbMaxWordInCentroid.getName())
 				.setMinValue(1);
 	}
 
 	private void init() {
-		nbMaxWordInCentroid = getCurrentProcess().getADN().getParameterValue(Integer.class,
-				Centroid_Parameter.NbMaxWordInCentroid.getName());
 		invertIndex = new InvertedIndex<WordIndex>(index);
 	}
 

@@ -26,7 +26,8 @@ public abstract class AbstractSelectionMethod extends ParameterizedMethod {
 		p.setModel(model);
 	}
 
-	public abstract void initADN() throws Exception;
+	public void initADN() throws Exception {
+	}
 
 	public abstract List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception;
 

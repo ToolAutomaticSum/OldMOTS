@@ -22,7 +22,6 @@ public class SummarizeController extends AbstractController {
 
 	@Override
 	public void notifyProcessChanged(String processName) throws ClassNotFoundException {
-		getModel().getProcessIDs().put("SummarizeProcess", processID);
 		Object o = dynamicConstructor("process.SummarizeProcess");
 		currentProcess = (SummarizeProcess) o;
 		getModel().getProcess().add(currentProcess);
