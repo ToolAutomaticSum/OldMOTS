@@ -1,6 +1,7 @@
 package main.java.liasd.asadera.control;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public abstract class AbstractController {
 	}
 
 	public final void notifyCorpusChanged(String summaryInputPath, List<String> summaryNames, String inputCorpusPath,
-			List<String> docNames) {
+			List<String> docNames) throws FileNotFoundException {
 		Set<String> set_docNames = new TreeSet<String>();
 		Set<String> set_summaryNames = new TreeSet<String>();
 
@@ -139,10 +140,12 @@ public abstract class AbstractController {
 			corpus.setSummaryPath(summaryInputPath);
 			currentMultiCorpus.add(corpus);
 		}
+		else
+			throw new FileNotFoundException("File " + inputCorpusPath + " not found.");
 	}
 	
 	public final void notifyCorpusChanged(String inputCorpusPath,
-			List<String> docNames) {
+			List<String> docNames) throws FileNotFoundException {
 		Set<String> set_docNames = new TreeSet<String>();
 
 		File f = new File(inputCorpusPath);
@@ -162,6 +165,8 @@ public abstract class AbstractController {
 			corpus.setInputPath(inputCorpusPath);
 			currentMultiCorpus.add(corpus);
 		}
+		else
+			throw new FileNotFoundException("Corpus folder " + inputCorpusPath + " not found.");
 	}
 
 	public void notifyOutputPathChanged(String outputDir) {

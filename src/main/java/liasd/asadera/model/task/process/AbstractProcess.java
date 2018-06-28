@@ -37,7 +37,7 @@ public abstract class AbstractProcess extends Optimize implements AbstractTask {
 
 	public final void initCorpusToCompress() throws NumberFormatException, LacksOfFeatures {
 		listCorpusId = new ArrayList<Integer>();
-		if (getModel().getProcessOption(id, "CorpusIdToSummarize").equals("all"))
+		if (getModel().getProcessOption(id, "CorpusIdToSummarize").toLowerCase().equals("all"))
 			for (int corpusId = 0; corpusId < getCurrentMultiCorpus().size(); corpusId++)
 				listCorpusId.add(corpusId);
 		else
