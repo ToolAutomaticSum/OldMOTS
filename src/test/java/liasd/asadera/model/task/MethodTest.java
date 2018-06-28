@@ -1,4 +1,4 @@
-package test.java.liasd.asadera.model.task.process;
+package test.java.liasd.asadera.model.task;
 
 import java.io.File;
 

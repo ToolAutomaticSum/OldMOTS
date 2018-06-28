@@ -14,6 +14,7 @@ public abstract class Scorer extends ParameterizedMethod {
 	public Scorer(AbstractSelectionMethod method) throws SupportADNException {
 		super(method.getId());
 		this.method = method;
+		this.method.getSubMethod().add(this);
 	}
 
 	public abstract void init() throws Exception;

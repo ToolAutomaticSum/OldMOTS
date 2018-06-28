@@ -33,8 +33,6 @@ public class KCoreQuery extends TfIdfVectorSentence
 
 		listParameterIn.add(new ParameterizedType(DefaultWeightedEdge.class, WordIndex.class, GraphBasedIn.class));
 		listParameterOut.add(new ParameterizedType(null, double[].class, QueryBasedOut.class));
-
-		query = new Query();
 	}
 
 	@Override
@@ -46,6 +44,9 @@ public class KCoreQuery extends TfIdfVectorSentence
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		query = new Query();
 	}
 
 	@Override

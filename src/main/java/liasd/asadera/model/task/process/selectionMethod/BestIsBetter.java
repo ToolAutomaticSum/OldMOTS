@@ -41,6 +41,8 @@ public class BestIsBetter extends AbstractSelectionMethod implements ScoreBasedI
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		nbCharSizeOrNbSentenceSize = Boolean
 				.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "CharLimitBoolean"));
 		int size = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));

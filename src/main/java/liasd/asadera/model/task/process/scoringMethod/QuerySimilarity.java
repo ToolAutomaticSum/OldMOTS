@@ -39,6 +39,8 @@ public class QuerySimilarity extends AbstractScoringMethod implements QueryBased
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		String similarityMethod = getCurrentProcess().getModel().getProcessOption(id, "SimilarityMethod");
 
 		sim = SimilarityMetric.instanciateSentenceSimilarity(similarityMethod);

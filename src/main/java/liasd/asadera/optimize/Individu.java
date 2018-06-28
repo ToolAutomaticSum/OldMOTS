@@ -14,6 +14,7 @@ public abstract class Individu extends AbstractMethod {
 
 	public Individu(int id) throws SupportADNException {
 		super(id);
+		
 		supportADN = new HashMap<String, Class<?>>();
 	}
 

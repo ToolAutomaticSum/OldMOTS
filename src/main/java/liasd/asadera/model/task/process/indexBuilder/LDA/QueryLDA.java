@@ -21,7 +21,6 @@ public class QueryLDA extends LDA implements QueryBasedOut {
 
 		listParameterOut.add(new ParameterizedType(null, double[].class, QueryBasedOut.class));
 
-		query = new Query();
 	}
 
 	@Override
@@ -29,6 +28,13 @@ public class QueryLDA extends LDA implements QueryBasedOut {
 		QueryLDA p = new QueryLDA(id);
 		initCopy(p);
 		return p;
+	}
+	
+	@Override
+	public void initADN() throws Exception {
+		super.initADN();
+		
+		query = new Query();
 	}
 
 	@Override

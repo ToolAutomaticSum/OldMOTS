@@ -1,8 +1,9 @@
-package test.java.liasd.asadera.model.task.process;
+package test.java.liasd.asadera.model.task.preprocess;
 
 import java.io.File;
 
 import main.java.liasd.asadera.launcher.MOTS;
+import test.java.liasd.asadera.model.task.MethodTest;
 
 public class PreProcessFrenchTest extends MethodTest {
 

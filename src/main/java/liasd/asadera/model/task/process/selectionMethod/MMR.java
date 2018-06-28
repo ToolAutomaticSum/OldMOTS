@@ -55,7 +55,7 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 
 	public MMR(int id) throws SupportADNException {
 		super(id);
-		supportADN = new HashMap<String, Class<?>>();
+
 		supportADN.put("Lambda", Double.class);
 
 		listParameterIn.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
@@ -73,6 +73,8 @@ public class MMR extends AbstractSelectionMethod implements SentenceCaracteristi
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		getCurrentProcess().getADN().putParameter(new Parameter<Double>(MMR_Parameter.Lambda.getName(),
 				Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Lambda"))));
 		getCurrentProcess().getADN().getParameter(Double.class, MMR_Parameter.Lambda.getName()).setMaxValue(1.0);

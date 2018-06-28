@@ -55,18 +55,12 @@ public class HLDA extends AbstractCaracteristicBuilder
 
 	public HLDA(int id) throws SupportADNException {
 		super(id);
-
-		hlda = new HierarchicalLDA();
-
+		
 		supportADN = new HashMap<String, Class<?>>();
 		supportADN.put("NumLevels", Integer.class);
 		supportADN.put("Alpha", Double.class);
 		supportADN.put("Gamma", Double.class);
 		supportADN.put("Eta", Double.class);
-
-		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
-		sentenceLevelDistribution = new HashMap<SentenceModel, double[]>();
-		topicWordDistribution = new HashMap<NCRPNode, double[]>();
 
 		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(NCRPNode[].class, Map.class, SentenceCaracteristicBasedOut.class));
@@ -84,6 +78,14 @@ public class HLDA extends AbstractCaracteristicBuilder
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
+		sentenceLevelDistribution = new HashMap<SentenceModel, double[]>();
+		topicWordDistribution = new HashMap<NCRPNode, double[]>();
+
+		hlda = new HierarchicalLDA();
+
 		int tempNumLevels = Integer
 				.parseInt(getModel().getProcessOption(id, Inference_HLDA_Parameter.numLevels.getName()));
 		getCurrentProcess().getADN()

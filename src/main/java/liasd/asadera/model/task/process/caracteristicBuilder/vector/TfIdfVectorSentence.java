@@ -25,9 +25,7 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder implements
 
 	public TfIdfVectorSentence(int id) throws SupportADNException {
 		super(id);
-
-		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
-
+		
 		listParameterIn.add(new ParameterizedType(NGram.class, Index.class, IndexBasedIn.class));
 		listParameterIn.add(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class));
 		listParameterOut.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedOut.class));
@@ -42,6 +40,9 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder implements
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
+		sentenceCaracteristic = new HashMap<SentenceModel, Object>();
 	}
 
 	@Override
@@ -49,15 +50,15 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder implements
 		for (Corpus corpus : listCorpus) {
 			for (TextModel text : corpus) {
 				for (SentenceModel sentenceModel : text) {
-					int nbWord = 0;
+//					int nbWord = 0;
 					double[] tfIdfVector = new double[index.size()];
 					for (WordIndex word : sentenceModel) {
 						tfIdfVector[word.getiD()] += word.getTfCorpus(corpus.getiD())
 								* word.getIdf(index.getNbDocument());
-						nbWord++;
+//						nbWord++;
 					}
-					for (int i = 0; i < index.size(); i++)
-						tfIdfVector[i] /= nbWord;
+//					for (int i = 0; i < index.size(); i++)
+//						tfIdfVector[i] /= nbWord;
 					sentenceCaracteristic.put(sentenceModel, tfIdfVector);
 				}
 			}

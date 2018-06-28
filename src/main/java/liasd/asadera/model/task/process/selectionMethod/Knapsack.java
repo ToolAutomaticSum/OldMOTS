@@ -20,6 +20,10 @@ public class Knapsack extends AbstractSelectionMethod {
 	private int K;
 	private Scorer scorer;
 
+	public void setScorer(Scorer scorer) {
+		this.scorer = scorer;
+	}
+
 	public Knapsack(int id) throws SupportADNException {
 		super(id);
 	}
@@ -33,6 +37,8 @@ public class Knapsack extends AbstractSelectionMethod {
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		K = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "Size"));
 
 		String sco = getCurrentProcess().getModel().getProcessOption(id, "ScoreMethod");
@@ -87,7 +93,7 @@ public class Knapsack extends AbstractSelectionMethod {
 
 	@Override
 	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
-		return false;
+		return compatibleMethod.isOutCompatible(scorer);
 	}
 
 	@Override

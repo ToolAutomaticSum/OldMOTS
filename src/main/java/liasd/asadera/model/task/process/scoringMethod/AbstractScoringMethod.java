@@ -18,7 +18,6 @@ public abstract class AbstractScoringMethod extends ParameterizedMethod implemen
 
 	public AbstractScoringMethod(int id) throws SupportADNException {
 		super(id);
-		sentencesScore = new HashMap<SentenceModel, Double>();
 
 		listParameterIn.add(new ParameterizedType(Double.class, Map.class, ScoreBasedIn.class));
 		listParameterOut.add(new ParameterizedType(Double.class, Map.class, ScoreBasedOut.class));
@@ -32,7 +31,9 @@ public abstract class AbstractScoringMethod extends ParameterizedMethod implemen
 		p.setModel(model);
 	}
 
-	public abstract void initADN() throws Exception;
+	public void initADN() throws Exception {
+		sentencesScore = new HashMap<SentenceModel, Double>();
+	}
 
 	public void init(AbstractProcess currentProcess) throws Exception {
 		this.currentProcess = currentProcess;

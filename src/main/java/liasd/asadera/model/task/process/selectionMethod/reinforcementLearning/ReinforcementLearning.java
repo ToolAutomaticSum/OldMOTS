@@ -51,6 +51,8 @@ public class ReinforcementLearning extends AbstractSelectionMethod {
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
+		
 		temp = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Temperature"));
 		gamma = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Gamma"));
 		alpha = Double.parseDouble(getCurrentProcess().getModel().getProcessOption(id, "Alpha"));

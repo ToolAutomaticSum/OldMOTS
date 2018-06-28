@@ -45,6 +45,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 
 	@Override
 	public void initADN() throws Exception {
+		super.initADN();
 	}
 
 	@Override
@@ -109,6 +110,7 @@ public class ILP extends AbstractSelectionMethod implements FileNameBasedIn {
 		return i;
 	}
 
+	@SuppressWarnings("unused")
 	private void eraseTmpFiles() {
 		File file = new File(fileName);
 		if (!file.delete())
