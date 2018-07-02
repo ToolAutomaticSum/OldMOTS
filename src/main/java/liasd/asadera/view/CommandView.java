@@ -57,6 +57,7 @@ public class CommandView extends AbstractView {
 	public void close() {
 	}
 
+	@Override
 	public void init() throws Exception {
 		if (separateConfFile) {
 			loadProcessConfiguration(confProcessFilePath);
