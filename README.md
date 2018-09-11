@@ -27,7 +27,7 @@ MOTS (MOdular Tool for Summarization) is a summarization system, written in Java
 * Install ROUGE :
 	* Define $ROUGE_HOME to your ROUGE installation folder (or to ./ROUGE-1.5.5/RELEASE-1.5.5).
 	* Install XML::DOM module in order to use ROUGE perl script. (sudo cpan install XML::DOM).
-	* Run ./install_rouge.sh
+	* Run ./rouge_install.sh
 	or :
 		* Define $ROUGE_EVAL_HOME to $ROUGE_HOME/data.
 		* Recreate database :
