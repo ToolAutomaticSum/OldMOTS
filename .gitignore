@@ -1,12 +1,19 @@
-AutomaticSummarization.git
-lib/*
-target/*
-bin/*
-conf/*
-output/*
-assembly.xml
+######################
+#	FOLDER       
+######################
+target
+conf
+output
+src/main/resources/TEXTEAV
+
+######################
+#	JUNK       
+######################
+*.bin
 *.pyc
 fitness_scores.txt
+conf/testFrench2.xml
 hlda.state
 tempILP0.ilp_in
 tempILP0.ilp_out
+

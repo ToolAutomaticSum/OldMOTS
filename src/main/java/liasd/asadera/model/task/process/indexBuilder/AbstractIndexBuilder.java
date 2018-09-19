@@ -57,6 +57,7 @@ public abstract class AbstractIndexBuilder<T extends WordIndex> extends Paramete
 	}
 
 	public void processIndex(List<Corpus> listCorpus) throws Exception {
+		listSen.clear();
 		try {
 			listIdSenPath = getModel().getProcessOption(id, "ListCompressedSenPath");
 		} catch (LacksOfFeatures lof) {
@@ -76,7 +77,7 @@ public abstract class AbstractIndexBuilder<T extends WordIndex> extends Paramete
 						try {
 							listSen.add(corpus.getSentenceByID(Integer.parseInt(line)));
 						} catch (Exception e) {
-							logger.error(folder[i].getPath());
+							logger.error("Error while loading sentence from file " + folder[i].getPath());
 						}
 					reader.close();
 				}
