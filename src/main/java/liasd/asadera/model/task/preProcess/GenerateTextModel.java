@@ -1,7 +1,6 @@
 package main.java.liasd.asadera.model.task.preProcess;
 
 import java.io.File;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -157,13 +156,11 @@ public class GenerateTextModel extends AbstractPreProcess {
 	}
 
 	public static void writeTempDocumentBySentence(String outputPath, MultiCorpus mc) throws Exception {
-		Iterator<Corpus> corpusIt = mc.iterator();
-		while (corpusIt.hasNext()) {
-			Corpus corpus = corpusIt.next();
-			Iterator<TextModel> textIt = corpus.iterator();
-			while (textIt.hasNext()) {
-				TextModel text = textIt.next();
-				new File(outputPath + File.separator + corpus.getCorpusName()).mkdir();
+		for (Corpus corpus : mc) {
+			File corpusDirectory = new File(outputPath + File.separator + corpus.getCorpusName());
+			Tools.deleteFileAndDirectory(corpusDirectory);
+			corpusDirectory.mkdirs();
+			for (TextModel text : corpus) {
 				Writer w = new Writer(
 						outputPath + File.separator + corpus.getCorpusName() + File.separator + text.getTextName());
 				w.open(false);
@@ -171,9 +168,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 				for (String l : text.getLabels())
 					t += l + File.separator + "%%" + File.separator;
 				w.write(t + "\n");
-				Iterator<SentenceModel> senIt = text.iterator();
-				while (senIt.hasNext()) {
-					SentenceModel sen = senIt.next();
+				for (SentenceModel sen : text) {
 					w.write("[Sen=" + sen.toString() + File.separator + "%%" + File.separator + "NbMot=" + sen.size()
 							+ "]" + sen.getSentence() + "\n");
 				}

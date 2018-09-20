@@ -25,6 +25,20 @@ import main.java.liasd.asadera.tools.reader_writer.Writer;
 import main.java.liasd.asadera.tools.vector.ToolsVector;
 
 public class Tools {
+	
+	static public boolean deleteFileAndDirectory(File file) {
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				for(String s : file.list()) {
+				    File currentFile = new File(file.getPath(), s);
+			    	deleteFileAndDirectory(currentFile);
+				}
+			}
+			file.delete();
+			return true;
+		}
+		return false;
+	}
 
 	static public String unAccent(String str) {
 		String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
