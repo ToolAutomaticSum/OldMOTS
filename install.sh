@@ -1,14 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z $JAVA_HOME ];then
-	read -p "\$JAVA_HOME isn't set. Do you want to set it automatically to your .profile file ? (y|n)" answer
-	case ${answer:0:1} in
-   	    * )
-		echo "export JAVA_HOME=\"$(dirname $(dirname $(readlink -f $(which javac))))\"" >> ~/.profile
-		source ~/.profile
+	read -p "\$JAVA_HOME isn't set. Do you want to set it automatically to your .profile file ? (y|n) " answer
+	case $answer in
+   	    [Yy]* )
+		if [ -x $(command -v javac) ]; then
+			echo "export JAVA_HOME=\"$(dirname $(dirname $(readlink -f $(which javac))))\"" >> $HOME/.profile
+			source $HOME/.profile
+		else
+			echo "Please install Java 8 JDK (sudo apt-get install openjdk-8-jdk)."
+		fi
     	    ;;
-       	    N|n )
-		echo "Please set the \$JAVA_HOME variable before relaunch installation script."
+       	    * )
+		echo "Please set the \$JAVA_HOME variable."
        		exit 1
     	    ;;
 	esac
@@ -24,13 +28,18 @@ if [ ! -x $(command -v jep) ]; then
 fi
 
 if [ -z $JEP_HOME ]; then
-	echo "export JEP_HOME=\"$(python3 -m site --user-site)/jep\"" >> ~/.profile
-	source ~/.profile	
+	echo "export JEP_HOME=\"$(python3 -m site --user-site)/jep\"" >> $HOME/.profile
+	source $HOME/.profile	
 fi
 
-source ./jep_env_before
-mvn install
-source ./jep_env_after
+
+if [ ! -x $(command -v jep) ]; then
+	echo "Please install Maven (sudo apt-get install maven)."
+else
+	source $(pwd)/jep_env_before
+	mvn install
+	source $(pwd)/jep_env_after
+fi
 
 #if [ -n $CORPUS_DATA ]; then
 	#echo Update TAC/DUC multicorpus configuration file to your \$CORPUS_DATA folder.
