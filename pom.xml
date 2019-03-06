@@ -126,6 +126,30 @@
 		    <classifier>models-french</classifier>
 		</dependency>
 		<dependency>
+		    <groupId>edu.stanford.nlp</groupId>
+		    <artifactId>stanford-corenlp</artifactId>
+		    <version>3.8.0</version>
+		    <classifier>models-german</classifier>
+		</dependency>
+		<dependency>
+		    <groupId>edu.stanford.nlp</groupId>
+		    <artifactId>stanford-corenlp</artifactId>
+		    <version>3.8.0</version>
+		    <classifier>models-spanish</classifier>
+		</dependency>
+		<dependency>
+		    <groupId>edu.stanford.nlp</groupId>
+		    <artifactId>stanford-corenlp</artifactId>
+		    <version>3.8.0</version>
+		    <classifier>models-arabic</classifier>
+		</dependency>
+		<dependency>
+		    <groupId>edu.stanford.nlp</groupId>
+		    <artifactId>stanford-corenlp</artifactId>
+		    <version>3.8.0</version>
+		    <classifier>models-chinese</classifier>
+		</dependency>
+		<dependency>
 		  	<groupId>org.jgrapht</groupId>
 	  		<artifactId>jgrapht-core</artifactId>
 	  		<version>1.1.0</version>

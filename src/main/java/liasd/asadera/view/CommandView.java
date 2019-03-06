@@ -82,7 +82,11 @@ public class CommandView extends AbstractView {
 				NodeList multiCorpusList = task.getElementsByTagName("MULTICORPUS");
 				for (int l = 0; l < multiCorpusList.getLength(); l++) {
 					if (multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {
+						NodeList languages = ((Element)multiCorpusList.item(l)).getElementsByTagName("LANGUAGE");
+						if (languages.getLength() > 0 && languages.item(0).getTextContent() != getCtrl().getLanguage())
+							continue;
 						getCtrl().notifyMultiCorpusChanged();
+							
 
 						NodeList corpusList = task.getElementsByTagName("CORPUS");
 						for (int j = 0; j < corpusList.getLength(); j++) {
@@ -265,6 +269,9 @@ public class CommandView extends AbstractView {
 					NodeList multiCorpusList = task.getElementsByTagName("MULTICORPUS");
 					for (int l = 0; l < multiCorpusList.getLength(); l++) {
 						if (multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {
+							NodeList languages = ((Element)multiCorpusList.item(l)).getElementsByTagName("LANGUAGE");
+							if (languages.getLength() > 0 && languages.item(0).getTextContent() != getCtrl().getLanguage())
+								continue;
 							getCtrl().notifyMultiCorpusChanged();
 
 							NodeList corpusList = task.getElementsByTagName("CORPUS");
