@@ -195,6 +195,9 @@ public class Corpus implements List<TextModel> {
 
 	@Override
 	public void clear() {
+		for (TextModel text : this) {
+			text.clear();
+		}
 		listTextModel.clear();
 		listSentence = null;
 	}

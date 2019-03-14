@@ -2,7 +2,6 @@ package main.java.liasd.asadera.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -36,6 +35,8 @@ public abstract class AbstractModel extends Observable {
 	private String language;
 
 	private String outputPath;
+	
+	private boolean writePerFile;
 
 	/**
 	 * List of AbstractPreProcess for documents preProcessing.
@@ -293,6 +294,14 @@ public abstract class AbstractModel extends Observable {
 
 	public void setVerbose(boolean isVerbose) {
 		this.isVerbose = isVerbose;
+	}
+
+	public boolean isWritePerFile() {
+		return writePerFile;
+	}
+
+	public void setWritePerFile(boolean writePerFile) {
+		this.writePerFile = writePerFile;
 	}
 
 	/** Clear instance's attribute.

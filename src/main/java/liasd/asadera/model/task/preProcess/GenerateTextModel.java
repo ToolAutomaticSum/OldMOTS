@@ -4,11 +4,16 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,7 +23,6 @@ import main.java.liasd.asadera.exception.EmptyTextListException;
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.exception.StateException;
 import main.java.liasd.asadera.textModeling.Corpus;
-import main.java.liasd.asadera.textModeling.MultiCorpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.WordModel;
@@ -44,6 +48,12 @@ public class GenerateTextModel extends AbstractPreProcess {
 		} catch (LacksOfFeatures e) {
 			getModel().setFilter(new TrueFilter());
 		}
+
+		try {
+			getModel().setWritePerFile(Boolean.valueOf(getModel().getProcessOption(id, "WritePerFile")));
+		} catch (LacksOfFeatures lof) {
+			getModel().setWritePerFile(false);
+		}
 	}
 
 	@Override
@@ -52,7 +62,13 @@ public class GenerateTextModel extends AbstractPreProcess {
 		for (Corpus corpus : getCurrentMultiCorpus())
 			nbDoc += corpus.size();
 		logger.trace("Reading " + nbDoc + " documents from files");
+
+		new File(getModel().getOutputPath() + File.separator + "temp").mkdir();
 		for (Corpus corpus : getCurrentMultiCorpus()) {
+			String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
+			File corpusDirectory = new File(outputPath);
+			Tools.deleteFileAndDirectory(corpusDirectory);
+			corpusDirectory.mkdirs();
 			if (corpus.size() == 0)
 				logger.error("Corpus list is empty.", new EmptyTextListException(String.valueOf(corpus.getiD())));
 			for (TextModel text : corpus) {
@@ -78,13 +94,20 @@ public class GenerateTextModel extends AbstractPreProcess {
 			}
 		}
 
-		new File(getModel().getOutputPath() + File.separator + "temp").mkdir();
-		try {
-			GenerateTextModel.writeTempDocumentBySentence(getModel().getOutputPath() + File.separator + "temp",
-					getCurrentMultiCorpus());
-		} catch (Exception e) {
-			logger.error("Error while writing preprocessed document in temp folder.");
-			e.printStackTrace();
+		if (!getModel().isWritePerFile()) {
+			for (Corpus corpus : getCurrentMultiCorpus()) {
+				String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
+				for (TextModel text : corpus) {
+					try {
+						GenerateTextModel.writeTempDocumentBySentence(outputPath, text);
+					} catch (Exception e) {
+						logger.error("Error while writing preprocessed document " + text.getTextName() + " in temp folder.");
+						e.printStackTrace();
+					} finally {
+						text.clear();
+					}
+				}
+			}
 		}
 	}
 
@@ -103,7 +126,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 					
 				}
 				return false;
-			} else if (header != null && !header.contains("<") && !header.contains(">")) {
+			} else if (Tools.getFileExtension(fXmlFile).equals("story")) {
 				reader.open();
 				String text = reader.read();
 				String temp = "";
@@ -155,27 +178,64 @@ public class GenerateTextModel extends AbstractPreProcess {
 			return false;
 	}
 
-	public static void writeTempDocumentBySentence(String outputPath, MultiCorpus mc) throws Exception {
-		for (Corpus corpus : mc) {
-			File corpusDirectory = new File(outputPath + File.separator + corpus.getCorpusName());
-			Tools.deleteFileAndDirectory(corpusDirectory);
-			corpusDirectory.mkdirs();
-			for (TextModel text : corpus) {
-				Writer w = new Writer(
-						outputPath + File.separator + corpus.getCorpusName() + File.separator + text.getTextName());
-				w.open(false);
-				String t = "Label=";
-				for (String l : text.getLabels())
-					t += l + File.separator + "%%" + File.separator;
-				w.write(t + "\n");
-				for (SentenceModel sen : text) {
-					w.write("[Sen=" + sen.toString() + File.separator + "%%" + File.separator + "NbMot=" + sen.size()
-							+ "]" + sen.getSentence() + "\n");
-				}
-				w.close();
-			}
-			corpus.clear();
-		}
+	
+	
+	public static void writeTempDocumentBySentence(String outputPath, TextModel text) throws Exception {
+		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+			 
+        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+ 
+        Document document = documentBuilder.newDocument();
+ 
+        // root element
+        Element root = document.createElement("doc");
+        document.appendChild(root);
+        Element labels = document.createElement("labels");
+        root.appendChild(labels);
+        for (String l : text.getLabels()) {
+            Element label = document.createElement("label");
+            label.appendChild(document.createTextNode(l));
+            labels.appendChild(label);
+        }
+        int i = 0;
+        Element sentences = document.createElement("sentences");
+        root.appendChild(sentences);
+        for (SentenceModel sen : text) {
+        	Element sentence = document.createElement("sentence");
+        	
+            Attr attr_id = document.createAttribute("id");
+            attr_id.setValue(String.valueOf(i));
+            sentence.setAttributeNode(attr_id);
+            
+            Attr attr_size = document.createAttribute("size");
+            attr_size.setValue(String.valueOf(sen.size()));
+            sentence.setAttributeNode(attr_size);
+            
+        	sentences.appendChild(sentence);
+        	
+        	Element original = document.createElement("original");
+        	original.appendChild(document.createTextNode(sen.toString()));
+        	sentence.appendChild(original);
+        	
+        	Element stemmed = document.createElement("stemmed");
+        	stemmed.appendChild(document.createTextNode(sen.getSentence()));
+        	sentence.appendChild(stemmed);
+        	i++;
+        }
+	
+        // create the xml file
+        //transform the DOM Object to an XML File
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource domSource = new DOMSource(document);
+        StreamResult streamResult = new StreamResult(new File(text.getTextName()));
+ 
+        // If you use
+        // StreamResult result = new StreamResult(System.out);
+        // the output will be pushed to the standard output ...
+        // You can use that for debugging 
+ 
+        transformer.transform(domSource, streamResult);
 	}
 
 	public static Corpus readTempDocument(String inputPath, Corpus c, boolean readStopWords) throws Exception {

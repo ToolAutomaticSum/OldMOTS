@@ -6,6 +6,7 @@
 		<MULTITHREADING>true</MULTITHREADING>		
 		<PREPROCESS NAME="GenerateTextModel">
 			<OPTION NAME="StopWordListFile">docs/StopWords/englishStopWords.txt</OPTION>
+			<OPTION NAME="WritePerFile">True</OPTION>
 		</PREPROCESS>
 		<PREPROCESS NAME="StanfordNLPPreProcess">
 		</PREPROCESS>	

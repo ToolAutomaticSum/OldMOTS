@@ -94,7 +94,7 @@ public class CommandView extends AbstractView {
 								Element corpus = (Element) corpusList.item(j);
 								NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
 								String summaryInputPath = null;
-								if (summaryElement.getLength() != 0)
+								if (summaryElement != null && summaryElement.getLength() != 0)
 									summaryInputPath = summaryElement.item(0).getTextContent();
 								String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0)
 										.getTextContent();
@@ -280,7 +280,7 @@ public class CommandView extends AbstractView {
 									Element corpus = (Element) corpusList.item(j);
 									NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
 									String summaryInputPath = null;
-									if (summaryElement .getLength() != 0)
+									if (summaryElement != null && summaryElement.getLength() != 0)
 										summaryInputPath = summaryElement.item(0).getTextContent();
 									String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0)
 											.getTextContent();

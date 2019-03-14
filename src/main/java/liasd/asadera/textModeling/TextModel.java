@@ -168,6 +168,8 @@ public class TextModel implements List<SentenceModel> {
 
 	@Override
 	public void clear() {
+		for (SentenceModel sent : this)
+			sent.clear();
 		listSentenceModel.clear();
 	}
 

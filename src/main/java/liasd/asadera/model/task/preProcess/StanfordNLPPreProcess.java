@@ -1,7 +1,7 @@
 package main.java.liasd.asadera.model.task.preProcess;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,8 +21,8 @@ import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.exception.UnknownLanguage;
 import main.java.liasd.asadera.model.task.preProcess.stanfordNLP.StanfordNLPProperties;
 import main.java.liasd.asadera.textModeling.Corpus;
-import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.TextModel;
+import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
 
@@ -64,11 +64,8 @@ public class StanfordNLPPreProcess extends AbstractPreProcess {
 		
 		int iD = 0;
 
-		Iterator<Corpus> corpusIt = getCurrentMultiCorpus().iterator();
-		while (corpusIt.hasNext()) {
-			Iterator<TextModel> textIt = corpusIt.next().iterator();
-			while (textIt.hasNext()) {
-				TextModel textModel = textIt.next();
+		for (Corpus corpus : getCurrentMultiCorpus()) {
+			for (TextModel textModel : corpus) {
 				// read some text in the text variable
 				String text = textModel.getText();
 				// create an empty Annotation just with the given text
@@ -108,6 +105,17 @@ public class StanfordNLPPreProcess extends AbstractPreProcess {
 						if (sen.getLength(getModel().getFilter()) > 7)
 							textModel.add(sen);
 						iD++;
+					}
+				}
+				if (getModel().isWritePerFile()) {
+					String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
+					try {
+						GenerateTextModel.writeTempDocumentBySentence(outputPath, textModel);
+					} catch (Exception e) {
+						logger.error("Error while writing preprocessed document " + textModel.getTextName() + " in temp folder.");
+						e.printStackTrace();
+					} finally {
+						textModel.clear();
 					}
 				}
 			}
