@@ -108,6 +108,12 @@ public class StanfordNLPPreProcess extends AbstractPreProcess {
 					}
 				}
 				if (getModel().isWritePerFile()) {
+					if (getModel().getFilter() != null)
+						for (SentenceModel sen : textModel)
+							for (WordModel word : sen.getListWordModel())
+								if (!getModel().getFilter().passFilter(word))
+									word.setStopWord(true);
+					
 					String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
 					try {
 						GenerateTextModel.writeTempDocumentBySentence(outputPath, textModel);

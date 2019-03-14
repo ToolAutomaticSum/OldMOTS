@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -28,7 +29,6 @@ import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
 import main.java.liasd.asadera.tools.reader_writer.Reader;
-import main.java.liasd.asadera.tools.reader_writer.Writer;
 import main.java.liasd.asadera.tools.wordFilters.TrueFilter;
 import main.java.liasd.asadera.tools.wordFilters.WordStopListFilter;
 
@@ -46,6 +46,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 		try {
 			getModel().setFilter(new WordStopListFilter(getModel().getProcessOption(id, "StopWordListFile")));
 		} catch (LacksOfFeatures e) {
+			logger.error("No StopWordListFile found.");
 			getModel().setFilter(new TrueFilter());
 		}
 
@@ -82,22 +83,16 @@ public class GenerateTextModel extends AbstractPreProcess {
 
 	@Override
 	public void finish() {
-		if (getModel().getFilter() != null) {
-			for (Corpus corpus : getCurrentMultiCorpus()) {
-				for (TextModel text : corpus) {
-					for (SentenceModel sen : text) {
-						for (WordModel word : sen.getListWordModel())
-							if (!getModel().getFilter().passFilter(word))
-								word.setStopWord(true);
-					}
-				}
-			}
-		}
-
 		if (!getModel().isWritePerFile()) {
 			for (Corpus corpus : getCurrentMultiCorpus()) {
 				String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
 				for (TextModel text : corpus) {
+					if (getModel().getFilter() != null)
+						for (SentenceModel sen : text)
+							for (WordModel word : sen.getListWordModel())
+								if (!getModel().getFilter().passFilter(word))
+									word.setStopWord(true);
+									
 					try {
 						GenerateTextModel.writeTempDocumentBySentence(outputPath, text);
 					} catch (Exception e) {
@@ -177,8 +172,6 @@ public class GenerateTextModel extends AbstractPreProcess {
 		} else
 			return false;
 	}
-
-	
 	
 	public static void writeTempDocumentBySentence(String outputPath, TextModel text) throws Exception {
 		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -189,17 +182,16 @@ public class GenerateTextModel extends AbstractPreProcess {
  
         // root element
         Element root = document.createElement("doc");
+        Attr attr_name = document.createAttribute("name");
+        attr_name.setValue(text.getTextName());
+        root.setAttributeNode(attr_name);
         document.appendChild(root);
-        Element labels = document.createElement("labels");
-        root.appendChild(labels);
         for (String l : text.getLabels()) {
             Element label = document.createElement("label");
             label.appendChild(document.createTextNode(l));
-            labels.appendChild(label);
+            root.appendChild(label);
         }
         int i = 0;
-        Element sentences = document.createElement("sentences");
-        root.appendChild(sentences);
         for (SentenceModel sen : text) {
         	Element sentence = document.createElement("sentence");
         	
@@ -211,7 +203,7 @@ public class GenerateTextModel extends AbstractPreProcess {
             attr_size.setValue(String.valueOf(sen.size()));
             sentence.setAttributeNode(attr_size);
             
-        	sentences.appendChild(sentence);
+        	root.appendChild(sentence);
         	
         	Element original = document.createElement("original");
         	original.appendChild(document.createTextNode(sen.toString()));
@@ -227,8 +219,10 @@ public class GenerateTextModel extends AbstractPreProcess {
         //transform the DOM Object to an XML File
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource domSource = new DOMSource(document);
-        StreamResult streamResult = new StreamResult(new File(text.getTextName()));
+        StreamResult streamResult = new StreamResult(new File(outputPath + File.separator + text.getTextName()));
  
         // If you use
         // StreamResult result = new StreamResult(System.out);
@@ -242,55 +236,72 @@ public class GenerateTextModel extends AbstractPreProcess {
 		c.clear();
 		File corpusDoc = new File(inputPath + File.separator + c.getCorpusName());
 		if (!corpusDoc.exists()) {
-			throw new StateException("Corpus file don't exist, so we can't read it.");
+			throw new StateException("Preprocess corpus file don't exist, so we can't read it. Please apply preprocess first.");
 		}
 		int id = 0;
 		for (File textFile : corpusDoc.listFiles()) {
 			TextModel text = new TextModel(c, textFile.getAbsolutePath());
-			int nbSentence = 0;
-			Reader r = new Reader(textFile.getAbsolutePath(), true);
-			r.open();
-			String s = r.read();
-			String[] tabs = s.split("=");
-			if (tabs.length == 2) {
-				String[] labels = tabs[1].split(File.separator + "%%" + File.separator);
-				for (String l : labels)
-					text.getLabels().add(l);
+			
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(textFile.getAbsolutePath());
+			NodeList listLabels = doc.getElementsByTagName("label");
+
+			if (listLabels.getLength() > 0) {
+				for (int i = 0; i < listLabels.getLength(); i++)
+					text.getLabels().add(listLabels.item(i).getTextContent().replace("\n", ""));
 			}
-			s = r.read();
-			while (s != null) {
-				tabs = s.split("]");
-				if (tabs.length == 2) {
-					String[] label = tabs[0].split(File.separator + "%%" + File.separator);
-					SentenceModel sen = new SentenceModel(label[0].split("=")[1], id, text);
-					nbSentence++;
-					sen.setNbMot(Integer.parseInt(label[1].split("=")[1]));
-					text.add(sen);
-					String[] word = tabs[1].split(" ");
-					for (String w : word) {
-						WordModel wm;
-						if (w.startsWith("%%")) {
-							if (readStopWords) {
-								w = w.replace("%%", "");
+
+			int nbSentence = 0;
+			NodeList listSentence = doc.getElementsByTagName("sentence");
+			if (listSentence.getLength() > 0) {
+				for (int i = 0; i < listSentence.getLength(); i++) {
+					if (listSentence.item(i).getNodeType() == Node.ELEMENT_NODE) {
+						Element sentence = (Element) listSentence.item(i);
+						
+						NodeList original = sentence.getElementsByTagName("original");
+						String originalSen = null;
+						if (original.getLength() != 0)
+							originalSen = original.item(0).getTextContent();
+						else
+							throw new NullPointerException("original node missing in xml file " + textFile.getAbsolutePath());
+						
+						NodeList stemmed = sentence.getElementsByTagName("stemmed");
+						String stemmedSen = null;
+						if (stemmed.getLength() != 0)
+							stemmedSen = stemmed.item(0).getTextContent();
+						else
+							throw new NullPointerException("stemmed node missing in xml file " + textFile.getAbsolutePath());
+						
+						SentenceModel sen = new SentenceModel(originalSen, id, text);
+						nbSentence++;
+						sen.setNbMot(Integer.parseInt(sentence.getAttribute("size")));
+						text.add(sen);
+						
+						String[] word = stemmedSen.split(" ");
+						for (String w : word) {
+							WordModel wm;
+							if (w.startsWith("%%")) {
+								if (readStopWords) {
+									w = w.replace("%%", "");
+									wm = new WordModel(w);
+									wm.setStopWord(true);
+									wm.setmLemma(w);
+									wm.setSentence(sen);
+									sen.getListWordModel().add(wm);
+								}
+							} else {
 								wm = new WordModel(w);
-								wm.setStopWord(true);
 								wm.setmLemma(w);
 								wm.setSentence(sen);
 								sen.getListWordModel().add(wm);
 							}
-						} else {
-							wm = new WordModel(w);
-							wm.setmLemma(w);
-							wm.setSentence(sen);
-							sen.getListWordModel().add(wm);
 						}
 					}
+					id++;
 				}
-				s = r.read();
-				id++;
 			}
 			text.setNbSentence(nbSentence);
-			r.close();
 			c.add(text);
 		}
 		return c;

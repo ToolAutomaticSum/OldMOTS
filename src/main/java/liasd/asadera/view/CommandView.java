@@ -92,12 +92,19 @@ public class CommandView extends AbstractView {
 						for (int j = 0; j < corpusList.getLength(); j++) {
 							if (corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
 								Element corpus = (Element) corpusList.item(j);
+								
 								NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
 								String summaryInputPath = null;
 								if (summaryElement != null && summaryElement.getLength() != 0)
 									summaryInputPath = summaryElement.item(0).getTextContent();
-								String corpusInputPath = corpus.getElementsByTagName("INPUT_PATH").item(0)
-										.getTextContent();
+								
+								NodeList inputElement = corpus.getElementsByTagName("INPUT_PATH");
+								String corpusInputPath = null;
+								if (inputElement != null && inputElement.getLength() != 0)
+									corpusInputPath = inputElement.item(0).getTextContent();
+								else
+									throw new NullPointerException("Missing INPUT_PATH node in XML file " + configFilePath + " for corpus ID " + corpus.getAttribute("ID") + ".");
+								
 								NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
 								List<String> docNames = new ArrayList<String>();
 								for (int k = 0; k < documentList.getLength(); k++) {
@@ -105,6 +112,7 @@ public class CommandView extends AbstractView {
 										docNames.add(documentList.item(k).getTextContent());
 									}
 								}
+								
 								NodeList summaryList = corpus.getElementsByTagName("SUMMARY");
 								List<String> summaryNames = new ArrayList<String>();
 								for (int k = 0; k < summaryList.getLength(); k++) {
