@@ -21,6 +21,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	private static Logger logger = LoggerFactory.getLogger(SentenceModel.class);
 
 	private List<WordModel> listWordModel = new ArrayList<WordModel>();
+	private List<String> labels = new ArrayList<String>();
 
 	protected int n;
 	protected Map<Integer, List<WordIndex>> mapNGram;
@@ -249,9 +250,14 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	public void setNbMot(int nbMot) {
 		this.nbMot = nbMot;
 	}
+	
+
+	public void setLabels(List<String> labels) {
+		this.labels = labels;
+	}
 
 	public List<String> getLabels() {
-		return text.getLabels();
+		return labels;
 	}
 
 	@Override

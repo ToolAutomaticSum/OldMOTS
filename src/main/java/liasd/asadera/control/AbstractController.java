@@ -32,14 +32,14 @@ public abstract class AbstractController {
 	private final AbstractView view;
 
 	protected static int processID = 0;
-	protected String language;
+	//protected String language;
 //	protected String inputDir;
-	protected List<Corpus> corpusList = new ArrayList<Corpus>();
-	protected String outputDir;
-	protected List<String> preProcess = new ArrayList<String>();
-	protected String processName;
-	protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
-	protected List<String> postProcess = new ArrayList<String>();
+	//protected List<Corpus> corpusList = new ArrayList<Corpus>();
+	//protected String outputDir;
+	//protected List<String> preProcess = new ArrayList<String>();
+	//protected String processName;
+	//protected List<Map<String, String>> processOption = new ArrayList<Map<String, String>>();
+	//protected List<String> postProcess = new ArrayList<String>();
 	protected EvaluationROUGE evalRouge;
 	protected MultiCorpus currentMultiCorpus;
 
@@ -81,18 +81,12 @@ public abstract class AbstractController {
 	public void notifyTaskChanged(int taskID) {
 		if (getModel().getTaskID() != taskID) {
 			processID = 0;
-			corpusList.clear();
-			processName = null;
-			processOption.clear();
-			preProcess.clear();
-			postProcess.clear();
 			getModel().clear();
 			getModel().setTaskID(taskID);
 		}
 	}
 
 	public void notifyLanguageChanged(String language) {
-		this.language = language;
 		getModel().setLanguage(language);
 	}
 
@@ -113,10 +107,14 @@ public abstract class AbstractController {
 
 		File f = new File(inputCorpusPath);
 		if (f.exists()) {
-			List<String> lf = Arrays.asList(f.list());
 			for (String doc : docNames) {
-				Pattern pattern = Pattern.compile(doc);
-				set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+				if (doc.contains("*")) {
+					List<String> lf = Arrays.asList(f.list());
+					Pattern pattern = Pattern.compile(doc);
+					set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+				}
+				else 
+					set_docNames.add(doc);
 			}
 			docNames.clear();
 			docNames.addAll(set_docNames);
@@ -125,10 +123,14 @@ public abstract class AbstractController {
 
 			f = new File(summaryInputPath);
 			if (f.exists()) {
-				lf = Arrays.asList(f.list());
-				for (String doc : summaryNames) {
-					Pattern pattern = Pattern.compile(doc);
-					set_summaryNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+				for (String summary : summaryNames) {
+					if (summary.contains("*")) {
+						List<String> lf = Arrays.asList(f.list());
+						Pattern pattern = Pattern.compile(summary);
+						set_summaryNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+					}
+					else
+						set_summaryNames.add(summary);
 				}
 				summaryNames.clear();
 				summaryNames.addAll(set_summaryNames);
@@ -144,16 +146,19 @@ public abstract class AbstractController {
 			throw new FileNotFoundException("File " + inputCorpusPath + " not found.");
 	}
 	
-	public final void notifyCorpusChanged(String inputCorpusPath,
-			List<String> docNames) throws FileNotFoundException {
+	public final void notifyCorpusChanged(String inputCorpusPath, List<String> docNames) throws FileNotFoundException {
 		Set<String> set_docNames = new TreeSet<String>();
 
 		File f = new File(inputCorpusPath);
 		if (f.exists()) {
 			List<String> lf = Arrays.asList(f.list());
 			for (String doc : docNames) {
-				Pattern pattern = Pattern.compile(doc);
-				set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+				if (doc.contains("*")) {
+					Pattern pattern = Pattern.compile(doc);
+					set_docNames.addAll(lf.stream().filter(pattern.asPredicate()).collect(Collectors.toSet()));
+				}
+				else 
+					set_docNames.add(doc);
 			}
 			docNames.clear();
 			docNames.addAll(set_docNames);
@@ -170,7 +175,6 @@ public abstract class AbstractController {
 	}
 
 	public void notifyOutputPathChanged(String outputDir) {
-		this.outputDir = outputDir;
 		getModel().setOutputPath(outputDir);
 	}
 
@@ -182,8 +186,7 @@ public abstract class AbstractController {
 	public abstract void notifyProcessChanged(String processName) throws ClassNotFoundException;
 
 	public void notifyProcessOptionChanged(Map<String, String> processOption) {
-		this.processOption.add(processOption);
-		getModel().setProcessOption(this.processOption);
+		getModel().getProcessOptionMap().add(processOption);
 	}
 
 	public abstract void notifyIndexBuilderChanged(String processName, String indexBuilder) throws ClassNotFoundException;
@@ -231,54 +234,6 @@ public abstract class AbstractController {
 
 	public void notifyPeerRootChanged(String peerRoot) {
 		evalRouge.setPeerRoot(peerRoot);
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-//	public String getInputDir() {
-//		return inputDir;
-//	}
-//
-//	public void setInputDir(String inputDir) {
-//		this.inputDir = inputDir;
-//	}
-
-	public List<String> getPreProcess() {
-		return preProcess;
-	}
-
-	public void setPreProcess(List<String> preProcess) {
-		this.preProcess = preProcess;
-	}
-
-	public String getProcess() {
-		return processName;
-	}
-
-	public void setProcess(String process) {
-		this.processName = process;
-	}
-
-	public List<Map<String, String>> getProcessOption() {
-		return processOption;
-	}
-
-	public void setProcessOption(List<Map<String, String>> processOption) {
-		this.processOption = processOption;
-	}
-
-	public List<String> getPostProcess() {
-		return postProcess;
-	}
-
-	public void setPostProcess(List<String> postProcess) {
-		this.postProcess = postProcess;
 	}
 
 	public AbstractModel getModel() {

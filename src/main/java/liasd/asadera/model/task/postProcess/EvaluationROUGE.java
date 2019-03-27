@@ -80,8 +80,8 @@ public class EvaluationROUGE extends AbstractPostProcess {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + " -e " + rougePath
 						+ File.separator + "data -n 2 -x -m -c 95 -r 1000 -f A -p 0.5 -t 0 -a " + rougeTempFilePath
 						+ File.separator + "settings" + getModel().getTaskID() + i + ".xml";
-				logger.trace(cmd);
-				System.out.println("");
+				logger.warn(cmd);
+				
 				Process proc = Runtime.getRuntime().exec(cmd);
 
 				BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));

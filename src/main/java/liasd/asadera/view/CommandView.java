@@ -17,6 +17,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
+
 public class CommandView extends AbstractView {
 
 	private static Logger logger = LoggerFactory.getLogger(CommandView.class);
@@ -77,54 +80,57 @@ public class CommandView extends AbstractView {
 			if (listTask.item(i).getNodeType() == Node.ELEMENT_NODE) {
 				Element task = (Element) listTask.item(i);
 
-				getCtrl().notifyTaskChanged(Integer.parseInt(task.getAttribute("ID")));
+				//getCtrl().notifyTaskChanged(Integer.parseInt(task.getAttribute("ID")));
 
 				NodeList multiCorpusList = task.getElementsByTagName("MULTICORPUS");
 				for (int l = 0; l < multiCorpusList.getLength(); l++) {
 					if (multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {
 						NodeList languages = ((Element)multiCorpusList.item(l)).getElementsByTagName("LANGUAGE");
-						if (languages.getLength() > 0 && languages.item(0).getTextContent() != getCtrl().getLanguage())
+						if (languages.getLength() > 0 && languages.item(0).getTextContent() != getCtrl().getModel().getLanguage())
 							continue;
 						getCtrl().notifyMultiCorpusChanged();
-							
 
 						NodeList corpusList = task.getElementsByTagName("CORPUS");
-						for (int j = 0; j < corpusList.getLength(); j++) {
-							if (corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {
-								Element corpus = (Element) corpusList.item(j);
-								
-								NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
-								String summaryInputPath = null;
-								if (summaryElement != null && summaryElement.getLength() != 0)
-									summaryInputPath = summaryElement.item(0).getTextContent();
-								
-								NodeList inputElement = corpus.getElementsByTagName("INPUT_PATH");
-								String corpusInputPath = null;
-								if (inputElement != null && inputElement.getLength() != 0)
-									corpusInputPath = inputElement.item(0).getTextContent();
-								else
-									throw new NullPointerException("Missing INPUT_PATH node in XML file " + configFilePath + " for corpus ID " + corpus.getAttribute("ID") + ".");
-								
-								NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
-								List<String> docNames = new ArrayList<String>();
-								for (int k = 0; k < documentList.getLength(); k++) {
-									if (documentList.item(k).getNodeType() == Node.ELEMENT_NODE) {
-										docNames.add(documentList.item(k).getTextContent());
+						try (ProgressBar pb = new ProgressBar("Configuring Multicorpus n°" + i, corpusList.getLength(), ProgressBarStyle.ASCII)) {
+							for (int j = 0; j < corpusList.getLength(); j++) {
+								if (corpusList.item(j).getNodeType() == Node.ELEMENT_NODE) {								
+									Element corpus = (Element) corpusList.item(j);
+									
+									NodeList summaryElement = corpus.getElementsByTagName("SUMMARY_PATH");
+									String summaryInputPath = null;
+									if (summaryElement != null && summaryElement.getLength() != 0)
+										summaryInputPath = summaryElement.item(0).getTextContent();
+									
+									NodeList inputElement = corpus.getElementsByTagName("INPUT_PATH");
+									String corpusInputPath = null;
+									if (inputElement != null && inputElement.getLength() != 0)
+										corpusInputPath = inputElement.item(0).getTextContent();
+									else
+										throw new NullPointerException("Missing INPUT_PATH node in XML file " + configFilePath + " for corpus ID " + corpus.getAttribute("ID") + ".");
+									
+									NodeList documentList = corpus.getElementsByTagName("DOCUMENT");
+									List<String> docNames = new ArrayList<String>();
+									for (int k = 0; k < documentList.getLength(); k++) {
+										if (documentList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+											docNames.add(documentList.item(k).getTextContent());
+										}
 									}
-								}
-								
-								NodeList summaryList = corpus.getElementsByTagName("SUMMARY");
-								List<String> summaryNames = new ArrayList<String>();
-								for (int k = 0; k < summaryList.getLength(); k++) {
-									if (summaryList.item(k).getNodeType() == Node.ELEMENT_NODE) {
-										summaryNames.add(summaryList.item(k).getTextContent());
+									
+									NodeList summaryList = corpus.getElementsByTagName("SUMMARY");
+									List<String> summaryNames = new ArrayList<String>();
+									for (int k = 0; k < summaryList.getLength(); k++) {
+										if (summaryList.item(k).getNodeType() == Node.ELEMENT_NODE) {
+											summaryNames.add(summaryList.item(k).getTextContent());
+										}
 									}
+									if (summaryInputPath == null)
+										getCtrl().notifyCorpusChanged(corpusInputPath, docNames);
+									else
+										getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath,
+											docNames);
+									pb.step();
+									logger.trace("Corpus n°" + j + "/" + corpusList.getLength() + " has been configured.");
 								}
-								if (summaryInputPath == null)
-									getCtrl().notifyCorpusChanged(corpusInputPath, docNames);
-								else
-									getCtrl().notifyCorpusChanged(summaryInputPath, summaryNames, corpusInputPath,
-										docNames);
 							}
 						}
 					}
@@ -278,7 +284,7 @@ public class CommandView extends AbstractView {
 					for (int l = 0; l < multiCorpusList.getLength(); l++) {
 						if (multiCorpusList.item(l).getNodeType() == Node.ELEMENT_NODE) {
 							NodeList languages = ((Element)multiCorpusList.item(l)).getElementsByTagName("LANGUAGE");
-							if (languages.getLength() > 0 && languages.item(0).getTextContent() != getCtrl().getLanguage())
+							if (languages.getLength() > 0 && languages.item(0).getTextContent() != getCtrl().getModel().getLanguage())
 								continue;
 							getCtrl().notifyMultiCorpusChanged();
 

@@ -23,7 +23,7 @@ public abstract class DeepLearning extends AbstractSelectionMethod implements In
 		super(id);
 	}
 	
-	public abstract void trainModel(List<Corpus> listCorpus);
+	public abstract void trainModel(List<Corpus> listCorpus) throws Exception;
 	
 //	@Override
 //	public List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception {

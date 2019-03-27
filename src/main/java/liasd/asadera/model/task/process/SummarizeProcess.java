@@ -120,7 +120,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		super.init();
 		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp",
 				getCurrentMultiCorpus().get(getSummarizeCorpusId()), true);
-		logger.info("Corpus " + corpusToSummarize.getiD() + " read");
+		logger.trace("Corpus " + corpusToSummarize.getiD() + " read");
 	}
 
 	private void initCompatibility() {
@@ -216,9 +216,11 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 
 	public void join() throws InterruptedException {
 		t.join();
-		getModel().setModelChanged();
-		getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(
-				this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId()), getModel().isVerbose()));
+		if (model.isVerbose()) {
+			getModel().setModelChanged();
+			getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(
+					this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId()), getModel().isVerbose()));
+		}
 	}
 
 	@Override

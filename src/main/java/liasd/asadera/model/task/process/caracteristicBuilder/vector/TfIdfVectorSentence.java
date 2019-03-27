@@ -22,7 +22,7 @@ public class TfIdfVectorSentence extends AbstractCaracteristicBuilder implements
 
 	protected Index<WordIndex> index;
 	protected Map<SentenceModel, Object> sentenceCaracteristic;
-
+	
 	public TfIdfVectorSentence(int id) throws SupportADNException {
 		super(id);
 		

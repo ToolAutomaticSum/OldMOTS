@@ -25,6 +25,8 @@ import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.tools.Tools;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 public class StanfordNLPPreProcess extends AbstractPreProcess {
 		
@@ -61,68 +63,66 @@ public class StanfordNLPPreProcess extends AbstractPreProcess {
 	@Override
 	public void process() throws Exception {
 		logger.trace("StanfordNLP pipeline starting");
-		
-		int iD = 0;
-
-		for (Corpus corpus : getCurrentMultiCorpus()) {
-			for (TextModel textModel : corpus) {
-				// read some text in the text variable
-				String text = textModel.getText();
-				// create an empty Annotation just with the given text
-				Annotation document = new Annotation(text);
-				// run all Annotators on this text
-				pipeline.annotate(document);
-				// these are all the sentences in this document
-				// a CoreMap is essentially a Map that uses class objects as keys and has values
-				// with custom types
-				List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-				for (CoreMap sentence : sentences) {
-					if (!sentence.toString().replace("_", "").isEmpty()) {
-						String senText;
-						if (sentence.toString().contains(" -- "))
-							senText = sentence.toString().split(" -- ")[1].replace("\n", "\t");
-						else
-							senText = sentence.toString().replace("\n", "\t");
-						SentenceModel sen = new SentenceModel(senText, iD, textModel);
-						// traversing the words in the current sentence
-						// a CoreLabel is a CoreMap with additional token-specific methods
-						for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-							String w = token.get(TextAnnotation.class);
-							if (!Tools.removePonctuation(w).isEmpty() && senText.contains(w)) {
-								WordModel word = new WordModel();
-								word.setmForm(w);
-								word.setSentence(sen);
-								if (propStanfordNLP.contains("pos"))
-									word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
-								if (propStanfordNLP.contains("lemma"))
-									word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
-								else
-									word.setmLemma(w.toLowerCase());
-								word.setWord(w);
-								sen.getListWordModel().add(word);
+		try (ProgressBar pb = new ProgressBar("Preprocessing documents ", getModel().getNbDoc(), ProgressBarStyle.ASCII)) {
+			int iD = 0;
+			boolean highlight = false;
+			for (Corpus corpus : getCurrentMultiCorpus()) {
+				for (TextModel textModel : corpus) {
+					// read some text in the text variable
+					String text = textModel.getText();
+					// create an empty Annotation just with the given text
+					Annotation document = new Annotation(text);
+					// run all Annotators on this text
+					pipeline.annotate(document);
+					// these are all the sentences in this document
+					// a CoreMap is essentially a Map that uses class objects as keys and has values
+					// with custom types
+					List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+					for (CoreMap sentence : sentences) {
+						if (!sentence.toString().replace("_", "").replace(".", "").isEmpty()) {
+							String senText;
+							if (sentence.toString().contains(" -- "))
+								senText = sentence.toString().split(" -- ")[1].replace("\n", "\t");
+							else
+								senText = sentence.toString().replace("\n", "\t");
+							if (senText.startsWith("@highlight")) {
+								highlight = true;
+								continue;
+							}
+							SentenceModel sen = new SentenceModel(senText, iD, textModel);
+							// traversing the words in the current sentence
+							// a CoreLabel is a CoreMap with additional token-specific methods
+							for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+								String w = token.get(TextAnnotation.class);
+								if (!Tools.removePonctuation(w).isEmpty() && senText.contains(w)) {
+									WordModel word = new WordModel();
+									word.setmForm(w);
+									word.setSentence(sen);
+									if (propStanfordNLP.contains("pos"))
+										word.setmPosTag(token.get(PartOfSpeechAnnotation.class));
+									if (propStanfordNLP.contains("lemma"))
+										word.setmLemma(token.get(LemmaAnnotation.class).toLowerCase());
+									else
+										word.setmLemma(w.toLowerCase());
+									word.setWord(w);
+									sen.getListWordModel().add(word);
+								}
+							}
+							//if (sen.getLength(getModel().getFilter()) > 7)
+							textModel.add(sen);
+							iD++;
+							if (highlight) {
+								logger.debug(sen.toString());
+								sen.getLabels().add("highlight");
+								highlight = false;
 							}
 						}
-						if (sen.getLength(getModel().getFilter()) > 7)
-							textModel.add(sen);
-						iD++;
 					}
-				}
-				if (getModel().isWritePerFile()) {
-					if (getModel().getFilter() != null)
-						for (SentenceModel sen : textModel)
-							for (WordModel word : sen.getListWordModel())
-								if (!getModel().getFilter().passFilter(word))
-									word.setStopWord(true);
-					
-					String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
-					try {
-						GenerateTextModel.writeTempDocumentBySentence(outputPath, textModel);
-					} catch (Exception e) {
-						logger.error("Error while writing preprocessed document " + textModel.getTextName() + " in temp folder.");
-						e.printStackTrace();
-					} finally {
-						textModel.clear();
+					if (getModel().isWritePerFile()) {
+						String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
+						GenerateTextModel.writeTempText(model, corpus.size(), textModel, outputPath);
 					}
+					pb.step();
 				}
 			}
 		}

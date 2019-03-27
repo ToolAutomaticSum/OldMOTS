@@ -71,7 +71,7 @@ public class MOTS {
 			System.setProperty("org.slf4j.simpleLogger.showLogName", "false");
 
 			if (commandLine.hasOption("v"))
-				System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "trace");
+				System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
 			else
 				System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
 

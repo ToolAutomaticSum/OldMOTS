@@ -1,6 +1,8 @@
 package main.java.liasd.asadera.model.task.preProcess;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +25,7 @@ import org.w3c.dom.NodeList;
 import main.java.liasd.asadera.exception.EmptyTextListException;
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.exception.StateException;
+import main.java.liasd.asadera.model.AbstractModel;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.textModeling.TextModel;
@@ -31,6 +34,8 @@ import main.java.liasd.asadera.tools.Tools;
 import main.java.liasd.asadera.tools.reader_writer.Reader;
 import main.java.liasd.asadera.tools.wordFilters.TrueFilter;
 import main.java.liasd.asadera.tools.wordFilters.WordStopListFilter;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 public class GenerateTextModel extends AbstractPreProcess {
 
@@ -62,21 +67,25 @@ public class GenerateTextModel extends AbstractPreProcess {
 		int nbDoc = 0;
 		for (Corpus corpus : getCurrentMultiCorpus())
 			nbDoc += corpus.size();
-		logger.trace("Reading " + nbDoc + " documents from files");
+		getModel().setNbDoc(nbDoc);
+		logger.info("Reading " + getModel().getNbDoc() + " documents from files");
 
 		new File(getModel().getOutputPath() + File.separator + "temp").mkdir();
-		for (Corpus corpus : getCurrentMultiCorpus()) {
-			String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
-			File corpusDirectory = new File(outputPath);
-			Tools.deleteFileAndDirectory(corpusDirectory);
-			corpusDirectory.mkdirs();
-			if (corpus.size() == 0)
-				logger.error("Corpus list is empty.", new EmptyTextListException(String.valueOf(corpus.getiD())));
-			for (TextModel text : corpus) {
-				if (text != null)
-					if (!loadText(text)) {
-						logger.warn("Can't load " + text.getDocumentFilePath() + ".");
-					}
+		try (ProgressBar pb = new ProgressBar("Reading documents ", getModel().getNbDoc(), ProgressBarStyle.ASCII)) {
+			for (Corpus corpus : getCurrentMultiCorpus()) {
+				String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
+				File corpusDirectory = new File(outputPath);
+				//Tools.deleteFileAndDirectory(corpusDirectory);
+				corpusDirectory.mkdirs();
+				if (corpus.size() == 0)
+					logger.error("Corpus list is empty.", new EmptyTextListException(String.valueOf(corpus.getiD())));
+				for (TextModel text : corpus) {
+					if (text != null)
+						if (!loadText(text)) {
+							logger.warn("Can't load " + text.getDocumentFilePath() + ".");
+						}
+					pb.step();
+				}
 			}
 		}
 	}
@@ -87,22 +96,39 @@ public class GenerateTextModel extends AbstractPreProcess {
 			for (Corpus corpus : getCurrentMultiCorpus()) {
 				String outputPath = getModel().getOutputPath() + File.separator + "temp" + File.separator + corpus.getCorpusName();
 				for (TextModel text : corpus) {
-					if (getModel().getFilter() != null)
-						for (SentenceModel sen : text)
-							for (WordModel word : sen.getListWordModel())
-								if (!getModel().getFilter().passFilter(word))
-									word.setStopWord(true);
-									
-					try {
-						GenerateTextModel.writeTempDocumentBySentence(outputPath, text);
-					} catch (Exception e) {
-						logger.error("Error while writing preprocessed document " + text.getTextName() + " in temp folder.");
-						e.printStackTrace();
-					} finally {
-						text.clear();
-					}
+					writeTempText(getModel(), corpus.size(), text, outputPath);
 				}
 			}
+		}
+	}
+	
+	public static void writeTempText(AbstractModel model, int sizeCorpus, TextModel text, String outputPath) {
+		if (model.getFilter() != null)
+			for (SentenceModel sen : text)
+				for (WordModel word : sen.getListWordModel())
+					if (!model.getFilter().passFilter(word))
+						word.setStopWord(true);
+						
+		try {
+			boolean corpusFolder;
+			File f;
+			if (sizeCorpus == 1) {
+				corpusFolder = false;
+				f = new File(outputPath);
+			}
+			else {
+				corpusFolder = true;
+				f = new File(outputPath + File.separator + text.getTextName());
+			}
+				
+			if (f.exists())
+				f.delete();
+			GenerateTextModel.writeTempDocumentBySentence(outputPath, text, corpusFolder);
+		} catch (Exception e) {
+			logger.error("Error while writing preprocessed document " + text.getTextName() + " in temp folder.");
+			e.printStackTrace();
+		} finally {
+			text.clear();
 		}
 	}
 
@@ -123,14 +149,14 @@ public class GenerateTextModel extends AbstractPreProcess {
 				return false;
 			} else if (Tools.getFileExtension(fXmlFile).equals("story")) {
 				reader.open();
-				String text = reader.read();
+				String line = reader.read();
 				String temp = "";
-				while (text != null) {
-					temp += text + "\n";
-					text = reader.read();
+				while (line != null) {
+					temp += line + "\n";
+					line = fixMissingPeriod(reader.read());
 				}
 				textModel.setText(temp + "\n");
-				System.out.println("Reading " + textModel.getTextName());
+				logger.trace("Reading " + textModel.getTextName());
 				return true;
 			} else if (header != null) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -163,7 +189,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 							}
 						}
 					}
-					logger.info("Reading " + textModel.getTextName());
+					logger.trace("Reading " + textModel.getTextName());
 					return true;
 				} else
 					return false;
@@ -173,7 +199,7 @@ public class GenerateTextModel extends AbstractPreProcess {
 			return false;
 	}
 	
-	public static void writeTempDocumentBySentence(String outputPath, TextModel text) throws Exception {
+	public static void writeTempDocumentBySentence(String outputPath, TextModel text, boolean corpusFolder) throws Exception {
 		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 			 
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -187,7 +213,7 @@ public class GenerateTextModel extends AbstractPreProcess {
         root.setAttributeNode(attr_name);
         document.appendChild(root);
         for (String l : text.getLabels()) {
-            Element label = document.createElement("label");
+            Element label = document.createElement("labels");
             label.appendChild(document.createTextNode(l));
             root.appendChild(label);
         }
@@ -212,6 +238,12 @@ public class GenerateTextModel extends AbstractPreProcess {
         	Element stemmed = document.createElement("stemmed");
         	stemmed.appendChild(document.createTextNode(sen.getSentence()));
         	sentence.appendChild(stemmed);
+        	
+        	for (String l : sen.getLabels()) {
+                Element label = document.createElement("label");
+                label.appendChild(document.createTextNode(l));
+                sentence.appendChild(label);
+            }
         	i++;
         }
 	
@@ -222,7 +254,11 @@ public class GenerateTextModel extends AbstractPreProcess {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource domSource = new DOMSource(document);
-        StreamResult streamResult = new StreamResult(new File(outputPath + File.separator + text.getTextName()));
+        StreamResult streamResult;
+        if (corpusFolder)
+        	streamResult = new StreamResult(new File(outputPath + File.separator + text.getTextName()));
+        else
+        	streamResult = new StreamResult(new File(outputPath));
  
         // If you use
         // StreamResult result = new StreamResult(System.out);
@@ -239,7 +275,14 @@ public class GenerateTextModel extends AbstractPreProcess {
 			throw new StateException("Preprocess corpus file don't exist, so we can't read it. Please apply preprocess first.");
 		}
 		int id = 0;
-		for (File textFile : corpusDoc.listFiles()) {
+		File[] listFiles;
+		if (corpusDoc.isDirectory())
+			listFiles = corpusDoc.listFiles();
+		else {
+			listFiles = new File[1];
+			listFiles[0] = corpusDoc;
+		}
+		for (File textFile : listFiles) {
 			TextModel text = new TextModel(c, textFile.getAbsolutePath());
 			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -273,7 +316,17 @@ public class GenerateTextModel extends AbstractPreProcess {
 						else
 							throw new NullPointerException("stemmed node missing in xml file " + textFile.getAbsolutePath());
 						
+						NodeList labels = sentence.getElementsByTagName("label");
+						List<String> labelsSen = new ArrayList<String>();
+						if (labels.getLength() > 0)
+							for (int j=0; j<labels.getLength(); j++)
+								labelsSen.add(labels.item(j).getTextContent().replace("\n", ""));
+						//else
+						//	throw new NullPointerException("labels node missing in xml file " + textFile.getAbsolutePath());
+						
+						
 						SentenceModel sen = new SentenceModel(originalSen, id, text);
+						sen.setLabels(labelsSen);
 						nbSentence++;
 						sen.setNbMot(Integer.parseInt(sentence.getAttribute("size")));
 						text.add(sen);
@@ -305,5 +358,23 @@ public class GenerateTextModel extends AbstractPreProcess {
 			c.add(text);
 		}
 		return c;
+	}
+	
+	private static String fixMissingPeriod(String line) {
+		if (line != null) {
+			String END_TOKENS = "[\\.!?'`’”\\)]";
+	
+			if (line.contains("@highlight"))
+				return line + " .";
+			if (line.equals(""))
+				return line;
+			if (line.matches("[\\s\\p{Z}]"))
+				return line;
+			if (line.matches(".*" + END_TOKENS + "$"))
+				return line;
+			 return line + " .";
+		}
+		else
+			return null;
 	}
 }

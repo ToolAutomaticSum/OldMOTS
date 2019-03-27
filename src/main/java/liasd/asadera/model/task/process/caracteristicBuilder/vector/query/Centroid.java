@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedIn;
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.QueryBasedOut;
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.vector.TfIdfVectorSentence;
@@ -19,6 +22,8 @@ import main.java.liasd.asadera.tools.jgibblda.Pair;
 
 public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 
+	private static Logger logger = LoggerFactory.getLogger(Centroid.class);
+	
 	public static enum Centroid_Parameter {
 		NbMaxWordInCentroid("NbMaxWordInCentroid");
 
@@ -84,19 +89,26 @@ public class Centroid extends TfIdfVectorSentence implements QueryBasedOut {
 
 		for (Corpus corpus : listCorpus) {
 			int corpusId = corpus.getiD();
-
-			for (WordIndex w : invertIndex.getCorpusWordIndex().get(corpusId)) {
-				double tfidf = w.getTfCorpus(corpusId) * w.getIdf(index.getNbDocument());
-				if (listBestWord.size() < nbMaxWordInCentroid) {
-					listBestWord.add(new Pair(w.getiD(), tfidf));
-					Collections.sort(listBestWord);
-					minTfIdf = (double) listBestWord.get(listBestWord.size() - 1).second;
-				} else if (tfidf > minTfIdf) {
-					listBestWord.remove(nbMaxWordInCentroid - 1);
-					listBestWord.add(new Pair(w.getiD(), tfidf));
-					Collections.sort(listBestWord);
-					minTfIdf = (double) listBestWord.get(listBestWord.size() - 1).second;
+			try {
+				for (WordIndex w : invertIndex.getCorpusWordIndex().get(corpusId)) {
+					double tfidf = w.getTfCorpus(corpusId) * w.getIdf(index.getNbDocument());
+					if (listBestWord.size() < nbMaxWordInCentroid) {
+						listBestWord.add(new Pair(w.getiD(), tfidf));
+						Collections.sort(listBestWord);
+						minTfIdf = (double) listBestWord.get(listBestWord.size() - 1).second;
+					} else if (tfidf > minTfIdf) {
+						listBestWord.remove(nbMaxWordInCentroid - 1);
+						listBestWord.add(new Pair(w.getiD(), tfidf));
+						Collections.sort(listBestWord);
+						minTfIdf = (double) listBestWord.get(listBestWord.size() - 1).second;
+					}
 				}
+			}
+			catch (NullPointerException e) {
+				logger.error(corpus.getCorpusName());
+				logger.error(index.size() + " / " + corpusId + " / " + invertIndex.getCorpusWordIndex().size() + " not found.");
+				System.out.println(invertIndex.getCorpusWordIndex().keySet());
+				e.printStackTrace();
 			}
 
 			for (Pair p : listBestWord) {

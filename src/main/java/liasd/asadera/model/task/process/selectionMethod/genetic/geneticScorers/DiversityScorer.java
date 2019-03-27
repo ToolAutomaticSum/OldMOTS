@@ -2,6 +2,7 @@ package main.java.liasd.asadera.model.task.process.selectionMethod.genetic.genet
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import main.java.liasd.asadera.model.task.process.selectionMethod.genetic.GeneticIndividual;
@@ -25,7 +26,7 @@ public class DiversityScorer extends GeneticIndividualScorer {
 		 * Finds maxIdf in index for this cluster (for future normalization)
 		 */
 		this.maxIdf = 0;
-		ArrayList<WordIndex> indexKeys = this.invertedIndex.getCorpusWordIndex().get(cd.getiD());
+		List<WordIndex> indexKeys = this.invertedIndex.getCorpusWordIndex().get(cd.getiD());
 		for (WordIndex key : indexKeys) {
 			WordIndex w = (WordIndex) (key);
 			double currIdf = w.getIdf(index.getNbDocument());

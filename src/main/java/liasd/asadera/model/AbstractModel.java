@@ -30,6 +30,7 @@ public abstract class AbstractModel extends Observable {
 	private AbstractController ctrl;
 
 	private int taskID;
+	private int nbDoc;
 	private String name;
 
 	private String language;
@@ -147,6 +148,14 @@ public abstract class AbstractModel extends Observable {
 		this.taskID = taskID;
 	}
 
+	public int getNbDoc() {
+		return nbDoc;
+	}
+
+	public void setNbDoc(int nbDoc) {
+		this.nbDoc = nbDoc;
+	}
+
 	/**
 	 * Get task's name. Set as Multicorpus config file name as default in {@link MOTS}
 	 * @return String name, task's name
@@ -194,6 +203,10 @@ public abstract class AbstractModel extends Observable {
 			return processOption.get(processId).get(optionName);
 		} else
 			throw new LacksOfFeatures(optionName + " wasn't found for the process. Be sure that it is spelled right.");
+	}
+	
+	public List<Map<String, String>> getProcessOptionMap() {
+		return this.processOption;
 	}
 
 	/**
