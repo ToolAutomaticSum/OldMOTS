@@ -2,7 +2,6 @@ package main.java.liasd.asadera.model.task.process.indexBuilder.TF_IDF;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +22,16 @@ import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
 import main.java.liasd.asadera.tools.reader_writer.Reader;
 import main.java.liasd.asadera.tools.reader_writer.Writer;
 import main.java.liasd.asadera.tools.wordFilters.WordFilter;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 
 	private boolean generateIdf = false;
 	private String idfFile = null;
+	
+	private boolean firstLoading = true;
+	private Index<WordIndex> loadingIndex;
 	
 	public TF_IDF(int id) throws SupportADNException {
 		super(id);
@@ -75,26 +79,37 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 				TF_IDF.generateDictionary(listCorpus, index, getCurrentProcess().getFilter());
 				for (Corpus c : getCurrentMultiCorpus()) {
 					if (!listCorpus.contains(c)) {
-						boolean clear = c.size() == 0;
-						Corpus temp = c;
-						if (clear)
-							temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c,
-									true);
-						TF_IDF.majIDFDictionnary(temp, index, getCurrentProcess().getFilter());
-						if (clear)
-							temp.clear();
+//						boolean clear = c.size() == 0;
+//						Corpus temp = c;
+//						if (clear)
+//							temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp", c,
+//									true);
+						TF_IDF.majIDFDictionnary(c, index, getCurrentProcess().getFilter());
+//						if (clear)
+//							temp.clear();
 					}
 				}
 			}
 			else {
-				TF_IDF.loadIdfFile(listCorpus, index, getCurrentProcess().getFilter(), idfFile);
+				if (firstLoading) {
+					loadingIndex = new Index<WordIndex>();
+					TF_IDF.loadIdfFile(getCurrentMultiCorpus(), loadingIndex, getCurrentProcess().getFilter(), idfFile);
+					firstLoading = false;
+				}
+				loadIdfFromLoadingIndex(listCorpus);
+				//TF_IDF.loadIdfFile(listCorpus, index, getCurrentProcess().getFilter(), idfFile);
 			}
 		}
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	public static void generateDictionary(List<Corpus> listCorpus, Index<WordIndex> index, WordFilter filter) {
+	public static void generateDictionary(List<Corpus> listCorpus, Index<WordIndex> index, WordFilter filter) throws Exception {
 		for (Corpus corpus : listCorpus) {
+			boolean clear = false;
+			if (corpus.getNbSentence() == 0) {
+				clear = true;
+				corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus, true);
+			}
 			index.setNbDocument(index.getNbDocument() + corpus.size());
 			for (TextModel textModel : corpus) {
 				for (SentenceModel sentenceModel : textModel) {
@@ -117,14 +132,22 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 				}
 			}
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
+			if (clear)
+				corpus.clear();
 		}
 	}
 
 	/**
 	 * @param corpus
 	 * @param dictionnary
+	 * @throws Exception 
 	 */
-	public static void majIDFDictionnary(Corpus corpus, Index<WordIndex> index, WordFilter filter) {
+	public static void majIDFDictionnary(Corpus corpus, Index<WordIndex> index, WordFilter filter) throws Exception {
+		boolean clear = false;
+		if (corpus.getNbSentence() == 0) {
+			clear = true;
+			corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus, true);
+		}
 		index.setNbDocument(index.getNbDocument() + corpus.getNbDocument());
 		for (TextModel text : corpus) {
 			for (SentenceModel sentenceModel : text) {
@@ -138,50 +161,60 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 			}
 		}
 		index.putCorpusNbDoc(corpus.getiD(), corpus.size());
+		if (clear)
+			corpus.clear();
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
 	public static void generateIdfFile(List<Corpus> listCorpus, WordFilter filter, String idfName) throws Exception {
 		new File("output" + File.separator + "modelIDF").mkdirs();
 		Index <WordIndex> index = new Index<WordIndex>();
-		for (Corpus corpus : listCorpus) {
-			if (corpus.getNbSentence() == 0)
-				corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus,
-															true);
-			index.setNbDocument(index.getNbDocument() + corpus.size());
-			for (TextModel textModel : corpus) {
-				for (SentenceModel sentenceModel : textModel) {
-					for (WordModel word : sentenceModel.getListWordModel())
-						if (filter.passFilter(word)) {
-							WordIndex w;
-							if (!index.containsKey(word.getmLemma())) {
-								w = new WordIndex(word.getmLemma());
-								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
-								index.put(word.getmLemma(), w);
-							} else {
-								w = index.get(word.getmLemma());
-								w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
+		try (ProgressBar pb = new ProgressBar("Generate index idf ", listCorpus.size(), ProgressBarStyle.ASCII)) {
+			for (Corpus corpus : listCorpus) {
+				if (corpus.getNbSentence() == 0)
+					corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus,
+																true);
+				index.setNbDocument(index.getNbDocument() + corpus.size());
+				for (TextModel textModel : corpus) {
+					for (SentenceModel sentenceModel : textModel) {
+						for (WordModel word : sentenceModel.getListWordModel())
+							if (filter.passFilter(word)) {
+								WordIndex w;
+								if (!index.containsKey(word.getmLemma())) {
+									w = new WordIndex(word.getmLemma());
+									w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
+									index.put(word.getmLemma(), w);
+								} else {
+									w = index.get(word.getmLemma());
+									w.addDocumentOccurence(corpus.getiD(), textModel.getiD());
+								}
 							}
-						}
+					}
 				}
+				index.putCorpusNbDoc(corpus.getiD(), corpus.size());
+				corpus.clear();
+				pb.step();
 			}
-			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
-			corpus.clear();
 		}
 		String outputPath = "output" + File.separator + "modelIDF" + File.separator + idfName;
 		File f = new File(outputPath);
 		if (f.exists())
 			f.delete();
 		Writer w = new Writer(outputPath);
-		try {
-			w.open(false);
-			w.write(String.valueOf(index.getNbDocument()) + "\n");
-			for(WordIndex word : index.values()) {
-				w.write(word.toString() + "\t" + + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf(index.getNbDocument()) + "\n");
-			}
-			w.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		w.open(false);
+		w.write(index.getNbDocument() + "\n");
+		for(WordIndex word : index.values()) {
+			w.write(word.toString() + "\t" + + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf(index.getNbDocument()) + "\n");
+		}
+		w.close();
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	protected void loadIdfFromLoadingIndex(List<Corpus> listCorpus) throws Exception {
+		TF_IDF.generateDictionary(listCorpus, index, getCurrentProcess().getFilter());
+		for (WordIndex word : index.values()) {
+			word.setNbDocumentWithWordSeen(loadingIndex.get(word.toString()).getNbDocumentWithWordSeen());
+			word.setIdf(loadingIndex.get(word.toString()).getIdf());
 		}
 	}
 	
@@ -200,11 +233,9 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 		line = r.read();
 		while (line != null) {
 			String[] split = line.split("\t");
-			if (index.containsKey(split[0])) {
-				WordIndex word = index.get(split[0]);
-				word.setNbDocumentWithWordSeen(Integer.parseInt(split[1]));
-				word.setIdf(Float.parseFloat(split[2]));
-			}
+			WordIndex word = index.get(split[0]);
+			word.setNbDocumentWithWordSeen(Integer.parseInt(split[1]));
+			word.setIdf(Float.parseFloat(split[2]));
 			line = r.read();
 		}
 		r.close();

@@ -41,7 +41,6 @@ public abstract class AbstractIndexBuilder<T extends WordIndex> extends Paramete
 			throws SupportADNException {
 		super(id, in, out);
 		index = new Index<T>();
-		listSen = new ArrayList<SentenceModel>();
 	}
 
 	public abstract AbstractIndexBuilder<T> makeCopy() throws Exception;
@@ -86,6 +85,8 @@ public abstract class AbstractIndexBuilder<T extends WordIndex> extends Paramete
 
 	public void finish() {
 		index.clear();
+		listSen.clear();
+//		System.gc();
 	}
 
 	public AbstractProcess getCurrentProcess() {

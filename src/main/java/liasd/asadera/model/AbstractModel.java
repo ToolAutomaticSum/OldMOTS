@@ -200,7 +200,7 @@ public abstract class AbstractModel extends Observable {
 	public String getProcessOption(int processId, String optionName) throws LacksOfFeatures {
 		if (processOption.get(processId) != null && !processOption.get(processId).isEmpty()
 				&& processOption.get(processId).containsKey(optionName)) {
-			return processOption.get(processId).get(optionName);
+ 			return processOption.get(processId).get(optionName);
 		} else
 			throw new LacksOfFeatures(optionName + " wasn't found for the process. Be sure that it is spelled right.");
 	}

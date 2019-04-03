@@ -3,6 +3,7 @@ package main.java.liasd.asadera.model;
 import java.io.File;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,6 @@ import main.java.liasd.asadera.model.task.preProcess.AbstractPreProcess;
 import main.java.liasd.asadera.model.task.process.AbstractProcess;
 import main.java.liasd.asadera.model.task.process.SummarizeProcess;
 import main.java.liasd.asadera.textModeling.MultiCorpus;
-import main.java.liasd.asadera.textModeling.SentenceModel;
 import main.java.liasd.asadera.tools.reader_writer.Writer;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarStyle;
@@ -138,11 +138,15 @@ public class SummarizeModel extends AbstractModel {
 					p.init();
 					p.process();
 					p.finish();
-					if (isVerbose()) {
-						setChanged();
-						notifyObservers("Corpus " + i + "\n"
-								+ SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i), isVerbose()));
-					}
+//					if (isVerbose()) {
+					setChanged();
+					notifyObservers(new ImmutablePair<String, Object>(p.getCorpusToSummarize().getCorpusName(), p.getSummary().get(multiCorpus.getiD()).get(i)));
+						//notifyObservers("Corpus " + i + "\n"
+						//		+ SentenceModel.listSentenceModelToString(p.getSummary().get(multiCorpus.getiD()).get(i), isVerbose()));
+//					}
+//					else {
+//						
+//					}
 					pb.step();
 				}
 			}

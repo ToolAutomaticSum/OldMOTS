@@ -154,11 +154,11 @@
 	  		<artifactId>jgrapht-core</artifactId>
 	  		<version>1.1.0</version>
 	  	</dependency>
-		<dependency>
+		<!-- <dependency>
 		    <groupId>black.ninia</groupId>
 		    <artifactId>jep</artifactId>
 		    <version>3.8.2</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 		    <groupId>junit</groupId>
 		    <artifactId>junit</artifactId>

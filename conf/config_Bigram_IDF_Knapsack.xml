@@ -6,11 +6,12 @@
 		<MULTITHREADING>false</MULTITHREADING>
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
-			<OPTION NAME="ReadStopWords">false</OPTION>
+			<OPTION NAME="ReadStopWords">true</OPTION>
 			<INDEX_BUILDER NAME="BasicIndexBuilder">
 			</INDEX_BUILDER>
 			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
 				<OPTION NAME="n">2</OPTION>
+				<OPTION NAME="IdfFile">cnn</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.TfIdfVectorSentence">
 			</CARACTERISTIC_BUILDER>

@@ -95,14 +95,6 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		this.iD = iD;
 	}
 
-	/**
-	 * @return full sentence
-	 */
-	@Override
-	public String toString() {
-		return sentence;
-	}
-
 	public static String listSentenceModelToString(List<SentenceModel> list, boolean verbose) {
 		String str = "";
 		if (verbose) {
@@ -115,11 +107,6 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 			str += ((verbose) ? sen.getNbMot() + "\t" + sen.getScore() + "\t" : "\t") + sen.toString() + "\n";
 		}
 		return str;
-	}
-
-	@Override
-	public int hashCode() {
-		return (text.getParentCorpus().getiD() + "_" + iD).hashCode();
 	}
 
 	public double getScore() {
@@ -403,8 +390,19 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 				return false;
 		} else if (iD == other.iD)
 			return true;
-		else if (!sentence.equals(other.sentence))
-			return false;
-		return true;
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return iD;
+	}
+	
+	/**
+	 * @return full sentence
+	 */
+	@Override
+	public String toString() {
+		return sentence;
 	}
 }

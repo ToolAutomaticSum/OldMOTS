@@ -1,23 +1,28 @@
 package main.java.liasd.asadera.model.task.process.scoringMethod.graphBased;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jgrapht.alg.scoring.PageRank;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
+
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.SentenceCaracteristicBasedIn;
+import main.java.liasd.asadera.model.task.process.indexBuilder.ListSentenceBasedIn;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedType;
 import main.java.liasd.asadera.model.task.process.scoringMethod.AbstractScoringMethod;
 import main.java.liasd.asadera.optimize.SupportADNException;
 import main.java.liasd.asadera.optimize.parameter.Parameter;
 import main.java.liasd.asadera.textModeling.Corpus;
 import main.java.liasd.asadera.textModeling.SentenceModel;
-import main.java.liasd.asadera.textModeling.graphBased.GraphSentenceBased;
-import main.java.liasd.asadera.textModeling.graphBased.NodeGraphSentenceBased;
 import main.java.liasd.asadera.tools.sentenceSimilarity.SimilarityMetric;
-import main.java.liasd.asadera.tools.vector.ToolsVector;
 
-public class LexRank extends AbstractScoringMethod implements SentenceCaracteristicBasedIn {
+public class LexRank extends AbstractScoringMethod implements ListSentenceBasedIn, SentenceCaracteristicBasedIn {
 
+//	private static Logger logger = LoggerFactory.getLogger(LexRank.class);
+	
 	public static enum LexRank_Parameter {
 		DampingParameter("DampingParameter"),
 		// Epsilon("Epsilon"),
@@ -35,6 +40,10 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	}
 
 	private SimilarityMetric sim;
+	/*
+	 * ListSentenceBased
+	 */
+	private List<SentenceModel> listSen;
 	/**
 	 * SentenceCaracteristicBased
 	 */
@@ -46,16 +55,14 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 	/**
 	 * Constant
 	 */
-	private double epsilon = 0.00001;
+	private double epsilon = 0.0001;
 	/**
 	 * Dans ADN
 	 */
 	private double graphThreshold = 0;
-	/**
-	 * Construit dans init
-	 */
-	private GraphSentenceBased graph;
-
+	
+	private SimpleWeightedGraph<SentenceModel, DefaultWeightedEdge> graph;	
+	
 	public LexRank(int id) throws SupportADNException {
 		super(id);
 
@@ -63,6 +70,7 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 		// supportADN.put("Epsilon", Double.class);
 		supportADN.put("GraphThreshold", Double.class);
 
+		listParameterIn.add(new ParameterizedType(SentenceModel.class, List.class, ListSentenceBasedIn.class));
 		listParameterIn.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
 		listParameterIn.add(new ParameterizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
 		listParameterIn.add(new ParameterizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));
@@ -103,37 +111,42 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 
 		dampingParameter = getCurrentProcess().getADN().getParameterValue(Double.class,
 				LexRank_Parameter.DampingParameter.getName());
-		epsilon = 0.00001; /// getCurrentProcess().getADN().getParameterValue(Double.class,
-							/// LexRank_Parameter.Epsilon.getName());
+		epsilon = 0.0001; /// getCurrentProcess().getADN().getParameterValue(Double.class,
+						  /// LexRank_Parameter.Epsilon.getName());
 		graphThreshold = getCurrentProcess().getADN().getParameterValue(Double.class,
 				LexRank_Parameter.GraphThreshold.getName());
+		
+		/**
+		 * Graph construction
+		 */
+		graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+		for(SentenceModel sentence : listSen) {
+			graph.addVertex(sentence);
+		}
 
-		graph = new GraphSentenceBased(graphThreshold, sentenceCaracteristic, sim);
-
-		graph.generateGraph();
+		for(int i=0; i<listSen.size();i++) {
+			for(int j=i+1; j<listSen.size();j++) {
+				if (i!=j) {
+					double weight = sim.computeSimilarity(sentenceCaracteristic, listSen.get(i), listSen.get(j));
+					if (weight > graphThreshold) {
+						DefaultWeightedEdge edge = new DefaultWeightedEdge();
+						graph.addEdge(listSen.get(i), listSen.get(j), edge);
+						graph.setEdgeWeight(edge, weight);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
 	public void computeScores(List<Corpus> listCorpus) throws Exception {
 		init();
 		if (graph != null) {
-			double[][] tempMat = new double[graph.size()][graph.size()];
-			double[][] matAdj = graph.getMatAdj();
-			int[] degree = graph.getDegree();
-
-			for (int j = 0; j < graph.size(); j++) {
-				for (int k = 0; k < graph.size(); k++) {
-					tempMat[j][k] = matAdj[j][k] / degree[k];
-				}
-			}
-			double[] result = LexRank.computeLexRankScore(dampingParameter, tempMat, graph.size(), epsilon);
-
-			double max = 0.0;
-			for (NodeGraphSentenceBased n : graph) {
-				if (result[n.getIdNode()] > max)
-					max = result[n.getIdNode()];
-				sentencesScore.put(n.getCurrentSentence(), result[n.getIdNode()]);
-			}
+			
+			PageRank<SentenceModel, DefaultWeightedEdge> pr = new PageRank<SentenceModel, DefaultWeightedEdge>(graph, dampingParameter, 100, epsilon);
+			sentencesScore.putAll(pr.getScores());
+			double max = Collections.max(sentencesScore.values());
+			
 			for (Entry<SentenceModel, Double> e : sentencesScore.entrySet()) {
 				e.setValue(e.getValue() / max);
 				e.getKey().setScore(e.getValue());
@@ -141,29 +154,9 @@ public class LexRank extends AbstractScoringMethod implements SentenceCaracteris
 		}
 	}
 
-	public static double[] computeLexRankScore(double dampingFactor, double[][] matAdj, int matSize, double epsilon)
-			throws Exception {
-		double[] ptprec = new double[matSize];
-		double[] pt = new double[matSize];
-		double normeDiff;
-		for (int i = 0; i < matSize; i++)
-			pt[i] = 1.0 / (double) matSize;
-		for (int i = 0; i < matSize; i++)
-			for (int j = 0; j < matSize; j++)
-				matAdj[i][j] = dampingFactor / (double) matSize + (1 - dampingFactor) * matAdj[i][j];
-		do {
-			for (int i = 0; i < matSize; i++)
-				ptprec[i] = pt[i];
-			for (int i = 0; i < matSize; i++) {
-				pt[i] = 0;
-				for (int j = 0; j < matSize; j++) { 
-					if (i != j)
-						pt[i] += matAdj[i][j] * ptprec[j];
-				}
-			}
-			normeDiff = ToolsVector.norme(ToolsVector.soustraction(pt, ptprec));
-		} while (normeDiff > epsilon);
-		return pt;
+	@Override
+	public void setListSentence(List<SentenceModel> listSen) {
+		this.listSen = listSen;
 	}
 
 	@Override

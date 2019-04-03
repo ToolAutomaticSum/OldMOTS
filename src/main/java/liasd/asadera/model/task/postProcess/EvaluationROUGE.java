@@ -88,7 +88,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 
 				Writer w = new Writer(
 						rougeTempFilePath + File.separator + "rouge_result" + getModel().getTaskID() + i + ".txt");
-				w.open(false);
+				w.open(true);
 				String line = "";
 				while ((line = input.readLine()) != null)
 					w.write(line + "\n");

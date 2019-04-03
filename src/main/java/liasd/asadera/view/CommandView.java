@@ -1,6 +1,7 @@
 package main.java.liasd.asadera.view;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Observable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -17,6 +19,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import main.java.liasd.asadera.model.AbstractModel;
+import main.java.liasd.asadera.textModeling.SentenceModel;
+import main.java.liasd.asadera.tools.reader_writer.Writer;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarStyle;
 
@@ -41,9 +46,37 @@ public class CommandView extends AbstractView {
 		this.confMultiCorpusFilePath = confMultiCorpusFilePath;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
-		System.out.println("\n" + (String) arg);
+		AbstractModel m = ctrl.getModel();
+		ImmutablePair<String, Object> p = (ImmutablePair<String, Object>) arg;
+		List<SentenceModel> l = (List<SentenceModel>) p.getValue();
+		String name = p.getKey();
+		if (m.isVerbose()) {
+			//System.out.println("\n" + (String) arg);
+			System.out.println("\n" + SentenceModel.listSentenceModelToString(l, true));
+		}
+		String output = m.getOutputPath() + File.separator + m.getName() + File.separator + "summary";
+		new File(output).mkdirs();
+		Writer w = new Writer(output + File.separator + name);
+		try {
+			w.open(true);
+			for (SentenceModel s : l) {
+				try {
+					w.write(s.toString() + "\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				w.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	@Override

@@ -81,7 +81,7 @@ public class BiGram_ILP extends AbstractIndexBuilder<NGram> implements IndexBase
 
 	@Override
 	public void processIndex(List<Corpus> listCorpus) throws Exception {
-		super.processIndex(listCorpus);
+		//super.processIndex(listCorpus);
 		fscFactor = getCurrentProcess().getADN().getParameterValue(Double.class,
 				BiGramILP_Parameter.fscFactor.getName());
 		minSenLength = getCurrentProcess().getADN().getParameterValue(Integer.class,
