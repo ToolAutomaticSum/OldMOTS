@@ -11,7 +11,7 @@
 			</INDEX_BUILDER>
 			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
 				<OPTION NAME="n">2</OPTION>
-				<OPTION NAME="IdfFile">cnn</OPTION>
+				<OPTION NAME="IdfFile">merged</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.query.Centroid">
 				<OPTION NAME="NbMaxWordInCentroid">80</OPTION>

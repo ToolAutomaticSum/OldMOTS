@@ -8,7 +8,7 @@
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
 			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
-				<OPTION NAME="IdfFile">cnn</OPTION>
+				<OPTION NAME="IdfFile">merged</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.TfIdfVectorSentence">
 			</CARACTERISTIC_BUILDER>
