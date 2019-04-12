@@ -324,7 +324,8 @@ public class GenerateTextModel extends AbstractPreProcess {
 						//else
 						//	throw new NullPointerException("labels node missing in xml file " + textFile.getAbsolutePath());
 						
-						
+						if (labelsSen.contains("highlight"))
+							continue;
 						SentenceModel sen = new SentenceModel(originalSen, id, text);
 						sen.setLabels(labelsSen);
 						nbSentence++;
@@ -354,6 +355,8 @@ public class GenerateTextModel extends AbstractPreProcess {
 					id++;
 				}
 			}
+			if (nbSentence == 0)
+				continue;
 			text.setNbSentence(nbSentence);
 			c.add(text);
 		}

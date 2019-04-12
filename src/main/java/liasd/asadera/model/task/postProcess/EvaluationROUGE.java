@@ -78,7 +78,7 @@ public class EvaluationROUGE extends AbstractPostProcess {
 		if (OSDetector.isUnix()) {
 			for (int i = 0; i < getModel().getProcess().size(); i++) {
 				String cmd = "perl " + rougePath + File.separator + "ROUGE-1.5.5.pl" + " -e " + rougePath
-						+ File.separator + "data -n 2 -x -m -c 95 -r 1000 -f A -p 0.5 -t 0 -a " + rougeTempFilePath
+						+ File.separator + "data -n 2 -x -m -s -c 95 -r 1000 -f A -p 0.5 -t 0 -a " + rougeTempFilePath
 						+ File.separator + "settings" + getModel().getTaskID() + i + ".xml";
 				logger.warn(cmd);
 				
@@ -90,8 +90,10 @@ public class EvaluationROUGE extends AbstractPostProcess {
 						rougeTempFilePath + File.separator + "rouge_result" + getModel().getTaskID() + i + ".txt");
 				w.open(true);
 				String line = "";
-				while ((line = input.readLine()) != null)
+				while ((line = input.readLine()) != null) {
 					w.write(line + "\n");
+					logger.warn(line + "\n");
+				}
 
 				w.close();
 				proc.waitFor();
@@ -139,8 +141,13 @@ public class EvaluationROUGE extends AbstractPostProcess {
 			}
 			w.write("</body>\n</html>");
 			w.close();
-		} else
+		} else {
 			logger.error("Summary corpus " + corpusId + " MultiCorpus " + multiCorpusId + " is null.");
+			File f = new File(rougeTempFilePath + File.separator + peerRoot + File.separator + "T"
+					+ getModel().getTaskID() + "_" + processID + "_" + multiCorpusId + "_" + corpusId + ".html");
+			if (f.exists())
+				f.delete();
+		}
 	}
 
 	private void writeHtmlModelSummary(int multiCorpusId, int corpusId) throws Exception {
@@ -179,6 +186,9 @@ public class EvaluationROUGE extends AbstractPostProcess {
 
 		for (int multiCorpusId = 0; multiCorpusId < getModel().getMultiCorpusModels().size(); multiCorpusId++) {
 			for (int corpusId : getModel().getProcess().get(processID).getListCorpusId()) {
+				if (!(new File(rougeTempFilePath + File.separator + this.peerRoot + File.separator + "T" + getModel().getTaskID() + "_" + processID
+						+ "_" + multiCorpusId + "_" + corpusId + ".html").exists()))
+					continue;
 				Element process = document.createElement("EVAL");
 				process.setAttribute("ID", "CORPUS_" + corpusId);
 				Element modelRoot = document.createElement("MODEL-ROOT");

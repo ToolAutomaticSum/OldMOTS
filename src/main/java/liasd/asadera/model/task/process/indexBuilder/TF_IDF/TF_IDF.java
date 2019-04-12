@@ -234,8 +234,10 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 		while (line != null) {
 			String[] split = line.split("\t");
 			WordIndex word = index.get(split[0]);
-			word.setNbDocumentWithWordSeen(Integer.parseInt(split[1]));
-			word.setIdf(Float.parseFloat(split[2]));
+			if (word != null) {
+				word.setNbDocumentWithWordSeen(Integer.parseInt(split[1]));
+				word.setIdf(Float.parseFloat(split[2]));
+			}
 			line = r.read();
 		}
 		r.close();

@@ -136,6 +136,8 @@ public class SummarizeModel extends AbstractModel {
 					p.setCurrentMultiCorpus(multiCorpus);
 					p.setSummarizeIndex(i);
 					p.init();
+					if (p.getCorpusToSummarize().size() == 0)
+						continue;
 					p.process();
 					p.finish();
 //					if (isVerbose()) {

@@ -41,7 +41,8 @@ public class SentenceBasedScorer extends Scorer implements ScoreBasedIn, Sentenc
 			return summary.getScore();
 		double value = 0;
 		for (SentenceModel sen : summary) {
-			value += score.get(sen) + 1 / sen.getPosition();
+			if (score.containsKey(sen))
+				value += score.get(sen) + 1 / sen.getPosition();
 		}
 		value *= lambda;
 
