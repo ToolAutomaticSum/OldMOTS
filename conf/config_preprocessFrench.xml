@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>french</LANGUAGE>
+		<OUTPUT_PATH>output</OUTPUT_PATH>
+		<MULTITHREADING>false</MULTITHREADING>		
+		<PREPROCESS NAME="GenerateTextModel">
+			<OPTION NAME="StopWordListFile">docs/StopWords/frenchStopWords.txt</OPTION>
+		</PREPROCESS>
+		<PREPROCESS NAME="StanfordNLPPreProcess">
+		</PREPROCESS>	
+	</TASK>
+</CONFIG>
