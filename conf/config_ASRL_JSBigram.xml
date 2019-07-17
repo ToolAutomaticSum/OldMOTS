@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<OUTPUT_PATH>output</OUTPUT_PATH>
+		<MULTITHREADING>true</MULTITHREADING>
+		<PROCESS>
+			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
+			<OPTION NAME="ReadStopWords">true</OPTION>
+			<INDEX_BUILDER NAME="BasicIndexBuilder">
+			</INDEX_BUILDER>
+			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
+				<OPTION NAME="n">2</OPTION>
+			</INDEX_BUILDER>
+			<CARACTERISTIC_BUILDER NAME="vector.TfIdfVectorSentence">
+			</CARACTERISTIC_BUILDER>
+			<SUMMARIZE_METHOD NAME="reinforcementLearning.ReinforcementLearning">
+				<OPTION NAME="Size">100</OPTION>
+				<OPTION NAME="Penalty">1.0</OPTION>
+				<OPTION NAME="Temperature">1.0</OPTION>
+				<OPTION NAME="Gamma">1.0</OPTION>
+				<OPTION NAME="Alpha">0.001</OPTION>
+				<OPTION NAME="ScoreMethod">JSBigramScorer</OPTION>
+				<OPTION NAME="FeatureMethod">BigramFeatures</OPTION>
+				<OPTION NAME="Fsc">1.0</OPTION>	
+				<OPTION NAME="Delta">0.0005</OPTION>
+				<OPTION NAME="NbWord">100</OPTION>
+				<OPTION NAME="NbIteration">100</OPTION>
+				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
+			</SUMMARIZE_METHOD>
+		</PROCESS>
+		<ROUGE_EVALUATION>
+			<ROUGE_MEASURE>ROUGE_1	ROUGE_2	ROUGE_SU4</ROUGE_MEASURE>
+			<MODEL_ROOT>models</MODEL_ROOT>
+			<PEER_ROOT>systems</PEER_ROOT>
+		</ROUGE_EVALUATION>
+	</TASK>
+</CONFIG>

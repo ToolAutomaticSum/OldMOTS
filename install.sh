@@ -33,12 +33,12 @@ if [ -z $JEP_HOME ]; then
 fi
 
 
-if [ ! -x $(command -v jep) ]; then
+if [ ! -x $(command -v mvn) ]; then
 	echo "Please install Maven (sudo apt-get install maven)."
 else
-	source $(pwd)/jep_env_before
+	#source $(pwd)/jep_env_before
 	mvn install
-	source $(pwd)/jep_env_after
+	#source $(pwd)/jep_env_after
 fi
 
 #if [ -n $CORPUS_DATA ]; then

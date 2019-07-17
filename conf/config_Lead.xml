@@ -7,19 +7,9 @@
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
-			<INDEX_BUILDER NAME="LDA.QueryLDA">
-				<OPTION NAME="K">10</OPTION>
-				<OPTION NAME="Alpha">0.2</OPTION>
-				<OPTION NAME="Beta">0.01</OPTION>
-			</INDEX_BUILDER>
-			<CARACTERISTIC_BUILDER NAME="vector.MeanVectorSentence">
-			</CARACTERISTIC_BUILDER>
-			<SCORING_METHOD NAME="QuerySimilarity">
-				<OPTION NAME="SimilarityMethod">JensenShannonSimilarity</OPTION>
-			</SCORING_METHOD>
-			<SUMMARIZE_METHOD NAME="BestIsBetter">
-				<OPTION NAME="CharLimitBoolean">true</OPTION>
+			<SUMMARIZE_METHOD NAME="LeadBased">
 				<OPTION NAME="Size">100</OPTION>
+				<OPTION NAME="NbSen">8</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>

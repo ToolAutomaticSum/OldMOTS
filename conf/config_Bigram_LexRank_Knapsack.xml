@@ -3,11 +3,15 @@
 	<TASK ID="1">
 		<LANGUAGE>english</LANGUAGE>
 		<OUTPUT_PATH>output</OUTPUT_PATH>
-		<MULTITHREADING>true</MULTITHREADING>
+		<MULTITHREADING>false</MULTITHREADING>		
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
-			<OPTION NAME="ReadStopWords">false</OPTION>
-			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
+			<OPTION NAME="ReadStopWords">true</OPTION>
+			<INDEX_BUILDER NAME="BasicIndexBuilder">
+			</INDEX_BUILDER>
+			<INDEX_BUILDER NAME="TF_IDF.NGram_IDF">
+				<OPTION NAME="n">2</OPTION>
+				<OPTION NAME="IdfFile">merged</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.TfIdfVectorSentence">
 			</CARACTERISTIC_BUILDER>
@@ -17,10 +21,10 @@
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="Knapsack">
-				<OPTION NAME="Size">100</OPTION>
+				<OPTION NAME="Size">50</OPTION>
 				<OPTION NAME="ScoreMethod">SentenceBasedScorer</OPTION>
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
-				<OPTION NAME="Lambda">0.9</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>
