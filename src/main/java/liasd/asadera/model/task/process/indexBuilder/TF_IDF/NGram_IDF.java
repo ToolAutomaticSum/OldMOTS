@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
-
 import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
 import main.java.liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
@@ -69,7 +67,7 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 
 		n = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "n"));
 		if (n <= 1)
-			throw new InvalidValue("N need to be >1 for NGram_IDF.");
+			throw new Exception("N need to be >1 for NGram_IDF.");
 		
 		try {
 			idfFile = getCurrentProcess().getModel().getProcessOption(id, "IdfFile");
@@ -116,6 +114,12 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 				}
 				loadIdfFromLoadingIndex(listCorpus);
 			}
+			
+			for (Corpus c : listCorpus)
+				for (TextModel t : c)
+					for (SentenceModel sen : t)
+						for (WordIndex wi : sen)
+							wi.setWeight(wi.getTfDocument(t.getiD())*wi.getIdf());
 		}
 	}
 

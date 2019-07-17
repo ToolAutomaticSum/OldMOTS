@@ -254,7 +254,8 @@ public class TF_IDF extends AbstractIndexBuilder<WordIndex> {
 	public void setCompatibility(ParameterizedMethod compMethod) {
 		if (super.isOutCompatible(compMethod))
 			super.setCompatibility(compMethod);
-		else
+		if (compMethod.getParameterTypeIn()
+				.contains(new ParameterizedType(WordIndex.class, Index.class, IndexBasedIn.class)))
 			((IndexBasedIn<WordIndex>) compMethod).setIndex(index);
 	}
 }

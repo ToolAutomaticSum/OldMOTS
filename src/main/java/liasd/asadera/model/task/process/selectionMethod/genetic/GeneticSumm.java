@@ -27,6 +27,8 @@ import main.java.liasd.asadera.textModeling.TextModel;
 import main.java.liasd.asadera.textModeling.wordIndex.Index;
 import main.java.liasd.asadera.textModeling.wordIndex.InvertedIndex;
 import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 public class GeneticSumm extends AbstractSelectionMethod implements IndexBasedIn<WordIndex> {
 
@@ -103,11 +105,15 @@ public class GeneticSumm extends AbstractSelectionMethod implements IndexBasedIn
 	public List<SentenceModel> calculateSummary(List<Corpus> listCorpus) throws Exception {
 		init(listCorpus);
 		this.initializePopulation();
-
-		for (int curr_generation = 0; curr_generation < this.generationsNb; curr_generation++) {
-			this.scoreCurrentPopulation();
-			System.out.println("Best score at " + curr_generation + "th generation : " + this.bestSummaryScore);
-			this.createNewGeneration();
+		try (ProgressBar pb = new ProgressBar("Current generation : ", this.generationsNb, ProgressBarStyle.ASCII)) {
+			
+			for (int curr_generation = 0; curr_generation < this.generationsNb; curr_generation++) {
+				this.scoreCurrentPopulation();
+//				System.out.println("Best score at " + curr_generation + "th generation : " + this.bestSummaryScore);
+				this.createNewGeneration();
+				pb.step();
+				pb.setExtraMessage("Best score : " + this.bestSummaryScore);
+			}
 		}
 
 		DecimalFormat df = new DecimalFormat("0.000");

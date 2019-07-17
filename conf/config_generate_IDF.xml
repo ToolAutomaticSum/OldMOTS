@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+	<TASK ID="1">
+		<LANGUAGE>english</LANGUAGE>
+		<OUTPUT_PATH>output</OUTPUT_PATH>
+		<MULTITHREADING>false</MULTITHREADING>		
+		<PROCESS>
+			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
+			<OPTION NAME="ReadStopWords">false</OPTION>
+			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
+				<OPTION NAME="IdfFile">cnn.idf</OPTION>
+				<OPTION NAME="GenerateIdf">true</OPTION>
+			</INDEX_BUILDER>
+		</PROCESS>
+	</TASK>
+</CONFIG>

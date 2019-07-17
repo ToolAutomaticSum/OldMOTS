@@ -6,7 +6,7 @@
 		<MULTITHREADING>false</MULTITHREADING>
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
-			<OPTION NAME="ReadStopWords">false</OPTION>
+			<OPTION NAME="ReadStopWords">False</OPTION>
 			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
 				<OPTION NAME="IdfFile">merged</OPTION>
 			</INDEX_BUILDER>
@@ -16,7 +16,7 @@
 				<OPTION NAME="Size">50</OPTION>
 				<OPTION NAME="ScoreMethod">GenericScorer</OPTION>
 				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
-				<OPTION NAME="Lambda">0.9</OPTION>
+				<OPTION NAME="Lambda">0.7</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>
 		<ROUGE_EVALUATION>

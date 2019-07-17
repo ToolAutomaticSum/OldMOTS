@@ -10,6 +10,7 @@ import main.java.liasd.asadera.model.task.process.caracteristicBuilder.SentenceC
 import main.java.liasd.asadera.model.task.process.caracteristicBuilder.vector.MeanVectorSentence;
 import main.java.liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
 import main.java.liasd.asadera.model.task.process.indexBuilder.IndexBasedOut;
+import main.java.liasd.asadera.model.task.process.indexBuilder.ListSentenceBasedIn;
 import main.java.liasd.asadera.model.task.process.indexBuilder.ListSentenceBasedOut;
 import main.java.liasd.asadera.model.task.process.indexBuilder.LDA.LDA;
 import main.java.liasd.asadera.model.task.process.processCompatibility.ParameterizedMethod;
@@ -60,6 +61,7 @@ public class ProcessCompatibilityTest {
 			
 			List<ParameterizedType> paramIn1 = new ArrayList<ParameterizedType>();
 			paramIn1.add(new ParameterizedType(Double.class, Map.class, ScoreBasedIn.class));
+			paramIn1.add(new ParameterizedType(SentenceModel.class, List.class, ListSentenceBasedIn.class));
 			paramIn1.add(new ParameterizedType(double[].class, Map.class, SentenceCaracteristicBasedIn.class));
 			paramIn1.add(new ParameterizedType(double[][].class, Map.class, SentenceCaracteristicBasedIn.class));
 			paramIn1.add(new ParameterizedType(double[][][].class, Map.class, SentenceCaracteristicBasedIn.class));

@@ -77,7 +77,8 @@ public class WordIndex implements Comparable<WordIndex> {
 	}
 
 	public double getIdf(int nbDocument) {
-		return Math.log(nbDocument / getNbDocumentWithWordSeen());
+		double a = (double) nbDocument / (double) getNbDocumentWithWordSeen();
+		return Math.log(a);
 	}
 
 	public float getIdf() {

@@ -59,6 +59,19 @@
 		 			</executions>
 		 		</plugin>
 				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.1.0</version>
+					<executions>
+					  	<execution>
+					    		<id>auto-clean</id>
+					    		<phase>initialize</phase>
+					    		<goals>
+					      			<goal>clean</goal>
+					    		</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
@@ -111,44 +124,44 @@
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
+		    <version>3.9.2</version>
 		</dependency>
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
+		    <version>3.9.2</version>
 		    <classifier>models</classifier>
 		</dependency>
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
+		    <version>3.9.2</version>
 		    <classifier>models-french</classifier>
 		</dependency>
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
+		    <version>3.9.2</version>
 		    <classifier>models-german</classifier>
 		</dependency>
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
+		    <version>3.9.2</version>
 		    <classifier>models-spanish</classifier>
 		</dependency>
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
+		    <version>3.9.2</version>
 		    <classifier>models-arabic</classifier>
 		</dependency>
-		<dependency>
-		    <groupId>edu.stanford.nlp</groupId>
-		    <artifactId>stanford-corenlp</artifactId>
-		    <version>3.8.0</version>
-		    <classifier>models-chinese</classifier>
-		</dependency>
+		<!--<dependency>-->
+		    <!--<groupId>edu.stanford.nlp</groupId>-->
+		    <!--<artifactId>stanford-corenlp</artifactId>-->
+		    <!--<version>3.9.2</version>-->
+		    <!--<classifier>models-chinese</classifier>-->
+		<!--</dependency>-->
 		<dependency>
 		  	<groupId>org.jgrapht</groupId>
 	  		<artifactId>jgrapht-core</artifactId>
