@@ -3,21 +3,21 @@
 	<TASK ID="1">
 		<LANGUAGE>english</LANGUAGE>
 		<OUTPUT_PATH>output</OUTPUT_PATH>
-		<MULTITHREADING>true</MULTITHREADING>		
+		<MULTITHREADING>false</MULTITHREADING>		
 		<PROCESS>
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
 			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.query.Centroid">
-				<OPTION NAME="NbMaxWordInCentroid">50</OPTION>
+				<OPTION NAME="NbMaxWordInCentroid">40</OPTION>
 			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="QuerySimilarity">
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="MMR">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
-				<OPTION NAME="Size">100</OPTION>
+				<OPTION NAME="Size">200</OPTION>
 				<OPTION NAME="Lambda">0.7</OPTION>
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 			</SUMMARIZE_METHOD>

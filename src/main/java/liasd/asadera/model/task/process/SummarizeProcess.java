@@ -120,7 +120,7 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 		super.init();
 		corpusToSummarize = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp",
 				getCurrentMultiCorpus().get(getSummarizeCorpusId()), true);
-		logger.info("Corpus " + corpusToSummarize.getiD() + " read");
+		logger.trace("Corpus " + corpusToSummarize.getiD() + " read");
 	}
 
 	private void initCompatibility() {
@@ -155,42 +155,44 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void process() throws Exception {
-		List<Corpus> listCorpus = new ArrayList<Corpus>();
-		listCorpus.add(corpusToSummarize);
-		if (indexBuilders != null) {
-			for (AbstractIndexBuilder indexBuilder : indexBuilders)
-				indexBuilder.processIndex(listCorpus);
-		}
-		if (caracteristicBuilders != null) {
-			for (AbstractCaracteristicBuilder caracteristicBuilder : caracteristicBuilders)
-				caracteristicBuilder.processCaracteristics(listCorpus);
-		}
-		if (scoringMethods != null) {
-			for (AbstractScoringMethod scoringMethod : scoringMethods) {
-				scoringMethod.init(this);
-				scoringMethod.computeScores(listCorpus);
+		if (corpusToSummarize.size() != 0) {
+			List<Corpus> listCorpus = new ArrayList<Corpus>();
+			listCorpus.add(corpusToSummarize);
+			if (indexBuilders != null) {
+				for (AbstractIndexBuilder indexBuilder : indexBuilders)
+					indexBuilder.processIndex(listCorpus);
 			}
-		}
-		if (selectionMethod != null) {
-			boolean test;
-			List<SentenceModel> sum = selectionMethod.calculateSummary(listCorpus);
-
-			synchronized (summary) {
-				test = summary.containsKey(getCurrentMultiCorpus().getiD());
+			if (caracteristicBuilders != null) {
+				for (AbstractCaracteristicBuilder caracteristicBuilder : caracteristicBuilders)
+					caracteristicBuilder.processCaracteristics(listCorpus);
 			}
-			if (!test) {
-				Map<Integer, List<SentenceModel>> map = new HashMap<Integer, List<SentenceModel>>();
-				map.put(getSummarizeCorpusId(), sum);
-				synchronized (summary) {
-					summary.put(getCurrentMultiCorpus().getiD(), map);
+			if (scoringMethods != null) {
+				for (AbstractScoringMethod scoringMethod : scoringMethods) {
+					scoringMethod.init(this);
+					scoringMethod.computeScores(listCorpus);
 				}
 			}
-			else {
-				Map<Integer, List<SentenceModel>> map;
+			if (selectionMethod != null) {
+				boolean test;
+				List<SentenceModel> sum = selectionMethod.calculateSummary(listCorpus);
+	
 				synchronized (summary) {
-					map = summary.get(getCurrentMultiCorpus().getiD());
+					test = summary.containsKey(getCurrentMultiCorpus().getiD());
 				}
-				map.put(getSummarizeCorpusId(), sum);
+				if (!test) {
+					Map<Integer, List<SentenceModel>> map = new HashMap<Integer, List<SentenceModel>>();
+					map.put(getSummarizeCorpusId(), sum);
+					synchronized (summary) {
+						summary.put(getCurrentMultiCorpus().getiD(), map);
+					}
+				}
+				else {
+					Map<Integer, List<SentenceModel>> map;
+					synchronized (summary) {
+						map = summary.get(getCurrentMultiCorpus().getiD());
+					}
+					map.put(getSummarizeCorpusId(), sum);
+				}
 			}
 		}
 	}
@@ -216,9 +218,11 @@ public class SummarizeProcess extends AbstractProcess implements Runnable {
 
 	public void join() throws InterruptedException {
 		t.join();
-		getModel().setModelChanged();
-		getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(
-				this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId()), getModel().isVerbose()));
+		if (model.isVerbose()) {
+			getModel().setModelChanged();
+			getModel().notifyObservers("Corpus " + getSummarizeCorpusId() + "\n" + SentenceModel.listSentenceModelToString(
+					this.getSummary().get(currentMultiCorpus.getiD()).get(getSummarizeCorpusId()), getModel().isVerbose()));
+		}
 	}
 
 	@Override

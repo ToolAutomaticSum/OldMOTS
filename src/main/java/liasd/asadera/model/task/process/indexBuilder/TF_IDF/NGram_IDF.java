@@ -1,14 +1,14 @@
 package main.java.liasd.asadera.model.task.process.indexBuilder.TF_IDF;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.omg.DynamicAny.DynAnyPackage.InvalidValue;
-
+import main.java.liasd.asadera.exception.LacksOfFeatures;
 import main.java.liasd.asadera.model.task.preProcess.GenerateTextModel;
 import main.java.liasd.asadera.model.task.process.indexBuilder.AbstractIndexBuilder;
 import main.java.liasd.asadera.model.task.process.indexBuilder.IndexBasedIn;
@@ -25,15 +25,24 @@ import main.java.liasd.asadera.textModeling.WordModel;
 import main.java.liasd.asadera.textModeling.wordIndex.Index;
 import main.java.liasd.asadera.textModeling.wordIndex.NGram;
 import main.java.liasd.asadera.textModeling.wordIndex.WordIndex;
+import main.java.liasd.asadera.tools.reader_writer.Reader;
+import main.java.liasd.asadera.tools.reader_writer.Writer;
 import main.java.liasd.asadera.tools.wordFilters.WordFilter;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBasedIn<WordIndex> {
 
 	private Map<SentenceModel, Set<NGram>> ngrams_in_sentences;
 
 	private Index<WordIndex> indexWord;
+	
+	private boolean firstLoading = true;
+	private Index<NGram> loadingIndex;
 
 	private int n;
+	private boolean generateIdf = false;
+	private String idfFile = null;
 
 	public NGram_IDF(int id) throws SupportADNException {
 		super(id);
@@ -58,21 +67,59 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 
 		n = Integer.parseInt(getCurrentProcess().getModel().getProcessOption(id, "n"));
 		if (n <= 1)
-			throw new InvalidValue("N need to be >1 for NGram_IDF.");
+			throw new Exception("N need to be >1 for NGram_IDF.");
+		
+		try {
+			idfFile = getCurrentProcess().getModel().getProcessOption(id, "IdfFile");
+			idfFile += "_" + n + ".idf";
+		}
+		catch (LacksOfFeatures e) {
+			idfFile = null;
+		}
+		try {
+			generateIdf = Boolean.parseBoolean(getCurrentProcess().getModel().getProcessOption(id, "GenerateIdf"));
+			if (generateIdf && idfFile == null)
+				throw new LacksOfFeatures("GenerateIdf option need IdfFile option.");
+		}
+		catch (LacksOfFeatures e) {
+			generateIdf = false;
+		}
 	}
 
 	@Override
 	public void processIndex(List<Corpus> listCorpus) throws Exception {
 		super.processIndex(listCorpus);
-		NGram_IDF.generateIndex(n, listCorpus, ngrams_in_sentences, index, indexWord, getCurrentProcess().getFilter());
-		for (Corpus c : getCurrentMultiCorpus()) {
-			if (!listCorpus.contains(c)) {
-				Corpus temp = GenerateTextModel.readTempDocument(getModel().getOutputPath() + File.separator + "temp",
-						c, true);
-				NGram_IDF.majIDFIndex(n, temp, index, indexWord, getCurrentProcess().getFilter());
-				if (!getModel().isMultiThreading())
-					temp.clear();
+		
+		if (generateIdf) {
+			indexWord = new Index<WordIndex>();
+			TF_IDF.generateDictionary(getCurrentMultiCorpus(), indexWord, getCurrentProcess().getFilter());
+			NGram_IDF.generateIdfFile(getCurrentMultiCorpus(), indexWord, n, getCurrentProcess().getFilter(), idfFile);
+			System.exit(0);
+		}
+		else {
+			if (idfFile == null) {
+				NGram_IDF.generateIndex(n, listCorpus, ngrams_in_sentences, index, indexWord, getCurrentProcess().getFilter());
+				for (Corpus c : getCurrentMultiCorpus()) {
+					if (!listCorpus.contains(c)) {
+						NGram_IDF.majIDFIndex(n, c, index, indexWord, getCurrentProcess().getFilter());
+					}
+				}
 			}
+			else {
+				if (firstLoading) {
+					loadingIndex = new Index<NGram>();
+					TF_IDF.generateDictionary(getCurrentMultiCorpus(), indexWord, getCurrentProcess().getFilter());
+					NGram_IDF.loadIdfFile(n, getCurrentMultiCorpus(), ngrams_in_sentences, loadingIndex, indexWord, getCurrentProcess().getFilter(), idfFile);
+					firstLoading = false;
+				}
+				loadIdfFromLoadingIndex(listCorpus);
+			}
+			
+			for (Corpus c : listCorpus)
+				for (TextModel t : c)
+					for (SentenceModel sen : t)
+						for (WordIndex wi : sen)
+							wi.setWeight(wi.getTfDocument(t.getiD())*wi.getIdf());
 		}
 	}
 
@@ -84,8 +131,13 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
  
 	@SuppressWarnings("unlikely-arg-type")
 	public static void generateIndex(int n, List<Corpus> listCorpus, Map<SentenceModel, Set<NGram>> ngrams_in_sentences,
-			Index<NGram> index, Index<WordIndex> indexWord, WordFilter filter) {
+			Index<NGram> index, Index<WordIndex> indexWord, WordFilter filter) throws Exception {
 		for (Corpus corpus : listCorpus) {
+			boolean clear = false;
+			if (corpus.getNbSentence() == 0) {
+				clear = true;
+				corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus, true);
+			}
 			index.setNbDocument(index.getNbDocument() + corpus.size()); 
 			for (TextModel textModel : corpus)
 				for (SentenceModel sen : textModel) {
@@ -108,16 +160,24 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 					ngrams_in_sentences.put(sen, indexedSenNG);
 				}
 			index.putCorpusNbDoc(corpus.getiD(), corpus.size());
+			if (clear)
+				corpus.clear();
 		}
 	}
 
 	/**
 	 * @param corpus
 	 * @param dictionnary
+	 * @throws Exception 
 	 */
 	@SuppressWarnings("unlikely-arg-type")
 	public static void majIDFIndex(int n, Corpus corpus, Index<NGram> index, Index<WordIndex> indexWord,
-			WordFilter filter) {
+			WordFilter filter) throws Exception {
+		boolean clear = false;
+		if (corpus.getNbSentence() == 0) {
+			clear = true;
+			corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus, true);
+		}
 		index.setNbDocument(index.getNbDocument() + corpus.size()); 
 		for (TextModel textModel : corpus) {
 			for (SentenceModel sen : textModel) {
@@ -133,6 +193,8 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 			}
 		}
 		index.putCorpusNbDoc(corpus.getiD(), corpus.size());
+		if (clear)
+			corpus.clear();
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
@@ -190,6 +252,85 @@ public class NGram_IDF extends AbstractIndexBuilder<NGram> implements IndexBased
 				ngrams_list.add(ng);
 		}
 		return ngrams_list;
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	public static void generateIdfFile(List<Corpus> listCorpus, Index<WordIndex> indexWord, int n, WordFilter filter, String idfName) throws Exception {
+		new File("output" + File.separator + "modelIDF").mkdirs();
+		Index <NGram> index = new Index<NGram>();
+		try (ProgressBar pb = new ProgressBar("Generate Bigram index idf ", listCorpus.size(), ProgressBarStyle.ASCII)) {
+			for (Corpus corpus : listCorpus) {
+				if (corpus.getNbSentence() == 0)
+					corpus = GenerateTextModel.readTempDocument("output" + File.separator + "temp", corpus,
+																true);
+				index.setNbDocument(index.getNbDocument() + corpus.size()); 
+				for (TextModel textModel : corpus)
+					for (SentenceModel sen : textModel) {
+						Set<NGram> senNG;
+						if (n == 2)
+							senNG = NGram_IDF.getBiGrams(indexWord, sen, filter);
+						else
+							senNG = NGram_IDF.getNGrams(n, indexWord, sen, filter);
+						for (NGram ng : senNG) {
+							if (!index.containsKey(ng.getWord()))
+								index.put(ng);
+							else
+								ng = index.get(ng.getWord());
+							ng.addDocumentOccurence(corpus.getiD(), textModel.getiD());
+						}
+					}
+				index.putCorpusNbDoc(corpus.getiD(), corpus.size());
+				corpus.clear();
+				pb.step();
+			}
+		}
+		
+		String outputPath = "output" + File.separator + "modelIDF" + File.separator + idfName;
+		File f = new File(outputPath);
+		if (f.exists())
+			f.delete();
+		Writer w = new Writer(outputPath);
+		w.open(false);
+		w.write(index.getNbDocument() + "\n");
+		for(WordIndex word : index.values()) {
+			w.write(word.toString() + "\t" + + word.getNbDocumentWithWordSeen() + "\t" + word.getIdf(index.getNbDocument()) + "\n");
+		}
+		w.close();
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	protected void loadIdfFromLoadingIndex(List<Corpus> listCorpus) throws Exception {
+		NGram_IDF.generateIndex(n, listCorpus, ngrams_in_sentences, index, indexWord, getCurrentProcess().getFilter());
+		for (NGram ng : index.values()) {
+			ng.setNbDocumentWithWordSeen(loadingIndex.get(ng.toString()).getNbDocumentWithWordSeen());
+			ng.setIdf(loadingIndex.get(ng.toString()).getIdf());
+		}
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	public static void loadIdfFile(int n, List<Corpus> listCorpus, Map<SentenceModel, Set<NGram>> ngrams_in_sentences,
+			Index<NGram> index, Index<WordIndex> indexWord,  WordFilter filter, String idfName) throws Exception {
+		String path = "output" + File.separator + "modelIDF" + File.separator + idfName;
+		if (!new File(path).exists())
+			throw new FileNotFoundException(path + " not found.");
+		
+		NGram_IDF.generateIndex(n, listCorpus, ngrams_in_sentences, index, indexWord, filter);
+		
+		Reader r = new Reader(path, true);
+		r.open();
+		String line = r.read();
+		index.setNbDocument(Integer.parseInt(line));
+		line = r.read();
+		while (line != null) {
+			String[] split = line.split("\t");
+			WordIndex word = index.get(split[0]);
+			if (word != null) {
+				word.setNbDocumentWithWordSeen(Integer.parseInt(split[1]));
+				word.setIdf(Float.parseFloat(split[2]));
+			}
+			line = r.read();
+		}
+		r.close();
 	}
 
 	@Override

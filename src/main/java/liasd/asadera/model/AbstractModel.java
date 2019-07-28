@@ -2,7 +2,6 @@ package main.java.liasd.asadera.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -31,11 +30,14 @@ public abstract class AbstractModel extends Observable {
 	private AbstractController ctrl;
 
 	private int taskID;
+	private int nbDoc;
 	private String name;
 
 	private String language;
 
 	private String outputPath;
+	
+	private boolean writePerFile;
 
 	/**
 	 * List of AbstractPreProcess for documents preProcessing.
@@ -146,6 +148,14 @@ public abstract class AbstractModel extends Observable {
 		this.taskID = taskID;
 	}
 
+	public int getNbDoc() {
+		return nbDoc;
+	}
+
+	public void setNbDoc(int nbDoc) {
+		this.nbDoc = nbDoc;
+	}
+
 	/**
 	 * Get task's name. Set as Multicorpus config file name as default in {@link MOTS}
 	 * @return String name, task's name
@@ -190,9 +200,13 @@ public abstract class AbstractModel extends Observable {
 	public String getProcessOption(int processId, String optionName) throws LacksOfFeatures {
 		if (processOption.get(processId) != null && !processOption.get(processId).isEmpty()
 				&& processOption.get(processId).containsKey(optionName)) {
-			return processOption.get(processId).get(optionName);
+ 			return processOption.get(processId).get(optionName);
 		} else
 			throw new LacksOfFeatures(optionName + " wasn't found for the process. Be sure that it is spelled right.");
+	}
+	
+	public List<Map<String, String>> getProcessOptionMap() {
+		return this.processOption;
 	}
 
 	/**
@@ -293,6 +307,14 @@ public abstract class AbstractModel extends Observable {
 
 	public void setVerbose(boolean isVerbose) {
 		this.isVerbose = isVerbose;
+	}
+
+	public boolean isWritePerFile() {
+		return writePerFile;
+	}
+
+	public void setWritePerFile(boolean writePerFile) {
+		this.writePerFile = writePerFile;
 	}
 
 	/** Clear instance's attribute.

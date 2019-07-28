@@ -2,6 +2,7 @@ package main.java.liasd.asadera.model.task.process.selectionMethod.genetic.genet
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import main.java.liasd.asadera.model.task.process.selectionMethod.genetic.GeneticIndividual;
 import main.java.liasd.asadera.textModeling.Corpus;
@@ -20,8 +21,8 @@ public class CosineScorer extends GeneticIndividualScorer {
 
 	@Override
 	public double computeScore(GeneticIndividual gi) {
-		ArrayList<WordIndex> listWordIndex = invertedIndex.getCorpusWordIndex().get(cd.getiD());
-		ArrayList<WordIndex> giIndexKeys = new ArrayList<WordIndex>();
+		List<WordIndex> listWordIndex = invertedIndex.getCorpusWordIndex().get(cd.getiD());
+		List<WordIndex> giIndexKeys = new ArrayList<WordIndex>();
 		HashMap<Integer, Double> giFrequencies = new HashMap<Integer, Double>();
 		this.computeGiIndexKeysAndFrequencies(giIndexKeys, giFrequencies, gi);
 		return this.cosineSimilarity(giIndexKeys, giFrequencies, listWordIndex);
@@ -39,7 +40,7 @@ public class CosineScorer extends GeneticIndividualScorer {
 	 * @param gi
 	 *            the scored genetic individual
 	 */
-	public void computeGiIndexKeysAndFrequencies(ArrayList<WordIndex> giIndexKeys,
+	public void computeGiIndexKeysAndFrequencies(List<WordIndex> giIndexKeys,
 		HashMap<Integer, Double> giFrequencies, GeneticIndividual gi) {
 		for (SentenceModel p : gi.getGenes()) {
 			for (WordIndex uIndexKey : p) {
@@ -54,8 +55,8 @@ public class CosineScorer extends GeneticIndividualScorer {
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
-	public double cosineSimilarity(ArrayList<WordIndex> giIndexKeys, HashMap<Integer, Double> giFrequencies,
-			ArrayList<WordIndex> clustIndexKeys) {
+	public double cosineSimilarity(List<WordIndex> giIndexKeys, HashMap<Integer, Double> giFrequencies,
+			List<WordIndex> clustIndexKeys) {
 
 		double sumCommon = 0.;
 		double sumGi = 0.;

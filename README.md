@@ -160,8 +160,6 @@ For now, all ID are useless and could be avoided.
 
 ## Authors
 
-* **Valentin Nyzam** - [ValNyz](https://github.com/ValNyz)
-
 ## License
 
 This project is licensed under the GPL3 License - see the [LICENSE.md](LICENSE.md) file for details

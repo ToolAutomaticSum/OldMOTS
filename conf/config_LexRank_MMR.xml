@@ -8,18 +8,19 @@
 			<OPTION NAME="CorpusIdToSummarize">all</OPTION>
 			<OPTION NAME="ReadStopWords">false</OPTION>
 			<INDEX_BUILDER NAME="TF_IDF.TF_IDF">
+				<OPTION NAME="IdfFile">merged</OPTION>
 			</INDEX_BUILDER>
 			<CARACTERISTIC_BUILDER NAME="vector.TfIdfVectorSentence">
 			</CARACTERISTIC_BUILDER>
 			<SCORING_METHOD NAME="graphBased.LexRank">
 				<OPTION NAME="DampingParameter">0.15</OPTION>
 				<OPTION NAME="GraphThreshold">0.1</OPTION>
-				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 			</SCORING_METHOD>
 			<SUMMARIZE_METHOD NAME="MMR">
 				<OPTION NAME="CharLimitBoolean">true</OPTION>
 				<OPTION NAME="Size">100</OPTION>
-				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
+				<OPTION NAME="SimilarityMethod">CosineSimilarity</OPTION>
 				<OPTION NAME="Lambda">0.6</OPTION>
 			</SUMMARIZE_METHOD>
 		</PROCESS>

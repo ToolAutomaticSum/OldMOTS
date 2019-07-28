@@ -21,6 +21,7 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	private static Logger logger = LoggerFactory.getLogger(SentenceModel.class);
 
 	private List<WordModel> listWordModel = new ArrayList<WordModel>();
+	private List<String> labels = new ArrayList<String>();
 
 	protected int n;
 	protected Map<Integer, List<WordIndex>> mapNGram;
@@ -94,14 +95,6 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 		this.iD = iD;
 	}
 
-	/**
-	 * @return full sentence
-	 */
-	@Override
-	public String toString() {
-		return sentence;
-	}
-
 	public static String listSentenceModelToString(List<SentenceModel> list, boolean verbose) {
 		String str = "";
 		if (verbose) {
@@ -114,11 +107,6 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 			str += ((verbose) ? sen.getNbMot() + "\t" + sen.getScore() + "\t" : "\t") + sen.toString() + "\n";
 		}
 		return str;
-	}
-
-	@Override
-	public int hashCode() {
-		return (text.getParentCorpus().getiD() + "_" + iD).hashCode();
 	}
 
 	public double getScore() {
@@ -249,9 +237,14 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 	public void setNbMot(int nbMot) {
 		this.nbMot = nbMot;
 	}
+	
+
+	public void setLabels(List<String> labels) {
+		this.labels = labels;
+	}
 
 	public List<String> getLabels() {
-		return text.getLabels();
+		return labels;
 	}
 
 	@Override
@@ -397,8 +390,19 @@ public class SentenceModel implements List<WordIndex>, Comparable<SentenceModel>
 				return false;
 		} else if (iD == other.iD)
 			return true;
-		else if (!sentence.equals(other.sentence))
-			return false;
-		return true;
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return iD;
+	}
+	
+	/**
+	 * @return full sentence
+	 */
+	@Override
+	public String toString() {
+		return sentence;
 	}
 }

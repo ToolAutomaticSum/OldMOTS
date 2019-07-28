@@ -7,6 +7,7 @@ public class WordIndex implements Comparable<WordIndex> {
 	private int iD;
 	private double weight;
 	private int nbDocumentWithWordSeen;
+	private float idf;
 
 	protected String word;
 	private int nbOccurence = 0;
@@ -76,11 +77,24 @@ public class WordIndex implements Comparable<WordIndex> {
 	}
 
 	public double getIdf(int nbDocument) {
-		return Math.log(nbDocument / getNbDocumentWithWordSeen());
+		double a = (double) nbDocument / (double) getNbDocumentWithWordSeen();
+		return Math.log(a);
+	}
+
+	public float getIdf() {
+		return idf;
+	}
+
+	public void setIdf(float idf) {
+		this.idf = idf;
 	}
 
 	public double getTf() {
 		return (double) getNbOccurence();
+	}
+	
+	public void setNbDocumentWithWordSeen(int nbDocumentWithWordSeen) {
+		this.nbDocumentWithWordSeen= nbDocumentWithWordSeen;
 	}
 
 	public int getNbDocumentWithWordSeen() {

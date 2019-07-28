@@ -30,7 +30,7 @@ public class StopList extends TreeSet<String> {
 			isr.close();
 			fisr.close();
 		} catch (IOException ioe) {
-			System.err.println("Error while reading stoplist file. Stoplist possibly empty");
+			System.err.println("Error while reading stoplist file. Stoplist possibly empty.");
 			ioe.printStackTrace();
 		}
 

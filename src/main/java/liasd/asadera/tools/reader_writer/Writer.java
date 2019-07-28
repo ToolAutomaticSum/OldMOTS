@@ -43,7 +43,7 @@ public class Writer {
 		output.close();
 	}
 	
-	public void write(String text) throws Exception {
+	public void write(String text) throws IOException {
 		if (output != null) {
 			output.write(text);
 			//on peut utiliser plusieurs fois methode write
@@ -51,6 +51,6 @@ public class Writer {
 			//ensuite flush envoie dans le fichier, ne pas oublier cette methode pour le BufferedWriter
 		}
 		else
-			throw new Exception("Writer need to be open first !");
+			throw new IOException("Writer need to be open first !");
 	}
 }

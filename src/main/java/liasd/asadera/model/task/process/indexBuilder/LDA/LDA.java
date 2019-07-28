@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
@@ -95,6 +94,7 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 	@Override
 	public void processIndex(List<Corpus> listCorpus) throws Exception {
 		super.processIndex(listCorpus);
+		
 		LDACmdOption option = new LDACmdOption();
 		option.est = false;
 		option.estc = false;
@@ -309,13 +309,16 @@ public class LDA extends AbstractIndexBuilder<WordVector> implements LearningMod
 
 	@Override
 	public boolean isOutCompatible(ParameterizedMethod compatibleMethod) {
-		return compatibleMethod.getParameterTypeIn()
+		return super.isOutCompatible(compatibleMethod) || compatibleMethod.getParameterTypeIn()
 				.contains(new ParameterizedType(WordVector.class, Index.class, IndexBasedIn.class));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setCompatibility(ParameterizedMethod compMethod) {
-		((IndexBasedIn<WordVector>) compMethod).setIndex(index);
+		if (super.isOutCompatible(compMethod))
+			super.setCompatibility(compMethod);
+		if (compMethod.getParameterTypeIn().contains(new ParameterizedType(WordVector.class, Index.class, IndexBasedIn.class)))
+			((IndexBasedIn<WordVector>) compMethod).setIndex(index);
 	}
 }

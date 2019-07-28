@@ -16,7 +16,7 @@
 				<OPTION NAME="GraphThreshold">0.1</OPTION>
 				<OPTION NAME="SimilarityMethod">JaccardSimilarity</OPTION>
 			</SCORING_METHOD>
-<SUMMARIZE_METHOD NAME="reinforcementLearning.ReinforcementLearning">
+			<SUMMARIZE_METHOD NAME="reinforcementLearning.ReinforcementLearning">
 				<OPTION NAME="Size">100</OPTION>
 				<OPTION NAME="Lambda">0.9</OPTION>
 				<OPTION NAME="Penalty">1.0</OPTION>

@@ -81,7 +81,7 @@ public class JSBigramScorer extends GeneticIndividualScorer {
 			}
 		}
 
-		System.out.println("Number of bigrams : " + nbBiGramsInSource);
+		//System.out.println("Number of bigrams : " + nbBiGramsInSource);
 
 		for (WordIndex ng : firstSentencesConcepts.keySet()) {
 			double d = sourceOccurences.get(ng);
@@ -91,8 +91,8 @@ public class JSBigramScorer extends GeneticIndividualScorer {
 
 		modified_nbBiGramsInSource += nbBiGramsInSource;
 
-		System.out.println(
-				"Number of bigrams after filtering : " + nbBiGramsInSource + " | " + modified_nbBiGramsInSource);
+		//System.out.println(
+				//"Number of bigrams after filtering : " + nbBiGramsInSource + " | " + modified_nbBiGramsInSource);
 		for (WordIndex ng : sourceOccurences.keySet()) {
 			sourceDistribution.put(ng, (double) sourceOccurences.get(ng) / modified_nbBiGramsInSource);
 		}
