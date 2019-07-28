@@ -5,6 +5,7 @@ target
 conf
 output
 docs/lemmaModels
+docs/output
 src/main/resources/TEXTEAV
 
 ######################
