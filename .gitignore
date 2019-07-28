@@ -4,6 +4,7 @@
 target
 conf
 output
+docs/lemmaModels
 src/main/resources/TEXTEAV
 
 ######################
